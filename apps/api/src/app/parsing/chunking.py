@@ -114,6 +114,24 @@ _PROJECT_RE = re.compile(
     r"(?P<amount>\d{1,3}(?:,\d{3})+|\d{4,})(?:\s|$)"
 )
 _BASIS_RE = re.compile(r"^\s*(?:[∘ㅇ○o°·\-]|\d\))\s*")
+# Real 세출예산사업명세서 rows (성남시, 2026): "306 출연금 2,900,000 …" is a 편성목, "01 출연금 …"
+# a 통계목, and "도 113,293 …" a funding source (국·도·시비, 균특, 기금, 조정교부금).
+_OBJECT_RE = re.compile(r"^\s*\d{3}\s+\S")
+_ITEM_RE = re.compile(r"^\s*(?:\d{2,3}\s+\S|[국도시균기조특]\s+△?\d)")
+_AMOUNT_RE = re.compile(r"\d{1,3}(?:,\d{3})+|\d{4,}")
+
+
+def _is_project_row(lines: list[str], i: int) -> bool:
+    """An unlabeled "name 예산액 전년도 증감" row. 부서·정책·단위사업 subtotals look the same;
+    only a 세부사업 is followed (after its funding lines) by a 편성목 row."""
+    content = lines[i]
+    if not _PROJECT_RE.match(content) or _BASIS_RE.match(content) or _ITEM_RE.match(content):
+        return False
+    for nxt in lines[i + 1 :]:
+        if not nxt.strip() or (_ITEM_RE.match(nxt) and not _OBJECT_RE.match(nxt)):
+            continue  # blank or a funding line
+        return bool(_OBJECT_RE.match(nxt))
+    return False
 
 
 def chunk_budget(text: str) -> list[Chunk]:
@@ -122,6 +140,7 @@ def chunk_budget(text: str) -> list[Chunk]:
     current: list[tuple[int, int]] = []
     current_dept: str | None = None
     offset = 0
+    lines = [line.rstrip("\r\n") for line in text.splitlines(keepends=True)]
 
     def flush() -> None:
         nonlocal current
@@ -131,8 +150,8 @@ def chunk_budget(text: str) -> list[Chunk]:
             chunks.append(Chunk(len(chunks), start, end, text[start:end], labels, "budget_line"))
         current = []
 
-    for line in text.splitlines(keepends=True):
-        content = line.rstrip("\r\n")
+    for i, line in enumerate(text.splitlines(keepends=True)):
+        content = lines[i]
         start, end = offset, offset + len(content)
         offset += len(line)
         if not content.strip():
@@ -141,13 +160,13 @@ def chunk_budget(text: str) -> list[Chunk]:
             flush()
             dept = m.group("dept")
             continue
-        if "세부사업" in content.replace(" ", "") or (
-            _PROJECT_RE.match(content) and not _BASIS_RE.match(content)
-        ):
+        # "세부사업" with an amount: a labeled row, not the "…ㆍ세부사업ㆍ편성목 예산액" header
+        labeled = "세부사업" in content.replace(" ", "") and _AMOUNT_RE.search(content)
+        if labeled or _is_project_row(lines, i):
             flush()
             current = [(start, end)]
             current_dept = dept
-        elif current and _BASIS_RE.match(content):
+        elif current and (_BASIS_RE.match(content) or _ITEM_RE.match(content)):
             current.append((start, end))
         else:
             flush()
