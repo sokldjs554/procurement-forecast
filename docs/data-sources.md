@@ -3,7 +3,7 @@
 | 키 | 제공처 | 문서 유형 | 주기 (KST) | 어댑터 |
 |---|---|---|---|---|
 | `clik_minutes` | 국회도서관 지방의정포털 Open API | 지방의회 회의록 | 매일 03:10 | `sources/clik.py` |
-| `lofin_budget` | 행정안전부 지방재정365 | 세출예산서(PDF·스캔 PDF·HWP/HWPX) | 매주 일 02:40 | `sources/lofin.py` |
+| `lofin_budget` | 행정안전부 지방재정365 (`www.lofin365.go.kr/lf/hub/<데이터코드>`) | 세출예산서(PDF·스캔 PDF·HWP/HWPX) | 매주 일 02:40 | `sources/lofin.py` |
 | `g2b_order_plan` | 조달청 발주계획현황서비스 | 발주계획 | 매시 7분 | `sources/g2b.py` |
 | `g2b_prespec` | 조달청 사전규격정보서비스 | 사전규격 | 매시 7분 | `sources/g2b.py` |
 | `g2b_bid` | 조달청 입찰공고정보서비스 | 입찰공고 | 매시 7분 | `sources/g2b.py` |
