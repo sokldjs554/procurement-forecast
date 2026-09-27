@@ -268,7 +268,9 @@ def sources_ingest(
     source: list[str] = typer.Option(
         ..., "--source", "-s", help="Source key, or an adapter name for all its sources (g2b)"
     ),
-    days: int = typer.Option(30, min=1, max=366, help="Window: this many days up to --until"),
+    days: int = typer.Option(
+        30, min=1, max=731, help="Window: this many days up to --until (budget boards: ~400)"
+    ),
     until: str = typer.Option(None, help="Last day of the window (YYYY-MM-DD, default today KST)"),
     rows: int = typer.Option(None, min=1, max=999, help="Items per call (조달청; default 100)"),
     max_calls: int = typer.Option(

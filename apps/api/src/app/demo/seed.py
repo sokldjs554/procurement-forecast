@@ -103,6 +103,7 @@ async def seed_sources(
         "clik": bool(s.clik_api_key),
         "lofin": bool(s.lofin_api_key),
         "g2b": bool(s.data_go_kr_service_key),
+        "crawler": False,  # real 누리집: enable once boards are configured
     }
     for entry in SOURCE_CATALOG:
         stmt = insert(Source).values(**entry, enabled=has_key[entry["adapter"]], config={})

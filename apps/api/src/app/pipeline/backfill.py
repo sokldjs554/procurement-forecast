@@ -24,6 +24,7 @@ from app.pipeline.link import link_signals
 from app.pipeline.process import pending_document_ids, process_document
 from app.runtime import Runtime
 from app.sources.base import FetchWindow
+from app.sources.crawler import BoardCrawlerAdapter
 from app.sources.g2b import G2BAdapter
 from app.sources.http import FatalSourceError, TransientSourceError
 from app.sources.lofin import LofinBudgetAdapter
@@ -98,7 +99,8 @@ async def ingest_window(
             "status": run.status if run else "failed",
             "error": error,
             "seconds": round(time.perf_counter() - started, 1),
-            "calls": limiter.calls.get(source.key, 0),
+            # The crawler keys its calls per host (``<source>@<host>``).
+            "calls": sum(n for k, n in limiter.calls.items() if k.split("@", 1)[0] == source.key),
         }
         if run is not None:
             report |= {
@@ -121,6 +123,8 @@ async def ingest_window(
                     for path, ps in adapter.path_stats.items()
                 },
             }
+        if isinstance(adapter, BoardCrawlerAdapter):
+            report["crawl"] = dataclasses.asdict(adapter.stats)
         if isinstance(adapter, LofinBudgetAdapter):
             report["books"] = dict(sorted(adapter.stats.items()))
             # Page links need the board crawler, and their hosts need network access.
