@@ -540,9 +540,20 @@ async def test_lofin_hub_errors_stop_the_source() -> None:
     with pytest.raises(FatalSourceError, match="ERROR-290"):
         [rec async for rec in adapter.fetch(FetchWindow(date(2025, 1, 1), date(2025, 1, 2)))]
 
-    no_code = LofinBudgetAdapter(_client(bad_key), "SECRET")
+    no_code = LofinBudgetAdapter(_client(bad_key), "SECRET", overrides={"api_code": None})
     with pytest.raises(FatalSourceError, match="api_code"):
         [rec async for rec in no_code.fetch(FetchWindow(date(2025, 1, 1), date(2025, 1, 2)))]
+
+
+def test_lofin_defaults_to_the_budget_book_dataset() -> None:
+    # BUDLK is the code on the 우리 지자체 예산서 dataset's OpenApi tab; config can still override it.
+    from app.sources.lofin import LofinBudgetAdapter
+
+    assert LofinBudgetAdapter(_client(lambda r: httpx.Response(404)), "K").list_path() == (
+        "/lf/hub/BUDLK"
+    )
+    other = LofinBudgetAdapter(_client(lambda r: httpx.Response(404)), "K", api_code="OTHER")
+    assert other.list_path() == "/lf/hub/OTHER"
 
 
 async def test_lofin_an_empty_year_is_not_an_error() -> None:

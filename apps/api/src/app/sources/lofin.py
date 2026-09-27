@@ -8,8 +8,9 @@ The API is the 지방재정365 open API hub: ``https://www.lofin365.go.kr/lf/hub
 ``Key``, ``Type=json``, ``pIndex``, ``pSize`` (≤1,000) and the dataset's filters, answering
 ``{"<코드>": [{"head": [{"list_total_count": n}, {"RESULT": {"CODE": "INFO-000", …}}]},
 {"row": [...]}]}``. The shape is taken from the MIT-licensed kpubdata client, which calls the same
-hub for other 지방재정365 datasets; the 예산서 dataset's own code (``api_code``) is shown on its
-OpenApi tab and set in ``sources.config``. The old host lofin.mois.go.kr no longer answers
+hub for other 지방재정365 datasets; the 예산서 dataset's own code, ``BUDLK``, is shown on its
+OpenApi tab (``sources.config.api_code`` overrides it). As of 2026-09-27 no response from it has
+been seen: the host was blocked from the development container. The old host lofin.mois.go.kr no longer answers
 (2026-09-27, ``docs/real-data-budget.md``). Field names are configurable (see ``DEFAULTS``);
 the ones below are the hub's naming (``laf_hg_nm`` 자치단체명, ``wa_laf_hg_nm`` 광역자치단체명,
 ``fyr`` 회계연도) plus the earlier guesses.
@@ -42,7 +43,7 @@ BASE_URL = "https://www.lofin365.go.kr"
 PAGE_SIZE = 1000  # the hub's maximum
 
 DEFAULTS: dict[str, Any] = {
-    "api_code": None,  # the 예산서 dataset's code on the hub; set in sources.config
+    "api_code": "BUDLK",  # 우리 지자체 예산서, from the dataset's OpenApi tab on the portal
     "list_path": "/lf/hub/{api_code}",
     "year_param": "fyr",
     "institution_fields": ["laf_hg_nm", "laf_nm", "LAF_NM", "wa_nm", "institutionName"],
