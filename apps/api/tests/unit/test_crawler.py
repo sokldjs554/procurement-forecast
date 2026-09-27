@@ -462,6 +462,41 @@ async def test_board_files_in_rows_still_obey_robots() -> None:
     ]
 
 
+EGOV_ROWS = """<table><tbody>
+<tr><td>2</td><td><a href="javascript:;">2026년도 예산서</a></td>
+<td><a href="/cmm/fms/FileDown.do?atchFileId=FILE_0000000000211&amp;fileSn=0">본예산.pdf</a></td>
+<td>2026-01-10</td></tr>
+<tr><td>1</td><td><a href="javascript:;">2025년 제1회 추가경정예산서</a></td>
+<td><a href="/cmm/fms/FileDown.do?atchFileId=FILE_0000000000187&amp;fileSn=0">추경.pdf</a></td>
+<td>2025-07-02</td></tr>
+</tbody></table>
+<ul><li><h4>2026년 예산서</h4>
+<a href="/cmm/fms/FileDown.do?atchFileId=FILE_0000000000211&amp;fileSn=1">사업명세서.pdf</a></li>
+<li><h4>2026년 예산서</h4>
+<a href="/cmm/fms/FileDown.do?atchFileId=FILE_0000000000211&amp;fileSn=2">사업명세서.pdf</a></li></ul>"""
+
+
+async def test_files_told_apart_only_by_query_get_their_own_ids() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        if request.url.path == "/robots.txt":
+            return httpx.Response(404)
+        if request.url.path == "/cmm/fms/FileDown.do":
+            return httpx.Response(200, content=PDF)
+        return httpx.Response(200, text=EGOV_ROWS)
+
+    rows = {"url": "https://gov.example/list.do", "attachment_pattern": r"FileDown\.do"}
+    adapter, _ = _adapter(handler, boards=[rows], title_keywords=[])
+    assert await _crawl(adapter, since=date(2025, 1, 1)) == [
+        "/cmm/fms/FileDown.do?atchFileId=FILE_0000000000211&fileSn=0",
+        "/cmm/fms/FileDown.do?atchFileId=FILE_0000000000187&fileSn=0",
+    ]
+
+    page = rows | {"url": "https://gov.example/budget.do", "layout": "page"}
+    adapter, _ = _adapter(handler, boards=[page], title_keywords=[])
+    ids = await _crawl(adapter, since=date(2025, 1, 1))
+    assert len(ids) == len(set(ids)) == 4
+
+
 async def test_page_layout_picks_by_title_fiscal_year_and_cap() -> None:
     board = {
         "url": "https://www.seongnam.go.kr/cn03050201",

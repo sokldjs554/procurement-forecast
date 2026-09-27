@@ -358,6 +358,14 @@ def canonical_url(url: str, keep: tuple[str, ...]) -> str:
     )
 
 
+def file_key(url: str) -> str:
+    """A file's id on its host: path and query. eGov boards tell files apart only by the query
+    (``/cmm/fms/FileDown.do?atchFileId=…&fileSn=0``), so the path alone would give every file
+    one id."""
+    parts = urlsplit(url)
+    return parts.path + (f"?{parts.query}" if parts.query else "")
+
+
 def _last_modified(resp: httpx.Response) -> date | None:
     value = resp.headers.get("Last-Modified")
     if not value:
@@ -546,8 +554,7 @@ class BoardCrawlerAdapter:
     async def _crawl_post(self, board: Board, row: BoardRow) -> AsyncIterator[RawRecord]:
         if row.attachments:  # the list row carries the files; there is no post page
             self.stats.posts += 1
-            post_url = canonical_url(row.url, (board.id_param,))
-            post_id = urlsplit(post_url).path
+            post_url, post_id = row.url, file_key(row.url)  # the row's first file
             attachments = row.attachments
         else:
             if not await self._allowed(row.url):
@@ -602,7 +609,7 @@ class BoardCrawlerAdapter:
             content, mime, modified = got
             yield self._record(
                 board,
-                external_id=urlsplit(att.href).path,
+                external_id=file_key(att.href),
                 title=title,
                 posted=modified or today_kst(),
                 url=att.href,
