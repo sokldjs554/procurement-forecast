@@ -17,7 +17,7 @@ from app.pipeline.ingest import reresolve_institutions, upsert_record
 from app.pipeline.link import link_signals
 from app.pipeline.process import process_document
 from app.sources import registry as registry_module
-from app.sources.base import FetchWindow
+from app.sources.base import FetchWindow, RawRecord
 from app.sources.g2b import map_item
 from app.sources.http import ResilientClient
 
@@ -516,3 +516,66 @@ async def test_another_order_of_the_same_notice_joins_by_number(demo_world, runt
     }
     seen = await _opportunities_after(runtime, [("bid_notice", C_BID), ("bid_notice", changed)])
     assert seen == [("bid_notice", "bid_open", date(2026, 9, 20), True)]
+
+
+# Two 구청 rows of 성남시's 2026 본예산 세출예산사업명세서 (pp. 1,2xx and 1,4xx), as pypdf reads
+# them. Similarity joined them (0.84) on the live run; they are two projects.
+SEONGNAM_ROWS = """부서: 중원구 건설과
+정책: 도로시설 관리
+단위: 도로 정비 (단위:천원)
+빗물받이 및 측구 정비공사 360,000 360,000 0
+401 시설비및부대비 360,000 360,000 0
+01 시설비 360,000 360,000 0
+ ○빗물받이 및 측구 정비공사
+360,000
+부서: 분당구 건설과
+정책: 도로시설관리
+단위: 도로시설물 유지관리 (단위:천원)
+빗물받이 정비공사 1,401,000 751,000 650,000
+401 시설비및부대비 1,401,000 751,000 650,000
+01 시설비 1,400,000 750,000 650,000
+ ○빗물받이정비공사(1구역)
+200,000
+"""
+
+
+async def test_two_rows_of_one_budget_book_are_two_opportunities(demo_world, runtime) -> None:  # type: ignore[no-untyped-def]
+    rec = RawRecord(
+        external_id="/humanframe/file/sncity/bgt/2026/11608_3.pdf",
+        doc_type="budget_book",
+        title="2026년 세입세출예산서 › 일반회계 › 세출예산사업명세서 › 전체",
+        published_at=date(2026, 6, 18),
+        mime="text/plain",
+        publisher_raw="경기도 성남시",
+        institution_code_hint="LG-41130",
+        content=SEONGNAM_ROWS.encode(),
+        structured={"fiscal_year": 2026, "budget_kind": "본"},
+    )
+    async with get_sessionmaker()() as s:
+        source = Source(
+            key="test_budget_rows", name="t", adapter="crawler", enabled=False, config={}
+        )
+        s.add(source)
+        await s.flush()
+        doc, _ = await upsert_record(s, source, rec, runtime)
+        signal_ids = (await process_document(s, runtime, doc.id)).signal_ids
+        await link_signals(s, runtime, signal_ids, today=date(2026, 9, 26))
+        rows = (
+            await s.execute(
+                select(
+                    Signal.title,
+                    Signal.department,
+                    Signal.budget_krw,
+                    OpportunitySignal.opportunity_id,
+                )
+                .join(OpportunitySignal, OpportunitySignal.signal_id == Signal.id)
+                .where(Signal.id.in_(signal_ids))
+                .order_by(Signal.id)
+            )
+        ).all()
+        await s.rollback()
+    assert [(r.title, r.department, r.budget_krw) for r in rows] == [
+        ("빗물받이 및 측구 정비공사", "중원구 건설과", 360_000_000),
+        ("빗물받이 정비공사", "분당구 건설과", 1_401_000_000),
+    ]
+    assert rows[0].opportunity_id != rows[1].opportunity_id

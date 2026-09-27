@@ -108,6 +108,10 @@ def test_chunk_budget_reads_the_real_table_rows() -> None:
         "상권활성화재단 출연 4,039,360 3,864,360 175,000",
     ]
     assert all(c.labels == ["부서: 지역경제상권과"] for c in chunks)
+    # 구청 부서 names have a space: "부서: 분당구 건설과"
+    assert chunk_budget("부서: 분당구 건설과\n" + SEONGNAM_2026_S2_PAGE.split("\n", 4)[4])[
+        0
+    ].labels == ["부서: 분당구 건설과"]
     assert "306 출연금" in chunks[1].text and "○성남시 상권활성화재단 출연금" in chunks[1].text
 
 

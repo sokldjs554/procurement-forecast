@@ -205,6 +205,28 @@ async def _without_conflicting_numbers(
     return [o for o in candidates if o.id not in conflicting]
 
 
+async def _without_rows_of_the_same_book(
+    session: AsyncSession, signal: Signal, candidates: list[Opportunity]
+) -> list[Opportunity]:
+    """Drop opportunities that already hold another row of the same 예산서: a book lists each
+    세부사업 once, so two rows are two projects. On six live 성남시 books (2026-09-27), 1,542 of
+    2,327 rows ended up in opportunities holding more than one 사업명 — up to 32 in one, and one
+    held 54 signals around "…정비공사" rows."""
+    if signal.stage != "budget_line" or not candidates:
+        return candidates
+    rows = await session.scalars(
+        select(OpportunitySignal.opportunity_id)
+        .join(Signal, Signal.id == OpportunitySignal.signal_id)
+        .where(
+            OpportunitySignal.opportunity_id.in_([o.id for o in candidates]),
+            Signal.document_id == signal.document_id,
+            Signal.id != signal.id,
+        )
+    )
+    taken = set(rows.all())
+    return [o for o in candidates if o.id not in taken]
+
+
 async def decide(session: AsyncSession, runtime: Runtime, signal: Signal) -> LinkDecision | None:
     ref = await _reference_match(session, signal)
     if ref is not None:
@@ -213,8 +235,10 @@ async def decide(session: AsyncSession, runtime: Runtime, signal: Signal) -> Lin
         return None
     threshold = runtime.settings.link_threshold
     band = runtime.settings.link_review_band
-    candidates = await _without_conflicting_numbers(
-        session, signal, await _candidates(session, signal)
+    candidates = await _without_rows_of_the_same_book(
+        session,
+        signal,
+        await _without_conflicting_numbers(session, signal, await _candidates(session, signal)),
     )
     best: tuple[float, Opportunity, dict[str, float]] | None = None
     for opp in candidates:

@@ -108,7 +108,7 @@ def chunk_minutes(text: str) -> list[Chunk]:
     return chunks
 
 
-_DEPT_RE = re.compile(r"^\s*부\s*서\s*[:：]\s*(?P<dept>\S+)")
+_DEPT_RE = re.compile(r"^\s*부\s*서\s*[:：]\s*(?P<dept>\S.*?)\s*$")  # "부서: 분당구 건설과"
 _PROJECT_RE = re.compile(
     r"^\s*(?:세\s*부\s*사\s*업\s*[:：]?\s*)?(?P<name>[가-힣A-Za-z0-9·()\-\s]{3,60}?)\s+"
     r"(?P<amount>\d{1,3}(?:,\d{3})+|\d{4,})(?:\s|$)"
