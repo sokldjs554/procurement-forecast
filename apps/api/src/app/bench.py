@@ -205,6 +205,18 @@ def queries(vec: str, inst: str, ref_hit: str, ref_miss: str) -> list[Query]:
             "(11, 22, 33, 44, 55, 66, 77, 88, 99, 110, 121, 132)",
         ),
         Query(
+            "link_candidate_same_book",
+            "기회 연결: 후보 기회 12건에 같은 예산서의 다른 행이 있는지 (있으면 제외)",
+            "SELECT os.opportunity_id FROM opportunity_signals os "
+            "JOIN signals s ON s.id = os.signal_id WHERE os.opportunity_id IN "
+            "(11, 22, 33, 44, 55, 66, 77, 88, 99, 110, 121, 132) "
+            "AND s.document_id = 7 AND s.id <> 1",
+            "SELECT os.opportunity_id FROM opportunity_signals os "
+            "JOIN signals s ON s.id = os.signal_id WHERE os.opportunity_id IN "
+            "(11, 22, 33, 44, 55, 66, 77, 88, 99, 110, 121, 132) "
+            "AND s.document_id = 7 AND s.id <> 1",
+        ),
+        Query(
             "feed_page",
             "고객 피드 첫 페이지 (점수순 21건)",
             "SELECT r.opportunity_id, r.score FROM recommendations r "
