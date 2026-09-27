@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 import pytest
 
 from app.domain.institutions import (
@@ -8,7 +11,10 @@ from app.domain.institutions import (
     looks_like_local_government,
     parse_name,
     provider_institution,
+    region_matches,
 )
+
+SNAPSHOT = Path(__file__).resolve().parents[2] / "scripts/data/stan_regin_cd_2026-09-27.json"
 
 
 @pytest.fixture(scope="module")
@@ -150,27 +156,86 @@ def test_gyeonggi_gwangju_is_a_city_of_gyeonggi() -> None:
 # --- The full table (scripts/build_institutions.py) -------------------------------------------
 
 
-def test_table_has_every_local_government(registry) -> None:  # type: ignore[no-untyped-def]
-    insts = registry.all()
-    sido_level = [i for i in insts if i.kind == "local_gov" and i.sigungu is None]
-    sigungu = [i for i in insts if i.kind == "local_gov" and i.sigungu]
-    councils = [i for i in insts if i.kind == "council"]
-    assert len(sido_level) == 17
-    assert len(sigungu) == 226 + 2  # + 제주시·서귀포시, 행정시 without a council
-    assert len(councils) == 17 + 226
-    assert len([i for i in insts if i.kind == "education_office"]) == 17
-    assert {i.sido for i in insts if i.kind != "public_agency"} == set(SIDO_REGION_CODES)
+def _snapshot() -> tuple[dict[str, str], dict[str, str]]:
+    """(시도 region code → name, 시군구 region code → full name) in force, from the 법정동코드
+    snapshot the table is built from. 세종 (36110) is a 시도; 행정구 ("경기도 수원시 장안구") are
+    left out."""
+    rows = json.loads(SNAPSHOT.read_text(encoding="utf-8"))["rows"]
+    top = [r for r in rows if r["locathigh_cd"] == "0000000000"]
+    sido = {r["region_cd"][:5]: r["locatadd_nm"] for r in top}
+    sigungu = {
+        r["region_cd"][:5]: r["locatadd_nm"]
+        for r in rows
+        if r not in top and len(r["locatadd_nm"].split()) == 2
+    }
+    return sido, sigungu
+
+
+def test_table_has_every_local_government_in_force(registry) -> None:  # type: ignore[no-untyped-def]
+    sido, sigungu = _snapshot()
+    insts = [i for i in registry.all() if i.kind != "public_agency"]
+    in_force = [i for i in insts if i.region_code in sido or i.region_code in sigungu]
+    sido_level = [i for i in in_force if i.kind == "local_gov" and i.sigungu is None]
+    local = [i for i in in_force if i.kind == "local_gov" and i.sigungu]
+    councils = [i for i in in_force if i.kind == "council"]
+    # 17 시도 less 광주광역시 and 전라남도, plus 전남광주통합특별시 (2026-07-01).
+    assert len(sido) == len(sido_level) == 16
+    assert len(local) == 227 + 2  # + 제주시·서귀포시, 행정시 without a council
+    assert len(councils) == 16 + 227
+    offices = {i.region_code[:2] for i in insts if i.kind == "education_office"}
+    assert {c[:2] for c in sido} <= offices
+    for i in [*sido_level, *local]:
+        assert i.name == {**sido, **sigungu}[i.region_code], i
+        assert i.region_code[:2] == SIDO_REGION_CODES[i.sido], i
+    assert {i.region_code for i in local} == set(sigungu)
+    assert {i.sido for i in insts} == set(SIDO_REGION_CODES)
     for c in councils:
         executive = registry.get(c.executive_code)
         assert executive is not None, c
-        assert (executive.kind, executive.sido, executive.sigungu) == (
+        assert (executive.kind, executive.sido, executive.sigungu, executive.region_code) == (
             "local_gov",
             c.sido,
             c.sigungu,
+            c.region_code,
         )
-    for i in sigungu:
-        assert i.region_code[:2] == SIDO_REGION_CODES[i.sido], i
-        assert len(i.region_code) == 5
+
+
+def test_abolished_governments_stay_for_older_documents(registry) -> None:  # type: ignore[no-untyped-def]
+    sido, sigungu = _snapshot()
+    abolished = {"LG-29000", "LG-46000", "LG-28110", "LG-28140", "LG-28260"}
+    for code in abolished | {"CN" + c[2:] for c in abolished}:
+        inst = registry.get(code)
+        assert inst is not None, code
+        assert inst.region_code not in sido and inst.region_code not in sigungu, inst
+    assert registry.get("EO-29000") is not None and registry.get("EO-46000") is not None
+    # Only these rows name a region code that is no longer in force.
+    stale = {
+        i.code
+        for i in registry.all()
+        if i.kind in ("local_gov", "council")
+        and i.region_code not in sido
+        and i.region_code not in sigungu
+    }
+    assert stale == abolished | {"CN" + c[2:] for c in abolished}
+
+
+def test_a_government_under_a_new_code_keeps_its_institution(registry) -> None:  # type: ignore[no-untyped-def]
+    # 2026-07-01: 전라남도 순천시 46150 → 전남광주통합특별시 순천시 12150, 광주 동구 29110 → 12210.
+    # The government goes on, so does its code and its old name.
+    for code, name, region, old in [
+        ("LG-46150", "전남광주통합특별시 순천시", "12150", "전라남도 순천시"),
+        ("CN-46150", "전남광주통합특별시 순천시의회", "12150", "전라남도 순천시의회"),
+        ("LG-29110", "전남광주통합특별시 동구", "12210", "광주광역시 동구"),
+    ]:
+        inst = registry.get(code)
+        assert (inst.name, inst.region_code) == (name, region)
+        assert old in inst.aliases
+    # New bodies get their own official codes, and a council each. 인천 서구 split into 서해구 and
+    # 검단구, both under new codes (조달청's too): no old code goes on.
+    for code in ("12000", "28125", "28155", "28275", "28290"):
+        assert registry.get(f"LG-{code}").region_code == code
+        assert registry.get(f"CN-{code}").executive_code == f"LG-{code}"
+    assert registry.get("EO-12000").name == "전남광주통합특별시교육청"
 
 
 @pytest.mark.parametrize(
@@ -230,7 +295,7 @@ def test_provider_institution_reads_kind_and_sido_off_the_name(
 @pytest.mark.parametrize(
     ("raw", "expected"),
     [
-        ("인천광역시 제물포구", True),  # a 구 the table does not have is a gap, not a new body
+        ("인천광역시 제물포구", True),  # a 구 the table lacks would be a gap, not a new body
         ("서울특별시 강남구의회", True),
         ("경기도", True),
         ("충북대학교병원", False),
@@ -303,3 +368,78 @@ def test_a_two_syllable_gu_is_never_a_typo_for_another() -> None:
     )
     assert registry.resolve("대전광역시 서구청", fuzzy_threshold=75).institution is None
     assert registry.resolve("대전광역시 동구청", fuzzy_threshold=75).institution is not None
+
+
+# --- 2026-07-01 reorganisations (행정안전부 법정동코드, pulled 2026-09-27) ---------------------
+
+
+@pytest.mark.parametrize(
+    ("raw", "code"),
+    [
+        # Names as 조달청 sent them after 2026-07-01 (30 days to 2026-09-26).
+        ("전남광주통합특별시 순천시", "LG-46150"),
+        ("전남광주통합특별시 해남군", "LG-46820"),
+        ("전남광주통합특별시 광산구", "LG-29200"),
+        ("전남광주통합특별시 동구의회", "CN-29110"),
+        ("전남광주통합특별시", "LG-12000"),
+        ("전남광주통합특별시의회", "CN-12000"),
+        ("전남광주통합특별시교육청", "EO-12000"),
+        ("인천광역시 서해구", "LG-28275"),
+        ("인천광역시 검단구", "LG-28290"),
+        ("인천광역시 제물포구", "LG-28125"),
+        ("인천광역시 영종구", "LG-28155"),
+        ("인천광역시 영종구의회", "CN-28155"),
+        # Older documents: the same governments under the names they had.
+        ("전라남도 순천시", "LG-46150"),
+        ("전라남도 순천시 스마트도시과", "LG-46150"),
+        ("순천시청", "LG-46150"),
+        ("전라남도 해남군의회", "CN-46820"),
+        ("광주광역시 동구청", "LG-29110"),
+        ("광주 동구", "LG-29110"),
+        ("광주광역시 광산구의회", "CN-29200"),
+        # ... and the ones that are gone, which wrote them.
+        ("인천광역시 서구", "LG-28260"),
+        ("인천광역시 서구의회", "CN-28260"),
+        ("전라남도", "LG-46000"),
+        ("광주광역시의회", "CN-29000"),
+        ("전라남도교육청", "EO-46000"),
+        ("인천광역시 중구", "LG-28110"),
+        ("인천광역시 동구", "LG-28140"),
+    ],
+)
+def test_resolves_the_2026_reorganisations(registry, raw: str, code: str) -> None:  # type: ignore[no-untyped-def]
+    res = registry.resolve(raw)
+    assert res.institution is not None, res
+    assert res.institution.code == code
+
+
+def test_a_hint_with_a_former_sido_still_narrows(registry) -> None:  # type: ignore[no-untyped-def]
+    assert registry.resolve("동구청").method == "ambiguous"
+    assert registry.resolve("동구청", sido_hint="광주").institution.code == "LG-29110"
+    assert registry.resolve("동구청", sido_hint="전남광주통합특별시").institution.code == "LG-29110"
+    assert registry.resolve("동구청", sido_hint="인천").institution.code == "LG-28140"
+
+
+def test_the_integrated_sido_is_not_read_as_jeonnam() -> None:
+    # 44 institutions named "전남광주통합특별시…" were filed under 전라남도 before (2026-09-26).
+    inst = provider_institution("B551234", "전남광주통합특별시북구시설관리공단")
+    assert (inst.sido, inst.region_code) == ("전남광주통합특별시", "12")
+    assert provider_institution("B551235", "전라남도 도로관리사업소").sido == "전라남도"
+
+
+@pytest.mark.parametrize(
+    ("region", "wanted", "expected"),
+    [
+        ("12150", "12", True),
+        ("12150", "46", True),  # a profile saved before 2026-07-01
+        ("46000", "12", True),  # 전라남도's own older documents
+        ("29", "12", True),  # a 조달청 institution named under 광주광역시
+        ("29110", "46", True),  # 광주 and 전남 are one 시도 now
+        ("11680", "12", False),
+        ("41110", "41", True),
+        ("41110", "41110", True),
+        ("41130", "41110", False),
+    ],
+)
+def test_region_filter_follows_merged_sido(region: str, wanted: str, expected: bool) -> None:
+    assert region_matches(region, wanted) is expected
