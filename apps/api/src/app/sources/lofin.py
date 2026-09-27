@@ -1,34 +1,40 @@
 """행정안전부 지방재정365 — 우리 지자체 예산서 (links to each government's budget book).
 
-Budget books are published as large PDF (sometimes scanned) or HWP files, one per 회계연도 and
-per 본예산/추경. The listing API returns metadata and a file URL; we download the file and let
-``parsing/`` decide between the PDF text layer, OCR, or the HWP reader.
-
 The API is the 지방재정365 open API hub: ``https://www.lofin365.go.kr/lf/hub/<데이터코드>`` with
-``Key``, ``Type=json``, ``pIndex``, ``pSize`` (≤1,000) and the dataset's filters, answering
-``{"<코드>": [{"head": [{"list_total_count": n}, {"RESULT": {"CODE": "INFO-000", …}}]},
-{"row": [...]}]}``. The shape is taken from the MIT-licensed kpubdata client, which calls the same
-hub for other 지방재정365 datasets; the 예산서 dataset's own code, ``BUDLK``, is shown on its
-OpenApi tab (``sources.config.api_code`` overrides it). As of 2026-09-27 no response from it has
-been seen: the host was blocked from the development container. The old host lofin.mois.go.kr no longer answers
-(2026-09-27, ``docs/real-data-budget.md``). Field names are configurable (see ``DEFAULTS``);
-the ones below are the hub's naming (``laf_hg_nm`` 자치단체명, ``wa_laf_hg_nm`` 광역자치단체명,
-``fyr`` 회계연도) plus the earlier guesses.
+``Key``, ``Type=json``, ``pIndex``, ``pSize`` (≤1,000) and ``fyr`` (required), answering
+``{"BUDLK": [{"head": [{"list_total_count": n}, {"RESULT": {"CODE": "INFO-000", …}}]},
+{"row": [...]}]}``; a failed or empty call answers ``{"RESULT": [{"CODE": …}]}`` instead. The
+예산서 dataset's code, ``BUDLK``, is shown on its OpenApi tab (``sources.config.api_code``
+overrides it).
 
-A book is tens to hundreds of MB, so rows are filtered *before* anything is downloaded: by
-fiscal year, by the fetch window (registration date), and by an optional ``institutions`` list
-from ``sources.config``. Only the rows that pass cost a file download.
+Seen live on 2026-09-27 (``docs/real-data-budget.md`` §7): one row per 지자체 per 회계연도, 243
+rows a year (17 시도 본청 + 226 시군구), six fields::
+
+    {"fyr": "2025", "wa_laf_hg_nm": "서울", "laf_cd": "1133000", "laf_hg_nm": "서울강남구",
+     "lnk_nm": "예산서", "lnk_url_nm": "https://www.gangnam.go.kr/board/B_000742/list.do?…"}
+
+The region is the short 시도 name and the institution name carries it as a prefix ("서울본청" is
+the 시도 itself). There is no 본예산/추경 field and no registration date. ``lnk_url_nm`` is the
+government's own 예산서 *board page*, not a file: every one of the 243 links was a page on the
+government's site. So a row only costs a download when its link names a PDF/HWP file, and the
+bytes decide the type; page links are counted and kept in ``page_links`` for the board crawler
+(``sources/crawler.py``), which follows boards politely.
+
+Rows are filtered *before* anything is downloaded: by fiscal year, by the fetch window, and by an
+optional ``institutions`` list from ``sources.config``.
 """
 
 from __future__ import annotations
 
-import mimetypes
+import re
 from collections import Counter
 from collections.abc import AsyncIterator, Iterable
 from dataclasses import dataclass
 from datetime import date
 from typing import Any
+from urllib.parse import urlsplit
 
+from app.domain.institutions import SIDO_ALIASES
 from app.sources.base import (
     DocType,
     FetchWindow,
@@ -37,6 +43,7 @@ from app.sources.base import (
     parse_int,
     pick,
 )
+from app.sources.crawler import sniff_mime
 from app.sources.http import FatalSourceError, ResilientClient
 
 BASE_URL = "https://www.lofin365.go.kr"
@@ -46,14 +53,20 @@ DEFAULTS: dict[str, Any] = {
     "api_code": "BUDLK",  # 우리 지자체 예산서, from the dataset's OpenApi tab on the portal
     "list_path": "/lf/hub/{api_code}",
     "year_param": "fyr",
-    "institution_fields": ["laf_hg_nm", "laf_nm", "LAF_NM", "wa_nm", "institutionName"],
-    "region_fields": ["wa_laf_hg_nm", "rgn_nm", "RGN_NM", "sido_nm", "regionName"],
-    "year_fields": ["fyr", "FYR", "accnut_year", "year"],
-    "kind_fields": ["bgt_kind_nm", "BGT_KIND_NM", "budgetKind"],
-    "url_fields": ["file_url", "FILE_URL", "link_url", "url"],
-    "id_fields": ["bgtbook_id", "BGTBOOK_ID", "seq"],
-    "published_fields": ["reg_dt", "REG_DT", "published"],
+    # The live names (2026-09-27). The listing has no 본예산/추경 or date field; the lists stay
+    # configurable in case the dataset grows one.
+    "institution_fields": ["laf_hg_nm"],
+    "region_fields": ["wa_laf_hg_nm"],
+    "year_fields": ["fyr"],
+    "kind_fields": [],
+    "url_fields": ["lnk_url_nm"],
+    "id_fields": ["laf_cd"],
+    "published_fields": [],
 }
+# "서울" → "서울특별시"; the listing speaks the short names.
+_SIDO_FULL = {alias: full for full, aliases in SIDO_ALIASES.items() for alias in aliases}
+_OWN_BODY = "본청"  # "서울본청": the 시도 itself
+_DOC_PATH_RE = re.compile(r"\.(pdf|hwp|hwpx)$", re.IGNORECASE)
 
 
 @dataclass(slots=True, frozen=True)
@@ -63,7 +76,7 @@ class BookRow:
     institution: str
     region: str | None
     fiscal_year: int
-    kind: str
+    kind: str | None
     url: str
     published: date
     external_id: str
@@ -96,6 +109,7 @@ class LofinBudgetAdapter:
         # ("서울특별시 강남구" matches a row 강남구 in 서울특별시).
         self._institutions = {_norm(n) for n in institutions} if institutions else None
         self.stats: Counter[str] = Counter()  # listed / kept / skipped:<why> / downloaded
+        self.page_links: list[BookRow] = []  # rows whose link is a board page, not a file
 
     async def aclose(self) -> None:
         await self._client.aclose()
@@ -128,7 +142,9 @@ class LofinBudgetAdapter:
                     if book is None:
                         continue
                     self.stats["kept"] += 1
-                    yield await self._download(book)
+                    record = await self._download(book)
+                    if record is not None:
+                        yield record
                 if len(rows) < PAGE_SIZE:
                     break
                 page += 1
@@ -151,18 +167,22 @@ class LofinBudgetAdapter:
         if not url or not inst:
             return None
         fy = parse_int(pick(row, *cfg["year_fields"])) or year
-        kind = str(pick(row, *cfg["kind_fields"]) or "본예산")
-        region = pick(row, *cfg["region_fields"])
+        kind = pick(row, *cfg["kind_fields"])
+        region_raw = pick(row, *cfg["region_fields"])
+        region, inst = _split_name(str(region_raw) if region_raw else None, str(inst))
         published = parse_compact_date(pick(row, *cfg["published_fields"])) or date(fy - 1, 12, 20)
-        ext = pick(row, *cfg["id_fields"]) or f"{inst}-{fy}-{kind}"
+        code = pick(row, *cfg["id_fields"])  # 자치단체코드: the same every year
+        ext = f"{code}-{fy}" if code else f"{region or ''}{inst}-{fy}"
+        if kind:
+            ext = f"{ext}-{kind}"
         return BookRow(
-            institution=str(inst),
-            region=str(region) if region else None,
+            institution=inst,
+            region=region,
             fiscal_year=fy,
-            kind=kind,
-            url=str(url),
+            kind=str(kind) if kind else None,
+            url=str(url).strip(),
             published=published,
-            external_id=str(ext),
+            external_id=ext,
         )
 
     def select(
@@ -191,27 +211,49 @@ class LofinBudgetAdapter:
             names.add(_norm(book.region + book.institution))
         return not names.isdisjoint(self._institutions)
 
-    async def _download(self, book: BookRow) -> RawRecord:
+    async def _download(self, book: BookRow) -> RawRecord | None:
+        if not _DOC_PATH_RE.search(urlsplit(book.url).path):
+            # A board page on the government's own site; the board crawler follows those.
+            self.stats["skipped:page_link"] += 1
+            self.page_links.append(book)
+            return None
         content = await self._client.get_bytes(book.url)
         self.stats["downloaded"] += 1
-        mime = mimetypes.guess_type(book.url)[0] or "application/pdf"
-        if book.url.lower().endswith(".hwp"):
-            mime = "application/x-hwp"
+        mime = sniff_mime(content)
+        if mime is None:  # an error or landing page served under a file name
+            self.stats["skipped:not_a_document"] += 1
+            return None
+        kind = f" {book.kind}" if book.kind else ""
+        structured: dict[str, Any] = {"fiscal_year": book.fiscal_year}
+        if book.kind:
+            structured["budget_kind"] = book.kind
         return RawRecord(
             external_id=book.external_id,
             doc_type="budget_book",
-            title=f"{book.fiscal_year}년도 {book.institution} {book.kind} 예산서",
+            title=f"{book.fiscal_year}년도 {book.institution}{kind} 예산서",
             published_at=book.published,
             mime=mime,
             publisher_raw=book.institution,
             sido_hint=book.region,
             url=book.url,
             content=content,
-            structured={"fiscal_year": book.fiscal_year, "budget_kind": book.kind},
+            structured=structured,
         )
 
 
-# INFO-000 정상, INFO-200 해당 데이터 없음; ERROR-290/300 are key errors, the rest bad requests.
+def _split_name(region: str | None, inst: str) -> tuple[str | None, str]:
+    """("서울", "서울강남구") → ("서울특별시", "강남구"); ("서울", "서울본청") → ("서울특별시",
+    "서울특별시"). Names without the prefix pass through with the region spelled out."""
+    full = _SIDO_FULL.get(region, region) if region else None
+    if region and inst.startswith(region) and len(inst) > len(region):
+        inst = inst[len(region) :]
+    if inst == _OWN_BODY and full:
+        inst = full
+    return full, inst
+
+
+# INFO-000 정상, INFO-200 해당 데이터 없음 (seen live). ERROR-290 is a bad key and ERROR-300 a
+# missing required parameter (seen live: no ``fyr``); every other code is an error too.
 _OK_RESULTS = frozenset({"INFO-000", "INFO-200"})
 
 
@@ -246,7 +288,9 @@ def _raise_for_result(payload: Any) -> None:
 
 def _rows(payload: Any) -> list[dict[str, Any]]:
     if isinstance(payload, dict):
-        for value in payload.values():
+        for name, value in payload.items():
+            if name == "RESULT":  # the envelope of an empty or failed call, not rows
+                continue
             if isinstance(value, list):
                 for part in value:
                     if isinstance(part, dict) and isinstance(part.get("row"), list):

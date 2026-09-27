@@ -468,55 +468,99 @@ async def test_budgeted_limiter_stops_a_run_before_the_shared_quota() -> None:
     assert shared.calls == {"g2b_bid": 2}  # the refused call did not count against the day
 
 
-# 지방재정365 예산서. The envelope and field names follow the published spec (lofin.py DEFAULTS);
-# no live response has been seen yet (docs/real-data-budget.md), so this is a contract test.
-def _lofin_row(inst: str, fyr: int, kind: str = "본예산", region: str = "서울특별시") -> dict:
-    return {
+# 지방재정365 예산서. ``_LOFIN_LIVE`` is a real BUDLK row (fyr=2025, fetched 2026-09-27), kept as
+# served: short 시도 name, the 시도 again as a prefix of the 자치단체명, and a link to the
+# government's board page rather than to a file (docs/real-data-budget.md §7).
+_LOFIN_LIVE = {
+    "fyr": "2025",
+    "wa_laf_hg_nm": "서울",
+    "laf_cd": "1133000",
+    "laf_hg_nm": "서울강남구",
+    "lnk_nm": "예산서",
+    "lnk_url_nm": "https://www.gangnam.go.kr/board/B_000742/list.do?mid=ID05_050302",
+}
+
+
+def _lofin_row(name: str, fyr: int, code: str, url: str | None = None) -> dict:
+    """A row in the live shape: ``name`` as served ("서울강남구", "부산중구", "경기본청")."""
+    region = name[:2]
+    return _LOFIN_LIVE | {
         "fyr": str(fyr),
-        "rgn_nm": region,
-        "laf_nm": inst,
-        "bgt_kind_nm": kind,
-        "file_url": f"https://files.example/{fyr}/{inst}-{kind}.pdf",
-        "reg_dt": f"{fyr - 1}1220",
+        "wa_laf_hg_nm": region,
+        "laf_cd": code,
+        "laf_hg_nm": name,
+        "lnk_url_nm": url or f"https://www.{code}.go.kr/board/list.do",
     }
 
 
-def _hub_page(code: str, rows: list[dict], result: str = "INFO-000") -> dict:
-    # The 지방재정365 hub envelope, as the kpubdata client (MIT) parses it for its datasets.
+def _hub_page(code: str, rows: list[dict]) -> dict:
+    # The live envelope of a listing with rows.
     head = [
         {"list_total_count": len(rows)},
-        {"RESULT": {"CODE": result, "MESSAGE": "정상 처리되었습니다."}},
+        {"RESULT": {"CODE": "INFO-000", "MESSAGE": "정상 처리되었습니다."}},
     ]
     return {code: [{"head": head}, {"row": rows}]}
 
 
-def _lofin_adapter(rows: list[dict], downloads: list[str], seen: list | None = None, **kwargs):  # type: ignore[no-untyped-def]
+def _hub_result(code: str, message: str) -> dict:
+    # The live envelope of an empty or failed call: RESULT at the top, as a list.
+    return {"RESULT": [{"CODE": code, "MESSAGE": message}]}
+
+
+def _lofin_adapter(
+    rows: list[dict],
+    downloads: list[str],
+    seen: list | None = None,
+    files: dict | None = None,
+    **kwargs,
+):  # type: ignore[no-untyped-def]
     from app.sources.lofin import LofinBudgetAdapter
 
     def handler(request: httpx.Request) -> httpx.Response:
         if request.url.host == "files.example":
             downloads.append(request.url.path)
-            return httpx.Response(200, content=b"%PDF-1.7 book")
+            return httpx.Response(200, content=(files or {}).get(request.url.path, b"%PDF-1.7 b"))
+        if request.url.host != "apis.example":  # the hub
+            downloads.append(str(request.url))
+            return httpx.Response(200, content=b"<html>board</html>")
         if seen is not None:
             seen.append(request.url)
-        fyr = int(request.url.params["fyr"])
-        listed = [r for r in rows if r.get("_listed_under", r["fyr"]) == str(fyr)]
+        fyr = request.url.params["fyr"]
+        listed = [r for r in rows if r["fyr"] == fyr]
+        if not listed:
+            return httpx.Response(200, json=_hub_result("INFO-200", "해당하는 데이터가 없습니다."))
         page = listed if request.url.params["pIndex"] == "1" else []
-        return httpx.Response(200, json=_hub_page("TESTCD", page))
+        return httpx.Response(200, json=_hub_page("BUDLK", page))
 
-    kwargs.setdefault("api_code", "TESTCD")
     return LofinBudgetAdapter(_client(handler), "SECRET", **kwargs)
+
+
+def test_lofin_maps_the_live_row() -> None:
+    from app.sources.lofin import BookRow
+
+    adapter = _lofin_adapter([], [])
+    assert adapter.map_row(_LOFIN_LIVE, 2025) == BookRow(
+        institution="강남구",
+        region="서울특별시",
+        fiscal_year=2025,
+        kind=None,  # the listing has no 본예산/추경 field
+        url=_LOFIN_LIVE["lnk_url_nm"],
+        published=date(2024, 12, 20),  # nor a date: the default is the eve of the fiscal year
+        external_id="1133000-2025",  # 자치단체코드 is the same every year
+    )
+    own = adapter.map_row(_lofin_row("경기본청", 2026, "4100000"), 2026)
+    assert own is not None
+    assert (own.region, own.institution) == ("경기도", "경기도")
 
 
 async def test_lofin_calls_the_365_hub_with_the_dataset_code() -> None:
     seen: list = []
-    rows = [_lofin_row("강남구", 2025) | {"laf_hg_nm": "강남구", "wa_laf_hg_nm": "서울특별시"}]
-    adapter = _lofin_adapter(rows, [], seen)
+    adapter = _lofin_adapter([_LOFIN_LIVE], [], seen)
     got = [rec async for rec in adapter.fetch(FetchWindow(date(2024, 12, 1), date(2025, 12, 31)))]
 
-    assert [r.publisher_raw for r in got] == ["강남구"]
+    assert got == []  # the link is a board page
     first = seen[0]
-    assert first.path == "/lf/hub/TESTCD"
+    assert first.path == "/lf/hub/BUDLK"
     assert dict(first.params) == {
         "Key": "SECRET",
         "Type": "json",
@@ -531,12 +575,9 @@ async def test_lofin_hub_errors_stop_the_source() -> None:
     from app.sources.lofin import LofinBudgetAdapter
 
     def bad_key(request: httpx.Request) -> httpx.Response:
-        # A failed call answers with RESULT at the top, not inside the dataset envelope.
-        return httpx.Response(
-            200, json={"RESULT": {"CODE": "ERROR-290", "MESSAGE": "인증키가 유효하지 않습니다."}}
-        )
+        return httpx.Response(200, json=_hub_result("ERROR-290", "인증키가 유효하지 않습니다."))
 
-    adapter = LofinBudgetAdapter(_client(bad_key), "SECRET", api_code="TESTCD")
+    adapter = LofinBudgetAdapter(_client(bad_key), "SECRET")
     with pytest.raises(FatalSourceError, match="ERROR-290"):
         [rec async for rec in adapter.fetch(FetchWindow(date(2025, 1, 1), date(2025, 1, 2)))]
 
@@ -557,53 +598,65 @@ def test_lofin_defaults_to_the_budget_book_dataset() -> None:
 
 
 async def test_lofin_an_empty_year_is_not_an_error() -> None:
-    from app.sources.lofin import LofinBudgetAdapter
-
-    def empty(request: httpx.Request) -> httpx.Response:
-        return httpx.Response(200, json=_hub_page("TESTCD", [], result="INFO-200"))
-
-    adapter = LofinBudgetAdapter(_client(empty), "SECRET", api_code="TESTCD")
-    assert [
-        rec async for rec in adapter.fetch(FetchWindow(date(2025, 1, 1), date(2025, 1, 2)))
-    ] == []
+    # The next fiscal year answers INFO-200 with RESULT at the top; that block is not a row.
+    adapter = _lofin_adapter([], [])
+    got = [rec async for rec in adapter.fetch(FetchWindow(date(2025, 1, 1), date(2025, 1, 2)))]
+    assert got == []
+    assert adapter.stats["listed"] == 0
 
 
-async def test_lofin_filters_rows_before_downloading_a_book() -> None:
+async def test_lofin_filters_rows_before_downloading_anything() -> None:
     rows = [
-        _lofin_row("강남구", 2025),
-        _lofin_row("강남구", 2025, "제1회 추가경정"),
-        _lofin_row("서초구", 2025),  # not a wanted institution
-        _lofin_row("중구", 2025, region="부산광역시"),  # a different 중구
-        _lofin_row("중구", 2025),
-        # a list that ignores ``fyr`` would still return an old book
-        _lofin_row("강남구", 2020) | {"_listed_under": "2025", "reg_dt": "20241220"},
+        _LOFIN_LIVE,
+        _lofin_row("서울서초구", 2025, "1132000"),  # not a wanted institution
+        _lofin_row("부산중구", 2025, "2611000"),  # a different 중구
+        _lofin_row("서울중구", 2025, "1112000"),
+        _lofin_row("경기성남시", 2025, "4112000", "https://files.example/2025/seongnam.pdf"),
     ]
     downloads: list[str] = []
-    adapter = _lofin_adapter(rows, downloads, institutions=["서울특별시 강남구", "서울특별시중구"])
-    window = FetchWindow(date(2024, 12, 1), date(2025, 12, 31))
+    adapter = _lofin_adapter(
+        rows, downloads, institutions=["서울특별시 강남구", "서울특별시중구", "경기도 성남시"]
+    )
+    got = [rec async for rec in adapter.fetch(FetchWindow(date(2024, 12, 1), date(2025, 12, 31)))]
 
-    got = [rec async for rec in adapter.fetch(window)]
-
-    assert [r.title for r in got] == [
-        "2025년도 강남구 본예산 예산서",
-        "2025년도 강남구 제1회 추가경정 예산서",
-        "2025년도 중구 본예산 예산서",
+    assert [r.title for r in got] == ["2025년도 성남시 예산서"]
+    assert got[0].sido_hint == "경기도"
+    assert got[0].mime == "application/pdf"
+    assert got[0].structured == {"fiscal_year": 2025}
+    assert downloads == ["/2025/seongnam.pdf"]  # board pages are never fetched here
+    assert [(b.region, b.institution) for b in adapter.page_links] == [
+        ("서울특별시", "강남구"),
+        ("서울특별시", "중구"),
     ]
-    assert len(downloads) == 3
-    assert got[0].sido_hint == "서울특별시"
-    assert got[0].structured == {"fiscal_year": 2025, "budget_kind": "본예산"}
-    assert adapter.stats["downloaded"] == 3
-    assert adapter.stats["skipped:institution"] == 2  # 서초구 and 부산광역시 중구
-    assert adapter.stats["skipped:fiscal_year"] == 1
+    assert adapter.stats["skipped:institution"] == 2  # 서초구 and 부산 중구
+    assert adapter.stats["skipped:page_link"] == 2
+
+
+async def test_lofin_a_file_link_must_hold_a_document() -> None:
+    rows = [
+        _lofin_row("서울강남구", 2025, "1133000", "https://files.example/a.hwp"),
+        _lofin_row("서울중구", 2025, "1112000", "https://files.example/b.pdf"),
+    ]
+    downloads: list[str] = []
+    files = {"/a.hwp": bytes.fromhex("D0CF11E0A1B11AE1") + b"hwp", "/b.pdf": b"<html>404</html>"}
+    adapter = _lofin_adapter(rows, downloads, files=files)
+    got = [rec async for rec in adapter.fetch(FetchWindow(date(2024, 12, 1), date(2025, 12, 31)))]
+
+    assert [(r.publisher_raw, r.mime) for r in got] == [("강남구", "application/x-hwp")]
+    assert adapter.stats["downloaded"] == 2
+    assert adapter.stats["skipped:not_a_document"] == 1
 
 
 async def test_lofin_without_an_institution_list_takes_every_book_in_the_window() -> None:
-    rows = [_lofin_row("강남구", 2025), _lofin_row("해운대구", 2025, region="부산광역시")]
-    rows.append(_lofin_row("강남구", 2026) | {"reg_dt": "20260105"})  # registered after the window
+    rows = [
+        _lofin_row("서울강남구", 2025, "1133000", "https://files.example/2025/gangnam.pdf"),
+        _lofin_row("부산해운대구", 2025, "2635000", "https://files.example/2025/haeundae.pdf"),
+        # FY2027 books would be dated 2026-12-20, after the window
+        _lofin_row("서울강남구", 2027, "1133000", "https://files.example/2027/gangnam.pdf"),
+    ]
     downloads: list[str] = []
     adapter = _lofin_adapter(rows, downloads)
     got = [rec async for rec in adapter.fetch(FetchWindow(date(2024, 12, 1), date(2025, 12, 31)))]
     assert [r.publisher_raw for r in got] == ["강남구", "해운대구"]
     assert len(downloads) == 2
-    assert adapter.stats["skipped:window"] == 1
-    assert adapter.stats["listed"] == 3
+    assert adapter.stats["listed"] == 2  # the window's fiscal years are 2024–2026
