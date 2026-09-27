@@ -12,6 +12,7 @@ import dataclasses
 import time
 from collections import Counter
 from typing import Any
+from urllib.parse import urlsplit
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -122,6 +123,9 @@ async def ingest_window(
             }
         if isinstance(adapter, LofinBudgetAdapter):
             report["books"] = dict(sorted(adapter.stats.items()))
+            # Page links need the board crawler, and their hosts need network access.
+            hosts = Counter(urlsplit(b.url).hostname or "" for b in adapter.page_links)
+            report["page_link_hosts"] = dict(hosts.most_common())
         reports.append(report)
     return reports
 
