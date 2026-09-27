@@ -481,21 +481,80 @@ def _lofin_row(inst: str, fyr: int, kind: str = "본예산", region: str = "서�
     }
 
 
-def _lofin_adapter(rows: list[dict], downloads: list[str], **kwargs):  # type: ignore[no-untyped-def]
+def _hub_page(code: str, rows: list[dict], result: str = "INFO-000") -> dict:
+    # The 지방재정365 hub envelope, as the kpubdata client (MIT) parses it for its datasets.
+    head = [
+        {"list_total_count": len(rows)},
+        {"RESULT": {"CODE": result, "MESSAGE": "정상 처리되었습니다."}},
+    ]
+    return {code: [{"head": head}, {"row": rows}]}
+
+
+def _lofin_adapter(rows: list[dict], downloads: list[str], seen: list | None = None, **kwargs):  # type: ignore[no-untyped-def]
     from app.sources.lofin import LofinBudgetAdapter
 
     def handler(request: httpx.Request) -> httpx.Response:
         if request.url.host == "files.example":
             downloads.append(request.url.path)
             return httpx.Response(200, content=b"%PDF-1.7 book")
+        if seen is not None:
+            seen.append(request.url)
         fyr = int(request.url.params["fyr"])
         listed = [r for r in rows if r.get("_listed_under", r["fyr"]) == str(fyr)]
         page = listed if request.url.params["pIndex"] == "1" else []
+        return httpx.Response(200, json=_hub_page("TESTCD", page))
+
+    kwargs.setdefault("api_code", "TESTCD")
+    return LofinBudgetAdapter(_client(handler), "SECRET", **kwargs)
+
+
+async def test_lofin_calls_the_365_hub_with_the_dataset_code() -> None:
+    seen: list = []
+    rows = [_lofin_row("강남구", 2025) | {"laf_hg_nm": "강남구", "wa_laf_hg_nm": "서울특별시"}]
+    adapter = _lofin_adapter(rows, [], seen)
+    got = [rec async for rec in adapter.fetch(FetchWindow(date(2024, 12, 1), date(2025, 12, 31)))]
+
+    assert [r.publisher_raw for r in got] == ["강남구"]
+    first = seen[0]
+    assert first.path == "/lf/hub/TESTCD"
+    assert dict(first.params) == {
+        "Key": "SECRET",
+        "Type": "json",
+        "pIndex": "1",
+        "pSize": "1000",
+        "fyr": "2024",
+    }
+
+
+async def test_lofin_hub_errors_stop_the_source() -> None:
+    from app.sources.http import FatalSourceError
+    from app.sources.lofin import LofinBudgetAdapter
+
+    def bad_key(request: httpx.Request) -> httpx.Response:
+        # A failed call answers with RESULT at the top, not inside the dataset envelope.
         return httpx.Response(
-            200, json={"BGTBOOK": [{"head": [{"list_total_count": len(page)}]}, {"row": page}]}
+            200, json={"RESULT": {"CODE": "ERROR-290", "MESSAGE": "인증키가 유효하지 않습니다."}}
         )
 
-    return LofinBudgetAdapter(_client(handler), "SECRET", **kwargs)
+    adapter = LofinBudgetAdapter(_client(bad_key), "SECRET", api_code="TESTCD")
+    with pytest.raises(FatalSourceError, match="ERROR-290"):
+        [rec async for rec in adapter.fetch(FetchWindow(date(2025, 1, 1), date(2025, 1, 2)))]
+
+    no_code = LofinBudgetAdapter(_client(bad_key), "SECRET")
+    with pytest.raises(FatalSourceError, match="api_code"):
+        [rec async for rec in no_code.fetch(FetchWindow(date(2025, 1, 1), date(2025, 1, 2)))]
+
+
+async def test_lofin_an_empty_year_is_not_an_error() -> None:
+    from app.sources.lofin import LofinBudgetAdapter
+
+    def empty(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, json=_hub_page("TESTCD", [], result="INFO-200"))
+
+    adapter = LofinBudgetAdapter(_client(empty), "SECRET", api_code="TESTCD")
+    assert [
+        rec async for rec in adapter.fetch(FetchWindow(date(2025, 1, 1), date(2025, 1, 2)))
+    ] == []
 
 
 async def test_lofin_filters_rows_before_downloading_a_book() -> None:

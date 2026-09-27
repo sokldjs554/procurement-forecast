@@ -4,10 +4,15 @@ Budget books are published as large PDF (sometimes scanned) or HWP files, one pe
 per 본예산/추경. The listing API returns metadata and a file URL; we download the file and let
 ``parsing/`` decide between the PDF text layer, OCR, or the HWP reader.
 
-Field names are configurable (see ``DEFAULTS``). The host, path and field names follow the
-published spec and have not been confirmed against a live response: on 2026-09-27 the dev
-container could not reach lofin.mois.go.kr (TLS reset) or www.lofin365.go.kr (egress policy),
-see ``docs/real-data-budget.md``.
+The API is the 지방재정365 open API hub: ``https://www.lofin365.go.kr/lf/hub/<데이터코드>`` with
+``Key``, ``Type=json``, ``pIndex``, ``pSize`` (≤1,000) and the dataset's filters, answering
+``{"<코드>": [{"head": [{"list_total_count": n}, {"RESULT": {"CODE": "INFO-000", …}}]},
+{"row": [...]}]}``. The shape is taken from the MIT-licensed kpubdata client, which calls the same
+hub for other 지방재정365 datasets; the 예산서 dataset's own code (``api_code``) is shown on its
+OpenApi tab and set in ``sources.config``. The old host lofin.mois.go.kr no longer answers
+(2026-09-27, ``docs/real-data-budget.md``). Field names are configurable (see ``DEFAULTS``);
+the ones below are the hub's naming (``laf_hg_nm`` 자치단체명, ``wa_laf_hg_nm`` 광역자치단체명,
+``fyr`` 회계연도) plus the earlier guesses.
 
 A book is tens to hundreds of MB, so rows are filtered *before* anything is downloaded: by
 fiscal year, by the fetch window (registration date), and by an optional ``institutions`` list
@@ -31,14 +36,17 @@ from app.sources.base import (
     parse_int,
     pick,
 )
-from app.sources.http import ResilientClient
+from app.sources.http import FatalSourceError, ResilientClient
 
-BASE_URL = "https://lofin.mois.go.kr"
+BASE_URL = "https://www.lofin365.go.kr"
+PAGE_SIZE = 1000  # the hub's maximum
 
 DEFAULTS: dict[str, Any] = {
-    "list_path": "/HUB/BGTBOOK",
-    "institution_fields": ["laf_nm", "LAF_NM", "wa_nm", "institutionName"],
-    "region_fields": ["rgn_nm", "RGN_NM", "sido_nm", "regionName"],
+    "api_code": None,  # the 예산서 dataset's code on the hub; set in sources.config
+    "list_path": "/lf/hub/{api_code}",
+    "year_param": "fyr",
+    "institution_fields": ["laf_hg_nm", "laf_nm", "LAF_NM", "wa_nm", "institutionName"],
+    "region_fields": ["wa_laf_hg_nm", "rgn_nm", "RGN_NM", "sido_nm", "regionName"],
     "year_fields": ["fyr", "FYR", "accnut_year", "year"],
     "kind_fields": ["bgt_kind_nm", "BGT_KIND_NM", "budgetKind"],
     "url_fields": ["file_url", "FILE_URL", "link_url", "url"],
@@ -73,6 +81,7 @@ class LofinBudgetAdapter:
         api_key: str,
         *,
         key: str = "lofin_budget",
+        api_code: str | None = None,
         institutions: Iterable[str] | None = None,
         overrides: dict[str, Any] | None = None,
     ) -> None:
@@ -80,6 +89,8 @@ class LofinBudgetAdapter:
         self._client = client
         self._api_key = api_key
         self._cfg = DEFAULTS | (overrides or {})
+        if api_code:
+            self._cfg["api_code"] = api_code
         # None: every institution. Names compare without spaces, alone or after the region
         # ("서울특별시 강남구" matches a row 강남구 in 서울특별시).
         self._institutions = {_norm(n) for n in institutions} if institutions else None
@@ -93,20 +104,22 @@ class LofinBudgetAdapter:
 
     async def fetch(self, window: FetchWindow) -> AsyncIterator[RawRecord]:
         cfg = self._cfg
+        path = self.list_path()
         years = self.fiscal_years(window)
         for year in years:
             page = 1
             while True:
                 payload = await self._client.get_json(
-                    cfg["list_path"],
+                    path,
                     params={
                         "Key": self._api_key,
                         "Type": "json",
                         "pIndex": page,
-                        "pSize": 100,
-                        "fyr": year,
+                        "pSize": PAGE_SIZE,
+                        cfg["year_param"]: year,
                     },
                 )
+                _raise_for_result(payload)
                 rows = _rows(payload)
                 for row in rows:
                     self.stats["listed"] += 1
@@ -115,9 +128,20 @@ class LofinBudgetAdapter:
                         continue
                     self.stats["kept"] += 1
                     yield await self._download(book)
-                if len(rows) < 100:
+                if len(rows) < PAGE_SIZE:
                     break
                 page += 1
+
+    def list_path(self) -> str:
+        path = str(self._cfg["list_path"])
+        if "{api_code}" in path:
+            if not self._cfg.get("api_code"):
+                raise FatalSourceError(
+                    "lofin_budget needs sources.config.api_code: the 예산서 dataset's code on "
+                    "the 지방재정365 hub (its OpenApi tab)"
+                )
+            path = path.format(api_code=self._cfg["api_code"])
+        return path
 
     def map_row(self, row: dict[str, Any], year: int) -> BookRow | None:
         cfg = self._cfg
@@ -184,6 +208,39 @@ class LofinBudgetAdapter:
             content=content,
             structured={"fiscal_year": book.fiscal_year, "budget_kind": book.kind},
         )
+
+
+# INFO-000 정상, INFO-200 해당 데이터 없음; ERROR-290/300 are key errors, the rest bad requests.
+_OK_RESULTS = frozenset({"INFO-000", "INFO-200"})
+
+
+def _results(payload: Any) -> list[dict[str, Any]]:
+    """RESULT blocks wherever the hub puts them: at the top on a failed call, in ``head`` on a
+    listing."""
+    found: list[dict[str, Any]] = []
+    if not isinstance(payload, dict):
+        return found
+    top = payload.get("RESULT")
+    for r in top if isinstance(top, list) else [top]:
+        if isinstance(r, dict):
+            found.append(r)
+    for value in payload.values():
+        if not isinstance(value, list):
+            continue
+        for part in value:
+            head = part.get("head") if isinstance(part, dict) else None
+            for item in head if isinstance(head, list) else []:
+                if isinstance(item, dict) and isinstance(item.get("RESULT"), dict):
+                    found.append(item["RESULT"])
+    return found
+
+
+def _raise_for_result(payload: Any) -> None:
+    for result in _results(payload):
+        code = str(result.get("CODE") or "")
+        if code and code not in _OK_RESULTS:
+            # The message never carries the key; the request URL (which does) is not logged here.
+            raise FatalSourceError(f"지방재정365 {code}: {result.get('MESSAGE') or ''}".strip())
 
 
 def _rows(payload: Any) -> list[dict[str, Any]]:

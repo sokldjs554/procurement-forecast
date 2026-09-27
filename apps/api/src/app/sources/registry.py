@@ -125,6 +125,7 @@ def build_adapter(source: Source, runtime: Runtime) -> SourceAdapter:
             client(source.config.get("base_url", lofin.BASE_URL)),
             s.lofin_api_key.get_secret_value(),
             key=source.key,
+            api_code=source.config.get("api_code"),
             institutions=source.config.get("institutions"),
             overrides=source.config.get("overrides"),
         )
