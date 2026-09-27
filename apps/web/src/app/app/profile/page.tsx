@@ -10,15 +10,8 @@ import { Card, CardHeader, ErrorNote, Field, Input, PageHeader, Skeleton, Textar
 import { useToast } from "@/components/ui/toast";
 import type { Schemas } from "@/lib/api/client";
 import { useCategories, useMe, useProfile, useSaveProfile } from "@/lib/api/hooks";
+import { SIDO, currentRegions } from "@/lib/regions";
 
-const SIDO = [
-  { key: "11", label: "서울" }, { key: "26", label: "부산" }, { key: "27", label: "대구" },
-  { key: "28", label: "인천" }, { key: "29", label: "광주" }, { key: "30", label: "대전" },
-  { key: "31", label: "울산" }, { key: "36", label: "세종" }, { key: "41", label: "경기" },
-  { key: "51", label: "강원" }, { key: "43", label: "충북" }, { key: "44", label: "충남" },
-  { key: "52", label: "전북" }, { key: "46", label: "전남" }, { key: "47", label: "경북" },
-  { key: "48", label: "경남" }, { key: "50", label: "제주" },
-];
 const PLAN_REGION_LIMIT: Record<string, number | null> = { free: 1, pro: 5, team: null };
 
 const toEok = (won: number | null | undefined) => (won ? String(won / 100_000_000) : "");
@@ -33,7 +26,7 @@ function ProfileForm({ initial }: { initial: Schemas["ProfileIO"] }) {
   const categories = useCategories();
   const me = useMe();
   const limit = PLAN_REGION_LIMIT[me.data?.org.plan ?? "free"] ?? 1;
-  const [form, setForm] = useState(initial);
+  const [form, setForm] = useState({ ...initial, region_codes: currentRegions(initial.region_codes ?? []) });
   const [budgetMin, setBudgetMin] = useState(toEok(initial.budget_min));
   const [budgetMax, setBudgetMax] = useState(toEok(initial.budget_max));
 
