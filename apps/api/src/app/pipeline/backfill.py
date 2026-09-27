@@ -25,6 +25,7 @@ from app.runtime import Runtime
 from app.sources.base import FetchWindow
 from app.sources.g2b import G2BAdapter
 from app.sources.http import FatalSourceError, TransientSourceError
+from app.sources.lofin import LofinBudgetAdapter
 from app.sources.registry import build_adapter
 from app.sources.resilience import (
     BudgetedLimiter,
@@ -119,6 +120,8 @@ async def ingest_window(
                     for path, ps in adapter.path_stats.items()
                 },
             }
+        if isinstance(adapter, LofinBudgetAdapter):
+            report["books"] = dict(sorted(adapter.stats.items()))
         reports.append(report)
     return reports
 
