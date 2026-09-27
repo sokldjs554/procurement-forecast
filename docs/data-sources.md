@@ -12,7 +12,7 @@
 
 ## 검증 상태 — 먼저 읽어 주세요
 
-개발 컨테이너의 네트워크 정책 때문에 `clik.nanet.go.kr`, `data.go.kr`, `lofin.mois.go.kr`에 직접 접속하지 못했습니다. 그래서 세 어댑터의 **엔드포인트 경로와 필드명은 공개 명세·검색 결과·공개 저장소를 근거로 작성**했고, `tests/unit/test_sources.py`의 계약 픽스처로만 검증했습니다. 실제 키로 처음 돌릴 때는 운영 콘솔 *수집원* 화면에서 첫 실행 결과(가져온 수·신규·오류)를 확인하세요.
+처음 작성할 때는 개발 컨테이너의 네트워크 정책 때문에 `clik.nanet.go.kr`, `data.go.kr`, `lofin.mois.go.kr`에 직접 접속하지 못했습니다. 그래서 세 어댑터의 **엔드포인트 경로와 필드명은 공개 명세·검색 결과·공개 저장소를 근거로 작성**했고, `tests/unit/test_sources.py`의 계약 픽스처로만 검증했습니다. 실제 키로 처음 돌릴 때는 운영 콘솔 *수집원* 화면에서 첫 실행 결과(가져온 수·신규·오류)를 확인하세요.
 
 **2026-09-26 첫 실호출(키 미승인)** ([`source-check.md`](source-check.md)): `apis.data.go.kr`의 `ad`/`ao` 경로 9개는 모두 존재하고(접두어 없는 옛 경로는 오류 12 "서비스 없음"), 키 전달 방식도 게이트웨이까지 정상입니다. 다만 그 키가 세 서비스 모두 활용신청 전이라 전부 오류 30으로 거절돼, **필드명·채움 비율은 아직 검증하지 못했습니다.** 이때 게이트웨이가 오류를 HTTP 200이 아니라 **HTTP 403 + JSON `OpenAPI_ServiceResponse`**로 보낸다는 것을 확인해 `http.py`가 이 본문의 코드로 분류하도록 고쳤습니다. 해외 경로에서는 TLS 연결이 가끔 끊기거나(`ConnectTimeout`, `Connection reset`) 느려서 점검 명령은 오퍼레이션마다 세 번까지 시도합니다.
 
@@ -25,6 +25,8 @@
 | 입찰공고 | 2,010 | 1,756 | 1,416 | 공사는 `asignBdgtAmt` 대신 `bdgtAmt`로 예산을 줌 → 금액 매핑에 추가(전에는 부가세 빠진 `presmptPrce`로 떨어짐) |
 
 **같은 날 30일치 적재** ([`real-data-run.md`](real-data-run.md)): 57,514건을 91회 호출로 받았고(한 번에 999건), 같은 기간을 다시 적재하면 전부 건너뜁니다. 여기서 1만 원 미만 자리표시 금액, 발주계획의 `bidNtceNoList`(차수 세 자리가 붙음), 사전규격에 부서 필드가 없다는 것을 확인했습니다.
+
+**2026-09-27 지방재정365 예산서 첫 실호출** ([`real-data-budget.md`](real-data-budget.md)): 발급받은 키로 시도했지만 **API에 닿지 못했습니다.** 기본값 `lofin.mois.go.kr/HUB/BGTBOOK`은 TLS 단계에서 매번 끊겼고(목록 호출 3번 포함), 새 사이트 `www.lofin365.go.kr`은 컨테이너 네트워크 정책이 막았습니다(프록시 CONNECT 403). `lofin365.go.kr`은 가끔 연결되지만 `www`로 301을 돌려줍니다. 그래서 예산서 어댑터의 경로·필드명·파일 호스트는 **여전히 확인되지 않은 추정값**입니다. 대신 어댑터가 파일을 받기 전에 회계연도·수집 창·`institutions` 목록으로 행을 거르도록 바꿨고, 호스트도 `base_url`로 바꿀 수 있게 했습니다. 전체 실행에는 최소한 `www.lofin365.go.kr` 허용이 필요하고, 파일 호스트는 목록을 받아 봐야 압니다.
 
 채움 비율이 낮은 필드는 필드명 문제가 아니라 원래 비어 있는 값입니다. 사전규격 응답에는 `orderPlanUntyNo` 필드 자체가 없어 발주계획번호가 0%이고(사전규격→발주계획 연결은 번호가 아니라 유사도로), 공사 입찰공고의 `bfSpecRgstNo`는 1,000건 중 19건만 차 있습니다(공사 사전규격 자체가 주 43건). 수의계약 공고 일부는 `bidClseDt`가 비어 있습니다.
 
@@ -47,8 +49,16 @@ APP_DATA_GO_KR_SERVICE_KEY=... make check-sources
 어긋나는 부분이 있으면 코드 수정 없이 `sources.config`(DB, JSON)에서 덮어쓸 수 있습니다.
 
 ```sql
-UPDATE sources SET config = config || '{"list_path": "/openapi/minutes.do", "date_fields": ["MTG_DE"]}'
+UPDATE sources SET config = config || '{"overrides": {"list_path": "/openapi/minutes.do", "date_fields": ["MTG_DE"]}}'
 WHERE key = 'clik_minutes';
+```
+
+지방재정365는 여기에 더해 API 호스트(`base_url`)와, 파일을 받을 기관 목록(`institutions`)을 설정합니다. 목록이 있으면 그 기관의 예산서만 내려받습니다. 이름은 띄어쓰기를 무시하고, 기관명만으로도 "지역명 + 기관명"으로도 맞춥니다.
+
+```sql
+UPDATE sources SET config = config || '{"base_url": "https://www.lofin365.go.kr",
+  "institutions": ["서울특별시 강남구", "부산광역시 해운대구"]}'
+WHERE key = 'lofin_budget';
 ```
 
 ## 호출 제약과 대응
