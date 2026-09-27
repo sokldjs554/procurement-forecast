@@ -52,7 +52,17 @@ _TITLE_RE = re.compile(
     + "|".join(_PROJECT_SUFFIX)
     + r"))(?=[은는이가을를의에도\s,.]|$)"
 )
-_OPERATING_WORDS = ("운영", "유지관리", "급여", "업무추진비", "개최", "인건비", "수당", "지원")
+_OPERATING_WORDS = (
+    "운영",
+    "유지관리",
+    "급여",
+    "업무추진비",
+    "개최",
+    "인건비",
+    "수당",
+    "지원",
+    "기본경비",  # every 부서's 행정운영경비 row in real books
+)
 _BUDGET_LINE_RE = re.compile(
     r"세\s*부\s*사\s*업\s*[:：]?\s*(?P<name>.+?)\s+(?P<amount>\d{1,3}(?:,\d{3})+|\d{4,})"
 )
@@ -258,6 +268,8 @@ def _extract_budget_line(ctx: ChunkContext, table_unit: int) -> list[ExtractedSi
     if category is Category.OTHER:
         return []
     amount_k = int(m.group("amount").replace(",", ""))
+    if amount_k == 0:
+        return []  # cut to nothing in a 추경 ("사업 0 73,080 △73,080"): no longer a plan
     dept = next(
         (lbl.split(":", 1)[1].strip() for lbl in ctx.labels if lbl.startswith("부서")), None
     )

@@ -111,6 +111,20 @@ def test_chunk_budget_reads_the_real_table_rows() -> None:
     assert "306 출연금" in chunks[1].text and "○성남시 상권활성화재단 출연금" in chunks[1].text
 
 
+def test_chunk_budget_skips_the_tail_of_a_wrapped_basis_line() -> None:
+    # 성남시 2026 제2회 추경: the "○…" basis line wraps, and its tail looks like a row
+    text = (
+        "고유가 피해지원금 63,037,861 0 63,037,861\n"
+        "101 인건비 673,639 0 673,639\n"
+        " ○자원안보위기 경보 에너지 민생안정 지원\n"
+        " 사업 전담인력 673,639 0 673,639\n"
+        "201 일반운영비 43,000 0 43,000\n"
+    )
+    assert [c.text.splitlines()[0] for c in chunk_budget(text)] == [
+        "고유가 피해지원금 63,037,861 0 63,037,861"
+    ]
+
+
 def test_hwp5_record_parser_handles_controls_and_extended_size() -> None:
     text = "스마트쉘터 설치\t352,000"
     units = [ord(c) for c in text.replace("\t", "")]

@@ -119,6 +119,7 @@ _BASIS_RE = re.compile(r"^\s*(?:[∘ㅇ○o°·\-]|\d\))\s*")
 _OBJECT_RE = re.compile(r"^\s*\d{3}\s+\S")
 _ITEM_RE = re.compile(r"^\s*(?:\d{2,3}\s+\S|[국도시균기조특]\s+△?\d)")
 _AMOUNT_RE = re.compile(r"\d{1,3}(?:,\d{3})+|\d{4,}")
+_AMOUNT_TAIL_RE = re.compile(r"\d\s*$")
 
 
 def _is_project_row(lines: list[str], i: int) -> bool:
@@ -127,6 +128,9 @@ def _is_project_row(lines: list[str], i: int) -> bool:
     content = lines[i]
     if not _PROJECT_RE.match(content) or _BASIS_RE.match(content) or _ITEM_RE.match(content):
         return False
+    prev = next((ln for ln in reversed(lines[:i]) if ln.strip()), "")
+    if _BASIS_RE.match(prev) and not _AMOUNT_TAIL_RE.search(prev):
+        return False  # the tail of a wrapped "○…" basis line: " 및 컨설팅 44,935 65,375 △20,440"
     for nxt in lines[i + 1 :]:
         if not nxt.strip() or (_ITEM_RE.match(nxt) and not _OBJECT_RE.match(nxt)):
             continue  # blank or a funding line

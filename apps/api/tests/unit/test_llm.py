@@ -444,3 +444,39 @@ def test_a_quote_that_spans_lines_keeps_its_signal() -> None:
         "- 2026-03-02 [의회 발언] 스마트쉘터 설치, 검토 중: 「적극 검토하겠습니다. 다만 예산이」"
         in prompt
     )
+
+
+# Rows from 성남시's 세출예산사업명세서 (2026 본예산, 2026 제1회 추경), as the chunker hands them over.
+@pytest.mark.parametrize(
+    ("text", "expected"),
+    [
+        (
+            "시설물 정비공사 4,096,440 2,974,472 1,121,968\n"
+            "401 시설비및부대비 4,096,440 2,974,472 1,121,968\n"
+            "01 시설비 4,095,440 2,973,472 1,121,968\n"
+            " ○희망대공원 산책계단 및 휴게공간 정비공",
+            ("시설물 정비공사", 4_096_440_000, 2026),
+        ),
+        # cut to nothing in the 추경: no plan left to procure
+        ("미니태양광 보급지원사업 0 73,080 △73,080\n401 시설비및부대비 0 73,080 △73,080", None),
+        # a 부서's running costs, in every book
+        ("기본경비 71,720 40,590 31,130\n201 일반운영비 27,150 23,550 3,600", None),
+    ],
+)
+async def test_heuristic_reads_real_budget_table_rows(
+    text: str, expected: tuple[str, int, int] | None
+) -> None:
+    ctx = ChunkContext(
+        "budget_book",
+        "예산서",
+        "경기도 성남시",
+        date(2026, 6, 18),
+        ["부서: 공원과"],
+        text,
+        fiscal_year=2026,
+    )
+    signals = (await HeuristicProvider().extract(ctx)).value.signals
+    if expected is None:
+        assert signals == []
+    else:
+        assert [(s.title, s.budget_krw, s.expected_year) for s in signals] == [expected]
