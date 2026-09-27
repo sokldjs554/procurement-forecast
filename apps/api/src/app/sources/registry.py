@@ -122,9 +122,10 @@ def build_adapter(source: Source, runtime: Runtime) -> SourceAdapter:
         if not s.lofin_api_key:
             raise FatalSourceError("APP_LOFIN_API_KEY is not configured")
         return lofin.LofinBudgetAdapter(
-            client(lofin.BASE_URL),
+            client(source.config.get("base_url", lofin.BASE_URL)),
             s.lofin_api_key.get_secret_value(),
             key=source.key,
+            institutions=source.config.get("institutions"),
             overrides=source.config.get("overrides"),
         )
     raise FatalSourceError(f"unknown adapter {source.adapter!r}")
