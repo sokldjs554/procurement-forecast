@@ -23,7 +23,7 @@ import io
 import json
 import random
 import zipfile
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from datetime import date, timedelta
 from typing import Any
 from xml.sax.saxutils import escape
@@ -55,6 +55,13 @@ DEMO_INSTITUTIONS = (
     "LG-28185",
     "LG-36110",
 )
+
+# The demo world is set before 2026-07-01, when 순천시 was 전라남도's. Its documents keep those
+# spellings, which still resolve as the old names they are, and a seed keeps its world.
+DEMO_SPELLINGS: dict[str, tuple[str, str, tuple[str, ...]]] = {
+    "LG-46150": ("전라남도 순천시", "전라남도", ("순천시청", "순천시")),
+    "CN-46150": ("전라남도 순천시의회", "전라남도", ("순천시의회",)),
+}
 
 COMMITTEES = ("행정자치위원회", "복지건설위원회", "경제도시위원회", "예산결산특별위원회")
 _MATERIALIZE_P = {"committed": 0.88, "planned": 0.7, "reviewing": 0.28, "declined": 0.04}
@@ -237,6 +244,13 @@ class _Builder:
         self.source_texts: dict[str, str] = {}
         self._seq = 0
 
+    def _institution(self, code: str) -> Institution | None:
+        inst = self.registry.get(code)
+        if inst is None or code not in DEMO_SPELLINGS:
+            return inst
+        name, sido, aliases = DEMO_SPELLINGS[code]
+        return replace(inst, name=name, sido=sido, aliases=aliases)
+
     def _next(self) -> int:
         self._seq += 1
         return self._seq
@@ -246,7 +260,7 @@ class _Builder:
         per_inst = max(2, round(7 * self.scale))
         n = 0
         for code in DEMO_INSTITUTIONS:
-            inst = self.registry.get(code)
+            inst = self._institution(code)
             assert inst is not None
             council = "CN-" + code.split("-", 1)[1]
             for arch in self.rng.sample(ARCHETYPES, per_inst):
@@ -339,7 +353,7 @@ class _Builder:
                 sessions.setdefault((council_key, d.strftime("%Y-%m")), [])
         session_no: dict[str, int] = {}
         for (council_code, month), items in sorted(sessions.items(), key=lambda kv: kv[0][1]):
-            council_inst = self.registry.get(council_code)
+            council_inst = self._institution(council_code)
             assert council_inst is not None
             session_no[council_code] = session_no.get(council_code, 270 + rng.randint(0, 40)) + 1
             day = min((ev.on for _, ev, _ in items), default=date.fromisoformat(month + "-15"))
@@ -423,7 +437,7 @@ class _Builder:
     def _mention_text(self, t: OpportunityTruth, ev: StageEvent, idx: int) -> tuple[str, str]:
         rng = self.rng
         arch = _arch(t.archetype)
-        inst = self.registry.get(t.institution_code)
+        inst = self._institution(t.institution_code)
         assert inst is not None
         spoken = rng.choice(arch.spoken)
         place = f"{_short_name(inst)} " + rng.choice(
@@ -526,7 +540,7 @@ class _Builder:
             for fy in range(self.start.year + 1, self.anchor.year + 1):
                 books.setdefault((code, fy, "본"), [])
         for (code, fy, kind), items in sorted(books.items(), key=lambda kv: (kv[0][1], kv[0][0])):
-            inst = self.registry.get(code)
+            inst = self._institution(code)
             assert inst is not None
             published = date(fy, 7, 8) if kind != "본" else date(fy - 1, 12, 18)
             if published > self.anchor:
@@ -624,7 +638,7 @@ class _Builder:
         rng = self.rng
         for t in self.truths:
             arch = _arch(t.archetype)
-            inst = self.registry.get(t.institution_code)
+            inst = self._institution(t.institution_code)
             assert inst is not None
             order_no = prespec_no = None
             for ev in t.events:
@@ -707,7 +721,7 @@ class _Builder:
             "홍보물 제작",
         )
         for _ in range(max(4, round(40 * self.scale))):
-            inst = self.registry.get(rng.choice(DEMO_INSTITUTIONS))
+            inst = self._institution(rng.choice(DEMO_INSTITUTIONS))
             assert inst is not None
             on = self.start + timedelta(days=rng.randint(0, (self.anchor - self.start).days))
             no = f"R{on:%y}BK{self._next():08d}"

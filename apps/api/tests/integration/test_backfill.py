@@ -11,7 +11,7 @@ from sqlalchemy import delete, func, select
 
 from app.db.models import Document, IngestRun, InstitutionRow, OpportunitySignal, Signal, Source
 from app.db.session import get_sessionmaker, session_scope
-from app.domain.institutions import load_registry_csv
+from app.domain.institutions import InstitutionRegistry, load_registry_csv
 from app.pipeline.backfill import ingest_window
 from app.pipeline.ingest import reresolve_institutions, upsert_record
 from app.pipeline.link import link_signals
@@ -229,7 +229,9 @@ async def test_a_school_is_known_by_its_procurement_code(demo_world, runtime) ->
 
 
 async def test_a_local_government_the_table_misses_goes_to_review(demo_world, runtime) -> None:  # type: ignore[no-untyped-def]
-    rt = dataclasses.replace(runtime, registry=load_registry_csv())
+    # The table as it was before 2026-07-01 codes came in: no 제물포구 yet.
+    before = [i for i in load_registry_csv().all() if i.sigungu != "제물포구"]
+    rt = dataclasses.replace(runtime, registry=InstitutionRegistry(before))
     item = SCHOOL_PLAN | {"orderInsttCd": "3999990", "orderInsttNm": "인천광역시 제물포구"}
     async with get_sessionmaker()() as s:
         source = Source(key="test_g2b_gap", name="t", adapter="g2b", enabled=False, config={})

@@ -29,6 +29,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.clock import today_kst
 from app.db.models import CompanyProfile, InstitutionRow, Opportunity, Recommendation
 from app.domain.embedding import cosine
+from app.domain.institutions import region_matches
 from app.domain.text import to_jamo
 from app.domain.timing import remaining_window
 from app.log import get_logger
@@ -119,12 +120,7 @@ def score_opportunity(
     region_match = 0.5
     if profile.region_codes and region_code:
         region_match = (
-            1.0
-            if any(
-                region_code.startswith(r[:2]) and (len(r) <= 2 or region_code == r)
-                for r in profile.region_codes
-            )
-            else 0.0
+            1.0 if any(region_matches(region_code, r) for r in profile.region_codes) else 0.0
         )
     features = {
         "semantic": min(max((semantic_raw - 0.05) / 0.45, 0.0), 1.0),

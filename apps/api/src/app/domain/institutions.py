@@ -45,12 +45,14 @@ SIDO_ALIASES: dict[str, tuple[str, ...]] = {
     "충청남도": ("충청남도", "충남"),
     "전북특별자치도": ("전북특별자치도", "전라북도", "전북"),
     "전라남도": ("전라남도", "전남"),
+    "전남광주통합특별시": ("전남광주통합특별시",),
     "경상북도": ("경상북도", "경북"),
     "경상남도": ("경상남도", "경남"),
     "제주특별자치도": ("제주특별자치도", "제주도", "제주"),
 }
 _SIDO_LOOKUP = {alias: full for full, aliases in SIDO_ALIASES.items() for alias in aliases}
-# 법정동코드 시도 part; the profile's region filter speaks these.
+# 법정동코드 시도 part; the profile's region filter speaks these. 광주광역시 and 전라남도 were
+# abolished on 2026-07-01 but stay: older documents and saved profiles still carry them.
 SIDO_REGION_CODES: dict[str, str] = {
     "서울특별시": "11",
     "부산광역시": "26",
@@ -66,10 +68,13 @@ SIDO_REGION_CODES: dict[str, str] = {
     "충청남도": "44",
     "전북특별자치도": "52",
     "전라남도": "46",
+    "전남광주통합특별시": "12",
     "경상북도": "47",
     "경상남도": "48",
     "제주특별자치도": "50",
 }
+# 시도 codes that went into another; a region filter on either side sees both.
+SIDO_SUCCESSORS: dict[str, str] = {"29": "12", "46": "12"}
 PROVIDER_CODE_PREFIX = "G2B-"
 # Longest alias first so "서울특별시" wins over "서울".
 _SIDO_RE = re.compile("|".join(sorted(map(re.escape, _SIDO_LOOKUP), key=len, reverse=True)))
@@ -235,6 +240,9 @@ class InstitutionRegistry:
         self._sido_level: dict[tuple[str, InstitutionKind], list[Institution]] = {}
         self._alias_index: dict[str, str] = {}
         self._jamo_index: dict[str, str] = {}
+        # Every 시도 an institution was named under: "전라남도 순천시" is now "전남광주통합특별시
+        # 순천시", and its old name, kept as an alias, still says which 순천시.
+        self._sidos: dict[str, frozenset[str]] = {}
         for inst in institutions:
             self.add(inst)
 
@@ -253,6 +261,11 @@ class InstitutionRegistry:
             compact = _compact(alias)
             self._alias_index[compact] = inst.code
             self._jamo_index[to_jamo(compact)] = inst.code
+        former = {parse_name(a).sido for a in inst.aliases}
+        self._sidos[inst.code] = frozenset({inst.sido} | {s for s in former if s})
+
+    def _in_sido(self, inst: Institution, sido: str) -> bool:
+        return sido in self._sidos.get(inst.code, (inst.sido,))
 
     def knows_name(self, raw: str) -> bool:
         return _compact(raw) in self._alias_index
@@ -309,11 +322,11 @@ class InstitutionRegistry:
             wanted: InstitutionKind = "council" if parsed.is_council else "local_gov"
             pool = [i for i in pool if i.kind == wanted] or pool
             if parsed.sido:
-                pool = [i for i in pool if i.sido == parsed.sido]
+                pool = [i for i in pool if self._in_sido(i, parsed.sido)]
             if len(pool) == 1:
                 return Resolution(pool[0], parsed.department, 1.0, "exact")
             if len(pool) > 1 and sido:
-                narrowed = [i for i in pool if i.sido == sido]
+                narrowed = [i for i in pool if self._in_sido(i, sido)]
                 if len(narrowed) == 1:
                     return Resolution(narrowed[0], parsed.department, 0.9, "context")
             if len(pool) > 1:
@@ -332,7 +345,10 @@ class InstitutionRegistry:
         if inst is not None and (
             (own_body and inst.kind in ("local_gov", "council"))
             or (parsed.department and _is_own_body(parsed.department))
-            or ((lead := _leading_sido(normalize(raw))) is not None and inst.sido != lead)
+            or (
+                (lead := _leading_sido(normalize(raw))) is not None
+                and not self._in_sido(inst, lead)
+            )
             or (
                 parsed.sigungu
                 and inst.sigungu
@@ -378,6 +394,19 @@ def _compact(text: str) -> str:
 
 
 compact_name = _compact
+
+
+def region_matches(region_code: str, wanted: str) -> bool:
+    """A profile's region ("41", or a 시군구 "41110") against an institution's region code. A
+    시도 code that went into another (광주 29, 전남 46 → 전남광주 12) matches on both sides, so
+    saved profiles and institutions from before 2026-07-01 still meet."""
+
+    def sido(code: str) -> str:
+        return SIDO_SUCCESSORS.get(code[:2], code[:2])
+
+    if len(wanted) <= 2:
+        return sido(region_code) == sido(wanted)
+    return region_code == wanted
 
 
 def looks_like_local_government(raw: str) -> bool:
@@ -428,7 +457,7 @@ def provider_institution(code: str, name: str) -> Institution:
 
 def load_registry_csv(path: str | None = None) -> InstitutionRegistry:
     """Load the institution table: every 시도·시군구, their councils and the 시도 교육청, built by
-    ``scripts/build_institutions.py`` from 행정안전부 행정동코드. Everything else (schools,
+    ``scripts/build_institutions.py`` from 행정안전부 법정동코드. Everything else (schools,
     hospitals, 공사·공단, 국가기관) arrives with a provider code; see :func:`provider_institution`."""
     if path is None:
         ref = resources.files("app.domain").joinpath("data/institutions.csv")
