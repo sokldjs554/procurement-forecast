@@ -67,6 +67,68 @@ def test_chunk_budget_attaches_basis_lines_and_department() -> None:
     assert chunks[1].labels == ["부서: 총무과"]
 
 
+# 성남시 2026년 제2회 추경 세출예산사업명세서 p.2 as pypdf reads it (trimmed, 2026-09-27): no
+# "세부사업" label, and 부서·정책·단위사업 subtotals have the same shape as the 세부사업 rows.
+SEONGNAM_2026_S2_PAGE = """부서ㆍ정책ㆍ단위(회계)ㆍ세부사업ㆍ편성목 예산액 기 정 액 비교증감
+세 출 예 산 사 업 명 세 서
+2026년도 추경 2 회 일반회계 전체
+부서: 지역경제상권과
+정책: 지역경제활성화
+단위: 지역경제활성화 추진 (단위:천원)
+지역경제상권과 42,735,345 42,060,345 675,000
+국 15,226 15,226 0
+도 204,711 204,711 0
+시 42,515,408 41,840,408 675,000
+지역경제활성화 18,840,950 18,165,950 675,000
+국 15,226 15,226 0
+시 18,707,863 18,032,863 675,000
+지역경제활성화 추진 4,603,272 4,103,272 500,000
+도 113,293 113,293 0
+시 4,489,979 3,989,979 500,000
+지역경제활성화 3,204,200 2,704,200 500,000
+306 출연금 2,900,000 2,400,000 500,000
+01 출연금 2,900,000 2,400,000 500,000
+ ○성남시 소상공인 특례보증 출연금
+2,900,000 2,400,000 500,000
+상권 활성화 추진 14,186,376 14,011,376 175,000
+상권활성화재단 출연 4,039,360 3,864,360 175,000
+306 출연금 4,039,360 3,864,360 175,000
+01 출연금 4,039,360 3,864,360 175,000
+ ○성남시 상권활성화재단 출연금
+4,039,360 3,864,360 175,000
+ 경정 2,900,000,000원
+"""
+
+
+def test_chunk_budget_reads_the_real_table_rows() -> None:
+    chunks = chunk_budget(SEONGNAM_2026_S2_PAGE)
+    # the two 세부사업 rows; the column header and the 부서·정책·단위 subtotals start no chunk
+    assert [c.text.splitlines()[0] for c in chunks] == [
+        "지역경제활성화 3,204,200 2,704,200 500,000",
+        "상권활성화재단 출연 4,039,360 3,864,360 175,000",
+    ]
+    assert all(c.labels == ["부서: 지역경제상권과"] for c in chunks)
+    # 구청 부서 names have a space: "부서: 분당구 건설과"
+    assert chunk_budget("부서: 분당구 건설과\n" + SEONGNAM_2026_S2_PAGE.split("\n", 4)[4])[
+        0
+    ].labels == ["부서: 분당구 건설과"]
+    assert "306 출연금" in chunks[1].text and "○성남시 상권활성화재단 출연금" in chunks[1].text
+
+
+def test_chunk_budget_skips_the_tail_of_a_wrapped_basis_line() -> None:
+    # 성남시 2026 제2회 추경: the "○…" basis line wraps, and its tail looks like a row
+    text = (
+        "고유가 피해지원금 63,037,861 0 63,037,861\n"
+        "101 인건비 673,639 0 673,639\n"
+        " ○자원안보위기 경보 에너지 민생안정 지원\n"
+        " 사업 전담인력 673,639 0 673,639\n"
+        "201 일반운영비 43,000 0 43,000\n"
+    )
+    assert [c.text.splitlines()[0] for c in chunk_budget(text)] == [
+        "고유가 피해지원금 63,037,861 0 63,037,861"
+    ]
+
+
 def test_hwp5_record_parser_handles_controls_and_extended_size() -> None:
     text = "스마트쉘터 설치\t352,000"
     units = [ord(c) for c in text.replace("\t", "")]

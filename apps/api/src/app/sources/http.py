@@ -22,6 +22,7 @@ import asyncio
 import json
 import random
 import re
+import ssl
 from collections import Counter
 from collections.abc import Awaitable, Callable, Mapping
 from typing import Any
@@ -134,6 +135,16 @@ def _classify_soft_error(source: str, body: str, *, status: int | None = None) -
     raise TransientSourceError(f"{source}: provider error {code} {message}".strip())
 
 
+def legacy_cipher_context() -> ssl.SSLContext:
+    """Certificates and host names are verified exactly as by default; only the cipher list is
+    OpenSSL's ``DEFAULT`` instead of Python's forward-secret-only list. Some 지자체 servers
+    (www.seongnam.go.kr, 2026-09) offer nothing but TLS 1.2 ``AES128-SHA``, so Python's default
+    handshake fails with ``SSLV3_ALERT_HANDSHAKE_FAILURE`` where curl succeeds."""
+    ctx = httpx.create_ssl_context()  # honours SSL_CERT_FILE like the default client
+    ctx.set_ciphers("DEFAULT")
+    return ctx
+
+
 class ResilientClient:
     def __init__(
         self,
@@ -148,6 +159,7 @@ class ResilientClient:
         max_delay: float = 30.0,
         transport: httpx.AsyncBaseTransport | None = None,
         sleep: Callable[[float], Awaitable[None]] = asyncio.sleep,
+        verify: ssl.SSLContext | None = None,
     ) -> None:
         self.source = source
         self._limiter = limiter
@@ -163,6 +175,7 @@ class ResilientClient:
             base_url=base_url,
             timeout=httpx.Timeout(timeout, connect=5.0),
             transport=transport,
+            verify=verify if verify is not None else True,
             headers={
                 "User-Agent": "procurement-forecast-collector/0.1 (+https://github.com/sokldjs554/procurement-forecast)"
             },

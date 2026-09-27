@@ -13,7 +13,7 @@ from app.runtime import Runtime
 from app.sources import clik, g2b, lofin
 from app.sources.base import DocType, FetchWindow, RawRecord, SourceAdapter
 from app.sources.crawler import BoardCrawlerAdapter
-from app.sources.http import FatalSourceError, ResilientClient
+from app.sources.http import FatalSourceError, ResilientClient, legacy_cipher_context
 from app.sources.resilience import Limiter, MemoryLimiter
 
 SOURCE_CATALOG: tuple[dict[str, Any], ...] = (
@@ -22,6 +22,8 @@ SOURCE_CATALOG: tuple[dict[str, Any], ...] = (
     {"key": "g2b_order_plan", "name": "조달청 나라장터 — 발주계획", "adapter": "g2b"},
     {"key": "g2b_prespec", "name": "조달청 나라장터 — 사전규격", "adapter": "g2b"},
     {"key": "g2b_bid", "name": "조달청 나라장터 — 입찰공고", "adapter": "g2b"},
+    # Boards are configured per government in ``sources.config`` (docs/real-data-budget.md §8).
+    {"key": "budget_boards", "name": "지자체 누리집 — 예산서 게시판", "adapter": "crawler"},
 )
 
 FIXTURE_CATALOG: tuple[dict[str, Any], ...] = (
@@ -146,6 +148,8 @@ def _crawler(source: Source, runtime: Runtime) -> BoardCrawlerAdapter:
         transport = sites.transport()
         limiter = MemoryLimiter()  # an in-process fake site needs no politeness
 
+    legacy_tls = set(config.get("legacy_tls_hosts", []))
+
     def client_for_host(host: str) -> ResilientClient:
         return ResilientClient(
             f"{source.key}@{host}",  # rate limit and circuit breaker per host
@@ -155,6 +159,7 @@ def _crawler(source: Source, runtime: Runtime) -> BoardCrawlerAdapter:
             timeout=s.source_http_timeout_seconds,
             max_attempts=s.source_max_attempts,
             transport=transport,
+            verify=legacy_cipher_context() if host in legacy_tls else None,
         )
 
     return BoardCrawlerAdapter(source.key, config, client_for_host)

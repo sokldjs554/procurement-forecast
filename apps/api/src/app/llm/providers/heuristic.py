@@ -52,9 +52,26 @@ _TITLE_RE = re.compile(
     + "|".join(_PROJECT_SUFFIX)
     + r"))(?=[은는이가을를의에도\s,.]|$)"
 )
-_OPERATING_WORDS = ("운영", "유지관리", "급여", "업무추진비", "개최", "인건비", "수당", "지원")
+_OPERATING_WORDS = (
+    "운영",
+    "유지관리",
+    "급여",
+    "업무추진비",
+    "개최",
+    "인건비",
+    "수당",
+    "지원",
+    "기본경비",  # every 부서's 행정운영경비 row in real books
+)
 _BUDGET_LINE_RE = re.compile(
     r"세\s*부\s*사\s*업\s*[:：]?\s*(?P<name>.+?)\s+(?P<amount>\d{1,3}(?:,\d{3})+|\d{4,})"
+)
+# Real 세출예산사업명세서 rows carry no "세부사업" label: "상권활성화재단 출연 4,039,360
+# 3,864,360 175,000" (예산액, 전년도/기정액, 증감 with △ for a cut). The chunker only starts a
+# chunk on such a row when a 편성목 follows it, which is what separates it from subtotals.
+_NUM = r"(?:\d{1,3}(?:,\d{3})+|\d+)"
+_TABLE_ROW_RE = re.compile(
+    rf"^\s*(?P<name>[가-힣A-Za-z(][^\n]*?)\s+(?P<amount>{_NUM})\s+{_NUM}\s+△?{_NUM}\s*$"
 )
 _MEMBER_ROLES = ("위원", "의원", "위원장", "의장")
 _GENERIC_TITLE_HEADS = (
@@ -239,7 +256,7 @@ def _extract_exchange(ctx: ChunkContext) -> list[ExtractedSignal]:
 
 def _extract_budget_line(ctx: ChunkContext, table_unit: int) -> list[ExtractedSignal]:
     first_line = ctx.text.splitlines()[0] if ctx.text else ""
-    m = _BUDGET_LINE_RE.search(first_line)
+    m = _BUDGET_LINE_RE.search(first_line) or _TABLE_ROW_RE.match(first_line)
     if not m:
         return []
     name = m.group("name").strip()
@@ -251,6 +268,8 @@ def _extract_budget_line(ctx: ChunkContext, table_unit: int) -> list[ExtractedSi
     if category is Category.OTHER:
         return []
     amount_k = int(m.group("amount").replace(",", ""))
+    if amount_k == 0:
+        return []  # cut to nothing in a 추경 ("사업 0 73,080 △73,080"): no longer a plan
     dept = next(
         (lbl.split(":", 1)[1].strip() for lbl in ctx.labels if lbl.startswith("부서")), None
     )
