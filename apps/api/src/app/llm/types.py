@@ -66,6 +66,13 @@ class LLMConfigError(LLMError):
     """Bad key, unknown model, invalid request. Needs a human; do not retry."""
 
 
+class LLMSetupError(LLMConfigError):
+    """No call can succeed until a person fixes the account or the settings: missing or bad
+    credentials, no permission, an unknown model, no credit left. Degrading chunk by chunk
+    would quietly finish the whole batch on the rule-based extractor, so extraction stops
+    instead: the job fails and its documents stay pending for the next run."""
+
+
 class LLMRefusedError(LLMError):
     """stop_reason == "refusal" even after server-side fallback."""
 

@@ -2,6 +2,9 @@
 
 Every attempt — hit, miss, refusal, budget skip — is written to ``llm_calls`` so the admin
 console can show cost per task/model/prompt version, cache hit rate and degraded-mode rate.
+A setup error (bad key, no credit, unknown model) is the exception: extraction stops rather
+than degrading, the job's transaction rolls back with its row, and the failure lands in
+``job_runs`` instead.
 """
 
 from __future__ import annotations
@@ -32,6 +35,7 @@ from app.llm.types import (
     LLMInvalidOutputError,
     LLMRefusedError,
     LLMResult,
+    LLMSetupError,
     LLMUnavailableError,
     Usage,
 )
@@ -206,6 +210,10 @@ class LLMService:
             if not final_attempt:
                 raise
             return await self._fallback_extract(session, ctx, document_id, "provider_unavailable")
+        except LLMSetupError as exc:
+            # Every other chunk would fail the same way; see LLMSetupError.
+            log.error("llm.extract.stopped", error=str(exc))
+            raise
         except (LLMRefusedError, LLMInvalidOutputError, LLMConfigError) as exc:
             status = (
                 "refusal"

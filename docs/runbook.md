@@ -19,6 +19,11 @@
 2. 트리아지 통과율이 올랐는지 확인합니다(새 수집원이 절차 발언이 많은 회의록을 대량으로 넣는 경우).
 3. 필요하면 `APP_LLM_DAILY_BUDGET_USD`를 올립니다. 한도 초과 동안의 문서는 규칙 기반 추출기로 처리되어 `degraded:budget_exceeded` 사유로 검토 대기열에 들어가 있습니다.
 
+**작업이 `LLMSetupError`로 실패 / `manage pipeline run`이 `stopped`로 끝남**
+1. 오류 문구로 원인을 봅니다. `auth`는 키(`APP_ANTHROPIC_API_KEY`)나 권한, `out of credit`은 Anthropic 계정 잔액, `not found`는 모델 이름(`APP_LLM_EXTRACT_MODEL`)입니다.
+2. 고치는 동안 문서는 `pending`으로 남고 규칙 기반으로 처리되지 않습니다. 새 신호가 늦어질 뿐, 품질이 낮은 신호가 쌓이지는 않습니다.
+3. 고친 뒤 `manage pipeline run`을 돌리거나 *작업 로그*에서 재실행합니다. 워커는 실패한 작업 결과를 한 시간 보관한 뒤 `sweep_pending_documents`가 같은 문서를 다시 넣습니다. 규칙 기반으로라도 먼저 돌려야 하면 `APP_LLM_PROVIDER=heuristic`으로 돌립니다.
+
 **검토 대기열이 쌓임**
 - 사유별로 봅니다. `institution_unresolved`가 대부분이면 기관 사전(`domain/data/institutions.csv`)에 별칭을 추가하거나, 행정구역이 바뀌었다면 `scripts/build_institutions.py`로 사전을 다시 만듭니다. 배포 뒤 `manage pipeline reresolve` → `manage pipeline run`으로 이미 쌓인 문서의 기관을 다시 풀고 처리합니다(다시 받지 않음). `year_unverified`가 대부분이면 시점 해석기(`domain/timing.py`)에 표현을 추가하고 수기 평가 세트에 사례를 넣습니다.
 - 승인/수정하면 해당 신호의 연결 작업이 다시 돕니다.

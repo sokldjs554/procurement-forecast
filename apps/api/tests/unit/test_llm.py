@@ -16,7 +16,13 @@ from app.llm.providers.anthropic_provider import AnthropicProvider
 from app.llm.providers.heuristic import HeuristicProvider, _answer_text, _budget_list_signals
 from app.llm.schemas import ExtractionOutput, strict_json_schema
 from app.llm.service import LLMService, cache_key
-from app.llm.types import LLMConfigError, LLMRefusedError, LLMUnavailableError, Usage
+from app.llm.types import (
+    LLMConfigError,
+    LLMRefusedError,
+    LLMSetupError,
+    LLMUnavailableError,
+    Usage,
+)
 
 CTX = ChunkContext(
     doc_type="council_minutes",
@@ -172,10 +178,10 @@ async def test_effort_is_omitted_for_models_without_the_knob() -> None:
     assert "fallbacks" not in call and "betas" not in call
 
 
-async def test_missing_credentials_are_a_config_error_not_a_crash() -> None:
+async def test_missing_credentials_are_a_setup_error_not_a_crash() -> None:
     # What the SDK raises at request time when no key, token or profile was found.
     provider, _ = _provider([TypeError("Could not resolve authentication method.")])
-    with pytest.raises(LLMConfigError):
+    with pytest.raises(LLMSetupError):
         await provider.extract(CTX)
 
 
@@ -200,6 +206,38 @@ async def test_rate_limit_maps_to_unavailable() -> None:
     provider, _ = _provider([error])
     with pytest.raises(LLMUnavailableError):
         await provider.extract(CTX)
+
+
+def _status_error(
+    cls: type[anthropic.APIStatusError], status: int, message: str
+) -> anthropic.APIStatusError:
+    request = httpx.Request("POST", "https://api.anthropic.com/v1/messages")
+    return cls(message, response=httpx.Response(status, request=request), body=None)
+
+
+NO_CREDIT = (
+    "Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing."
+)
+
+
+@pytest.mark.parametrize(
+    ("error", "setup"),
+    [
+        (_status_error(anthropic.BadRequestError, 400, NO_CREDIT), True),
+        (_status_error(anthropic.AuthenticationError, 401, "invalid x-api-key"), True),
+        (_status_error(anthropic.PermissionDeniedError, 403, "not allowed"), True),
+        (_status_error(anthropic.NotFoundError, 404, "model: claude-nope"), True),
+        (_status_error(anthropic.BadRequestError, 400, "prompt is too long"), False),
+        (_status_error(anthropic.UnprocessableEntityError, 422, "bad field"), False),
+    ],
+)
+async def test_errors_every_call_would_hit_are_setup_errors(
+    error: anthropic.APIStatusError, setup: bool
+) -> None:
+    provider, _ = _provider([error])
+    with pytest.raises(LLMConfigError) as caught:
+        await provider.extract(CTX)
+    assert isinstance(caught.value, LLMSetupError) is setup
 
 
 async def test_service_records_cost_and_uses_primary() -> None:
@@ -236,6 +274,25 @@ async def test_service_propagates_transient_errors_until_final_attempt() -> None
         await service.extract(FakeSession(), CTX, final_attempt=False)  # type: ignore[arg-type]
     attempt = await service.extract(FakeSession(), CTX, final_attempt=True)  # type: ignore[arg-type]
     assert attempt.degraded and attempt.reason == "provider_unavailable"
+
+
+async def test_service_stops_on_a_setup_error_instead_of_degrading() -> None:
+    # Out of credit, the rule-based fallback would quietly finish every chunk left.
+    provider, messages = _provider([_status_error(anthropic.BadRequestError, 400, NO_CREDIT)])
+    service = LLMService(primary=provider, fallback=HeuristicProvider(), guard=MemorySpendGuard(10))
+    with pytest.raises(LLMSetupError):
+        await service.extract(FakeSession(), CTX, final_attempt=True)  # type: ignore[arg-type]
+    assert len(messages.calls) == 1
+
+
+async def test_service_still_degrades_on_a_request_the_api_turns_away() -> None:
+    provider, _ = _provider([_status_error(anthropic.BadRequestError, 400, "prompt is too long")])
+    service = LLMService(primary=provider, fallback=HeuristicProvider(), guard=MemorySpendGuard(10))
+    session = FakeSession()
+    attempt = await service.extract(session, CTX)  # type: ignore[arg-type]
+    assert attempt.degraded and attempt.reason == "error"
+    assert attempt.output.signals[0].title
+    assert session.added[0].status == "error"
 
 
 async def test_heuristic_extracts_council_commitment() -> None:
