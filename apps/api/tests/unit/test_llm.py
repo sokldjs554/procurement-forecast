@@ -492,6 +492,16 @@ def test_heuristic_reads_a_glued_member_line_as_the_question() -> None:
     assert answer == "설치되어 있는 걸 제외하고 이번에 다 하는 겁니다."
 
 
+def test_heuristic_reads_a_spaced_member_line_as_the_question() -> None:
+    # Most councils in CLIK write "○최광선 의원" — the name first, then a space.
+    question, answer = _answer_text(
+        "○최광선 의원  노후 청사 이전을 내년도 본예산에 반영해 주시기 바랍니다.\n"
+        "○자치행정국장 홍길동  네, 반영하겠습니다."
+    )
+    assert question == "노후 청사 이전을 내년도 본예산에 반영해 주시기 바랍니다."
+    assert answer == "네, 반영하겠습니다."
+
+
 # 성남시의회 제309회 본회의 제1차(2026.03.12.): 2026년 제1회 추경 제안 설명, 행정기획조정실장.
 BUDGET_BILL = (
     "○행정기획조정실장 전재환  2026년도 제1회 추가경정예산안에 대하여 제안 설명 드리겠습니다.\n"

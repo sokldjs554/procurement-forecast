@@ -9,10 +9,10 @@ documents when the logic improves, without re-fetching (and without spending API
 from __future__ import annotations
 
 import hashlib
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Awaitable, Callable
 from dataclasses import dataclass, field
 from datetime import date
-from typing import Any, Literal, Protocol
+from typing import Any, Literal, Protocol, runtime_checkable
 
 DocType = Literal["council_minutes", "budget_book", "order_plan", "prespec", "bid_notice", "award"]
 
@@ -57,6 +57,14 @@ class SourceAdapter(Protocol):
     def fetch(self, window: FetchWindow) -> AsyncIterator[RawRecord]: ...
 
     async def aclose(self) -> None: ...
+
+
+@runtime_checkable
+class SkipsStored(Protocol):
+    """An adapter whose second call per record costs quota (a detail call) asks which of its
+    external ids are stored already; ``run_ingest`` sets the lookup before fetching."""
+
+    known_external_ids: Callable[[list[str]], Awaitable[set[str]]] | None
 
 
 def pick(record: dict[str, Any], *names: str) -> Any:

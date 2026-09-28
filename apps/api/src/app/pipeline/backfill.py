@@ -24,6 +24,7 @@ from app.pipeline.link import link_signals
 from app.pipeline.process import pending_document_ids, process_document
 from app.runtime import Runtime
 from app.sources.base import FetchWindow
+from app.sources.clik import ClikMinutesAdapter
 from app.sources.crawler import BoardCrawlerAdapter
 from app.sources.g2b import G2BAdapter
 from app.sources.http import FatalSourceError, TransientSourceError
@@ -110,13 +111,8 @@ async def ingest_window(
                 "skipped": run.skipped,
             }
         if isinstance(adapter, G2BAdapter):
-            stats: Counter[str] = adapter.client.stats
-            not_sent = sum(v for k, v in stats.items() if k.removeprefix("error:") in _NOT_SENT)
-            report |= {
+            report |= _client_report(adapter.client.stats) | {
                 "rows_per_call": adapter.rows,
-                "sent": stats["attempts"] - not_sent,
-                "retries": stats["retries"],
-                "errors": {k[6:]: v for k, v in sorted(stats.items()) if k.startswith("error:")},
                 "operations": {
                     path.rsplit("/", 1)[-1]: dataclasses.asdict(ps)
                     | {"seconds": round(ps.seconds, 1)}
@@ -125,6 +121,9 @@ async def ingest_window(
             }
         if isinstance(adapter, BoardCrawlerAdapter):
             report["crawl"] = dataclasses.asdict(adapter.stats)
+        if isinstance(adapter, ClikMinutesAdapter):
+            report |= _client_report(adapter.client.stats)
+            report["minutes"] = dict(sorted(adapter.stats.items()))
         if isinstance(adapter, LofinBudgetAdapter):
             report["books"] = dict(sorted(adapter.stats.items()))
             # Page links need the board crawler, and their hosts need network access.
@@ -132,6 +131,15 @@ async def ingest_window(
             report["page_link_hosts"] = dict(hosts.most_common())
         reports.append(report)
     return reports
+
+
+def _client_report(stats: Counter[str]) -> dict[str, Any]:
+    not_sent = sum(v for k, v in stats.items() if k.removeprefix("error:") in _NOT_SENT)
+    return {
+        "sent": stats["attempts"] - not_sent,
+        "retries": stats["retries"],
+        "errors": {k[6:]: v for k, v in sorted(stats.items()) if k.startswith("error:")},
+    }
 
 
 async def process_pending(
