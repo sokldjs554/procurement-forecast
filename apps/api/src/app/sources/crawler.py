@@ -41,8 +41,9 @@ Real sites stray from that shape in three ways, each handled by configuration:
 
 Any of ``layout``, ``detail_pattern``, ``attachment_pattern``, ``id_param``, ``page_param``,
 ``title_keywords``, ``title_pattern`` (a regex the title must match), ``script_links`` and
-``title_attr`` (take the post link's ``title`` attribute as the post title) can be set per board, overriding the source-level value. ``legacy_tls_hosts`` lists hosts that only
-speak old TLS cipher suites (see ``http.legacy_cipher_context``; certificates are still verified).
+``title_attr`` (take the post link's ``title`` attribute as the post title) can be set per
+board, overriding the source-level value. ``legacy_tls_hosts`` lists hosts that only speak old
+TLS cipher suites (see ``http.legacy_cipher_context``; certificates are still verified).
 """
 
 from __future__ import annotations
