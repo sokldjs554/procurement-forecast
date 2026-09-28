@@ -235,6 +235,36 @@ def test_split_turns_reads_names_glued_to_the_member_role() -> None:
     assert "전동보장구 충전시설" in chunks[1].text and "다 하는 겁니다" in chunks[1].text
 
 
+# Speaker lines as CLIK serves them for other councils (2026-09-28): most put a space between the
+# member's name and 의원/위원, some add " : " or put the speech on the next line.
+CLIK_SPACED_MINUTES = (
+    "○위원장 백현조  의사일정 제1항을 상정합니다.\n"
+    "○최광선 의원  노후 청사 이전을 내년도 본예산에 반영해 주시기 바랍니다.\n"
+    "○농업기술센터소장 신태만  네, 검토하겠습니다.\n"
+    "○오문섭 위원 사실 오늘 인사청문회 앞서서 제안을 좀 드리고 싶습니다.\n"
+    "○ 김재헌 위원\n"
+    "  질의하겠습니다.\n"
+    "○전문위원 김현아 : 전문위원 김현아입니다.\n"
+    "○출석 위원(4인)\n"
+)
+
+
+def test_split_turns_reads_members_written_with_a_space() -> None:
+    turns = split_turns(CLIK_SPACED_MINUTES)
+    assert [(t.role, t.name) for t in turns] == [
+        ("위원장", "백현조"),
+        ("의원", "최광선"),
+        ("농업기술센터소장", "신태만"),
+        ("위원", "오문섭"),
+        ("위원", "김재헌"),
+        ("전문위원", "김현아"),
+    ]
+    chunks = chunk_minutes(CLIK_SPACED_MINUTES)
+    assert [c.kind for c in chunks] == ["procedure", "exchange", "exchange", "exchange"]
+    assert chunks[1].labels == ["의원 최광선", "농업기술센터소장 신태만"]
+    assert "질의하겠습니다" in chunks[3].text
+
+
 def test_a_long_speech_keeps_its_lead_line_with_what_follows() -> None:
     # 제307회 본회의 제1차: the piece ended on "주요사업비 예산 반영 내역입니다." and the list
     # itself started the next piece, without the line that says what it is.

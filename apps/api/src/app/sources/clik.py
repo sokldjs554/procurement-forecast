@@ -298,7 +298,7 @@ def meeting_title(row: dict[str, Any]) -> str:
     parts = [str(row.get("RASMBLY_NM") or "").strip()]
     if sesn := str(row.get("RASMBLY_SESN") or "").strip():
         parts.append(f"제{sesn}회")
-    parts.append(str(row.get("MTGNM") or "회의록").strip())
+    parts.append(" ".join(str(row.get("MTGNM") or "회의록").split()))  # "본회의\n[임시]"
     odr = str(row.get("MINTS_ODR") or "").strip()
     if odr and odr != "0":
         parts.append(f"제{odr}차")

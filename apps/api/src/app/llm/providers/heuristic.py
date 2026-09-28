@@ -26,7 +26,7 @@ from app.domain.timing import resolve_timing
 from app.llm.prompts import EXTRACT_PROMPT_VERSION, BriefFacts, ChunkContext
 from app.llm.schemas import Commitment, ExtractedSignal, ExtractionOutput
 from app.llm.types import LLMResult
-from app.parsing.chunking import GLUED_MEMBER_RE
+from app.parsing.chunking import match_member
 
 HEURISTIC_VERSION = "heuristic-v2"
 
@@ -99,7 +99,7 @@ def _answer_text(chunk_text: str) -> tuple[str, str]:
     current = question
     for line in chunk_text.splitlines():
         content = line
-        if glued := GLUED_MEMBER_RE.match(line.strip()):
+        if glued := match_member(line.strip()):
             current, content = question, glued.group("speech")
         elif m := re.match(r"^[○◯◎]\s*(?P<role>[가-힣A-Za-z·]+)\s+[가-힣]{2,4}\s+", line.strip()):
             current = question if m.group("role") in _MEMBER_ROLES else answer
@@ -231,7 +231,7 @@ def _budget_list_signals(ctx: ChunkContext) -> list[ExtractedSignal]:
     signals: list[ExtractedSignal] = []
     for i, raw in enumerate(lines):
         line = raw.strip()
-        if glued := GLUED_MEMBER_RE.match(line):
+        if glued := match_member(line):
             member = True
             line = glued.group("speech")
         elif m := re.match(r"^[○◯◎]\s*(?P<role>[가-힣A-Za-z·]+)\s+[가-힣]{2,4}\s+", line):
