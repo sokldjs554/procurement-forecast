@@ -41,12 +41,19 @@ from app.llm.types import (
     LLMInvalidOutputError,
     LLMRefusedError,
     LLMResult,
+    LLMSetupError,
     LLMUnavailableError,
     Usage,
 )
 
 _FALLBACK_BETA = "server-side-fallback-2026-07-01"
 _EXTRACTION_SCHEMA = strict_json_schema(ExtractionOutput)
+
+
+def _out_of_credit(exc: anthropic.APIStatusError) -> bool:
+    """The API turns an empty balance away with a 400 and "Your credit balance is too low to
+    access the Anthropic API" (seen on a live run, docs/real-data-minutes-claude.md §6.2)."""
+    return "credit balance" in str(exc).lower()
 
 
 def _usage(resp: Any) -> Usage:
@@ -114,22 +121,22 @@ class AnthropicProvider:
         try:
             return await self._client.beta.messages.create(**kwargs)
         except (anthropic.AuthenticationError, anthropic.PermissionDeniedError) as exc:
-            raise LLMConfigError(f"anthropic auth: {exc}") from exc
+            raise LLMSetupError(f"anthropic auth: {exc}") from exc
         except anthropic.NotFoundError as exc:
-            raise LLMConfigError(f"anthropic model/endpoint not found: {exc}") from exc
-        except anthropic.BadRequestError as exc:
-            raise LLMConfigError(f"anthropic rejected request: {exc}") from exc
+            raise LLMSetupError(f"anthropic model/endpoint not found: {exc}") from exc
         except anthropic.RateLimitError as exc:
             raise LLMUnavailableError(f"anthropic rate limited: {exc}") from exc
         except anthropic.APIStatusError as exc:
             if exc.status_code >= 500:
                 raise LLMUnavailableError(f"anthropic {exc.status_code}: {exc}") from exc
-            raise LLMConfigError(f"anthropic {exc.status_code}: {exc}") from exc
+            if _out_of_credit(exc):
+                raise LLMSetupError(f"anthropic account out of credit: {exc}") from exc
+            raise LLMConfigError(f"anthropic rejected request ({exc.status_code}): {exc}") from exc
         except (anthropic.APITimeoutError, anthropic.APIConnectionError) as exc:
             raise LLMUnavailableError(f"anthropic connection: {exc}") from exc
         except TypeError as exc:
             # The SDK only finds out at request time that no key or credentials were configured.
-            raise LLMConfigError(f"anthropic client not configured: {exc}") from exc
+            raise LLMSetupError(f"anthropic client not configured: {exc}") from exc
 
     async def extract(self, ctx: ChunkContext) -> LLMResult[ExtractionOutput]:
         started = time.perf_counter()

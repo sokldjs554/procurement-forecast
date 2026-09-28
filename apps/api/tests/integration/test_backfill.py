@@ -3,19 +3,25 @@
 import dataclasses
 from datetime import date
 from functools import partial
+from types import SimpleNamespace
 from typing import Any
 
+import anthropic
 import httpx
 from pydantic import SecretStr
-from sqlalchemy import delete, func, select
+from sqlalchemy import delete, func, select, update
 
 from app.db.models import Document, IngestRun, InstitutionRow, OpportunitySignal, Signal, Source
 from app.db.session import get_sessionmaker, session_scope
 from app.domain.institutions import InstitutionRegistry, load_registry_csv
-from app.pipeline.backfill import ingest_window
+from app.llm.budget import MemorySpendGuard
+from app.llm.providers.anthropic_provider import AnthropicProvider
+from app.llm.providers.heuristic import HeuristicProvider
+from app.llm.service import LLMService
+from app.pipeline.backfill import ingest_window, process_pending
 from app.pipeline.ingest import reresolve_institutions, upsert_record
 from app.pipeline.link import link_signals
-from app.pipeline.process import process_document
+from app.pipeline.process import pending_document_ids, process_document
 from app.sources import registry as registry_module
 from app.sources.base import FetchWindow, RawRecord
 from app.sources.g2b import map_item
@@ -581,3 +587,72 @@ async def test_two_rows_of_one_budget_book_are_two_opportunities(demo_world, run
         ("빗물받이 정비공사", "분당구 건설과", 1_401_000_000),
     ]
     assert rows[0].opportunity_id != rows[1].opportunity_id
+
+
+class _NoCredit:
+    """The Anthropic client once the balance is gone (docs/real-data-minutes-claude.md §6.2)."""
+
+    def __init__(self) -> None:
+        self.calls = 0
+
+    async def create(self, **_: Any) -> Any:
+        self.calls += 1
+        request = httpx.Request("POST", "https://api.anthropic.com/v1/messages")
+        raise anthropic.BadRequestError(
+            "Your credit balance is too low to access the Anthropic API.",
+            response=httpx.Response(400, request=request),
+            body=None,
+        )
+
+
+async def test_pipeline_run_stops_when_the_llm_account_runs_out_of_credit(
+    demo_world, runtime
+) -> None:  # type: ignore[no-untyped-def]
+    messages = _NoCredit()
+    provider = AnthropicProvider(
+        api_key="test",
+        extract_model="claude-opus-5",
+        extract_effort="low",
+        brief_model="claude-opus-5",
+        brief_effort="medium",
+        client=SimpleNamespace(beta=SimpleNamespace(messages=messages)),  # type: ignore[arg-type]
+    )
+    llm = LLMService(primary=provider, fallback=HeuristicProvider(), guard=MemorySpendGuard(10))
+    rt = dataclasses.replace(runtime, llm=llm)
+    async with session_scope() as s:
+        assert not await pending_document_ids(s)
+        ids = list(
+            (
+                await s.scalars(
+                    select(Document.id)
+                    .where(
+                        Document.doc_type == "council_minutes",
+                        Document.id.in_(select(Signal.document_id)),
+                    )
+                    .order_by(Document.id)
+                    .limit(2)
+                )
+            ).all()
+        )
+        count = select(func.count()).select_from(Signal).where(Signal.document_id.in_(ids))
+        signals_before = await s.scalar(count)
+        await s.execute(update(Document).where(Document.id.in_(ids)).values(parse_status="pending"))
+    try:
+        async with session_scope() as s:
+            report = await process_pending(s, rt)
+        async with session_scope() as s:
+            statuses = (
+                await s.scalars(select(Document.parse_status).where(Document.id.in_(ids)))
+            ).all()
+            signals_after = await s.scalar(count)
+    finally:
+        async with session_scope() as s:
+            await s.execute(
+                update(Document).where(Document.id.in_(ids)).values(parse_status="parsed")
+            )
+    assert len(ids) == 2
+    assert messages.calls == 1  # the second document never reached the API
+    assert report["stopped"].startswith("LLMSetupError")
+    assert report["documents"] == 0 and report["failed"] == 0
+    assert statuses == ["pending", "pending"]  # picked up again once the account is fixed
+    assert signals_after == signals_before  # the stopped document keeps what it had

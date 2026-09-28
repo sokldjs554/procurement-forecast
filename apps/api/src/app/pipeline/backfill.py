@@ -18,6 +18,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models import Document, IngestRun, Signal, Source
+from app.llm.types import LLMSetupError
 from app.log import get_logger
 from app.pipeline.ingest import run_ingest
 from app.pipeline.link import link_signals
@@ -152,12 +153,14 @@ async def process_pending(
 ) -> dict[str, Any]:
     """Process every pending document, then link the new signals — the worker's
     ``process_document`` → ``link_signals`` chain, in one process. A document that fails is
-    rolled back on its own and counted."""
+    rolled back on its own and counted. An LLM setup error (bad key, no credit) stops the run
+    instead: that document stays pending, and so does everything after it."""
     started = time.perf_counter()
     signal_ids: list[int] = []
     processed = failed = 0
     failures: Counter[str] = Counter()
-    while limit is None or processed + failed < limit:
+    stopped: str | None = None
+    while stopped is None and (limit is None or processed + failed < limit):
         batch_size = 500 if limit is None else min(500, limit - processed - failed)
         ids = await pending_document_ids(session, limit=batch_size)
         if not ids:
@@ -166,6 +169,10 @@ async def process_pending(
             try:
                 async with session.begin_nested():
                     result = await process_document(session, runtime, doc_id)
+            except LLMSetupError as exc:
+                stopped = f"{type(exc).__name__}: {exc}"[:2000]
+                log.error("backfill.stopped", document_id=doc_id, error=repr(exc)[:300])
+                break
             except Exception as exc:  # recorded per document; one bad row must not stop a backfill
                 failed += 1
                 failures[type(exc).__name__] += 1
@@ -199,6 +206,7 @@ async def process_pending(
         "documents": processed,
         "failed": failed,
         "failures": dict(failures),
+        "stopped": stopped,
         "signals": len(signal_ids),
         "verdicts": dict(verdicts),
         "opportunities_touched": len(touched),

@@ -349,7 +349,10 @@ def pipeline_run(
 
         return await process_pending(session, runtime, limit=limit)
 
-    typer.echo(json.dumps(_run(lambda: _with_session(go)), ensure_ascii=False, indent=2))
+    result = _run(lambda: _with_session(go))
+    typer.echo(json.dumps(result, ensure_ascii=False, indent=2))
+    if result["stopped"]:  # the LLM account needs a person; the rest is still pending
+        raise typer.Exit(1)
 
 
 @pipeline_app.command("reresolve")
