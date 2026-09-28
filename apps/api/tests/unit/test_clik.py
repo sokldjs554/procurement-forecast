@@ -249,3 +249,33 @@ def test_clik_external_id_fits_the_column() -> None:
     ext = external_id(meeting_key(row))
     assert len(ext) <= 128 and ext.startswith("031013:10:312:1:20260907:")
     assert json.dumps(ext)
+
+
+async def test_sources_check_reads_clik_list_and_one_detail() -> None:
+    from app.sources.check import check_clik, problems, render
+
+    page = [_row("CLIKC2946767454052674", "20260907", "2"), _row("CLIKC1", "20260904", "1")]
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        q = parse_qs(urlsplit(str(request.url)).query)
+        if q["displayType"] == ["list"]:
+            return httpx.Response(200, json=_list(page))
+        return httpx.Response(200, json=DETAIL)
+
+    checks = await check_clik("SECRET", transport=httpx.MockTransport(handler))
+    assert [(c.ok, c.items, c.mapped) for c in checks] == [(True, 2, 2), (True, 1, 1)]
+    assert checks[0].total == 7338 and not problems(checks)
+    md = render(checks, days=7)
+    assert md.startswith("# CLIK API") and "SECRET" not in md
+
+
+async def test_sources_check_masks_the_clik_key_on_error() -> None:
+    from app.sources.check import check_clik, problems
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        return httpx.Response(200, json=BAD_KEY)
+
+    checks = await check_clik("SECRET", transport=httpx.MockTransport(handler))
+    assert not checks[0].ok and "ERROR01" in (checks[0].error or "")
+    assert all("SECRET" not in (c.error or "") for c in checks)
+    assert len(problems(checks)) == 2

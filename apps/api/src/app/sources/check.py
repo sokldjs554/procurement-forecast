@@ -29,8 +29,8 @@ import httpx
 
 from app.clock import today_kst
 from app.log import redact_secrets
-from app.sources import g2b
-from app.sources.base import DocType
+from app.sources import clik, g2b
+from app.sources.base import DocType, parse_compact_date
 from app.sources.http import ResilientClient
 from app.sources.resilience import MemoryBreaker, MemoryLimiter
 
@@ -163,6 +163,89 @@ def _inspect(
         }
 
 
+async def check_clik(
+    api_key: str,
+    *,
+    rows: int = 5,
+    council: str | None = None,
+    transport: httpx.AsyncBaseTransport | None = None,
+) -> list[OperationCheck]:
+    """CLIK: the newest page of the minutes list, then one detail call for its first row."""
+    client = ResilientClient(
+        "clik-check",
+        base_url=clik.BASE_URL,
+        limiter=MemoryLimiter(),
+        breaker=MemoryBreaker(),
+        max_attempts=3,  # clik.nanet.go.kr resets some TLS handshakes too
+        transport=transport,
+    )
+    path = clik.DEFAULTS["path"]
+    listing = OperationCheck("clik_minutes", f"{path}?displayType=list")
+    detail = OperationCheck("clik_minutes", f"{path}?displayType=detail")
+    started = time.perf_counter()
+    items: list[dict[str, Any]] = []
+    try:
+        params: dict[str, Any] = {
+            "key": api_key,
+            "type": "json",
+            "displayType": "list",
+            "startCount": 0,
+            "listCount": rows,
+            "searchType": "ALL",
+            "sort": "MTG_DE/DESC",
+        } | ({"rasmblyId": council} if council else {})
+        env = clik.envelope(await client.get_json(path, params=params))
+        items = clik.list_rows(env)
+        listing.ok, listing.total, listing.items = True, env.get("TOTAL_COUNT"), len(items)
+        mapped = [r for r in items if r.get("DOCID") and parse_compact_date(r.get("MTG_DE"))]
+        listing.mapped = len(mapped)
+        listing.publisher = _share(sum(bool(r.get("RASMBLY_NM")) for r in mapped), len(mapped))
+        listing.coverage = {
+            k: _share(sum(bool(r.get(f)) for r in mapped), len(mapped))
+            for k, f in (("meeting", "MTGNM"), ("session", "RASMBLY_SESN"))
+        }
+        if items and not mapped:
+            listing.dropped_item_keys = sorted(items[0])
+        if mapped:
+            row = mapped[0]
+            listing.sample = {
+                "id": row["DOCID"],
+                "title": clik.meeting_title(row),
+                "published": str(parse_compact_date(row["MTG_DE"])),
+                "publisher": row.get("RASMBLY_NM"),
+            }
+    except Exception as exc:  # report every failure mode, never the key
+        listing.error = _mask(f"{type(exc).__name__}: {exc}", api_key)[:500]
+    listing.latency_ms = int((time.perf_counter() - started) * 1000)
+    if listing.mapped:
+        started = time.perf_counter()
+        adapter = clik.ClikMinutesAdapter(client, api_key)
+        row = next(r for r in items if r.get("DOCID") and parse_compact_date(r.get("MTG_DE")))
+        try:
+            rec = await adapter.read_meeting(clik.external_id(clik.meeting_key(row)), [row])
+        except Exception as exc:
+            detail.error = _mask(f"{type(exc).__name__}: {exc}", api_key)[:500]
+        else:
+            detail.ok, detail.total, detail.items = True, 1, 1
+            if rec is not None:
+                detail.mapped = 1
+                detail.publisher = 1.0 if rec.publisher_raw else 0.0
+                detail.coverage = {
+                    "original_file_url": 1.0 if rec.structured.get("original_file_url") else 0.0
+                }
+                detail.sample = {
+                    "id": rec.structured["docid"],
+                    "title": f"{rec.title} · 본문 {len(rec.content or b''):,}바이트",
+                    "published": rec.published_at.isoformat(),
+                    "publisher": rec.publisher_raw,
+                }
+        detail.latency_ms = int((time.perf_counter() - started) * 1000)
+    else:
+        detail.error = "목록에서 읽은 행이 없어 호출하지 않음"
+    await client.aclose()
+    return [listing, detail]
+
+
 # 공공데이터포털 lists each service separately and a key works only for services applied for.
 PORTAL_SERVICES = {
     "OrderPlanSttusService": (
@@ -206,6 +289,9 @@ _LABEL = {
     "opinion_deadline": "의견마감",
     "prespec_no": "사전규격번호",
     "bid_close_at": "입찰마감",
+    "meeting": "회의명",
+    "session": "회수",
+    "original_file_url": "원본 파일 URL",
 }
 
 
@@ -218,10 +304,16 @@ def _pct(v: float | None) -> str:
 
 
 def render(checks: list[OperationCheck], *, days: int) -> str:
+    provider = "CLIK" if checks and all(c.source.startswith("clik") for c in checks) else "조달청"
     lines = [
-        "# 조달청 API 실호출 점검 (자동 생성: `manage sources check`)",
+        f"# {provider} API 실호출 점검 (자동 생성: `manage sources check`)",
         "",
-        f"기준일 {today_kst().isoformat()} · 최근 {days}일 · 오퍼레이션마다 첫 페이지 1회 호출",
+        f"기준일 {today_kst().isoformat()} · "
+        + (
+            "최신 목록 1쪽과 그 첫 회의록의 상세, 2회 호출"
+            if provider == "CLIK"
+            else f"최근 {days}일 · 오퍼레이션마다 첫 페이지 1회 호출"
+        ),
         "",
         "| 수집원 | 오퍼레이션 | 결과 | 전체 건수 | 받은 항목 | 레코드로 변환 | 기관명 | 연결·랭킹 필드 채움 비율 |",
         "|---|---|---|---:|---:|---:|---:|---|",
@@ -267,7 +359,8 @@ def render(checks: list[OperationCheck], *, days: int) -> str:
             amount = f"{s['amount_krw']:,}원" if s.get("amount_krw") is not None else "금액 없음"
             lines.append(
                 f"- `{c.path.rsplit('/', 1)[-1]}` {s['published']} · "
-                f"{_cell(s['publisher'] or '기관 미상')} · {_cell(s['title'])} · {amount}"
+                f"{_cell(s['publisher'] or '기관 미상')} · {_cell(s['title'])}"
+                + ("" if c.source.startswith("clik") else f" · {amount}")
             )
     return "\n".join(lines) + "\n"
 

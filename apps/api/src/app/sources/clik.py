@@ -166,7 +166,7 @@ class ClikMinutesAdapter:
             if cap is not None and self.stats["details"] >= int(cap):
                 self.stats["skipped:cap"] += 1
                 continue
-            rec = await self._detail(ext, meetings[mk])
+            rec = await self.read_meeting(ext, meetings[mk])
             if rec is not None:
                 yield rec
 
@@ -186,8 +186,7 @@ class ClikMinutesAdapter:
             if council:
                 params["rasmblyId"] = council
             payload = await self.client.get_json(self._cfg["path"], params=params)
-            envelope = _envelope(payload)
-            rows = list_rows(envelope)
+            rows = list_rows(envelope(payload))
             self.stats["listed"] += len(rows)
             oldest = None
             for row in rows:
@@ -207,7 +206,8 @@ class ClikMinutesAdapter:
                 return
             start += size
 
-    async def _detail(self, ext: str, rows: list[dict[str, Any]]) -> RawRecord | None:
+    async def read_meeting(self, ext: str, rows: list[dict[str, Any]]) -> RawRecord | None:
+        """One detail call for the first of a meeting's revisions."""
         row = rows[0]
         docid = str(row["DOCID"])
         self.stats["details"] += 1
@@ -215,7 +215,7 @@ class ClikMinutesAdapter:
             self._cfg["path"],
             params={"key": self._api_key, "type": "json", "displayType": "detail", "docid": docid},
         )
-        detail = _envelope(payload)
+        detail = envelope(payload)
         body = detail.get("MINTS_HTML")
         if not body or not str(body).strip():
             self.stats["empty"] += 1
@@ -252,7 +252,7 @@ class ClikMinutesAdapter:
         )
 
 
-def _envelope(payload: Any) -> dict[str, Any]:
+def envelope(payload: Any) -> dict[str, Any]:
     """The first object of the answer, after checking its result code."""
     obj = payload[0] if isinstance(payload, list) and payload else payload
     if not isinstance(obj, dict):

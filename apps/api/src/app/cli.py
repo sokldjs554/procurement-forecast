@@ -7,6 +7,7 @@ manage eval all --record          # extraction / linking / OCR / realistic-set e
 manage eval llm --dry-run         # Claude model × effort comparison on the hand-written set
 manage bench --report ../../docs/performance.md   # hot-query plans at volume
 manage sources check              # first real call to each 조달청 operation (needs the data.go.kr key)
+manage sources check -s clik_minutes   # CLIK minutes list + one detail (needs the CLIK key)
 manage sources ingest -s g2b --days 30 --max-calls 250   # backfill a window, counting calls
 manage pipeline run               # process pending documents and link their signals
 manage worker                     # arq worker + cron (+ /healthz on $PORT for Cloud Run)
@@ -228,30 +229,48 @@ def eval_llm(
 @sources_app.command("check")
 def sources_check(
     source: list[str] = typer.Option(
-        None, "--source", "-s", help="g2b_order_plan | g2b_prespec | g2b_bid (default: all)"
+        None,
+        "--source",
+        "-s",
+        help="g2b_order_plan | g2b_prespec | g2b_bid | clik_minutes (default: the three g2b)",
     ),
-    days: int = typer.Option(7, min=1, max=31, help="Look back this many days"),
+    days: int = typer.Option(7, min=1, max=31, help="Look back this many days (g2b)"),
     rows: int = typer.Option(20, min=1, max=100, help="Items per call"),
+    council: str = typer.Option(None, help="CLIK 지방의회 ID (rasmblyId), e.g. 031013"),
     report: Path = typer.Option(None, help="Write a Markdown report here"),
 ) -> None:
-    """Call each 조달청 operation once with APP_DATA_GO_KR_SERVICE_KEY and check that the
-    adapter can read what comes back. No database needed; nothing is stored.
+    """Call each 조달청 operation once with APP_DATA_GO_KR_SERVICE_KEY — or, with
+    ``-s clik_minutes``, the CLIK minutes list and one detail with APP_CLIK_API_KEY — and check
+    that the adapter can read what comes back. No database needed; nothing is stored.
 
     Exits 1 when any call failed or an operation's items could not be mapped."""
-    from app.sources.check import as_json, check_g2b, problems, render
+    from app.sources.check import as_json, check_clik, check_g2b, problems, render
     from app.sources.g2b import OPERATIONS
 
     configure_logging(json=False, level="WARNING", stream=sys.stderr)
-    if unknown := sorted(set(source or ()) - set(OPERATIONS)):
+    known = [*OPERATIONS, "clik_minutes"]
+    if unknown := sorted(set(source or ()) - set(known)):
         raise typer.BadParameter(
-            f"unknown {', '.join(unknown)}; one of {', '.join(OPERATIONS)}", param_hint="--source"
+            f"unknown {', '.join(unknown)}; one of {', '.join(known)}", param_hint="--source"
         )
-    secret = get_settings().data_go_kr_service_key
-    if secret is None:
-        typer.echo("APP_DATA_GO_KR_SERVICE_KEY is not set (.env or environment)", err=True)
-        raise typer.Exit(2)
-    key = secret.get_secret_value()
-    checks = _run(lambda: check_g2b(key, sources=source or None, days=days, rows=rows))
+    wanted = list(source or OPERATIONS)
+    g2b_sources = [s for s in wanted if s in OPERATIONS]
+    settings = get_settings()
+    checks = []
+    if "clik_minutes" in wanted:
+        clik_secret = settings.clik_api_key
+        if clik_secret is None:
+            typer.echo("APP_CLIK_API_KEY is not set (.env or environment)", err=True)
+            raise typer.Exit(2)
+        clik_key = clik_secret.get_secret_value()
+        checks += _run(lambda: check_clik(clik_key, rows=min(rows, 100), council=council))
+    if g2b_sources:
+        secret = settings.data_go_kr_service_key
+        if secret is None:
+            typer.echo("APP_DATA_GO_KR_SERVICE_KEY is not set (.env or environment)", err=True)
+            raise typer.Exit(2)
+        key = secret.get_secret_value()
+        checks += _run(lambda: check_g2b(key, sources=g2b_sources, days=days, rows=rows))
     for c in checks:
         status = f"{c.mapped}/{c.items} mapped (total {c.total})" if c.ok else f"FAILED {c.error}"
         typer.echo(f"{c.path.rsplit('/', 1)[-1]:<36} {status}", err=True)
