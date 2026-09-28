@@ -30,6 +30,20 @@ _SPEAKER_RE = re.compile(
 GLUED_MEMBER_RE = re.compile(
     r"^[○◯◎]\s*(?P<name>[가-힣]{2,4})(?P<role>위원|의원)(?:\s{2,}|$)(?P<speech>.*)$"
 )
+# Most councils in CLIK (109 of 178 minutes from 52 councils, 2026-09-28) put a space between:
+# "○최광선 의원  존경하는…", "○오문섭 위원 사실 오늘…", "○김석환 의원" (speech on the next line).
+# The space is what tells "○박재신 위원" (a member) from "○위원장 박재신" and "○전문위원 홍길동".
+SPACED_MEMBER_RE = re.compile(
+    r"^[○◯◎]\s*(?!(?:출석|전문)\s)(?P<name>[가-힣]{2,4})\s(?P<role>위원|의원)(?:\s*:\s*|\s+|$)"
+    r"(?P<speech>.*)$"
+)
+
+
+def match_member(line: str) -> re.Match[str] | None:
+    """A council member's speaker line, in either spelling; groups ``name``, ``role``, ``speech``."""
+    return GLUED_MEMBER_RE.match(line) or SPACED_MEMBER_RE.match(line)
+
+
 _MEMBER_ROLES = ("위원", "의원")
 _CHAIR_ROLES = ("위원장", "의장", "부의장")
 
@@ -65,7 +79,7 @@ def split_turns(text: str) -> list[Turn]:
     offset = 0
     for line in text.splitlines(keepends=True):
         stripped = line.strip()
-        m = GLUED_MEMBER_RE.match(stripped) or _SPEAKER_RE.match(stripped)
+        m = match_member(stripped) or _SPEAKER_RE.match(stripped)
         line_end = offset + len(line.rstrip("\r\n"))
         if m:
             turns.append(
