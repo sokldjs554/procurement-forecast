@@ -301,8 +301,8 @@ def parse_board_rows(
         posted = parse_date(" ".join(row.texts))
         link = next((ln for ln in row.links if detail_re.search(ln.href) and ln.text), None)
         if link is not None:
-            title = (link.tooltip if title_attr else "") or link.text
-            rows.append(BoardRow(title, urljoin(base_url, link.href), posted))
+            name = (link.tooltip if title_attr else "") or link.text
+            rows.append(BoardRow(name, urljoin(base_url, link.href), posted))
             continue
         if attach_re is None:
             continue
