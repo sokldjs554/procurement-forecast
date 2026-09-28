@@ -204,3 +204,32 @@ def test_html_to_text_keeps_speaker_lines() -> None:
         "○위원 박지훈 질문입니다.",
         "○과장 이정민 답변입니다.",
     ]
+
+
+# 성남시의회 제312회 예산결산특별위원회 제1차(2026.09.04.), HWP: members are printed with the name
+# glued to 위원 ("○조우현위원"), officials as role then name ("○분당구청장 정상철").
+SNCOUNCIL_MINUTES = (
+    "○위원장 서은경  다음은 조우현 위원님 질의해 주시기 바랍니다.\n"
+    "○조우현위원  우리 분당구청은 어때요? 분당구청 전동보장구 충전시설 이게 예산에 잡혀 있는 게 "
+    "아니고 기설치돼 있나요, 다?\n"
+    "○분당구청장 정상철  설치되어 있는 걸 제외하고 이번에 다 하는 겁니다. \n"
+    "○조우현위원  이번에? \n"
+    "○분당구청장 정상철  예.\n"
+    "○전문위원 홍길동 보고드리겠습니다.\n"
+)
+
+
+def test_split_turns_reads_names_glued_to_the_member_role() -> None:
+    turns = split_turns(SNCOUNCIL_MINUTES)
+    assert [(t.role, t.name) for t in turns] == [
+        ("위원장", "서은경"),
+        ("위원", "조우현"),
+        ("분당구청장", "정상철"),
+        ("위원", "조우현"),
+        ("분당구청장", "정상철"),
+        ("전문위원", "홍길동"),  # one space after the role: a role, not a member's name
+    ]
+    chunks = chunk_minutes(SNCOUNCIL_MINUTES)
+    assert [c.kind for c in chunks] == ["procedure", "exchange", "exchange"]
+    assert chunks[1].labels == ["위원 조우현", "분당구청장 정상철"]
+    assert "전동보장구 충전시설" in chunks[1].text and "다 하는 겁니다" in chunks[1].text

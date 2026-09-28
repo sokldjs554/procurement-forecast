@@ -40,8 +40,8 @@ Real sites stray from that shape in three ways, each handled by configuration:
   decides whether it is in the window, and the file's ``Last-Modified`` is its date.
 
 Any of ``layout``, ``detail_pattern``, ``attachment_pattern``, ``id_param``, ``page_param``,
-``title_keywords``, ``title_pattern`` (a regex the title must match) and ``script_links`` can be
-set per board, overriding the source-level value. ``legacy_tls_hosts`` lists hosts that only
+``title_keywords``, ``title_pattern`` (a regex the title must match), ``script_links`` and
+``title_attr`` (take the post link's ``title`` attribute as the post title) can be set per board, overriding the source-level value. ``legacy_tls_hosts`` lists hosts that only
 speak old TLS cipher suites (see ``http.legacy_cipher_context``; certificates are still verified).
 """
 
@@ -143,6 +143,7 @@ class Link:
     text: str
     onclick: str = ""
     context: tuple[str, ...] = ()  # headings above the link, then its row's own text
+    tooltip: str = ""  # the link's title="…" attribute
 
     @property
     def title(self) -> str:
@@ -184,6 +185,7 @@ class _RowCollector(HTMLParser):
         self._in_link = False
         self._href = ""
         self._onclick = ""
+        self._tooltip = ""
         self._link_text: list[str] = []
         self._headings: dict[int, str] = {}
         self._heading: tuple[int, list[str]] | None = None
@@ -194,6 +196,7 @@ class _RowCollector(HTMLParser):
         elif tag == "a":
             a = dict(attrs)
             self._href, self._onclick = a.get("href") or "", a.get("onclick") or ""
+            self._tooltip = " ".join((a.get("title") or "").split())
             self._in_link = bool(self._href or self._onclick)
             self._link_text = []
         elif len(tag) == 2 and tag[0] == "h" and tag[1] in "123456":
@@ -207,6 +210,7 @@ class _RowCollector(HTMLParser):
                 " ".join("".join(self._link_text).split()),
                 self._onclick,
                 (*(self._headings[k] for k in sorted(self._headings)), " ".join(labels)),
+                self._tooltip,
             )
             self.links.append(link)
             if self._row is not None:
@@ -279,8 +283,12 @@ def parse_board_rows(
     detail_pattern: str,
     attachment_pattern: str | None = None,
     script_links: ScriptLinks | None = None,
+    title_attr: bool = False,
 ) -> list[BoardRow]:
     """Rows that link to a post: title = link text, date = first date in the row.
+
+    With ``title_attr`` the post link's ``title="…"`` attribute is the title when it has one:
+    some boards print only a short label ("[임시] 본회의") and keep the full name there.
 
     With ``attachment_pattern``, a row that has no post link but lists files is a post by
     itself: its title is the first other link's text and its files come with it."""
@@ -293,7 +301,8 @@ def parse_board_rows(
         posted = parse_date(" ".join(row.texts))
         link = next((ln for ln in row.links if detail_re.search(ln.href) and ln.text), None)
         if link is not None:
-            rows.append(BoardRow(link.text, urljoin(base_url, link.href), posted))
+            title = (link.tooltip if title_attr else "") or link.text
+            rows.append(BoardRow(title, urljoin(base_url, link.href), posted))
             continue
         if attach_re is None:
             continue
@@ -388,6 +397,7 @@ _BOARD_OPTIONS = (
     "title_keywords",
     "title_pattern",
     "script_links",
+    "title_attr",
 )
 
 
@@ -404,6 +414,7 @@ class Board:
     title_keywords: list[str] = field(default_factory=lambda: ["예산서", "사업명세서"])
     title_pattern: str | None = None
     script_links: ScriptLinks = field(default_factory=list)
+    title_attr: bool = False
 
     @classmethod
     def from_config(cls, board: dict[str, Any], defaults: dict[str, Any]) -> Board:
@@ -533,7 +544,12 @@ class BoardCrawlerAdapter:
             html = (await self._get(url)).content.decode("utf-8", errors="replace")
             self.stats.pages += 1
             rows = parse_board_rows(
-                html, url, board.detail_pattern, board.attachment_pattern, board.script_links
+                html,
+                url,
+                board.detail_pattern,
+                board.attachment_pattern,
+                board.script_links,
+                title_attr=board.title_attr,
             )
             fresh = [r for r in rows if r.url not in seen]
             if not fresh:

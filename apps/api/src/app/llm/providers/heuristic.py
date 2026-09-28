@@ -26,6 +26,7 @@ from app.domain.timing import resolve_timing
 from app.llm.prompts import EXTRACT_PROMPT_VERSION, BriefFacts, ChunkContext
 from app.llm.schemas import Commitment, ExtractedSignal, ExtractionOutput
 from app.llm.types import LLMResult
+from app.parsing.chunking import GLUED_MEMBER_RE
 
 HEURISTIC_VERSION = "heuristic-v2"
 
@@ -97,9 +98,10 @@ def _answer_text(chunk_text: str) -> tuple[str, str]:
     answer: list[str] = []
     current = question
     for line in chunk_text.splitlines():
-        m = re.match(r"^[○◯◎]\s*(?P<role>[가-힣A-Za-z·]+)\s+[가-힣]{2,4}\s+", line.strip())
         content = line
-        if m:
+        if glued := GLUED_MEMBER_RE.match(line.strip()):
+            current, content = question, glued.group("speech")
+        elif m := re.match(r"^[○◯◎]\s*(?P<role>[가-힣A-Za-z·]+)\s+[가-힣]{2,4}\s+", line.strip()):
             current = question if m.group("role") in _MEMBER_ROLES else answer
             content = _SPEAKER_PREFIX_RE.sub("", line.strip())
         current.append(content)

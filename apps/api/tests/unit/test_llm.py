@@ -13,7 +13,7 @@ import pytest
 from app.llm.budget import MemorySpendGuard
 from app.llm.prompts import EXTRACT_SYSTEM, ChunkContext, extract_user_message
 from app.llm.providers.anthropic_provider import AnthropicProvider
-from app.llm.providers.heuristic import HeuristicProvider
+from app.llm.providers.heuristic import HeuristicProvider, _answer_text
 from app.llm.schemas import ExtractionOutput, strict_json_schema
 from app.llm.service import LLMService, cache_key
 from app.llm.types import LLMConfigError, LLMRefusedError, LLMUnavailableError, Usage
@@ -480,3 +480,13 @@ async def test_heuristic_reads_real_budget_table_rows(
         assert signals == []
     else:
         assert [(s.title, s.budget_krw, s.expected_year) for s in signals] == [expected]
+
+
+def test_heuristic_reads_a_glued_member_line_as_the_question() -> None:
+    # 성남시의회 prints members as "○조우현위원"; that line is the question, not an answer.
+    question, answer = _answer_text(
+        "○조우현위원  분당구청 전동보장구 충전시설 이게 예산에 잡혀 있나요?\n"
+        "○분당구청장 정상철  설치되어 있는 걸 제외하고 이번에 다 하는 겁니다."
+    )
+    assert question == "분당구청 전동보장구 충전시설 이게 예산에 잡혀 있나요?"
+    assert answer == "설치되어 있는 걸 제외하고 이번에 다 하는 겁니다."
