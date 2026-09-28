@@ -28,6 +28,9 @@ from app.domain.krw import (
         ("내년도에 2억 8천 정도 들 것으로", 280_000_000),
         ("1억 5백 규모", 105_000_000),
         ("1조 2천", 1_200_000_000_000),
+        # the same with a bare number (성남시의회 minutes: "예산액은 한 2억 4000 정도로")
+        ("예산액은 한 2억 4000 정도로 예산을 하고", 240_000_000),
+        ("1조 5000 규모", 1_500_000_000_000),
         ("5만 3천원", 53_000),  # after 만 the tail is literal
         ("3억 5천만원을 편성", 350_000_000),  # explicit 만 unchanged
         # written amounts (ending in 원) are exact, however the tail is spelled
@@ -35,6 +38,7 @@ from app.domain.krw import (
         ("2억 3천원", 200_003_000),
         ("2억 8천 5백원", 200_008_500),
         ("2억 8천500원", 200_008_500),
+        ("2억 4000원", 200_004_000),
     ],
 )
 def test_parse_krw_spoken_and_written_forms(text: str, expected: int) -> None:
@@ -43,6 +47,12 @@ def test_parse_krw_spoken_and_written_forms(text: str, expected: int) -> None:
 
 def test_trailing_year_is_not_swallowed_into_amount() -> None:
     assert parse_krw("사업비 2억 2027년 착공 예정") == 200_000_000
+
+
+def test_bare_tail_is_not_a_count_year_or_decimal() -> None:
+    assert parse_krw("2억 10개소 설치") == 200_000_000
+    assert parse_krw("2억 2027년도 착공") == 200_000_000
+    assert parse_krw("2억 4000.5") == 200_000_000
 
 
 def test_hangul_digits_do_not_fire_on_place_names() -> None:

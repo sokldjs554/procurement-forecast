@@ -11,6 +11,7 @@ on all of them because it is the referee that checks the LLM's ``budget_krw`` ag
     "삼억 오천만 원"    → 350,000,000   (hangul numerals — appear in transcribed speech)
     "350,000" + unit=1000 (table cell under "(단위: 천원)") → 350,000,000
     "2억 8천 정도"     → 280,000,000   (spoken: the 만 after 8천 is left out)
+    "2억 4000 정도"    → 240,000,000   (spoken: the 만 after 4000 is left out)
 
 The algorithm is the usual positional one: small units (십/백/천) accumulate into a section,
 large units (만/억/조) flush the section into the total. One spoken convention on top: a trailing
@@ -48,8 +49,12 @@ _NUM = r"\d[\d,]*(?:\.\d+)?"
 _HNUM = r"[영공일이삼사오육륙칠팔구]"
 _UNIT = r"[십백천만억조]"
 _PART = rf"(?:{_NUM}|{_HNUM})\s?{_UNIT}+|{_UNIT}+"
+# Spoken tail with no unit right after 억/조 ("2억 4000 정도"): up to four digits, not a year,
+# date or count ("2억 2027년", "3억 10개소").
+_BARE_TAIL = r"(?<=[억조])\s?\d{1,4}(?![\d,.]|\s?[년월일개명건호차회층곳%])"
 _SPAN_RE = re.compile(
-    rf"(?P<body>(?:{_NUM}|{_HNUM})\s?{_UNIT}+(?:\s?(?:{_PART}))*(?:\s?{_NUM}(?=\s?원))?)\s?(?P<won>원)?"
+    rf"(?P<body>(?:{_NUM}|{_HNUM})\s?{_UNIT}+(?:\s?(?:{_PART}))*"
+    rf"(?:\s?{_NUM}(?=\s?원)|{_BARE_TAIL})?)\s?(?P<won>원)?"
     rf"|(?P<plain>{_NUM})\s?(?P<won2>원)"
 )
 _TOKEN_RE = re.compile(rf"{_NUM}|{_HNUM}|{_UNIT}")
@@ -103,6 +108,8 @@ def _evaluate(body: str, *, spoken: bool = True) -> int | None:
             pending = number
     if spoken and section and pending is None and last_large >= _LARGE["억"]:
         section *= last_large // _LARGE["만"]  # "2억 8천" → 8천만, "1조 2천" → 2천억
+    if spoken and not section and pending is not None and last_large >= _LARGE["억"]:
+        pending *= last_large // _LARGE["만"]  # "2억 4000" → 4000만 (the 만 is left out)
     total += section + (pending if pending is not None else Decimal(0))
     if not saw_unit and total == 0:
         return None
