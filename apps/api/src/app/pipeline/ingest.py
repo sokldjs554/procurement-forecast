@@ -26,7 +26,7 @@ from app.domain.institutions import (
 )
 from app.log import get_logger
 from app.runtime import Runtime
-from app.sources.base import FetchWindow, RawRecord, SourceAdapter
+from app.sources.base import FetchWindow, RawRecord, SkipsStored, SourceAdapter
 from app.storage import store_raw
 
 log = get_logger(__name__)
@@ -244,6 +244,17 @@ async def run_ingest(
     session.add(run)
     await session.flush()
     stats = IngestStats()
+    if isinstance(adapter, SkipsStored):
+
+        async def known(ids: list[str]) -> set[str]:
+            stored = await session.scalars(
+                select(Document.external_id).where(
+                    Document.source_id == source.id, Document.external_id.in_(ids)
+                )
+            )
+            return set(stored.all())
+
+        adapter.known_external_ids = known
     try:
         async for rec in adapter.fetch(window):
             stats.fetched += 1
