@@ -24,6 +24,12 @@ MAX_CHUNK_CHARS = 2400
 _SPEAKER_RE = re.compile(
     r"^[○◯◎]\s*(?P<role>[가-힣A-Za-z·]{1,20}?)\s+(?P<name>[가-힣]{2,4})(?:\s{1,}|$)(?P<speech>.*)$"
 )
+# 성남시의회 (and other councils' HWP minutes) print members as "○조우현위원  질문": the name glued
+# to 위원/의원, then two spaces. Officials keep "○교통도로국장 유동  답변". Without two spaces after
+# the role, "○전문위원 홍길동" stays a role followed by a name.
+GLUED_MEMBER_RE = re.compile(
+    r"^[○◯◎]\s*(?P<name>[가-힣]{2,4})(?P<role>위원|의원)(?:\s{2,}|$)(?P<speech>.*)$"
+)
 _MEMBER_ROLES = ("위원", "의원")
 _CHAIR_ROLES = ("위원장", "의장", "부의장")
 
@@ -59,7 +65,7 @@ def split_turns(text: str) -> list[Turn]:
     offset = 0
     for line in text.splitlines(keepends=True):
         stripped = line.strip()
-        m = _SPEAKER_RE.match(stripped)
+        m = GLUED_MEMBER_RE.match(stripped) or _SPEAKER_RE.match(stripped)
         line_end = offset + len(line.rstrip("\r\n"))
         if m:
             turns.append(
@@ -83,7 +89,10 @@ def chunk_minutes(text: str) -> list[Chunk]:
             cut = text.rfind(".", start, start + MAX_CHUNK_CHARS)
             cut = cut + 1 if cut > start + 200 else start + MAX_CHUNK_CHARS
             chunks.append(Chunk(len(chunks), start, cut, text[start:cut], labels, kind))
-            start = cut
+            # A short line that ends the piece ("주요사업비 예산 반영 내역입니다.") introduces what
+            # follows, so the next piece starts with it too.
+            lead = text.rfind("\n", start, cut) + 1
+            start = lead if lead > start and len(text[lead:cut].strip()) <= 60 else cut
         chunks.append(Chunk(len(chunks), start, end, text[start:end], labels, kind))
 
     i = 0

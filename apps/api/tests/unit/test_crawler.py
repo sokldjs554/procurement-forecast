@@ -548,3 +548,125 @@ def test_legacy_ciphers_keep_certificate_checks() -> None:
     assert ctx.check_hostname
     assert "AES128-SHA" in {c["name"] for c in ctx.get_ciphers()}
     assert "AES128-SHA" not in {c["name"] for c in ssl.create_default_context().get_ciphers()}
+
+
+# 성남시의회 최근회의록 (http://www.sncouncil.go.kr/kr/assembly/late.do, 2026-09-28), trimmed. The
+# link text is only "[임시] 본회의"; the full name and date are in its title attribute.
+SNCOUNCIL_ROWS = """<table class="normal_list">
+<thead><tr><th>번호</th><th>대수</th><th>회수</th><th>차수</th><th>회의명</th><th>일자</th></tr></thead>
+<tbody>
+<tr><td class="first-child"> 6811 </td><td>10대</td><td> 제312회 </td><td>2차</td>
+<td> <a href="/record/recordView.do?key=1d996c673937d436" target="_blank"
+ title="제312회 의회운영위원회 제2차(2026.09.22.)">[임시] 의회운영위원회</a> </td>
+<td class="last-child">2026.09.22 화요일</td></tr>
+<tr><td class="first-child"> 6810 </td><td>10대</td><td> 제312회 </td><td>2차</td>
+<td> <a href="/record/recordView.do?key=b2766b78a00faff3" target="_blank"
+ title="제312회 본회의 제2차(2026.09.07.)">[임시] 본회의</a> </td>
+<td class="last-child">2026.09.07 월요일</td></tr>
+<tr><td class="first-child"> 6809 </td><td>10대</td><td> 제312회 </td><td>1차</td>
+<td> <a href="/record/recordView.do?key=a8dc4f23fc80e613" target="_blank"
+ title="제312회 예산결산특별위원회 제1차(2026.09.04.)">[임시] 예산결산특별위원회</a> </td>
+<td class="last-child">2026.09.04 금요일</td></tr>
+</tbody></table>
+<div id="pagingNav"> <a class='num_current' title='현재 페이지'>1</a>
+<a href='?pageNum=2' class='num' title='2 페이지로 이동'>2</a> </div>"""
+
+# Its minutes page (/record/recordView.do): appendices, then the minutes themselves as HWP.
+SNCOUNCIL_VIEW = """<ul class="treeview-menu">
+<li><a href="/record/appendixCompressDownload.do?key=a8dc4f23fc80e613&download=Y" target="_blank"
+ title="전체부록다운로드"><i class="fa fa-download"></i>전체부록다운로드</a></li>
+<li><a href="/record/appendixDownload.do?key=babd1f55e1899877" target="_blank"
+ title="312_1_예산결산특별위원회_의사일정안"><i class="fa fa-download"></i>
+ 312_1_예산결산특별위원회_의사일정안</a></li>
+</ul>
+<li class="item over-hidden">
+<a href="/record/HwpDownload.do?key=a8dc4f23fc80e613" target="_blank" title="원본파일 - 10E0110312012">
+<i class="fa fa-download"></i><span class="fs10">hwp 파일 다운로드</span></a></li>"""
+
+
+def test_title_attribute_names_the_post_when_asked() -> None:
+    base = "http://www.sncouncil.go.kr/kr/assembly/late.do"
+    rows = parse_board_rows(SNCOUNCIL_ROWS, base, r"recordView\.do", title_attr=True)
+    assert [(r.title, r.posted) for r in rows] == [
+        ("제312회 의회운영위원회 제2차(2026.09.22.)", date(2026, 9, 22)),
+        ("제312회 본회의 제2차(2026.09.07.)", date(2026, 9, 7)),
+        ("제312회 예산결산특별위원회 제1차(2026.09.04.)", date(2026, 9, 4)),
+    ]
+    assert rows[1].url == "http://www.sncouncil.go.kr/record/recordView.do?key=b2766b78a00faff3"
+    # off by default: the link text stays the title
+    short = parse_board_rows(SNCOUNCIL_ROWS, base, r"recordView\.do")
+    assert [r.title for r in short] == [
+        "[임시] 의회운영위원회",
+        "[임시] 본회의",
+        "[임시] 예산결산특별위원회",
+    ]
+
+
+async def test_council_minutes_board_takes_only_the_minutes_file() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        path = request.url.path
+        if path == "/robots.txt":
+            return httpx.Response(200, text="User-agent: *\nAllow:/\n")
+        if path == "/kr/assembly/late.do":
+            page = request.url.params.get("pageNum", "1")
+            return httpx.Response(200, text=SNCOUNCIL_ROWS if page == "1" else "<table></table>")
+        if path == "/record/recordView.do":
+            return httpx.Response(200, text=SNCOUNCIL_VIEW)
+        if path.startswith("/record/"):
+            return httpx.Response(200, content=HWP5)
+        return httpx.Response(404)
+
+    board = {
+        "url": "http://www.sncouncil.go.kr/kr/assembly/late.do",
+        "institution_code": "CN-41130",
+        "publisher": "경기도 성남시의회",
+    }
+    adapter, requested = _adapter(
+        handler,
+        boards=[board],
+        doc_type="council_minutes",
+        detail_pattern=r"recordView\.do",
+        attachment_pattern=r"HwpDownload\.do",
+        id_param="key",
+        page_param="pageNum",
+        title_attr=True,
+        title_keywords=[],
+        title_pattern=r"본회의|예산결산특별위원회",
+    )
+    records = [r async for r in adapter.fetch(FetchWindow(date(2025, 9, 1), date(2026, 9, 28)))]
+    assert [(r.external_id, r.title, r.doc_type, r.mime) for r in records] == [
+        (
+            "b2766b78a00faff3",
+            "제312회 본회의 제2차(2026.09.07.)",
+            "council_minutes",
+            "application/x-hwp",
+        ),
+        (
+            "a8dc4f23fc80e613",
+            "제312회 예산결산특별위원회 제1차(2026.09.04.)",
+            "council_minutes",
+            "application/x-hwp",
+        ),
+    ]
+    assert records[0].url == "http://www.sncouncil.go.kr/record/recordView.do?key=b2766b78a00faff3"
+    assert records[0].institution_code_hint == "CN-41130"
+    assert "fiscal_year" not in records[0].structured  # budget facts are for budget books only
+    assert adapter.stats.skipped_title == 1  # 의회운영위원회
+    assert not any("appendix" in r for r in requested)  # 부록 are not the minutes
+
+    # past max_files the post pages are not opened either (each is ~0.8 MB here)
+    capped, requested = _adapter(
+        handler,
+        boards=[board],
+        doc_type="council_minutes",
+        detail_pattern=r"recordView\.do",
+        attachment_pattern=r"HwpDownload\.do",
+        page_param="pageNum",
+        title_keywords=[],
+        max_files=1,
+    )
+    assert (
+        len([r async for r in capped.fetch(FetchWindow(date(2025, 9, 1), date(2026, 9, 28)))]) == 1
+    )
+    assert capped.stats.skipped_cap == 2
+    assert sum(r.startswith("/record/recordView.do") for r in requested) == 1

@@ -4,7 +4,7 @@ import zlib
 import pytest
 
 from app.demo.synth import render_hwpx
-from app.parsing.chunking import chunk_budget, chunk_minutes, split_turns
+from app.parsing.chunking import MAX_CHUNK_CHARS, chunk_budget, chunk_minutes, split_turns
 from app.parsing.dispatch import decode_text, structured_to_text
 from app.parsing.hwp import (
     HWPTAG_PARA_TEXT,
@@ -204,3 +204,50 @@ def test_html_to_text_keeps_speaker_lines() -> None:
         "○위원 박지훈 질문입니다.",
         "○과장 이정민 답변입니다.",
     ]
+
+
+# 성남시의회 제312회 예산결산특별위원회 제1차(2026.09.04.), HWP: members are printed with the name
+# glued to 위원 ("○조우현위원"), officials as role then name ("○분당구청장 정상철").
+SNCOUNCIL_MINUTES = (
+    "○위원장 서은경  다음은 조우현 위원님 질의해 주시기 바랍니다.\n"
+    "○조우현위원  우리 분당구청은 어때요? 분당구청 전동보장구 충전시설 이게 예산에 잡혀 있는 게 "
+    "아니고 기설치돼 있나요, 다?\n"
+    "○분당구청장 정상철  설치되어 있는 걸 제외하고 이번에 다 하는 겁니다. \n"
+    "○조우현위원  이번에? \n"
+    "○분당구청장 정상철  예.\n"
+    "○전문위원 홍길동 보고드리겠습니다.\n"
+)
+
+
+def test_split_turns_reads_names_glued_to_the_member_role() -> None:
+    turns = split_turns(SNCOUNCIL_MINUTES)
+    assert [(t.role, t.name) for t in turns] == [
+        ("위원장", "서은경"),
+        ("위원", "조우현"),
+        ("분당구청장", "정상철"),
+        ("위원", "조우현"),
+        ("분당구청장", "정상철"),
+        ("전문위원", "홍길동"),  # one space after the role: a role, not a member's name
+    ]
+    chunks = chunk_minutes(SNCOUNCIL_MINUTES)
+    assert [c.kind for c in chunks] == ["procedure", "exchange", "exchange"]
+    assert chunks[1].labels == ["위원 조우현", "분당구청장 정상철"]
+    assert "전동보장구 충전시설" in chunks[1].text and "다 하는 겁니다" in chunks[1].text
+
+
+def test_a_long_speech_keeps_its_lead_line_with_what_follows() -> None:
+    # 제307회 본회의 제1차: the piece ended on "주요사업비 예산 반영 내역입니다." and the list
+    # itself started the next piece, without the line that says what it is.
+    head = "○행정기획조정실장 주광호  "
+    lead = "  주요사업비 예산 반영 내역입니다. \n"
+    filler = "세입 예산안을 설명드리겠습니다. "
+    n = (MAX_CHUNK_CHARS - len(head) - len(lead) - 10) // len(filler)
+    speech = (
+        head + filler * n + "\n" + lead + "  수내교 전면 개축공사 105억 원, 박물관 건립 168억 원, "
+        "성남시 보훈회관 이전 건립 15억 원 등입니다.\n"
+    )
+    chunks = chunk_minutes(speech)
+    assert len(chunks) == 2
+    assert chunks[0].text.rstrip().endswith("주요사업비 예산 반영 내역입니다.")
+    assert chunks[1].text.lstrip().startswith("주요사업비 예산 반영 내역입니다.")
+    assert speech[chunks[1].char_start : chunks[1].char_end] == chunks[1].text

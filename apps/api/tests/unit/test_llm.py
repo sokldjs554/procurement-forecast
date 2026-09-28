@@ -13,7 +13,7 @@ import pytest
 from app.llm.budget import MemorySpendGuard
 from app.llm.prompts import EXTRACT_SYSTEM, ChunkContext, extract_user_message
 from app.llm.providers.anthropic_provider import AnthropicProvider
-from app.llm.providers.heuristic import HeuristicProvider
+from app.llm.providers.heuristic import HeuristicProvider, _answer_text, _budget_list_signals
 from app.llm.schemas import ExtractionOutput, strict_json_schema
 from app.llm.service import LLMService, cache_key
 from app.llm.types import LLMConfigError, LLMRefusedError, LLMUnavailableError, Usage
@@ -480,3 +480,60 @@ async def test_heuristic_reads_real_budget_table_rows(
         assert signals == []
     else:
         assert [(s.title, s.budget_krw, s.expected_year) for s in signals] == [expected]
+
+
+def test_heuristic_reads_a_glued_member_line_as_the_question() -> None:
+    # 성남시의회 prints members as "○조우현위원"; that line is the question, not an answer.
+    question, answer = _answer_text(
+        "○조우현위원  분당구청 전동보장구 충전시설 이게 예산에 잡혀 있나요?\n"
+        "○분당구청장 정상철  설치되어 있는 걸 제외하고 이번에 다 하는 겁니다."
+    )
+    assert question == "분당구청 전동보장구 충전시설 이게 예산에 잡혀 있나요?"
+    assert answer == "설치되어 있는 걸 제외하고 이번에 다 하는 겁니다."
+
+
+# 성남시의회 제309회 본회의 제1차(2026.03.12.): 2026년 제1회 추경 제안 설명, 행정기획조정실장.
+BUDGET_BILL = (
+    "○행정기획조정실장 전재환  2026년도 제1회 추가경정예산안에 대하여 제안 설명 드리겠습니다.\n"
+    "  주요사업비 예산 반영 내역으로는 판교 시스템반도체 연구센터 조성 263억 원, 수정청소년수련관 "
+    "시설 개선 20억 원, 오리공원 물놀이장 설치 공사비 10억 원, 수내역 광장 재정비 공사비 5억 원, "
+    "판교개발부담금 과오납 환급금 147억 원 등을 반영하였습니다.\n"
+)
+
+
+async def test_heuristic_reads_each_item_of_a_budget_bill_list() -> None:
+    ctx = ChunkContext(
+        doc_type="council_minutes",
+        title="제309회 본회의 제1차(2026.03.12.)",
+        institution="경기도 성남시의회",
+        document_date=date(2026, 3, 12),
+        labels=["행정기획조정실장 전재환"],
+        text=BUDGET_BILL,
+    )
+    signals = (await HeuristicProvider().extract(ctx)).value.signals
+    got = {s.title: (s.budget_krw, s.expected_year, s.commitment) for s in signals}
+    assert got["오리공원 물놀이장 설치 공사"] == (1_000_000_000, 2026, "committed")
+    assert got["수내역 광장 재정비 공사"] == (500_000_000, 2026, "committed")
+    assert "판교개발부담금 과오납 환급금" not in got  # a refund, not a project
+    for s in signals:  # every quote is in the text, so the verifier can ground it
+        assert s.evidence[0] in BUDGET_BILL and s.budget_text in s.evidence[0]
+
+
+def test_budget_list_needs_the_executive_and_the_list_heading() -> None:
+    member = "○조우현위원  주요사업비 예산 반영 내역으로는 가 공원 조성 1억 원, 나 도로 정비 2억 원, 다 청사 신축 3억 원\n"
+    ctx = ChunkContext("council_minutes", "회의", "성남시의회", date(2026, 3, 12), [], member)
+    assert _budget_list_signals(ctx) == []  # a member reading numbers is not the budget
+    revenue = "○행정기획조정실장 전재환  지방세 1016억 원, 세외수입 64억 원, 지방교부세 46억 원이 증액됐습니다.\n"
+    ctx = ChunkContext("council_minutes", "회의", "성남시의회", date(2026, 3, 12), [], revenue)
+    assert _budget_list_signals(ctx) == []
+
+
+def test_budget_list_keeps_amounts_written_with_thousands_commas() -> None:
+    # constructed: the same list shape with "1,050억 원" (성남 writes "1050억 원")
+    text = (
+        "○행정기획조정실장 전재환  주요사업비 예산 반영 내역으로는 수내교 전면 개축공사 1,050억 원, "
+        "박물관 건립 168억 원, 성남시 보훈회관 이전 건립 15억 원 등을 반영하였습니다.\n"
+    )
+    ctx = ChunkContext("council_minutes", "회의", "성남시의회", date(2025, 11, 20), [], text)
+    got = {s.title: s.budget_krw for s in _budget_list_signals(ctx)}
+    assert got["수내교 전면 개축공사"] == 105_000_000_000
