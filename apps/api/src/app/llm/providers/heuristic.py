@@ -196,7 +196,95 @@ def _keywords(text: str) -> list[str]:
     return found[:6]
 
 
+# The 예산안 제안 설명 in 본회의 (and again in 예결특위) reads the budget's main projects as one list:
+# "주요사업비 예산 반영 내역으로는 판교 시스템반도체 연구센터 조성 263억 원, 오리공원 물놀이장
+# 설치 공사비 10억 원, … 등을 반영하였습니다." Each item is a project and its amount, so each is a
+# signal; one signal for the whole speech would keep one garbled title and the largest amount.
+_BUDGET_LIST_HEAD_RE = re.compile(r"(?:예산|사업비?)\s*반영\s*내역")
+_LIST_ITEM_RE = re.compile(
+    r"(?P<name>[가-힣A-Za-z0-9·()][가-힣A-Za-z0-9·()\s]*?)\s*(?:이|가|에)?\s*"
+    r"(?P<amount>\d[\d,]*억(?:\s*\d[\d,]*만)?\s*원)"
+)
+# transfers, repayments and handouts are in the list too but are not projects anyone bids on
+_LIST_SKIP_WORDS = (
+    "전출금",
+    "출연금",
+    "상환",
+    "환급금",
+    "쿠폰",
+    "지원금",
+    "보전금",
+    "융자",
+    "상품권",
+    "축하금",
+)
+_BUDGET_BILL_YEAR_RE = re.compile(
+    r"20\d\d년도?\s*(?:제\s*\d+\s*회\s*)?(?:일반\s*및\s*특별회계\s*)?"
+    r"(?:세입\s*[·ㆍ]?\s*세출\s*)?(?:추가경정)?\s*예산안"
+)
+
+
+def _budget_list_signals(ctx: ChunkContext) -> list[ExtractedSignal]:
+    """One signal per item of a "주요사업비 예산 반영 내역" list spoken by the executive."""
+    lines = ctx.text.splitlines()
+    member = False
+    signals: list[ExtractedSignal] = []
+    for i, raw in enumerate(lines):
+        line = raw.strip()
+        if glued := GLUED_MEMBER_RE.match(line):
+            member = True
+            line = glued.group("speech")
+        elif m := re.match(r"^[○◯◎]\s*(?P<role>[가-힣A-Za-z·]+)\s+[가-힣]{2,4}\s+", line):
+            member = m.group("role") in _MEMBER_ROLES
+            line = line[m.end() :]
+        if member:
+            continue
+        head = _BUDGET_LIST_HEAD_RE.search(line)
+        if head is None and not (i > 0 and _BUDGET_LIST_HEAD_RE.search(lines[i - 1])):
+            continue
+        body = line[head.end() :] if head else line
+        items = [it for it in re.split(r",\s*", body) if _LIST_ITEM_RE.search(it)]
+        if len(items) < 3:
+            continue
+        bill = _BUDGET_BILL_YEAR_RE.search(ctx.text)
+        timing = resolve_timing(bill.group(0), ctx.document_date) if bill else None
+        for item in items:
+            m = _LIST_ITEM_RE.search(item)
+            assert m is not None
+            name = re.sub(r"^(?:으로는|은|는|입니다\.?)\s*", "", m.group("name").strip())
+            if name.endswith(("사업비", "공사비", "건립비", "조성비")):
+                name = name[:-1]
+            if len(name) < 4 or any(w in name for w in _LIST_SKIP_WORDS):
+                continue
+            category, conf = classify_category(name)
+            if category is Category.OTHER:
+                continue
+            [amount] = find_amounts(m.group("amount"))
+            signals.append(
+                ExtractedSignal(
+                    title=name,
+                    summary=f"{ctx.institution or '기관'} 예산안 제안 설명: '{name}' {m.group('amount')}",
+                    category=category,
+                    institution_mention=ctx.institution,
+                    department=None,
+                    budget_text=m.group("amount"),
+                    budget_krw=amount.value,
+                    timing_text=bill.group(0) if bill and timing else None,
+                    expected_year=timing.year if timing else None,
+                    expected_half=None,
+                    commitment="committed",
+                    procurement_type="unknown",
+                    keywords=_keywords(name) or [name],
+                    evidence=[item[m.start() : m.end()].strip()],
+                    confidence=round(0.65 + 0.1 * min(conf, 1.0), 2),
+                )
+            )
+    return signals
+
+
 def _extract_exchange(ctx: ChunkContext) -> list[ExtractedSignal]:
+    if listed := _budget_list_signals(ctx):
+        return listed
     question, answer = _answer_text(ctx.text)
     if not answer:
         return []

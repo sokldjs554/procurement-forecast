@@ -89,7 +89,10 @@ def chunk_minutes(text: str) -> list[Chunk]:
             cut = text.rfind(".", start, start + MAX_CHUNK_CHARS)
             cut = cut + 1 if cut > start + 200 else start + MAX_CHUNK_CHARS
             chunks.append(Chunk(len(chunks), start, cut, text[start:cut], labels, kind))
-            start = cut
+            # A short line that ends the piece ("주요사업비 예산 반영 내역입니다.") introduces what
+            # follows, so the next piece starts with it too.
+            lead = text.rfind("\n", start, cut) + 1
+            start = lead if lead > start and len(text[lead:cut].strip()) <= 60 else cut
         chunks.append(Chunk(len(chunks), start, end, text[start:end], labels, kind))
 
     i = 0
