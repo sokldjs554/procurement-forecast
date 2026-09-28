@@ -24,6 +24,8 @@ SOURCE_CATALOG: tuple[dict[str, Any], ...] = (
     {"key": "g2b_bid", "name": "조달청 나라장터 — 입찰공고", "adapter": "g2b"},
     # Boards are configured per government in ``sources.config`` (docs/real-data-budget.md §8).
     {"key": "budget_boards", "name": "지자체 누리집 — 예산서 게시판", "adapter": "crawler"},
+    # 지방의회 누리집 회의록 (HWP), while the CLIK key is pending (docs/real-data-minutes.md).
+    {"key": "minutes_boards", "name": "지방의회 누리집 — 회의록 게시판", "adapter": "crawler"},
 )
 
 FIXTURE_CATALOG: tuple[dict[str, Any], ...] = (

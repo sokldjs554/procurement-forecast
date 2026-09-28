@@ -345,7 +345,7 @@ async def ingest_procurement(ctx: dict[str, Any]) -> None:
 
 
 async def ingest_minutes(ctx: dict[str, Any]) -> None:
-    await ingest_cron(ctx, ("clik_minutes",))
+    await ingest_cron(ctx, ("clik_minutes", "minutes_boards"))
 
 
 async def ingest_budget_books(ctx: dict[str, Any]) -> None:

@@ -653,3 +653,20 @@ async def test_council_minutes_board_takes_only_the_minutes_file() -> None:
     assert "fiscal_year" not in records[0].structured  # budget facts are for budget books only
     assert adapter.stats.skipped_title == 1  # 의회운영위원회
     assert not any("appendix" in r for r in requested)  # 부록 are not the minutes
+
+    # past max_files the post pages are not opened either (each is ~0.8 MB here)
+    capped, requested = _adapter(
+        handler,
+        boards=[board],
+        doc_type="council_minutes",
+        detail_pattern=r"recordView\.do",
+        attachment_pattern=r"HwpDownload\.do",
+        page_param="pageNum",
+        title_keywords=[],
+        max_files=1,
+    )
+    assert (
+        len([r async for r in capped.fetch(FetchWindow(date(2025, 9, 1), date(2026, 9, 28)))]) == 1
+    )
+    assert capped.stats.skipped_cap == 2
+    assert sum(r.startswith("/record/recordView.do") for r in requested) == 1

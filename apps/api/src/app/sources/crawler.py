@@ -573,6 +573,9 @@ class BoardCrawlerAdapter:
             post_url, post_id = row.url, file_key(row.url)  # the row's first file
             attachments = row.attachments
         else:
+            if self._capped():
+                self.stats.skipped_cap += 1  # don't open a post whose files we won't take
+                return
             if not await self._allowed(row.url):
                 self.stats.skipped_robots += 1
                 return
@@ -635,8 +638,11 @@ class BoardCrawlerAdapter:
                 date_from="last_modified" if modified else "crawled",
             )
 
+    def _capped(self) -> bool:
+        return self.max_files is not None and self.stats.files >= self.max_files
+
     async def _download(self, att: Link) -> tuple[bytes, str, date | None] | None:
-        if self.max_files is not None and self.stats.files >= self.max_files:
+        if self._capped():
             self.stats.skipped_cap += 1
             return None
         if not await self._allowed(att.href):
