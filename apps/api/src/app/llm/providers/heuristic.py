@@ -243,7 +243,8 @@ def _budget_list_signals(ctx: ChunkContext) -> list[ExtractedSignal]:
         if head is None and not (i > 0 and _BUDGET_LIST_HEAD_RE.search(lines[i - 1])):
             continue
         body = line[head.end() :] if head else line
-        items = [it for it in re.split(r",\s*", body) if _LIST_ITEM_RE.search(it)]
+        # items are ", "-separated; "1,120억 원" has no space after its comma
+        items = [it for it in re.split(r",\s+", body) if _LIST_ITEM_RE.search(it)]
         if len(items) < 3:
             continue
         bill = _BUDGET_BILL_YEAR_RE.search(ctx.text)
@@ -259,7 +260,10 @@ def _budget_list_signals(ctx: ChunkContext) -> list[ExtractedSignal]:
             category, conf = classify_category(name)
             if category is Category.OTHER:
                 continue
-            [amount] = find_amounts(m.group("amount"))
+            amounts = find_amounts(m.group("amount"))
+            if not amounts:
+                continue
+            amount = amounts[0]
             signals.append(
                 ExtractedSignal(
                     title=name,
