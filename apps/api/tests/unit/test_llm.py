@@ -526,3 +526,14 @@ def test_budget_list_needs_the_executive_and_the_list_heading() -> None:
     revenue = "○행정기획조정실장 전재환  지방세 1016억 원, 세외수입 64억 원, 지방교부세 46억 원이 증액됐습니다.\n"
     ctx = ChunkContext("council_minutes", "회의", "성남시의회", date(2026, 3, 12), [], revenue)
     assert _budget_list_signals(ctx) == []
+
+
+def test_budget_list_keeps_amounts_written_with_thousands_commas() -> None:
+    # constructed: the same list shape with "1,050억 원" (성남 writes "1050억 원")
+    text = (
+        "○행정기획조정실장 전재환  주요사업비 예산 반영 내역으로는 수내교 전면 개축공사 1,050억 원, "
+        "박물관 건립 168억 원, 성남시 보훈회관 이전 건립 15억 원 등을 반영하였습니다.\n"
+    )
+    ctx = ChunkContext("council_minutes", "회의", "성남시의회", date(2025, 11, 20), [], text)
+    got = {s.title: s.budget_krw for s in _budget_list_signals(ctx)}
+    assert got["수내교 전면 개축공사"] == 105_000_000_000
