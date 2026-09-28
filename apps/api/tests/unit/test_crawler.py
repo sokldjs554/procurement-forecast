@@ -9,6 +9,7 @@ from app.sources.base import FetchWindow
 from app.sources.crawler import (
     BoardCrawlerAdapter,
     RobotsRules,
+    adopted_by,
     budget_title_facts,
     canonical_url,
     compile_script_links,
@@ -67,6 +68,11 @@ def test_budget_title_facts_and_canonical_urls() -> None:
         "budget_kind": "제1회 추가경정",
     }
     assert budget_title_facts("2027년도 본예산서")["budget_kind"] == "본"
+    # A 본예산 is adopted before its fiscal year starts, an 추경 within it.
+    assert adopted_by(budget_title_facts("2026년 세입세출예산서")) == date(2025, 12, 31)
+    assert adopted_by(budget_title_facts("2025년 2회 추경 세입세출예산서")) == date(2025, 12, 31)
+    assert adopted_by(budget_title_facts("2026년 1회 추경 세입세출예산서")) == date(2026, 12, 31)
+    assert adopted_by(budget_title_facts("세출예산사업명세서")) is None
     assert (
         canonical_url("https://Gov.Example/view.do?nttId=7&jsessionid=X&menuNo=3#top", ("nttId",))
         == "https://gov.example/view.do?nttId=7"
@@ -515,8 +521,11 @@ async def test_page_layout_picks_by_title_fiscal_year_and_cap() -> None:
         ("2026년 세입세출예산서 › 일반회계 › 세출예산사업명세서 › 전체", "본"),
         ("2026년 1회 추경 세입세출예산서 › 세출예산사업명세서", "제1회 추가경정"),
     ]
-    assert records[0].published_at == date(2026, 6, 18)  # Last-Modified, in KST
-    assert records[0].structured["published_from"] == "last_modified"
+    # Both files read Last-Modified 2026-06-18. The 2026 본예산 was adopted by 2025-12-31 at
+    # the latest; the 2026 제1회 추경 may well date from June.
+    assert [r.published_at for r in records] == [date(2025, 12, 31), date(2026, 6, 18)]
+    assert [r.structured["published_from"] for r in records] == ["fiscal_year", "last_modified"]
+    assert records[0].structured["last_modified"] == "2026-06-18"  # in KST
     assert records[0].external_id == "/humanframe/file/sncity/bgt/2026/11608_3.pdf"
     assert adapter.stats.skipped_title == 3
     assert adapter.stats.skipped_window == 1  # 2024 is before the window
