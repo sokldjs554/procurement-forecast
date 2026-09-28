@@ -3,11 +3,13 @@
 > 작업 중인 문서입니다. 수치는 모두 이 세션에서 직접 본 것이고, 계산으로 낸 값은 "(계산)"으로 표시합니다.
 > [`real-data-minutes.md`](real-data-minutes.md)(규칙 기반 추출기로 잰 34건)의 후속입니다.
 
-## 상태: Claude 실행 전에 멈춤 (API 키 없음)
+## 상태: Claude 실행 전에 멈춤 (두 번째 시도: 크레딧 잔액 부족)
 
-이 문서의 목적은 [`real-data-minutes.md` §5–6](real-data-minutes.md#5-회의록-측정)과 **같은 34건, 같은 20개 청크**에서 Claude 추출기(설정 기본값 `claude-opus-5`, effort `low`)를 규칙 기반 추출기와 나란히 재는 것입니다.
+이 문서의 목적은 [`real-data-minutes.md` §5–6](real-data-minutes.md#5-회의록-측정)과 **같은 34건, 같은 20개 청크**에서 Claude 추출기(설정 기본값 `claude-opus-5`, effort `low`)를 규칙 기반 추출기와 나란히 재는 것입니다. **Claude 쪽 수치는 아직 하나도 없습니다.**
 
-그러나 이 세션에서 `test -n "$APP_ANTHROPIC_API_KEY"`가 거짓이었습니다(키가 설정되어 있지 않음). 그래서 **Anthropic API는 한 번도 부르지 않았고 LLM 비용은 0입니다**(`llm_calls` 0행). 키를 다른 곳에서 찾지는 않았습니다. 아래는 키 없이 할 수 있는 준비를 모두 마친 상태이고, 키가 들어오면 §5의 명령으로 이어서 잽니다. Claude 쪽 수치는 아직 하나도 없습니다.
+- **첫 시도**: `APP_ANTHROPIC_API_KEY`가 설정되어 있지 않아 API를 부르지 않았습니다(§1–§6은 그때 준비한 것).
+- **두 번째 시도(2026-09-28, §7)**: 키는 설정되어 있었고 `api.anthropic.com`에도 닿았습니다(프록시 경유, 키 없는 요청에 `401`). 같은 34건을 다시 받아 SHA-256을 맞추고 20개 청크를 다시 찾은 뒤, 그 20개만 Claude로 보냈습니다. **20번 모두 API가 `400 invalid_request_error` "Your credit balance is too low to access the Anthropic API"로 거절했습니다.** 토큰 0, 비용 $0입니다(`llm_calls` 20행 모두 `status=error`, 입력·출력 토큰 0, `cost_usd` 0). 한 건으로 다시 확인하려던 호출은 이 세션의 실행 권한에서 막혀 보내지 않았습니다.
+- 그래서 비용 추정(§5)도 실측으로 바꾸지 못했고, 전체 실행과 예산서 사슬 비교도 하지 않았습니다. **계정에 크레딧이 들어오면 §7.4의 명령으로 이어서 잽니다.**
 
 ## 1. 환경과 코드
 
@@ -101,5 +103,44 @@ HEAD의 규칙 기반 제목은 신호 31의 청크(추경 제안 설명)를 빼
 3. §4의 20개 청크에서 Claude 신호와 규칙 기반 신호, 원문을 대조합니다(사업명, 금액(천원 단위면 ×1,000), 연도, 약속 수준, 발언자가 집행부인가).
 4. Claude 신호 20건(`md5(id || 'claude20')` 순) 정밀도와 검증기 결과(accepted / needs_review / rejected).
 5. 비용이 남으면 성남시 예산서 2026 제2회 추경(약 8청크)만 Claude로, 나머지는 규칙 기반으로 넣고 회의록 신호와 예산 행 신호가 함께 든 기회를 판정합니다.
+
+## 7. 두 번째 시도 (2026-09-28): 준비는 다시 맞췄고, API가 크레딧 부족으로 거절
+
+### 7.1 환경
+
+- 코드: `main`의 `34cdd39`(이 브랜치는 그 위에 이 문서만 더합니다). §1의 `aa03b1d`는 main에 들어가 있습니다. 코드는 바꾸지 않았습니다.
+- 이 컨테이너에서도 PostgreSQL 16을 직접 띄우고 `postgresql-16-pgvector`, Redis, `tesseract-ocr`·`tesseract-ocr-kor`·`fonts-nanum`을 설치했습니다. `uv sync` → `manage db upgrade` → `manage seed --anchor 2026-09-25`.
+- 명령마다 `APP_LLM_DAILY_BUDGET_USD=25`를 주었습니다(환경의 기본값은 30). Claude 실행에는 `APP_LLM_PROVIDER=anthropic`을 주었습니다. 키는 설정 여부만 확인했고 출력·파일·커밋에 남기지 않았습니다.
+
+### 7.2 수집과 규칙 기반 재현: 앞과 같음
+
+- §2와 같은 설정으로 `manage sources ingest -s minutes_boards --days 393 --until 2026-09-28`: 133.4 s(명령 전체의 벽시계 시간), 제목 조건 탈락 149, 적재 34건.
+- 받은 파일 34개의 SHA-256을 다시 계산해 [`real-data-minutes.md` §1의 표](real-data-minutes.md#1-접속-https는-새-연결이-거의-다-끊기고-회의록은-http로-받음)에서 뽑은 34개와 맞췄습니다. **정렬한 두 목록의 `diff`가 비어 있습니다.**
+- 적재 직후 DB를 `createdb -T`로 복사해 `APP_LLM_PROVIDER=heuristic`으로 `manage pipeline run`: 문서 34 / 실패 0, 신호 75, accepted 72 / needs_review 3, 처리 3.9 s, 연결 1.1 s. 청크 8,845, 선별 통과 1,518. **§3의 HEAD 열과 같습니다.**
+- 20개 청크(§4)를 같은 번호로 다시 찾았습니다. 20개 모두 선별을 통과하고, 각 청크의 규칙 기반 신호 번호·약속 수준·제목이 §4의 표와 한 글자까지 같습니다.
+
+### 7.3 Claude 호출: 20번 모두 거절
+
+적재 직후 DB의 복사본(`app_c20`)에서, `pipeline/process.py`가 만드는 것과 같은 `ChunkContext`로 20개 청크만 `runtime.llm.extract`에 보냈습니다(동시 5). 전체 파이프라인을 34건에 다시 돌리지 않은 것은, 문서 단위로 돌리면 20개 청크가 든 문서의 다른 청크까지 모두 Claude로 가기 때문입니다(제 결정). 응답을 LLM 캐시에 넣어 두고, 그 문서들만 캐시를 쓰는 파이프라인으로 처리해 검증기를 거친 신호를 얻을 계획이었습니다.
+
+| | 값 |
+|---|---:|
+| 호출 | 20 |
+| 결과 | 20번 모두 `400 invalid_request_error`: "Your credit balance is too low to access the Anthropic API. Please go to Plans & Billing to upgrade or purchase credits." |
+| `llm_calls` | 20행, `status=error`, 입력·출력·캐시 토큰 0, `cost_usd` 0 |
+| LLM 캐시 | 0행 |
+| 걸린 시간 | 1.6 s |
+
+- 이 오류는 `anthropic_provider.py`에서 `BadRequestError` → `LLMConfigError`로 바뀌고, 서비스는 그 청크를 **규칙 기반 추출기로 강등**합니다(ADR-0006의 설계). 그래서 이 상태로 34건 전체를 돌렸다면 파이프라인은 실패 없이 끝나고, 신호는 모두 규칙 기반 값에 `degraded`(사유 `error`)가 붙었을 것입니다. **"Claude로 돌렸다"는 결과를 믿기 전에 `llm_calls`의 `status`를 봐야 하는 이유입니다.** 이번에는 파이프라인을 돌리기 전에 호출 기록에서 거절을 확인했습니다.
+- 크레딧 부족은 청크를 바꿔 다시 보내도 바뀌지 않는 오류라, 20번 이후 더 보내지 않았습니다. 한 건으로 다시 확인하려던 호출은 이 세션의 실행 권한(실제 결제가 걸린 호출)에서 막혔습니다.
+- 버그는 아니라고 판단해 코드는 고치지 않았습니다(제 판단). 다만 운영에서는 크레딧 부족이 하루 내내 조용한 강등으로 이어질 수 있으니, 운영 콘솔의 강등 비율 경보가 이 경우를 잡는지 확인할 가치가 있습니다.
+
+### 7.4 크레딧이 들어오면
+
+이 세션의 순서를 그대로 이어서 합니다. 준비(수집·재현·20개 청크)는 위와 같이 다시 할 수 있습니다.
+
+1. 20개 청크만 Claude로(보수적 추정식 $0.58(계산)). `llm_calls`에서 청크당 입력·출력·캐시 읽기 토큰과 비용을 봅니다.
+2. 그 청크당 실측 비용 × 1,518로 전체 실행 비용을 추정합니다. **20달러 이하일 때만** 34건 전체를 돌립니다. 전체 상한은 25달러입니다.
+3. 20개 청크의 Claude·규칙 기반·원문 대조(사업명, 금액, 연도, 약속 수준, 발언자), 전체를 돌렸다면 Claude 신호 20건(`md5(id || 'claude20')` 순) 대조와 검증기 결과, 그리고 성남시 예산서 6권과의 사슬을 [`real-data-minutes.md` §7](real-data-minutes.md#7-발언--예산서-행--조달청-공고)의 규칙 기반 17개(맞음 9)와 비교합니다.
 
 <!-- RESULTS -->
