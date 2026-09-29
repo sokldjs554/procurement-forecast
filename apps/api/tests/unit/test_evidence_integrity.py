@@ -146,3 +146,9 @@ def test_fuzzy_budget_reads_the_actual_source_amount():
     )
     assert report.verdict == "needs_review"
     assert report.budget_parsed == 300_000_000
+
+
+def test_unrecognized_speaker_header_ends_official_attribution():
+    text = "○교통과장 이민수  다음 안건입니다.\n○참석자  스마트쉘터를 설치해 주십시오."
+    report = checked(text, ["스마트쉘터를 설치해 주십시오."])
+    assert report.verdict == "needs_review"

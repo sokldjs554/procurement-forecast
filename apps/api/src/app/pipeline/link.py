@@ -158,7 +158,10 @@ def facilities_conflict(a: str, b: str) -> bool:
         return result
 
     left, right = names(a), names(b)
-    return any(left[kind].isdisjoint(right[kind]) for kind in left.keys() & right.keys())
+    return any(
+        not any(x.endswith(y) or y.endswith(x) for x in left[kind] for y in right[kind])
+        for kind in left.keys() & right.keys()
+    )
 
 
 def score_candidate(signal: Signal, opp: Opportunity) -> tuple[float, dict[str, float]]:

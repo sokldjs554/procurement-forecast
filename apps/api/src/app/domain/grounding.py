@@ -17,6 +17,7 @@ the admin review queue, ``rejected`` is stored for eval but never shown to custo
 
 from __future__ import annotations
 
+import re
 from dataclasses import asdict, dataclass, field
 from datetime import date
 from typing import Any, Literal
@@ -71,6 +72,8 @@ def official_evidence_issue(
             and not turn.is_chair
             and not turn.role.endswith(("위원", "의원", "위원장", "의장"))
             and turn.role.endswith(_OFFICIAL_ENDINGS)
+            # An unknown speaker heading must not inherit the preceding official's role.
+            and not re.search(r"(?m)^[ \t]*[○◯◎]", document_text[turn.start + 1 : end])
         ):
             quote = collapse_ws(document_text[start:end])
             # Quotes including a speaker header must not gain length from the role/name.

@@ -85,3 +85,15 @@ def test_different_named_facilities_cannot_merge(a, b):
     score, reasons = link.score_candidate(signal, opportunity(1, b))
     assert score == 0
     assert reasons["facility_conflict"] == 1.0
+
+
+@pytest.mark.parametrize(
+    ("a", "b"),
+    [
+        ("판교도서관 냉난방기 교체", "성남시판교도서관 냉난방기 교체"),
+        ("중원청소년수련관 시설개선", "성남시중원청소년수련관 시설개선"),
+        ("공공도서관 리모델링", "판교도서관 리모델링"),
+    ],
+)
+def test_qualified_or_generic_facility_name_is_not_a_conflict(a, b):
+    assert not link.facilities_conflict(a, b)
