@@ -38,12 +38,14 @@ eval_app = typer.Typer(help="Evaluations")
 sources_app = typer.Typer(help="External data sources")
 pipeline_app = typer.Typer(help="Pipeline stages outside the worker")
 llm_cache_app = typer.Typer(help="Paid LLM answers, kept across databases")
+link_app = typer.Typer(help="Linking real signals again, without fetching or extracting")
 app.add_typer(db_app, name="db")
 app.add_typer(demo_app, name="demo")
 app.add_typer(eval_app, name="eval")
 app.add_typer(sources_app, name="sources")
 app.add_typer(pipeline_app, name="pipeline")
 app.add_typer(llm_cache_app, name="llm-cache")
+app.add_typer(link_app, name="link")
 
 T = TypeVar("T")
 
@@ -382,6 +384,64 @@ def llm_cache_import(
         return await import_cache(session, path, model=runtime.settings.llm_extract_model)
 
     typer.echo(f"imported {_run(lambda: _with_session(go))} new answers from {path}")
+
+
+@link_app.command("export")
+def link_export(
+    path: Path = typer.Argument(..., help="Where to write (.jsonl.gz)"),
+    doc_type: list[str] = typer.Option(
+        ["budget_book", "council_minutes"], "--doc-type", "-t", help="Repeatable"
+    ),
+) -> None:
+    """Write the signals of these document types with the opportunity each joined, for
+    `link replay` in another database."""
+
+    async def go(session: Any, runtime: Any) -> int:
+        from app.pipeline.link_replay import export_signals
+
+        return await export_signals(session, path, doc_types=doc_type)
+
+    typer.echo(f"exported {_run(lambda: _with_session(go))} signals to {path}")
+
+
+@link_app.command("replay")
+def link_replay(
+    path: Path = typer.Argument(..., help="A file from `link export`"),
+    first: list[str] = typer.Option(
+        None, "--first", help="Document types linked in a run of their own before the rest"
+    ),
+    out: Path = typer.Option(None, help="Write the resulting opportunities (signal keys) here"),
+    keep: bool = typer.Option(False, help="Commit, to look at the opportunities afterwards"),
+) -> None:
+    """Link the exported signals with the current linker in a seeded database that has no
+    opportunities, and compare with the run they came from. Rolled back unless --keep."""
+    configure_logging(json=False, level="WARNING", stream=sys.stderr)
+
+    from app.pipeline.link_replay import ReplayResult, load_export
+
+    records = load_export(path)
+
+    async def go(session: Any, runtime: Any) -> ReplayResult:
+        from sqlalchemy import func, select
+
+        from app.db.models import Opportunity
+        from app.pipeline.link_replay import replay_links
+
+        if await session.scalar(select(func.count()).select_from(Opportunity)):
+            # They would be candidates too, and the result would not be the file's alone.
+            typer.echo("this database already has opportunities; replay into a fresh one", err=True)
+            raise typer.Exit(2)
+        result = await replay_links(
+            session, runtime, records, first=first or None, today=today_kst()
+        )
+        if not keep:
+            await session.rollback()
+        return result
+
+    result = _run(lambda: _with_session(go))
+    if out:
+        out.write_text(json.dumps(result.groups, ensure_ascii=False) + "\n", encoding="utf-8")
+    typer.echo(json.dumps(result.summary(), ensure_ascii=False, indent=2))
 
 
 @pipeline_app.command("reresolve")

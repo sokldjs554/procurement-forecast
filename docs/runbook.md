@@ -26,6 +26,7 @@
 
 **측정·임시 DB를 버리기 전**
 - `manage llm-cache export <파일>.jsonl.gz`로 비용을 낸 추출 응답을 파일로 빼 둡니다. 새 DB에서는 `manage llm-cache import <파일>`로 넣으면 같은 청크가 캐시로 처리됩니다. 파일에는 캐시 키와 응답만 들어가고, 키가 모델·effort·프롬프트·청크 글자를 묶고 있어 설정이 달라지면 쓰이지 않을 뿐 틀린 응답이 나가지는 않습니다.
+- 연결 규칙을 다시 잴 일이 있으면 `manage link export <파일>.jsonl.gz`로 신호와 그 신호가 붙은 기회를 빼 둡니다. 나중에 `db upgrade` + `seed`만 한 빈 DB에서 `manage link replay <파일> [--first budget_book] [--out 결과.json]`을 돌리면, 받기·추출 없이 연결만 다시 하고 원래 실행과 기회 단위로 비교합니다(기본은 롤백). 임베딩은 같은 텍스트로 다시 계산하므로 해싱 임베더가 아니면 원래 실행과 달라질 수 있습니다.
 
 **검토 대기열이 쌓임**
 - 사유별로 봅니다. `institution_unresolved`가 대부분이면 기관 사전(`domain/data/institutions.csv`)에 별칭을 추가하거나, 행정구역이 바뀌었다면 `scripts/build_institutions.py`로 사전을 다시 만듭니다. 배포 뒤 `manage pipeline reresolve` → `manage pipeline run`으로 이미 쌓인 문서의 기관을 다시 풀고 처리합니다(다시 받지 않음). `year_unverified`가 대부분이면 시점 해석기(`domain/timing.py`)에 표현을 추가하고 수기 평가 세트에 사례를 넣습니다.
