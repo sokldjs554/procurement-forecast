@@ -1,9 +1,7 @@
 # 평가 결과 (자동 생성: `manage eval all --report`)
 
-이 문서 본문의 수치는 PR #49 병합 기준입니다. 후속 [PR #50](https://github.com/sokldjs554/procurement-forecast/pull/50)의
-동일 조건 전후 수치와 최종 검증 실행 링크는 해당 PR에 기록합니다. 각 실행의 `integrity-audit`
-아티팩트에는 `baseline.json`, `changed.json`, 전체 생성 보고서 및 저장 원문 재검증 결과가
-포함됩니다. 이전 결과를 후속 코드의 실측값으로 간주하지 않습니다.
+2026-09-29 [검증 실행](https://github.com/sokldjs554/procurement-forecast/actions/runs/36567195391)의 변경본 수치입니다. 전후 표는 [PR #53](https://github.com/sokldjs554/procurement-forecast/pull/53)에 있습니다.
+원본 CI 보고서의 추출기 이름은 고정 문자열 때문에 v2로 잘못 표시됐습니다. 실제 실행기는 v3이며, 보고 함수가 실행 provider의 모델명을 읽도록 수정했습니다. 수기 54사례를 다시 실행해 이름 이외 모든 결과가 원본 JSON과 같음을 확인했습니다. 아래에서는 이름만 바로잡았습니다.
 
 > 합성 세계(synthetic world) 결과는 파이프라인이 설계대로 동작하는지 보여줄 뿐, 실제 데이터에서의
 > 정확도를 주장하지 않습니다. 실제 문장에 가까운 수기 작성 세트(realistic)를 따로 둔 이유입니다.
@@ -24,17 +22,17 @@
 - 문서 6건 · CER 0.0113 → 보정 후 0.0099
 - 금액 토큰 정확도 100.0% → 100.0%
 
-## 수기 작성 세트 (extractor: heuristic-v2, 54건)
-- 정밀도 92.0% · 재현율 46.0% (기대 50건, 예측 25건)
-- 필드 정확도: category 82.6%, commitment 82.6%, budget 78.3%, expected_year 91.3%
-- 검증기 통과 후(저장되는 값): 정밀도 92.0% · 재현율 46.0% · category 82.6%, commitment 82.6%, budget 78.3%, expected_year 91.3% · 근거를 찾지 못해 버린 신호 0건
+## 수기 작성 세트 (extractor: heuristic-v3, 54건)
+- 정밀도 92.9% · 재현율 52.0% (기대 50건, 예측 28건)
+- 필드 정확도: category 92.3%, commitment 84.6%, budget 88.5%, expected_year 92.3%
+- 검증기 통과 후(저장되는 값): 정밀도 92.9% · 재현율 52.0% · category 92.3%, commitment 84.6%, budget 88.5%, expected_year 92.3% · 근거를 찾지 못해 버린 신호 0건
 - 모델별 비교는 `manage eval llm` → [evaluation-llm.md](evaluation-llm.md)
 
 ## 백테스트 (현재 연결의 회고적 진단)
 - 방법: `public-date-cohort-v2` · 기준일 2026-09-25 · 관측기간 540일
 - 관측기간 미충족 기회 35건 · 공개일 불확실 제외 신호 0건
 - 합성 데이터 실행 수치는 실제 예측 성능이 아닙니다. 현재 연결을 사용하므로 과거 시점 예측 재현도 아닙니다.
-- 입찰공고 63건 중 54.0%가 공고 이전에 공개 신호를 가짐
+- 입찰공고 76건 중 44.7%가 공고 이전에 공개 신호를 가짐
 - 선행 기간 중앙값 273.5일 (p25 192.75, p75 347.75)
 - 첫 신호 유형별 입찰 전환율:
   - `budget_line:*` n=9 → 77.8%

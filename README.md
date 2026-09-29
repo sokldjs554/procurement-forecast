@@ -112,7 +112,7 @@
 | Docker 기반 개발 환경 구성 경험 | `docker compose up`으로 DB·Redis·메일·API·워커·웹 |
 | 로깅·에러 트래킹 기반 장애 대응 경험 | structlog JSON(요청·작업 ID), Sentry, 워커 헬스체크, 런북 |
 | Git 브랜치 전략과 코드 리뷰 기반 협업 경험 | 짧은 브랜치 + 트렁크, squash merge, Conventional Commits, PR 템플릿, CODEOWNERS. PR 예: [#6](https://github.com/sokldjs554/procurement-forecast/pull/6) 의존성 PR 검토(액션 10개 호환성 대조), [#7](https://github.com/sokldjs554/procurement-forecast/pull/7) 기능 PR(코드 리뷰 15건 중 13건 반영, 2건은 이유 답변). 초기 구축은 main 직접 커밋 ([CONTRIBUTING](CONTRIBUTING.md)) |
-| 테스트 작성 및 정적 타입 검사를 습관으로 갖춘 분 | pytest 551개(실제 PostgreSQL·Redis), vitest 53개(BFF 프록시 헤더, 과금 요청의 재시도·멱등 키 포함), Playwright E2E 3개(README 둘러보기를 실제 브라우저로), mypy strict, CI 필수 통과 |
+| 테스트 작성 및 정적 타입 검사를 습관으로 갖춘 분 | pytest 685개(실제 PostgreSQL·Redis), vitest 61개(BFF 프록시 헤더, 과금 요청의 재시도·멱등 키 포함), Playwright E2E 3개(README 둘러보기를 실제 브라우저로), mypy strict, CI 필수 통과 |
 | 명세가 불완전한 상태에서 구조를 세우고 문서로 남길 수 있는 능력 | 주요업무 9번 |
 
 </details>
@@ -156,7 +156,7 @@ flowchart LR
 | 연결 (합성, 승인 신호 기준) | 쌍 정밀도 / 재현율 | 100% / 98.5% |
 | OCR (스캔 예산서) | 문자 오류율 원본 → 보정 / 금액 토큰 정확도 | 1.13% → 0.99% / 100% |
 | **수기 세트** (54건, 신호 없는 사례 10건) | 정밀도 / 재현율 (규칙 기반) | **92.9% / 52.0%** |
-| 백테스트 (합성·회고적 진단) | 공고 이전에 공개 신호가 있던 입찰 | 63건 중 34건 (54.0%) |
+| 백테스트 (합성·회고적 진단) | 공고 이전에 공개 신호가 있던 입찰 | 76건 중 34건 (44.7%) |
 | | 첫 공개 신호 → 입찰공고 선행 기간 중앙값 | 273.5일 |
 | | 최초 발언 강도별 540일 내 입찰 전환율: 확약 / 검토 | 81.8% (n=11) / 22.2% (n=9) |
 

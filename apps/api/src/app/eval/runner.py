@@ -278,7 +278,7 @@ async def eval_realistic(session: AsyncSession, runtime: Runtime) -> dict[str, A
         stored.add(case, kept)
     return {
         "cases": len(cases),
-        "extractor": runtime.llm.primary.extract_model if runtime.llm.primary else "heuristic-v2",
+        "extractor": (runtime.llm.primary or runtime.llm.fallback).extract_model,
         **raw.summary(),
         "after_verifier": stored.summary() | {"rejected": rejected},
         "failures": raw.failures[:20],
