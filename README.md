@@ -11,6 +11,8 @@
 
 구조로 보면 **공개 데이터를 매일 수집·구조화해 기업마다 맞춤 추천하고 알리는 B2B SaaS**입니다: 수집(공공 API·누리집 크롤링) → 추출·검증(LLM + 원문 대조) → 추천 → 알림 → 구독·크레딧 과금.
 
+**공개 데모: [sokldjs554.github.io/procurement-forecast](https://sokldjs554.github.io/procurement-forecast/)** — 설치 없이 브라우저에서 바로 열립니다. 실제 웹 앱을 정적 파일로 내보내고, 서버 대신 실제 API가 합성 데모 세계에 답한 내용을 녹화해 읽습니다(`manage demo snapshot`, [pages.yml](.github/workflows/pages.yml)). 운영 콘솔은 `admin@example.com` / `admin-pass-1234`로 로그인하면 보이고, 바꾼 내용은 저장되지 않습니다. 수집부터 알림까지 실제로 도는 모습은 [실행하기](#실행하기)대로 로컬에서 볼 수 있습니다.
+
 **30초 둘러보기** — 랜딩에서 한 번 눌러 데모로 들어가, 기회 피드의 정렬과 단계별 건수를 보고, '입찰 진행' 탭에서 입찰공고 12개월 전에 찾아낸 사업을 열어 원문 근거가 칠해진 신호 타임라인을 본 뒤 영업 브리핑을 만듭니다.
 
 ![30초 둘러보기: 랜딩 → 데모 → 기회 피드 → 기회 상세 → 영업 브리핑](docs/screenshots/walkthrough.gif)
@@ -110,7 +112,7 @@
 | Docker 기반 개발 환경 구성 경험 | `docker compose up`으로 DB·Redis·메일·API·워커·웹 |
 | 로깅·에러 트래킹 기반 장애 대응 경험 | structlog JSON(요청·작업 ID), Sentry, 워커 헬스체크, 런북 |
 | Git 브랜치 전략과 코드 리뷰 기반 협업 경험 | 짧은 브랜치 + 트렁크, squash merge, Conventional Commits, PR 템플릿, CODEOWNERS. PR 예: [#6](https://github.com/sokldjs554/procurement-forecast/pull/6) 의존성 PR 검토(액션 10개 호환성 대조), [#7](https://github.com/sokldjs554/procurement-forecast/pull/7) 기능 PR(코드 리뷰 15건 중 13건 반영, 2건은 이유 답변). 초기 구축은 main 직접 커밋 ([CONTRIBUTING](CONTRIBUTING.md)) |
-| 테스트 작성 및 정적 타입 검사를 습관으로 갖춘 분 | pytest 404개(실제 PostgreSQL·Redis), vitest 47개(BFF 프록시 헤더, 과금 요청의 재시도·멱등 키 포함), Playwright E2E 3개(README 둘러보기를 실제 브라우저로), mypy strict, CI 필수 통과 |
+| 테스트 작성 및 정적 타입 검사를 습관으로 갖춘 분 | pytest 405개(실제 PostgreSQL·Redis), vitest 53개(BFF 프록시 헤더, 과금 요청의 재시도·멱등 키 포함), Playwright E2E 3개(README 둘러보기를 실제 브라우저로), mypy strict, CI 필수 통과 |
 | 명세가 불완전한 상태에서 구조를 세우고 문서로 남길 수 있는 능력 | 주요업무 9번 |
 
 </details>
