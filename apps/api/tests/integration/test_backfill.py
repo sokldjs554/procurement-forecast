@@ -668,6 +668,79 @@ async def test_pipeline_run_stops_when_the_llm_account_runs_out_of_credit(
     assert signals_after == signals_before  # the stopped document keeps what it had
 
 
+# 2026 제1회 추경: the book row (dated by its file, 2026-06-18) and the statement that announced it
+# (2026-03-12), as on the live 성남시 run (docs/real-data-minutes.md §8.6).
+SUPPLEMENTARY_ROW = """부서: 분당구 공원과
+정책: 공원 조성
+단위: 공원 시설 (단위:천원)
+오리공원 물놀이장 설치공사 1,000,000 0 1,000,000
+401 시설비및부대비 1,000,000 0 1,000,000
+01 시설비 1,000,000 0 1,000,000
+ ○오리공원 물놀이장 설치공사
+1,000,000
+"""
+SUPPLEMENTARY_BILL = (
+    "○행정기획조정실장 전재환  2026년도 제1회 추가경정예산안에 대하여 제안 설명 드리겠습니다.\n"
+    "  주요사업비 예산 반영 내역으로는 수정청소년수련관 시설 개선 20억 원, 오리공원 물놀이장 설치 "
+    "공사비 10억 원, 수내역 광장 재정비 공사비 5억 원 등을 반영하였습니다.\n"
+)
+
+
+async def test_a_statement_linked_after_the_book_it_announced_still_joins_it(
+    demo_world, runtime
+) -> None:  # type: ignore[no-untyped-def]
+    book = RawRecord(
+        external_id="/humanframe/file/sncity/bgt/2026/order-test.pdf",
+        doc_type="budget_book",
+        title="2026년 1회 추경 세입세출예산서 › 세출예산사업명세서",
+        published_at=date(2026, 6, 18),
+        mime="text/plain",
+        publisher_raw="경기도 성남시",
+        institution_code_hint="LG-41130",
+        content=SUPPLEMENTARY_ROW.encode(),
+        structured={"fiscal_year": 2026, "budget_kind": "제1회 추가경정"},
+    )
+    minutes = RawRecord(
+        external_id="order-test-309-1",
+        doc_type="council_minutes",
+        title="제309회 본회의 제1차(2026.03.12.)",
+        published_at=date(2026, 4, 1),
+        mime="text/plain",
+        publisher_raw="경기도 성남시의회",
+        institution_code_hint="CN-41130",
+        content=SUPPLEMENTARY_BILL.encode(),
+        structured={"meeting_date": "2026-03-12"},
+    )
+    async with get_sessionmaker()() as s:
+        source = Source(
+            key="test_link_order", name="t", adapter="crawler", enabled=False, config={}
+        )
+        s.add(source)
+        await s.flush()
+        ids: dict[str, list[int]] = {}
+        for rec in (book, minutes):  # the book first: 98 days after the statement
+            doc, _ = await upsert_record(s, source, rec, runtime)
+            ids[rec.doc_type] = (await process_document(s, runtime, doc.id)).signal_ids
+            await link_signals(s, runtime, ids[rec.doc_type], today=date(2026, 9, 26))
+        rows = (
+            await s.execute(
+                select(Signal.stage, Signal.title, OpportunitySignal.opportunity_id)
+                .join(OpportunitySignal, OpportunitySignal.signal_id == Signal.id)
+                .where(
+                    Signal.id.in_(ids["budget_book"] + ids["council_minutes"]),
+                    Signal.title.contains("오리공원"),
+                )
+                .order_by(Signal.id)
+            )
+        ).all()
+        await s.rollback()
+    assert [(r.stage, r.title) for r in rows] == [
+        ("budget_line", "오리공원 물놀이장 설치공사"),
+        ("council_mention", "오리공원 물놀이장 설치 공사"),
+    ]
+    assert rows[0].opportunity_id == rows[1].opportunity_id
+
+
 def _empty_answer() -> Any:
     """A successful extraction that found nothing — enough to be paid for and cached."""
     return SimpleNamespace(
