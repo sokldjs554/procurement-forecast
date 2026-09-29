@@ -90,6 +90,7 @@ for variant in ('budget_first', 'reverse'):
     }
 (root / 'arrival-sensitivity.json').write_text(json.dumps(report, indent=2) + '\n')
 print(json.dumps(report, indent=2))
+assert all(v['identical_partition'] for v in report['variants'].values()), report
 PY
     fi
   )

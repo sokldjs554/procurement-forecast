@@ -426,6 +426,53 @@ def link_export(
     typer.echo(f"exported {_run(lambda: _with_session(go))} signals to {path}")
 
 
+@link_app.command("reconcile")
+def link_reconcile(
+    institution_code: list[str] = typer.Option(
+        None, "--institution-code", help="Demand owner; repeatable. Default: all pending owners"
+    ),
+    force: bool = typer.Option(
+        False, help="Recompute selected owners even if their generation is clean"
+    ),
+    today: str = typer.Option(None, help="Business date YYYY-MM-DD; default KST today"),
+) -> None:
+    """Complete automatic link convergence, preserving reviewed/customer identities.
+
+    This writes memberships and history atomically per owner. It neither extracts inputs
+    nor sends notifications. The worker sweeper dispatches pending recommendations.
+    """
+    from dataclasses import asdict
+
+    business_date = date.fromisoformat(today) if today else today_kst()
+
+    async def go(session: Any, runtime: Any) -> list[dict[str, Any]]:
+        from sqlalchemy import select
+
+        from app.db.models import LinkReconciliationState
+        from app.pipeline.link_reconcile import mark_link_dirty, reconcile_institution
+
+        query = select(LinkReconciliationState.institution_code)
+        if institution_code:
+            query = query.where(LinkReconciliationState.institution_code.in_(institution_code))
+        elif not force:
+            query = query.where(
+                LinkReconciliationState.generation > LinkReconciliationState.reconciled_generation
+            )
+        codes = list(
+            await session.scalars(query.order_by(LinkReconciliationState.institution_code))
+        )
+        results = []
+        for code in codes:
+            if force:
+                await mark_link_dirty(session, {code})
+            result = await reconcile_institution(session, runtime, code, today=business_date)
+            await session.commit()
+            results.append({"institution_code": code, **asdict(result)})
+        return results
+
+    typer.echo(json.dumps(_run(lambda: _with_session(go)), ensure_ascii=False, indent=2))
+
+
 @eval_app.command("export-reviews")
 def eval_export_reviews(
     out: Path = typer.Option(..., help="Write a frozen human-reviewed JSONL dataset"),

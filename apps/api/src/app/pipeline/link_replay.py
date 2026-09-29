@@ -289,6 +289,13 @@ async def replay_links(
         await link_signals(session, runtime, [ids_by_key[key] for key in batch], today=today)
         await session.flush()
 
+    # The production completion stage sees only linked inputs, never future/unlinked rows.
+    # Exercise the actual arrival batches above; canonicalizing the replay input itself
+    # would conceal precisely the historical incremental-order defect being measured.
+    from app.pipeline.link_reconcile import reconcile_pending
+
+    await reconcile_pending(session, runtime, today=today)
+
     rows = (
         await session.execute(
             select(OpportunitySignal.opportunity_id, Signal.dedupe_key)

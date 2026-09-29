@@ -323,6 +323,10 @@ async def run_demo_pipeline(
 
     async with _job("link_signals", signals=len(signal_ids)) as job:
         touched = await link_signals(session, runtime, signal_ids, today=anchor)
+        from app.pipeline.link_reconcile import reconcile_pending
+
+        normalized = await reconcile_pending(session, runtime, today=anchor)
+        touched = sorted(set(touched).union(*(r.touched_ids for r in normalized)))
         job.update(opportunities=len(touched))
     await session.commit()
     report.opportunities = len(touched)

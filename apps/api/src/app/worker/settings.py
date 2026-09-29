@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from typing import Any, ClassVar
 
-from arq import cron
+from arq import cron, func
 from redis.asyncio import Redis
 
 from app.clock import KST
@@ -46,6 +46,9 @@ class WorkerSettings:
         tasks.ingest_source,
         tasks.process_document,
         tasks.link_signals,
+        # PostgreSQL generations deduplicate completed work. Do not retain a failed result
+        # for an hour and prevent the minute sweep from retrying its same generation.
+        func(tasks.reconcile_links, keep_result=0),
         tasks.refresh_recommendations,
         tasks.enqueue_alerts,
         tasks.deliver_notifications,
@@ -54,12 +57,14 @@ class WorkerSettings:
         tasks.refresh_lifecycle,
         tasks.renew_subscriptions,
         tasks.sweep_pending_documents,
+        tasks.sweep_pending_links,
     ]
     cron_jobs: ClassVar[list[Any]] = [
         cron(tasks.ingest_procurement, minute=7, run_at_startup=False),  # hourly
         cron(tasks.ingest_minutes, hour=3, minute=10),
         cron(tasks.ingest_budget_books, weekday="sun", hour=2, minute=40),
         cron(tasks.sweep_pending_documents, minute={0, 10, 20, 30, 40, 50}),
+        cron(tasks.sweep_pending_links, minute=set(range(60))),
         cron(tasks.deliver_notifications, minute=set(range(60))),
         cron(tasks.daily_digest, hour=8, minute=10),
         cron(tasks.weekly_digest, weekday="mon", hour=8, minute=20),

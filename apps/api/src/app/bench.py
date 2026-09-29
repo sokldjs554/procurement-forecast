@@ -32,8 +32,8 @@ from pathlib import Path
 from typing import Any
 
 import asyncpg
-from sqlalchemy import cast, func, literal, or_, select
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import BigInteger, cast, func, literal, or_, select
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB
 from sqlalchemy.dialects.postgresql.base import PGDialect
 from sqlalchemy.orm import defer
 from sqlalchemy.sql import ClauseElement
@@ -41,14 +41,21 @@ from sqlalchemy.sql import ClauseElement
 from app.db.models import (
     Document,
     DocumentChunk,
+    LinkReconciliationState,
+    Notification,
     Opportunity,
     OpportunityRelation,
     OpportunityRelationEvent,
     OpportunitySignal,
+    Recommendation,
     ReviewItem,
     Signal,
+    Source,
 )
 from app.eval.review_dataset import RESOLVED_STATUSES
+from app.pipeline.link_reconcile import reconciliation_signals_query
+from app.pipeline.link_state import link_settled, protected_opportunities_query
+from app.pipeline.recommend import CANDIDATES_PER_SOURCE, OPEN_ONLY
 from app.pipeline.relations import CONTRACT_STAGES, PROJECT_STAGES
 from app.settings import get_settings
 from app.sources.coverage import coverage_documents_query, latest_source_runs_query
@@ -445,7 +452,9 @@ async def run_query(
     return Result(statistics.median(times[1:] or times), rows, plan, recall)
 
 
-def additional_queries() -> list[Query]:
+def additional_queries(
+    sizes: dict[str, int] | None = None, *, vec: str | None = None
+) -> list[Query]:
     """Head-only application queries; initial-schema timings do not exist.
 
     Compile ORM projections so document/embedding payload choices match the application.
@@ -459,11 +468,62 @@ def additional_queries() -> list[Query]:
         sql = str(stmt.compile(dialect=pg, compile_kwargs={"literal_binds": True}))
         return Query(key, title, None, sql)
 
+    sizes = sizes or SIZES
+    # B-0001 owns every institutions-th signal in _load. Group 1 has one member
+    # per opportunities-sized block. Keep probes faithful to scaled benchmark runs.
+    scope_signal_ids = list(
+        range(sizes["institutions"], sizes["signals"] + 1, sizes["institutions"])
+    )
+    summary_ids = list(range(1, sizes["signals"] + 1, sizes["opportunities"]))
+    state = LinkReconciliationState
+    recommendation_base = select(Opportunity).where(OPEN_ONLY, link_settled())
+    vector = json.loads(vec) if vec is not None else [1.0, *([0.0] * (DIM - 1))]
+    settled_semantic = query(
+        "recommend_semantic_settled",
+        "추천 후보: 미정합 기관 제외 + 벡터 최근접 300건 (전체 기회 투영)",
+        recommendation_base.order_by(Opportunity.embedding.cosine_distance(vector)).limit(
+            CANDIDATES_PER_SOURCE
+        ),
+    )
+    settled_semantic.setup_after = (f"SET LOCAL hnsw.ef_search = {CANDIDATES_PER_SOURCE}",)
+    settled_semantic.exact = settled_semantic.after
     endpoint = select(OpportunityRelation).where(
         OpportunityRelation.id > 0,
         or_(OpportunityRelation.project_id == 1, OpportunityRelation.contract_id == 1),
     )
     result = [
+        settled_semantic,
+        query(
+            "recommend_keywords_settled",
+            "추천 후보: 미정합 기관 제외 + 제목·키워드 300건 (전체 기회 투영)",
+            recommendation_base.where(
+                or_(
+                    Opportunity.title.ilike("%스마트쉘터%"),
+                    Opportunity.keywords.contains(["스마트쉘터"]),
+                )
+            ).limit(CANDIDATES_PER_SOURCE),
+        ),
+        query(
+            "recommend_category_settled",
+            "추천 후보: 미정합 기관 제외 + 분야 300건 (전체 기회 투영)",
+            recommendation_base.where(Opportunity.category.in_(["smart_city"])).limit(
+                CANDIDATES_PER_SOURCE
+            ),
+        ),
+        query(
+            "notify_candidates_settled",
+            "알림 후보: 회사 7·점수 0.5 이상·미정합 기관 제외 (추천·기회 투영)",
+            select(Recommendation, Opportunity)
+            .join(Opportunity, Opportunity.id == Recommendation.opportunity_id)
+            .where(
+                Recommendation.org_id == 7,
+                Recommendation.score >= 0.5,
+                or_(Recommendation.feedback.is_(None), Recommendation.feedback == "relevant"),
+                Opportunity.status.in_(("open", "bid_open")),
+                link_settled(),
+            )
+            .order_by(Recommendation.score.desc()),
+        ),
         query(
             "coverage_documents",
             "수집 현황: 전체 문서의 좁은 메타데이터 투영",
@@ -471,6 +531,54 @@ def additional_queries() -> list[Query]:
         ),
         query(
             "coverage_latest_runs", "수집 현황: 수집원별 최신 실행 기록", latest_source_runs_query()
+        ),
+        query(
+            "reconciliation_institution_signals",
+            "자동 연결 재정합: 기관 전체 신호·연결·벡터·원문 위치",
+            reconciliation_signals_query("B-0001"),
+        ),
+        query(
+            "reconciliation_protected_opportunities",
+            "자동 연결 재정합: 기관 범위의 사람 결정·고객 이력 전체 보호 조회",
+            protected_opportunities_query({"B-0001"}),
+        ),
+        query(
+            "reconciliation_dirty_sweep",
+            "자동 연결 재정합: 미정합 세대가 있는 기관 전체 조회",
+            select(state.institution_code)
+            .where(state.generation > state.reconciled_generation)
+            .order_by(state.institution_code),
+        ),
+        query(
+            "reconciliation_pending_dispatch",
+            "자동 연결 재정합: 미정합 또는 추천 미전달 세대 200기관",
+            select(state.institution_code, state.generation)
+            .where(
+                or_(
+                    state.generation > state.reconciled_generation,
+                    state.reconciled_generation > state.recommendations_generation,
+                )
+            )
+            .order_by(state.institution_code)
+            .limit(200),
+        ),
+        query(
+            "link_summary_tie_metadata",
+            "기회 요약: 날짜가 같은 구성 신호의 원문 위치 일괄 조회",
+            select(
+                Signal.id,
+                Source.key,
+                Document.external_id,
+                Document.doc_type,
+                DocumentChunk.seq,
+                DocumentChunk.char_start,
+                DocumentChunk.char_end,
+                DocumentChunk.labels,
+            )
+            .join(Document, Document.id == Signal.document_id)
+            .join(Source, Source.id == Document.source_id)
+            .outerjoin(DocumentChunk, DocumentChunk.id == Signal.chunk_id)
+            .where(Signal.id.in_(summary_ids)),
         ),
         query(
             "relation_endpoint_page",
@@ -493,6 +601,18 @@ def additional_queries() -> list[Query]:
             .limit(51),
         ),
     ]
+    for label, ids in (("hit", scope_signal_ids), ("miss", [-sid for sid in scope_signal_ids])):
+        result.append(
+            query(
+                f"reconciliation_evidence_overlap_{label}",
+                f"자동 연결 재정합: 관계 이력의 기관 전체 근거 ID 겹침 ({label})",
+                select(OpportunityRelationEvent.evidence_signal_ids).where(
+                    OpportunityRelationEvent.evidence_signal_ids.overlap(
+                        cast(ids, ARRAY(BigInteger))
+                    )
+                ),
+            )
+        )
     for label, document_id in (("hit", 2), ("miss", 0)):
         result.append(
             query(
@@ -507,6 +627,44 @@ def additional_queries() -> list[Query]:
                 .limit(1),
             )
         )
+    for label, opportunity_id in (("hit", 1), ("miss", 0)):
+        previous_link = cast(
+            literal(json.dumps({"previous_link": {"opportunity_id": opportunity_id}})), JSONB
+        )
+        history = cast(
+            literal(
+                json.dumps({"history": [{"previous_link": {"opportunity_id": opportunity_id}}]})
+            ),
+            JSONB,
+        )
+        result += [
+            query(
+                f"reconciliation_review_history_{label}",
+                f"자동 연결 보호: 사람 검토의 이전 기회 JSONB 근거 ({label})",
+                select(ReviewItem.id)
+                .where(
+                    or_(
+                        ReviewItem.resolution.contains(previous_link),
+                        ReviewItem.resolution.contains(history),
+                    )
+                )
+                .limit(1),
+            ),
+            query(
+                f"reconciliation_notification_history_{label}",
+                f"자동 연결 보호: 보존된 알림의 기회 JSONB 근거 ({label})",
+                select(Notification.id)
+                .where(
+                    Notification.payload.contains(
+                        cast(
+                            literal(json.dumps({"items": [{"opportunity_id": opportunity_id}]})),
+                            JSONB,
+                        )
+                    )
+                )
+                .limit(1),
+            ),
+        ]
     result += [
         query(
             "relation_mixed_audit",
@@ -713,6 +871,7 @@ async def _load_additional(
     relations = sizes["opportunities"] // 2
     reviews = sizes["signals"] // 20
     ingest_runs = sizes["opportunities"] // 10
+    notifications = sizes["opportunities"] // 2
     project_width = max(1, min(relations, 200))
     counts: dict[str, int] = {}
     steps = [
@@ -748,8 +907,28 @@ async def _load_additional(
                 (signal_id, reasons, status, resolution, resolved_at)
             SELECT i, ARRAY['synthetic_query_volume'],
                    {_arr(RESOLVED_STATUSES)}[1 + i % 3],
-                   '{{"benchmark_only": true}}'::jsonb, now()
+                   jsonb_build_object('benchmark_only', true,
+                       'previous_link', jsonb_build_object('opportunity_id', i),
+                       'history', jsonb_build_array(jsonb_build_object('previous_link',
+                           jsonb_build_object('opportunity_id', 1 + i % {sizes["opportunities"]})))),
+                   now()
             FROM generate_series(1, {reviews}) i""",
+        ),
+        (
+            "alert_channels",
+            """INSERT INTO alert_channels (org_id, kind, target, label, enabled)
+            VALUES (1, 'email', 'benchmark@example.invalid', 'Synthetic benchmark only', false)""",
+        ),
+        (
+            "notifications",
+            f"""INSERT INTO notifications
+                (org_id, channel_id, kind, dedupe_key, payload, status, attempts)
+            SELECT 1, (SELECT id FROM alert_channels WHERE label = 'Synthetic benchmark only'),
+                   'digest', 'benchmark:notification:' || i,
+                   jsonb_build_object('benchmark_only', true,
+                       'items', jsonb_build_array(jsonb_build_object('opportunity_id', i))),
+                   'sent', 1
+            FROM generate_series(1, {notifications}) i""",
         ),
         (
             "ingest_runs",
@@ -762,6 +941,19 @@ async def _load_additional(
                    now() - i * interval '1 minute' + interval '10 seconds',
                    10, 5, 2, 3, '{{"benchmark_only": true}}'::jsonb
             FROM generate_series(1, {ingest_runs}) i""",
+        ),
+        (
+            "link_reconciliation_states",
+            """INSERT INTO link_reconciliation_states
+                (institution_code, generation, reconciled_generation, recommendations_generation)
+            SELECT code, 3,
+                   CASE WHEN n % 3 = 0 THEN 2 ELSE 3 END,
+                   CASE WHEN n % 3 = 2 THEN 3 ELSE 2 END
+            FROM (SELECT code, row_number() OVER (ORDER BY code) AS n FROM institutions) i
+            ON CONFLICT (institution_code) DO UPDATE SET
+                generation = EXCLUDED.generation,
+                reconciled_generation = EXCLUDED.reconciled_generation,
+                recommendations_generation = EXCLUDED.recommendations_generation""",
         ),
     ]
     for name, sql in steps:
@@ -794,6 +986,49 @@ async def _load_additional(
     counts["mixed_groups_seeded"] = int(retyped) // 2
     counts["coverage_documents"] = int(await conn.fetchval("SELECT count(*) FROM documents"))
     counts["coverage_sources"] = int(await conn.fetchval("SELECT count(*) FROM sources"))
+    # The original fixture's signal embeddings/chunk FKs are null. Populate the complete
+    # probed institution plus group 1 only, after baseline timings, so the new projection
+    # actually reads vectors and source locations without rewriting 400k rows unnecessarily.
+    # In _load, the first chunk of document d is d-1 (or documents for document 1).
+    counts["reconciliation_payload_signals"] = int(
+        await conn.fetchval(
+            f"""WITH changed AS (
+            UPDATE signals s SET embedding = o.embedding, chunk_id = c.id
+            FROM opportunity_signals os
+            JOIN opportunities o ON o.id = os.opportunity_id,
+                 document_chunks c
+            WHERE os.signal_id = s.id
+              AND (s.institution_code = 'B-0001' OR os.opportunity_id = 1)
+              AND c.document_id = s.document_id
+              AND c.id = CASE WHEN s.document_id = 1 THEN {sizes["documents"]}
+                              ELSE s.document_id - 1 END
+            RETURNING s.id
+        ) SELECT count(*) FROM changed"""
+        )
+    )
+    counts["reconciliation_scope_signals"] = int(
+        await conn.fetchval("SELECT count(*) FROM signals WHERE institution_code = 'B-0001'")
+    )
+    counts["reconciliation_summary_tie_signals"] = int(
+        await conn.fetchval(
+            """WITH changed AS (
+            UPDATE signals s SET observed_at = date '2026-01-01'
+            FROM opportunity_signals os
+            WHERE os.signal_id = s.id AND os.opportunity_id = 1 RETURNING s.id
+        ) SELECT count(*) FROM changed"""
+        )
+    )
+    counts["reconciliation_dirty_states"] = int(
+        await conn.fetchval(
+            "SELECT count(*) FROM link_reconciliation_states WHERE generation > reconciled_generation"
+        )
+    )
+    counts["reconciliation_pending_dispatch_states"] = int(
+        await conn.fetchval(
+            "SELECT count(*) FROM link_reconciliation_states WHERE generation > reconciled_generation "
+            "OR reconciled_generation > recommendations_generation"
+        )
+    )
     await conn.execute("VACUUM ANALYZE")
     return counts
 
@@ -844,7 +1079,7 @@ async def run_bench(sizes: dict[str, int], report: Path, log: Any = print) -> di
         after = {q.key: await run_query(conn, q, "after") for q in qs}
         log("loading head-only synthetic query-volume fixtures …")
         supplemental_sizes = await _load_additional(conn, sizes, log)
-        for q in additional_queries():
+        for q in additional_queries(sizes, vec=p["vec"]):
             qs.append(q)
             before[q.key] = None
             after[q.key] = await run_query(conn, q, "after")
@@ -931,6 +1166,23 @@ def render(r: dict[str, Any]) -> str:
             "신규 기능의 전 결과는 미구현으로 표시하며 속도 개선율을 계산하지 않습니다.",
             "",
         ]
+        if "link_reconciliation_states" in extra:
+            lines[4:4] = [
+                f"재정합 입력은 기관 상태 {extra['link_reconciliation_states']:,}개 "
+                f"(미정합 {extra['reconciliation_dirty_states']:,}, 미정합 또는 추천 전달 대기 "
+                f"{extra['reconciliation_pending_dispatch_states']:,})입니다. "
+                f"B-0001 기관 전체 {extra['reconciliation_scope_signals']:,}신호를 조회하며, "
+                f"이 기관과 요약 동률 그룹의 합계 {extra['reconciliation_payload_signals']:,}신호에만 "
+                f"512차원 벡터와 청크 FK를 head 측정 전에 채웠습니다. 요약 동률 조회는 "
+                f"{extra['reconciliation_summary_tie_signals']:,}신호의 원문 위치를 읽습니다. "
+                "기관 밖 나머지 신호의 벡터·청크 FK는 기존 합성 fixture처럼 비어 있습니다. "
+                "완료 세대 필터를 사용하는 추천·알림도 head 전용 쿼리로 별도 측정합니다.",
+                f"과거 알림 보호용 합성 payload {extra['notifications']:,}건은 비활성 채널에만 "
+                "저장합니다. 검토 resolution에도 이전 기회 ID를 채웁니다. 실제 알림을 보내지 "
+                "않으며, 보호 전체 조회의 OR 가지가 다른 근거로 단축될 수 있어 검토·알림 "
+                "JSONB 포함 조건의 hit/miss도 각각 따로 측정합니다.",
+                "",
+            ]
     for q in r["queries"]:
         b, a = q["before"], q["after"]
 

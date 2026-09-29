@@ -149,7 +149,9 @@ def score_opportunity(
 
 
 async def _candidates(session: AsyncSession, profile: CompanyProfile) -> list[Opportunity]:
-    base = select(Opportunity).where(OPEN_ONLY)
+    from app.pipeline.link_state import link_settled
+
+    base = select(Opportunity).where(OPEN_ONLY, link_settled())
     found: dict[int, Opportunity] = {}
     if profile.embedding is not None:
         # An HNSW scan returns at most hnsw.ef_search rows (default 40). Ask for as many as we
@@ -201,6 +203,8 @@ async def refresh_recommendations(
             Recommendation.org_id == org_id,
             Recommendation.opportunity_id.not_in(keep_ids) if keep_ids else true(),
             Recommendation.feedback.is_(None),
+            Recommendation.feedback_at.is_(None),
+            Recommendation.notified_stage.is_(None),
         )
     )
     for s in scored:

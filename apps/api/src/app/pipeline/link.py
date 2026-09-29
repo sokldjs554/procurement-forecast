@@ -21,6 +21,7 @@ from __future__ import annotations
 import math
 import re
 from collections import Counter
+from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from datetime import date, timedelta
 from difflib import SequenceMatcher
@@ -34,7 +35,7 @@ from sqlalchemy.orm.attributes import set_committed_value
 from sqlalchemy.sql.elements import ColumnElement
 
 from app.clock import today_kst
-from app.db.models import Opportunity, OpportunitySignal, Signal
+from app.db.models import Document, DocumentChunk, Opportunity, OpportunitySignal, Signal, Source
 from app.domain.embedding import cosine
 from app.domain.stages import (
     CANCELS_KEY,
@@ -238,7 +239,22 @@ def _bid_numbers(refs: dict[str, Any]) -> set[str]:
     return numbers
 
 
-async def _reference_match(session: AsyncSession, signal: Signal) -> int | None:
+def reference_target(
+    matches: Sequence[int], direct_matches: Sequence[int] | None = None
+) -> int | None:
+    """Select the same unique reference identity for SQL and canonical planning."""
+    if len(matches) > 1 and direct_matches:
+        matches = direct_matches
+    if not matches:
+        return None
+    if len(matches) != 1:
+        raise _ReferenceConflictError
+    return matches[0]
+
+
+async def _reference_match(
+    session: AsyncSession, signal: Signal, *, blocked_opportunity_ids: set[int] | None = None
+) -> int | None:
     if signal.institution_code is None:
         return None
     # One plan/specification can advertise several tenders. It cannot identify one purchase.
@@ -281,6 +297,10 @@ async def _reference_match(session: AsyncSession, signal: Signal) -> int | None:
     matches = list((await session.scalars(stmt.where(or_(*conditions)))).all())
     if not matches:
         return None
+    if blocked_opportunity_ids and any(opp.id in blocked_opportunity_ids for opp in matches):
+        # A human/customer identity is an island. Do not turn its explicit reference into
+        # a similarity attachment elsewhere, or pin a new arrival inside that island.
+        raise _ReferenceConflictError
     if len(matches) > 1 and bid_conditions:
         # A shared plan can now hold separate tenders. A cancellation/revision must still
         # find its own bid, rather than be defeated by the other tender's upstream number.
@@ -289,12 +309,15 @@ async def _reference_match(session: AsyncSession, signal: Signal) -> int | None:
             matches = direct
     # Inspect ALL reference kinds/targets. The first row is not necessarily the right one,
     # and filtering one conflicting target must not make another target look unambiguous.
-    if len(matches) != 1 or not await _without_conflicting_numbers(session, signal, matches):
+    target = reference_target([opp.id for opp in matches])
+    if not await _without_conflicting_numbers(session, signal, matches):
         raise _ReferenceConflictError
-    return matches[0].id
+    return target
 
 
-async def _candidates(session: AsyncSession, signal: Signal) -> list[Opportunity]:
+async def _candidates(
+    session: AsyncSession, signal: Signal, *, blocked_opportunity_ids: set[int] | None = None
+) -> list[Opportunity]:
     eligible_member = (
         select(OpportunitySignal.signal_id)
         .join(Signal, Signal.id == OpportunitySignal.signal_id)
@@ -320,7 +343,12 @@ async def _candidates(session: AsyncSession, signal: Signal) -> list[Opportunity
     # Score the complete eligible population: filtering a nearest-12 slice hid valid #13,
     # and vector order cannot bound the combined title/category/budget/timeline score.
     # ID ordering also makes ties deterministic, including signals without embeddings.
-    return list((await session.scalars(stmt.order_by(Opportunity.id))).all())
+    candidates = list((await session.scalars(stmt.order_by(Opportunity.id))).all())
+    # The protection set is loaded once per batch. Filter metadata before structural/vector
+    # work without expanding a potentially huge NOT IN bind list for each new signal.
+    if not blocked_opportunity_ids:
+        return candidates
+    return [opp for opp in candidates if opp.id not in blocked_opportunity_ids]
 
 
 async def _load_candidate_embeddings(session: AsyncSession, candidates: list[Opportunity]) -> None:
@@ -347,7 +375,6 @@ async def _without_conflicting_numbers(
     A shared plan/specification is insufficient to merge distinct tenders. Plural bid lists
     and already-mixed threads are not safe identities for a single purchase either.
     """
-    mine = {k: signal.external_refs[k] for k in _REF_KEYS if signal.external_refs.get(k)}
     mine_bids = _bid_numbers(signal.external_refs)
     if len(mine_bids) > 1:
         return []
@@ -362,6 +389,21 @@ async def _without_conflicting_numbers(
             OpportunitySignal.tentative.is_(False),
         )
     )
+    return without_conflicting_numbers(
+        signal, candidates, [(opp_id, refs) for opp_id, refs in rows]
+    )
+
+
+def without_conflicting_numbers(
+    signal: Signal,
+    candidates: list[Opportunity],
+    rows: Iterable[tuple[int, dict[str, Any]]],
+) -> list[Opportunity]:
+    """Pure purchase-identity gate shared by the online and canonical linkers."""
+    mine = {k: signal.external_refs[k] for k in _REF_KEYS if signal.external_refs.get(k)}
+    mine_bids = _bid_numbers(signal.external_refs)
+    if len(mine_bids) > 1:
+        return []
     conflicting = set()
     bids: dict[int, set[str]] = {}
     for opp_id, refs in rows:
@@ -424,7 +466,24 @@ async def _without_other_budget_rows(
             )
         )
     ).all()
-    agree = [budget_names_agree(signal.title, title) for _, _, title, _ in rows]
+    return without_other_budget_rows(
+        signal, candidates, [(row[0], row[1], row[2], row[3]) for row in rows]
+    )
+
+
+def without_other_budget_rows(
+    signal: Signal,
+    candidates: list[Opportunity],
+    rows: Sequence[tuple[int, int, str, str | None]],
+) -> list[Opportunity]:
+    """Pure book/name/jurisdiction gate; rows cover every candidate budget member."""
+    if signal.stage != "budget_line" or not candidates:
+        return candidates
+    # A generic name may repeat in dozens of departments; compare each title only once.
+    agreement = {
+        title: budget_names_agree(signal.title, title) for title in {row[2] for row in rows}
+    }
+    agree = [agreement[title] for _, _, title, _ in rows]
     apart = {
         opp_id
         for (opp_id, document_id, _, dept), same in zip(rows, agree, strict=True)
@@ -449,9 +508,17 @@ async def _without_other_budget_rows(
     return [o for o in candidates if o.id not in apart]
 
 
-async def decide(session: AsyncSession, runtime: Runtime, signal: Signal) -> LinkDecision | None:
+async def decide(
+    session: AsyncSession,
+    runtime: Runtime,
+    signal: Signal,
+    *,
+    blocked_opportunity_ids: set[int] | None = None,
+) -> LinkDecision | None:
     try:
-        ref = await _reference_match(session, signal)
+        ref = await _reference_match(
+            session, signal, blocked_opportunity_ids=blocked_opportunity_ids
+        )
     except _ReferenceConflictError:
         return None
     if ref is not None:
@@ -463,13 +530,26 @@ async def decide(session: AsyncSession, runtime: Runtime, signal: Signal) -> Lin
     candidates = await _without_other_budget_rows(
         session,
         signal,
-        await _without_conflicting_numbers(session, signal, await _candidates(session, signal)),
+        await _without_conflicting_numbers(
+            session,
+            signal,
+            await _candidates(session, signal, blocked_opportunity_ids=blocked_opportunity_ids),
+        ),
     )
     if candidates and signal.embedding is not None:
         await _load_candidate_embeddings(session, candidates)
+    return choose_similarity(signal, candidates, threshold=threshold, band=band)
+
+
+def choose_similarity(
+    signal: Signal, candidates: list[Opportunity], *, threshold: float, band: float
+) -> LinkDecision | None:
+    """Score the complete structurally eligible population, including every runner-up."""
     best: tuple[float, Opportunity, dict[str, float]] | None = None
+    scores: dict[int, float] = {}
     for opp in candidates:
         score, parts = score_candidate(signal, opp)
+        scores[opp.id] = score
         if best is None or score > best[0]:
             best = (score, opp, parts)
     if best is None:
@@ -495,9 +575,7 @@ async def decide(session: AsyncSession, runtime: Runtime, signal: Signal) -> Lin
     ):
         score = round(score + 0.2, 4)
         parts = parts | {"exclusive": 1.0}
-    runner_up = max(
-        (score_candidate(signal, o)[0] for o in candidates if o.id != opp.id), default=0.0
-    )
+    runner_up = max((value for key, value in scores.items() if key != opp.id), default=0.0)
     if score < threshold or score - runner_up < band:
         return None
     return LinkDecision(opp.id, score, "similarity", False, parts)
@@ -542,6 +620,60 @@ async def refresh_opportunity(
             )
         ).all()
     )
+    if len({signal.observed_at for signal in links}) < len(links):
+        # Summary ties must not revert a reconciled group's title/category/vector when a
+        # later lifecycle refresh happens to read its members in surrogate-ID order.
+        # Load only source locations, once for the group; never transfer original text.
+        from app.pipeline.link_partition import stable_signal_key
+
+        metadata = (
+            await session.execute(
+                select(
+                    Signal.id,
+                    Source.key,
+                    Document.external_id,
+                    Document.doc_type,
+                    DocumentChunk.seq,
+                    DocumentChunk.char_start,
+                    DocumentChunk.char_end,
+                    DocumentChunk.labels,
+                )
+                .join(Document, Document.id == Signal.document_id)
+                .join(Source, Source.id == Document.source_id)
+                .outerjoin(DocumentChunk, DocumentChunk.id == Signal.chunk_id)
+                .where(Signal.id.in_([signal.id for signal in links]))
+            )
+        ).all()
+        by_id = {signal.id: signal for signal in links}
+        keys = {
+            sid: stable_signal_key(
+                by_id[sid],
+                source_key=source,
+                document_external_id=external,
+                document_type=kind,
+                chunk_seq=seq,
+                chunk_start=start,
+                chunk_end=end,
+                chunk_labels=labels or (),
+            )
+            for sid, source, external, kind, seq, start, end, labels in metadata
+        }
+        links.sort(key=lambda signal: (signal.observed_at, keys[signal.id]))
+    summarize_opportunity(opp, links, today=today, calibration=calibration)
+
+
+def summarize_opportunity(
+    opp: Opportunity,
+    links: Sequence[Signal],
+    *,
+    today: date,
+    calibration: dict[str, float] | None = None,
+) -> None:
+    """Apply a summary from accepted non-tentative members in caller-defined stable order.
+
+    Canonical planning and the database refresh wrapper both provide (observation date,
+    source/content key) order. This helper never reads mutable opportunity summary inputs.
+    """
     if not links:
         # Keep the identity and its feedback/brief/review history, but retract all derived
         # demand claims when no accepted, confirmed evidence remains.
@@ -657,8 +789,15 @@ async def link_signals(
         ).all()
     )
     touched: set[int] = set()
+    blocked: set[int] = set()
+    if signals:
+        from app.pipeline.link_state import protected_opportunity_ids
+
+        blocked = await protected_opportunity_ids(
+            session, {s.institution_code for s in signals if s.institution_code}
+        )
     for signal in signals:
-        decision = await decide(session, runtime, signal)
+        decision = await decide(session, runtime, signal, blocked_opportunity_ids=blocked)
         if decision is None:
             opp = Opportunity(
                 institution_code=signal.institution_code,
@@ -704,4 +843,8 @@ async def link_signals(
         await session.flush()
         touched.add(opp.id)
     log.info("link.done", signals=len(signals), opportunities=len(touched))
+    if signals:
+        from app.pipeline.link_reconcile import mark_link_dirty
+
+        await mark_link_dirty(session, {s.institution_code for s in signals if s.institution_code})
     return sorted(touched)

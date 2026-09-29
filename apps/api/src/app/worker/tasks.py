@@ -3,8 +3,10 @@
 Pipeline fan-out::
 
     cron ─► ingest_source(key) ─► process_document(doc) ─► link_signals(ids)
-                                                             └► refresh_recommendations(org)
+                                             └► reconcile_links(institution)
+                                                       └► refresh_recommendations(org)
                                                                    └► enqueue_alerts(org) (instant)
+    cron ─► sweep_pending_links           (every minute; durable generation recovery)
     cron ─► deliver_notifications         (every minute)
     cron ─► daily/weekly digests           (08:10 KST)
     cron ─► renew_subscriptions            (hourly)
@@ -26,10 +28,21 @@ from datetime import UTC, date, datetime, timedelta
 from typing import Any, TypeVar, cast
 
 from arq import Retry
-from sqlalchemy import select
+from sqlalchemy import func, or_, select, update
+from sqlalchemy.exc import DBAPIError
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.clock import today_kst
-from app.db.models import AlertRule, EvalRun, JobRun, Opportunity, Organization, Signal, Source
+from app.db.models import (
+    AlertRule,
+    EvalRun,
+    JobRun,
+    LinkReconciliationState,
+    Opportunity,
+    Organization,
+    Signal,
+    Source,
+)
 from app.db.session import session_scope
 from app.llm.types import LLMUnavailableError
 from app.log import bind_contextvars, clear_contextvars, get_logger
@@ -37,6 +50,7 @@ from app.pipeline.backtest import latest_calibration, run_backtest
 from app.pipeline.ingest import default_window, run_ingest
 from app.pipeline.link import link_signals as link_signals_impl
 from app.pipeline.link import refresh_opportunity
+from app.pipeline.link_reconcile import LinkSnapshotChangedError, reconcile_institution
 from app.pipeline.process import pending_document_ids
 from app.pipeline.process import process_document as process_impl
 from app.pipeline.recommend import refresh_recommendations as refresh_recs_impl
@@ -98,12 +112,26 @@ def tracked(name: str) -> Callable[[F], F]:
             except CircuitOpenError as exc:
                 status, error = "retrying", str(exc)
                 raise Retry(defer=timedelta(seconds=exc.retry_after + 5)) from exc
-            except (TransientSourceError, LLMUnavailableError) as exc:
+            except (TransientSourceError, LLMUnavailableError, LinkSnapshotChangedError) as exc:
                 if attempt >= MAX_TRIES:
                     status, error = "failed", f"{type(exc).__name__}: {exc}"
                     raise
                 status, error = "retrying", str(exc)
                 raise Retry(defer=timedelta(seconds=30 * 2 ** (attempt - 1))) from exc
+            except DBAPIError as exc:
+                status, error = "failed", f"{type(exc).__name__}: {exc}"
+                # Conflicting writers require a fresh whole reconciliation transaction.
+                # Other SQL failures remain visible rather than being treated as transient.
+                sqlstate = getattr(exc.orig, "sqlstate", None) or getattr(exc.orig, "pgcode", None)
+                if (
+                    name == "reconcile_links"
+                    and sqlstate in {"40001", "40P01", "55P03"}
+                    and attempt < MAX_TRIES
+                ):
+                    status = "retrying"
+                    raise Retry(defer=timedelta(seconds=30 * 2 ** (attempt - 1))) from exc
+                log.exception("job.failed")
+                raise
             except asyncio.CancelledError:
                 # Worker shutdown (SIGTERM on deploy): arq puts the job back on the queue.
                 status, error = "retrying", "cancelled by worker shutdown"
@@ -200,7 +228,26 @@ async def link_signals(ctx: dict[str, Any], signal_ids: list[int]) -> dict[str, 
     async with session_scope() as s:
         calibration = await latest_calibration(s)
         touched = await link_signals_impl(s, runtime, signal_ids, calibration=calibration)
-        org_ids = list((await s.scalars(select(Organization.id))).all())
+        owners = (
+            list(
+                (
+                    await s.scalars(
+                        select(Opportunity.institution_code)
+                        .where(Opportunity.id.in_(touched))
+                        .distinct()
+                    )
+                ).all()
+            )
+            if touched
+            else []
+        )
+        pending = await _pending_link_generations(s, {code for code in owners if code is not None})
+        # Unknown owners have no institution reconciliation scope; retain their old fan-out.
+        org_ids = list((await s.scalars(select(Organization.id))).all()) if None in owners else []
+    for code, generation in pending:
+        await enqueue(
+            ctx["redis"], "reconcile_links", code, job_id=f"reconcile:{code}:{generation}"
+        )
     for org_id in org_ids:
         await enqueue(
             ctx["redis"],
@@ -209,6 +256,86 @@ async def link_signals(ctx: dict[str, Any], signal_ids: list[int]) -> dict[str, 
             job_id=f"recs:{org_id}:{int(time.time() // 30)}",
         )
     return {"opportunities": len(touched)}
+
+
+async def _pending_link_generations(
+    session: AsyncSession, institution_codes: set[str] | None = None
+) -> list[tuple[str, int]]:
+    if institution_codes is not None and not institution_codes:
+        return []
+    state = LinkReconciliationState
+    stmt = (
+        select(state.institution_code, state.generation)
+        .where(
+            or_(
+                state.generation > state.reconciled_generation,
+                state.reconciled_generation > state.recommendations_generation,
+            )
+        )
+        .order_by(state.institution_code)
+        .limit(200)
+    )
+    if institution_codes is not None:
+        stmt = stmt.where(state.institution_code.in_(sorted(institution_codes)))
+    return [(code, generation) for code, generation in (await session.execute(stmt)).all()]
+
+
+@tracked("reconcile_links")
+async def reconcile_links(ctx: dict[str, Any], institution_code: str) -> dict[str, Any]:
+    """Publish recommendations only after the institution's canonical links commit.
+
+    Recommendation dispatch remains pending in PostgreSQL until every deterministic org
+    job is queued. A retry can finish a partial dispatch even if normalization is a no-op.
+    """
+    async with session_scope() as s:
+        calibration = await latest_calibration(s)
+        result = await reconcile_institution(
+            s, _runtime(ctx), institution_code, calibration=calibration
+        )
+        state = await s.get(LinkReconciliationState, institution_code)
+        completed_generation = state.reconciled_generation if state is not None else 0
+        pending_dispatch = (
+            state is not None and completed_generation > state.recommendations_generation
+        )
+        org_ids = list((await s.scalars(select(Organization.id))).all()) if pending_dispatch else []
+    for org_id in org_ids:
+        await enqueue(
+            ctx["redis"],
+            "refresh_recommendations",
+            org_id,
+            job_id=f"recs:{institution_code}:{completed_generation}:{org_id}",
+        )
+    if pending_dispatch:
+        async with session_scope() as s:
+            await s.execute(
+                update(LinkReconciliationState)
+                .where(LinkReconciliationState.institution_code == institution_code)
+                .values(
+                    recommendations_generation=func.greatest(
+                        LinkReconciliationState.recommendations_generation, completed_generation
+                    )
+                )
+            )
+    return {
+        "opportunities": len(result.touched_ids),
+        "protected_opportunities": result.protected_opportunities,
+        "changed_signals": result.changed_signals,
+        "generation": result.generation,
+        "processed": result.processed,
+        "recommendation_jobs": len(org_ids),
+    }
+
+
+@tracked("sweep_pending_links")
+async def sweep_pending_links(ctx: dict[str, Any]) -> dict[str, Any]:
+    """Recover committed links or recommendation dispatch lost between DB and Redis."""
+    async with session_scope() as s:
+        pending = await _pending_link_generations(s)
+    for code, generation in pending:
+        await enqueue(
+            ctx["redis"], "reconcile_links", code, job_id=f"reconcile:{code}:{generation}"
+        )
+    return {"enqueued": len(pending)}
 
 
 @tracked("refresh_recommendations")

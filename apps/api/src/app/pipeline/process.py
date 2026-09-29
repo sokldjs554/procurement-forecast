@@ -474,10 +474,16 @@ async def process_document(
             .order_by(Opportunity.id)
             .with_for_update()
         )
+        old_owners: set[str] = set()
         for opportunity in old_opportunities:
             await refresh_opportunity(session, opportunity, today=business_date)
+            if opportunity.institution_code:
+                old_owners.add(opportunity.institution_code)
         await session.flush()
         await refresh_affected_recommendations(session, old_opportunity_ids, today=business_date)
+        from app.pipeline.link_reconcile import mark_link_dirty
+
+        await mark_link_dirty(session, old_owners)
     log.info(
         "document.processed",
         document_id=doc.id,

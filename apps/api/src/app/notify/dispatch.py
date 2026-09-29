@@ -39,6 +39,7 @@ from app.domain.stages import STAGE_LABEL, STAGE_ORDER, Stage
 from app.domain.timing import month_span, remaining_window
 from app.log import get_logger
 from app.notify.channels import Channel, PermanentDeliveryError, TransientDeliveryError
+from app.pipeline.link_state import link_settled
 
 log = get_logger(__name__)
 MAX_ATTEMPTS = 5
@@ -166,6 +167,7 @@ async def enqueue_alerts(
                 Recommendation.feedback.is_(None) | (Recommendation.feedback == "relevant"),
                 Opportunity.status.in_(("open", "bid_open")),
             )
+            .where(link_settled())
             .order_by(Recommendation.score.desc())
         )
     ).all()
