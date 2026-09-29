@@ -1,0 +1,56 @@
+name: Integrity audit
+on:
+  pull_request:
+    paths:
+      - 'apps/api/src/app/domain/grounding.py'
+      - 'apps/api/src/app/pipeline/**'
+      - 'apps/api/src/app/bench.py'
+      - 'scripts/integrity-audit.sh'
+      - '.github/workflows/integrity-audit.yml'
+permissions:
+  contents: read
+concurrency:
+  group: integrity-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  audit:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: app
+          POSTGRES_PASSWORD: app
+          POSTGRES_DB: app
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd 'pg_isready -U app' --health-interval 3s --health-timeout 3s --health-retries 20
+      redis:
+        image: redis:7-alpine
+        ports: ['6379:6379']
+    env:
+      PGHOST: localhost
+      PGUSER: app
+      PGPASSWORD: app
+      APP_LOG_JSON: 'false'
+      AUDIT_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - name: OCR engine and Korean fonts
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-kor fonts-nanum
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: '0.8.17'
+          python-version: '3.11'
+          enable-cache: true
+          cache-dependency-glob: apps/api/uv.lock
+      - name: Baseline and changed pipeline, real replay twice, query benchmark
+        run: bash scripts/integrity-audit.sh
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: integrity-audit
+          path: ${{ runner.temp }}/integrity-audit

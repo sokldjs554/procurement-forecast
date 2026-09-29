@@ -12,8 +12,8 @@ Deterministic where possible, probabilistic where necessary:
    When present they decide the link (precision 1.0).
 2. **Similarity links** — otherwise candidates from the same demand owner are scored on
    semantic similarity, title overlap, category, budget proximity and lifecycle plausibility.
-   Above ``link_threshold`` → attach; within ``link_review_band`` of it → attach *tentatively*
-   and surface in review; below → start a new opportunity.
+   Above ``link_threshold`` with a clear lead over alternatives → attach; otherwise keep a
+   separate opportunity. An ambiguous match must not change another opportunity's summary.
 """
 
 from __future__ import annotations
@@ -139,7 +139,31 @@ def terms_conflict(a: str, b: str) -> bool:
     return bool(ta) and bool(tb) and not (ta & tb)
 
 
+_FACILITY_RE = re.compile(r"([가-힣0-9]+?)(청소년수련관|도서관)")
+_GENERIC_FACILITY_PREFIXES = {"공공", "시립", "구립", "국립", "작은", "어린이", "스마트", "전자"}
+
+
+def facilities_conflict(a: str, b: str) -> bool:
+    """A shared facility type is not identity when both titles name different sites.
+
+    Intentionally narrow: no claim to resolve all Korean place names. Generic descriptions
+    such as 공공도서관 carry no location evidence and therefore do not trigger this veto.
+    """
+
+    def names(title: str) -> dict[str, set[str]]:
+        result: dict[str, set[str]] = {}
+        for prefix, kind in _FACILITY_RE.findall(title):
+            if prefix not in _GENERIC_FACILITY_PREFIXES:
+                result.setdefault(kind, set()).add(prefix)
+        return result
+
+    left, right = names(a), names(b)
+    return any(left[kind].isdisjoint(right[kind]) for kind in left.keys() & right.keys())
+
+
 def score_candidate(signal: Signal, opp: Opportunity) -> tuple[float, dict[str, float]]:
+    if facilities_conflict(signal.title, opp.title):
+        return 0.0, {"facility_conflict": 1.0}
     parts = {
         "semantic": max(cosine(signal.embedding, opp.embedding), 0.0)
         if signal.embedding is not None and opp.embedding is not None
@@ -328,9 +352,8 @@ async def decide(session: AsyncSession, runtime: Runtime, signal: Signal) -> Lin
     if best is None:
         return None
     score, opp, parts = best
-    # Exclusivity: the only live opportunity at this institution in the same category with a
-    # budget within ~15% is strong evidence even when the names share nothing ("어린이보호구역
-    # 지능형 CCTV" → "스쿨존 AI 안전카메라"). Never applies when two candidates compete.
+    # Similar amount/category can reinforce positive title evidence, never replace it.
+    # Uniqueness here is only within the retrieved candidate set, not the whole institution.
     same_kind = [
         o
         for o in candidates
@@ -344,12 +367,17 @@ async def decide(session: AsyncSession, runtime: Runtime, signal: Signal) -> Lin
         and signal.budget_krw
         and opp.est_budget_krw
         and not terms_conflict(signal.title, opp.title)
+        and not facilities_conflict(signal.title, opp.title)
+        and parts.get("title", 0.0) >= BUDGET_NAME_FLOOR
     ):
         score = round(score + 0.2, 4)
         parts = parts | {"exclusive": 1.0}
-    if score < threshold - band:
+    runner_up = max(
+        (score_candidate(signal, o)[0] for o in candidates if o.id != opp.id), default=0.0
+    )
+    if score < threshold or score - runner_up < band:
         return None
-    return LinkDecision(opp.id, score, "similarity", score < threshold, parts)
+    return LinkDecision(opp.id, score, "similarity", False, parts)
 
 
 def _conversion_probability(

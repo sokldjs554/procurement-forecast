@@ -377,7 +377,10 @@ def render_report(r: dict[str, Any]) -> str:
         cov = bt.get("tender_early_coverage", {})
         lead = bt.get("lead_time_days", {})
         lines += [
-            "## 백테스트",
+            "## 백테스트 (현재 연결의 회고적 진단)",
+            f"- 방법: `{bt.get('method_version', 'legacy')}` · 기준일 {bt.get('as_of')} · 관측기간 {bt.get('horizon_days')}일",
+            f"- 관측기간 미충족 기회 {bt.get('censored_opportunities', 0)}건 · 공개일 불확실 제외 신호 {bt.get('excluded_uncertain_dates', 0)}건",
+            "- 합성 데이터 실행 수치는 실제 예측 성능이 아닙니다. 현재 연결을 사용하므로 과거 시점 예측 재현도 아닙니다.",
             f"- 입찰공고 {cov.get('tenders')}건 중 {_pct(cov.get('rate'))}가 공고 이전에 공개 신호를 가짐",
             f"- 선행 기간 중앙값 {lead.get('median')}일 (p25 {lead.get('p25')}, p75 {lead.get('p75')})",
             "- 첫 신호 유형별 입찰 전환율:",

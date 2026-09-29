@@ -239,6 +239,7 @@ class ClikMinutesAdapter:
             content=text.encode("utf-8"),
             structured={
                 "meeting_date": day.isoformat(),
+                "published_from": "meeting_date",
                 "council": council,
                 "council_id": merged.get("RASMBLY_ID"),
                 "term": merged.get("RASMBLY_NUMPR"),
