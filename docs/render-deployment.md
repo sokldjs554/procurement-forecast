@@ -235,7 +235,8 @@ Do not equate a passing `/healthz` or empty dashboard with these outcomes.
 [`render.yaml` JSON schema](https://render.com/schema/render.yaml.json). Focused tests cover
 Render URL adaptation, missing/unsafe production settings, redacted validation errors, and
 bounded worker concurrency. The repository's API lint and test commands remain required.
-The editing workspace had no Docker engine, so a successful production image build, resource
-creation, live health response, provider connectivity, and full user flow are not claimed here.
+The editing workspace had no Docker engine. The [verified CI run](https://github.com/sokldjs554/procurement-forecast/actions/runs/36557807923)
+built the API, web, and Render production images successfully. Resource creation, live health
+responses, provider connectivity, and the full production user flow remain unverified.
 For Render-side semantic validation, use `render blueprints validate render.yaml` with a current
 authenticated Render CLI before creating the Blueprint.
