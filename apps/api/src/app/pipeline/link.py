@@ -9,7 +9,7 @@
 Deterministic where possible, probabilistic where necessary:
 
 1. **Reference links** — 나라장터 records carry each other's numbers (발주계획번호, 사전규격등록번호).
-   When present they decide the link (precision 1.0).
+   They decide the link only within one institution and one consistent purchase identity.
 2. **Similarity links** — otherwise candidates from the same demand owner are scored on
    semantic similarity, title overlap, category, budget proximity and lifecycle plausibility.
    Above ``link_threshold`` with a clear lead over alternatives → attach; otherwise keep a
@@ -24,10 +24,14 @@ from collections import Counter
 from dataclasses import dataclass
 from datetime import date, timedelta
 from difflib import SequenceMatcher
+from functools import lru_cache
 from typing import Any
 
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import defer
+from sqlalchemy.orm.attributes import set_committed_value
+from sqlalchemy.sql.elements import ColumnElement
 
 from app.clock import today_kst
 from app.db.models import Opportunity, OpportunitySignal, Signal
@@ -43,7 +47,7 @@ from app.domain.stages import (
     withdrawn_bids,
 )
 from app.domain.synonyms import canonical_terms, canonicalize
-from app.domain.text import char_ngrams, jaccard
+from app.domain.text import char_ngrams
 from app.log import get_logger
 from app.pipeline.process import canonical_title
 from app.runtime import Runtime
@@ -76,14 +80,51 @@ class LinkDecision:
     reasons: dict[str, Any]
 
 
+@dataclass(frozen=True, slots=True)
+class _TitleFingerprint:
+    budget_name: str
+    bigrams: frozenset[str]
+    trigrams: frozenset[str]
+    terms: frozenset[str]
+
+
+def _make_title_fingerprint(title: str) -> _TitleFingerprint:
+    canonical = canonicalize(canonical_title(title))
+    return _TitleFingerprint(
+        budget_name=_NAME_NOISE_RE.sub("", canonical),
+        bigrams=frozenset(char_ngrams(canonical, 2)),
+        trigrams=frozenset(char_ngrams(canonical, 3)),
+        # Terms intentionally use the original title: stripping e.g. [CCTV] first would
+        # change the existing evidence, even though n-grams use the cleaned title.
+        terms=frozenset(canonical_terms(title)),
+    )
+
+
+@lru_cache(maxsize=2048)
+def _cached_title_fingerprint(title: str) -> _TitleFingerprint:
+    return _make_title_fingerprint(title)
+
+
+def _title_fingerprint(title: str) -> _TitleFingerprint:
+    # Bound both the number and input length of retained entries. Full document fragments
+    # accidentally supplied as titles still score normally, without occupying the cache.
+    if len(title) > 256:
+        return _make_title_fingerprint(title)
+    return _cached_title_fingerprint(title)
+
+
+def _ngram_overlap(a: frozenset[str], b: frozenset[str]) -> float:
+    return len(a & b) / len(a | b) if a and b else 0.0
+
+
 def title_similarity(a: str, b: str) -> float:
     """Character n-gram overlap after synonym canonicalisation, or shared domain terms."""
-    ca, cb = canonicalize(canonical_title(a)), canonicalize(canonical_title(b))
+    fa, fb = _title_fingerprint(a), _title_fingerprint(b)
     ngram = max(
-        jaccard(set(char_ngrams(ca, 2)), set(char_ngrams(cb, 2))),
-        jaccard(set(char_ngrams(ca, 3)), set(char_ngrams(cb, 3))),
+        _ngram_overlap(fa.bigrams, fb.bigrams),
+        _ngram_overlap(fa.trigrams, fb.trigrams),
     )
-    ta, tb = canonical_terms(a), canonical_terms(b)
+    ta, tb = fa.terms, fb.terms
     shared = len(ta & tb) / max(min(len(ta), len(tb)), 1) if ta and tb else 0.0
     return max(ngram, 0.8 * shared)
 
@@ -124,7 +165,7 @@ def budget_names_agree(a: str, b: str) -> bool:
     "수정청소년수련관", 1 for 2 — or words dropped on one side and others added on the other —
     "CCTV 관제센터 구축 및 운영" and "수정구 생활안전 CCTV 구축" — make another project, however
     much of the rest is shared."""
-    x, y = (_NAME_NOISE_RE.sub("", canonicalize(canonical_title(t))) for t in (a, b))
+    x, y = _title_fingerprint(a).budget_name, _title_fingerprint(b).budget_name
     if x == y:
         return True
     if title_similarity(a, b) < BUDGET_NAME_FLOOR:
@@ -135,7 +176,7 @@ def budget_names_agree(a: str, b: str) -> bool:
 
 def terms_conflict(a: str, b: str) -> bool:
     """Both titles name specific, *different* things ("스마트쉘터" vs "스마트폴")."""
-    ta, tb = canonical_terms(a), canonical_terms(b)
+    ta, tb = _title_fingerprint(a).terms, _title_fingerprint(b).terms
     return bool(ta) and bool(tb) and not (ta & tb)
 
 
@@ -185,92 +226,148 @@ def score_candidate(signal: Signal, opp: Opportunity) -> tuple[float, dict[str, 
     return round(total, 4), {k: round(v, 3) for k, v in parts.items()}
 
 
+class _ReferenceConflictError(Exception):
+    """Reference evidence is contradictory; similarity must not override it."""
+
+
+def _bid_numbers(refs: dict[str, Any]) -> set[str]:
+    numbers = {str(no) for no in refs.get("bid_notice_nos") or () if no}
+    for key in ("bid_notice_no", CANCELS_KEY):
+        if no := refs.get(key):
+            numbers.add(str(no))
+    return numbers
+
+
 async def _reference_match(session: AsyncSession, signal: Signal) -> int | None:
+    if signal.institution_code is None:
+        return None
+    # One plan/specification can advertise several tenders. It cannot identify one purchase.
+    bid_numbers = _bid_numbers(signal.external_refs)
+    if len(bid_numbers) > 1:
+        raise _ReferenceConflictError
+    conditions: list[ColumnElement[bool]] = []
     for key in _REF_KEYS:
         value = signal.external_refs.get(key)
-        if not value:
-            continue
-        opp_id = await session.scalar(
-            select(OpportunitySignal.opportunity_id)
-            .join(Signal, Signal.id == OpportunitySignal.signal_id)
-            .where(Signal.id != signal.id, Signal.external_refs.contains({key: value}))
-            .limit(1)
+        if value:
+            conditions.append(Signal.external_refs.contains({key: value}))
+    bid_conditions: list[ColumnElement[bool]] = []
+    for no in bid_numbers:
+        # Same-number revisions/cancellations retain identity, in either arrival order.
+        bid_conditions.extend(
+            Signal.external_refs.contains({key: value})
+            for key, value in (
+                ("bid_notice_no", no),
+                (CANCELS_KEY, no),
+                ("bid_notice_nos", [no]),
+            )
         )
-        if opp_id is not None:
-            return int(opp_id)
-    bid_no = signal.external_refs.get("bid_notice_no")
-    if bid_no:
-        # Another 차수 of the same 공고 (변경·재공고·취소) is the same purchase.
-        opp_id = await session.scalar(
-            select(OpportunitySignal.opportunity_id)
-            .join(Signal, Signal.id == OpportunitySignal.signal_id)
-            .where(Signal.id != signal.id, Signal.external_refs.contains({"bid_notice_no": bid_no}))
-            .limit(1)
+    conditions.extend(bid_conditions)
+    if not conditions:
+        return None
+    stmt = (
+        select(Opportunity)
+        .join(OpportunitySignal, OpportunitySignal.opportunity_id == Opportunity.id)
+        .join(Signal, Signal.id == OpportunitySignal.signal_id)
+        .where(
+            Signal.id != signal.id,
+            Signal.institution_code == signal.institution_code,
+            Opportunity.institution_code == signal.institution_code,
+            Signal.verdict == "accepted",
+            OpportunitySignal.tentative.is_(False),
         )
-        if opp_id is not None:
-            return int(opp_id)
-        # A 사전규격 lists the bid numbers it turned into.
-        opp_id = await session.scalar(
-            select(OpportunitySignal.opportunity_id)
-            .join(Signal, Signal.id == OpportunitySignal.signal_id)
-            .where(Signal.external_refs.contains({"bid_notice_nos": [bid_no]}))
-            .limit(1)
-        )
-        if opp_id is not None:
-            return int(opp_id)
-    # …and so do 발주계획 (72% of live plans, 2026-09-26). Half of them were registered the
-    # same day as their 공고, so the bid can be linked first; look the other way too.
-    for no in signal.external_refs.get("bid_notice_nos") or ():
-        opp_id = await session.scalar(
-            select(OpportunitySignal.opportunity_id)
-            .join(Signal, Signal.id == OpportunitySignal.signal_id)
-            .where(Signal.id != signal.id, Signal.external_refs.contains({"bid_notice_no": no}))
-            .limit(1)
-        )
-        if opp_id is not None:
-            return int(opp_id)
-    return None
-
-
-async def _candidates(session: AsyncSession, signal: Signal, limit: int = 12) -> list[Opportunity]:
-    stmt = select(Opportunity).where(
-        Opportunity.institution_code == signal.institution_code,
-        Opportunity.last_signal_at >= signal.observed_at - timedelta(days=SPAN_DAYS),
-        Opportunity.first_seen_at <= signal.observed_at + timedelta(days=SPAN_DAYS),
+        .distinct()
+        .order_by(Opportunity.id)
     )
-    # The id breaks ties. A book repeats a 세부사업명 across departments ("사회복지 시책추진비"),
-    # and those rows make opportunities with the same embedding: without it the row order on
-    # disk picked among them, and a replay of the live 성남시 run put 19 rows elsewhere
-    # (docs/data/seongnam-link-signals.md).
-    if signal.embedding is not None:
-        stmt = stmt.order_by(
-            Opportunity.embedding.cosine_distance(signal.embedding), Opportunity.id
+    matches = list((await session.scalars(stmt.where(or_(*conditions)))).all())
+    if not matches:
+        return None
+    if len(matches) > 1 and bid_conditions:
+        # A shared plan can now hold separate tenders. A cancellation/revision must still
+        # find its own bid, rather than be defeated by the other tender's upstream number.
+        direct = list((await session.scalars(stmt.where(or_(*bid_conditions)))).all())
+        if direct:
+            matches = direct
+    # Inspect ALL reference kinds/targets. The first row is not necessarily the right one,
+    # and filtering one conflicting target must not make another target look unambiguous.
+    if len(matches) != 1 or not await _without_conflicting_numbers(session, signal, matches):
+        raise _ReferenceConflictError
+    return matches[0].id
+
+
+async def _candidates(session: AsyncSession, signal: Signal) -> list[Opportunity]:
+    eligible_member = (
+        select(OpportunitySignal.signal_id)
+        .join(Signal, Signal.id == OpportunitySignal.signal_id)
+        .where(
+            OpportunitySignal.opportunity_id == Opportunity.id,
+            OpportunitySignal.tentative.is_(False),
+            Signal.verdict == "accepted",
+            Signal.institution_code == signal.institution_code,
         )
-    else:
-        stmt = stmt.order_by(Opportunity.id)
-    return list((await session.scalars(stmt.limit(limit))).all())
+        .exists()
+    )
+    stmt = (
+        select(Opportunity)
+        .options(defer(Opportunity.embedding, raiseload=True))
+        .where(
+            Opportunity.institution_code == signal.institution_code,
+            Opportunity.signal_count > 0,
+            Opportunity.last_signal_at >= signal.observed_at - timedelta(days=SPAN_DAYS),
+            Opportunity.first_seen_at <= signal.observed_at + timedelta(days=SPAN_DAYS),
+            eligible_member,
+        )
+    )
+    # Score the complete eligible population: filtering a nearest-12 slice hid valid #13,
+    # and vector order cannot bound the combined title/category/budget/timeline score.
+    # ID ordering also makes ties deterministic, including signals without embeddings.
+    return list((await session.scalars(stmt.order_by(Opportunity.id))).all())
+
+
+async def _load_candidate_embeddings(session: AsyncSession, candidates: list[Opportunity]) -> None:
+    """Fetch vectors only after every structural gate, in one explicit query.
+
+    Mark them loaded without marking the opportunities dirty. Deferred attributes raise on
+    access, so scoring can never accidentally issue one lazy query per candidate.
+    """
+    rows = await session.execute(
+        select(Opportunity.id, Opportunity.embedding).where(
+            Opportunity.id.in_([opp.id for opp in candidates])
+        )
+    )
+    vectors = dict(rows.all())
+    for opp in candidates:
+        set_committed_value(opp, "embedding", vectors.get(opp.id))
 
 
 async def _without_conflicting_numbers(
     session: AsyncSession, signal: Signal, candidates: list[Opportunity]
 ) -> list[Opportunity]:
-    """Drop opportunities that already hold a *different* 발주계획번호 or 사전규격번호 than the
-    signal: two numbers are two purchases, however alike the titles. On 30 days of live data
-    (2026-09-26) 1,396 of 1,987 similarity links joined such pairs — one 기관 puts out dozens
-    of "…도로 정비공사" a month."""
+    """Keep one consistent procurement identity, including all members' bid numbers.
+
+    A shared plan/specification is insufficient to merge distinct tenders. Plural bid lists
+    and already-mixed threads are not safe identities for a single purchase either.
+    """
     mine = {k: signal.external_refs[k] for k in _REF_KEYS if signal.external_refs.get(k)}
-    if not mine or not candidates:
+    mine_bids = _bid_numbers(signal.external_refs)
+    if len(mine_bids) > 1:
+        return []
+    if not candidates:
         return candidates
     rows = await session.execute(
         select(OpportunitySignal.opportunity_id, Signal.external_refs)
         .join(Signal, Signal.id == OpportunitySignal.signal_id)
-        .where(OpportunitySignal.opportunity_id.in_([o.id for o in candidates]))
+        .where(
+            OpportunitySignal.opportunity_id.in_([o.id for o in candidates]),
+            Signal.verdict == "accepted",
+            OpportunitySignal.tentative.is_(False),
+        )
     )
-    conflicting = {
-        opp_id
-        for opp_id, refs in rows
-        if any(refs.get(k) and refs[k] != v for k, v in mine.items())
-    }
+    conflicting = set()
+    bids: dict[int, set[str]] = {}
+    for opp_id, refs in rows:
+        bids.setdefault(opp_id, set(mine_bids)).update(_bid_numbers(refs))
+        if len(bids[opp_id]) > 1 or any(refs.get(k) and refs[k] != v for k, v in mine.items()):
+            conflicting.add(opp_id)
     return [o for o in candidates if o.id not in conflicting]
 
 
@@ -308,6 +405,8 @@ async def _without_other_budget_rows(
                 OpportunitySignal.opportunity_id.in_([o.id for o in candidates]),
                 Signal.stage == signal.stage,
                 Signal.id != signal.id,
+                Signal.verdict == "accepted",
+                OpportunitySignal.tentative.is_(False),
             )
         )
     ).all()
@@ -335,7 +434,10 @@ async def _without_other_budget_rows(
 
 
 async def decide(session: AsyncSession, runtime: Runtime, signal: Signal) -> LinkDecision | None:
-    ref = await _reference_match(session, signal)
+    try:
+        ref = await _reference_match(session, signal)
+    except _ReferenceConflictError:
+        return None
     if ref is not None:
         return LinkDecision(ref, 1.0, "ref", False, {"ref": signal.external_refs})
     if signal.institution_code is None:
@@ -347,6 +449,8 @@ async def decide(session: AsyncSession, runtime: Runtime, signal: Signal) -> Lin
         signal,
         await _without_conflicting_numbers(session, signal, await _candidates(session, signal)),
     )
+    if candidates and signal.embedding is not None:
+        await _load_candidate_embeddings(session, candidates)
     best: tuple[float, Opportunity, dict[str, float]] | None = None
     for opp in candidates:
         score, parts = score_candidate(signal, opp)
@@ -356,7 +460,7 @@ async def decide(session: AsyncSession, runtime: Runtime, signal: Signal) -> Lin
         return None
     score, opp, parts = best
     # Similar amount/category can reinforce positive title evidence, never replace it.
-    # Uniqueness here is only within the retrieved candidate set, not the whole institution.
+    # Uniqueness is checked over every eligible candidate in the institution/time window.
     same_kind = [
         o
         for o in candidates
@@ -413,13 +517,27 @@ async def refresh_opportunity(
             await session.scalars(
                 select(Signal)
                 .join(OpportunitySignal, OpportunitySignal.signal_id == Signal.id)
-                .where(OpportunitySignal.opportunity_id == opp.id)
-                .order_by(Signal.observed_at)
+                .where(
+                    OpportunitySignal.opportunity_id == opp.id,
+                    Signal.verdict == "accepted",
+                    OpportunitySignal.tentative.is_(False),
+                )
+                .order_by(Signal.observed_at, Signal.id)
             )
         ).all()
     )
     if not links:
-        await session.delete(opp)
+        # Keep the identity and its feedback/brief/review history, but retract all derived
+        # demand claims when no accepted, confirmed evidence remains.
+        opp.status = "dormant"
+        opp.signal_count = 0
+        opp.bid_published_at = None
+        opp.bid_window_start = opp.bid_window_end = None
+        opp.est_budget_krw = None
+        opp.best_commitment = None
+        opp.conversion_prob = 0.0
+        opp.keywords = []
+        opp.embedding = None
         return
     withdrawn = withdrawn_bids(
         (s.external_refs, s.observed_at) for s in links if s.stage == Stage.BID.value
@@ -467,6 +585,8 @@ async def refresh_opportunity(
         mean = [sum(float(v[i]) for v in vectors) / len(vectors) for i in range(dim)]
         norm = math.sqrt(sum(x * x for x in mean)) or 1.0
         opp.embedding = [x / norm for x in mean]
+    else:
+        opp.embedding = None
     bids = [s for s in live if s.stage in (Stage.BID.value, Stage.AWARD.value)]
     opp.bid_published_at = min(s.observed_at for s in bids) if bids else None
     if opp.bid_published_at:

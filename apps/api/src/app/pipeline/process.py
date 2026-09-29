@@ -2,6 +2,7 @@
 
 Idempotent: re-processing a document (content changed, parser improved, prompt bumped) replaces
 its chunks and signals; opportunity aggregates are recomputed by the linker afterwards.
+Documents with human review or manual link decisions require an explicit migration instead.
 """
 
 from __future__ import annotations
@@ -12,10 +13,18 @@ from dataclasses import dataclass, field
 from datetime import UTC, date, datetime
 from typing import Any
 
-from sqlalchemy import delete, select
+from sqlalchemy import delete, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.db.models import Document, DocumentChunk, ReviewItem, Signal
+from app.clock import today_kst
+from app.db.models import (
+    Document,
+    DocumentChunk,
+    Opportunity,
+    OpportunitySignal,
+    ReviewItem,
+    Signal,
+)
 from app.domain.grounding import GroundingReport, verify_extraction
 from app.domain.krw import detect_table_unit
 from app.domain.stages import CANCEL_NOTICE, CANCELS_KEY, Stage
@@ -64,6 +73,47 @@ class ProcessResult:
     rejected: int = 0
     degraded: int = 0
     extractor: str | None = None
+
+
+class ReprocessingProtectedError(RuntimeError):
+    """Replacing a document's derivations would erase persisted human decisions."""
+
+
+async def protect_human_decisions(session: AsyncSession, document_id: int) -> None:
+    """Refuse destructive source/derivation changes; caller holds the Document row lock."""
+    # Review writers use the same Signal-first lock order. A separate query after acquiring
+    # the locks observes any review committed while we waited (READ COMMITTED isolation).
+    signal_ids = list(
+        await session.scalars(
+            select(Signal.id)
+            .where(Signal.document_id == document_id)
+            .order_by(Signal.id)
+            .with_for_update()
+        )
+    )
+    if not signal_ids:
+        return
+    protected = await session.scalar(
+        select(Signal.id)
+        .outerjoin(ReviewItem, ReviewItem.signal_id == Signal.id)
+        .outerjoin(OpportunitySignal, OpportunitySignal.signal_id == Signal.id)
+        .where(
+            Signal.id.in_(signal_ids),
+            or_(
+                ReviewItem.status != "open",
+                ReviewItem.resolved_at.is_not(None),
+                ReviewItem.resolved_by.is_not(None),
+                ReviewItem.resolution != {},
+                OpportunitySignal.method == "manual",
+            ),
+        )
+        .limit(1)
+    )
+    if protected is not None:
+        raise ReprocessingProtectedError(
+            f"document {document_id} has human decisions; re-extraction requires an explicit "
+            "review/manual-link migration"
+        )
 
 
 def _dedupe_key(*parts: object) -> str:
@@ -190,6 +240,7 @@ def check_signal(
         if doc_type == "council_minutes"
         else None,
         char_start=char_start,
+        commitment=sig.commitment,
     )
     budget = sig.budget_krw
     if report.budget_grounded is False and report.budget_parsed:
@@ -273,9 +324,14 @@ def _text_signal(
 async def process_document(
     session: AsyncSession, runtime: Runtime, document_id: int, *, final_attempt: bool = True
 ) -> ProcessResult:
-    doc = await session.get(Document, document_id)
+    # PostgreSQL NO KEY UPDATE serializes source edits/reprocessing while permitting the
+    # independent paid-call/cache transaction's foreign-key KEY SHARE on this document.
+    doc = await session.get(
+        Document, document_id, with_for_update={"key_share": True}, populate_existing=True
+    )
     if doc is None:
         raise LookupError(f"document {document_id} not found")
+    await protect_human_decisions(session, document_id)
     result = ProcessResult(document_id)
     try:
         if doc.text is None:
@@ -287,6 +343,14 @@ async def process_document(
     text = doc.text or ""
 
     # Replace previous derivations of this document.
+    old_opportunity_ids = list(
+        await session.scalars(
+            select(OpportunitySignal.opportunity_id)
+            .join(Signal, Signal.id == OpportunitySignal.signal_id)
+            .where(Signal.document_id == doc.id)
+            .distinct()
+        )
+    )
     await session.execute(delete(Signal).where(Signal.document_id == doc.id))
     await session.execute(delete(DocumentChunk).where(DocumentChunk.document_id == doc.id))
     await session.flush()
@@ -390,6 +454,23 @@ async def process_document(
     doc.parse_error = None
     doc.extracted_at = datetime.now(UTC)
     await session.flush()
+    if old_opportunity_ids:
+        # The new signals may later link elsewhere. Retract the old aggregates now, in the
+        # caller's transaction, keeping opportunity and customer-history identities intact.
+        from app.pipeline.link import refresh_opportunity
+        from app.pipeline.revalidate import refresh_affected_recommendations
+
+        business_date = today_kst()
+        old_opportunities = await session.scalars(
+            select(Opportunity)
+            .where(Opportunity.id.in_(old_opportunity_ids))
+            .order_by(Opportunity.id)
+            .with_for_update()
+        )
+        for opportunity in old_opportunities:
+            await refresh_opportunity(session, opportunity, today=business_date)
+        await session.flush()
+        await refresh_affected_recommendations(session, old_opportunity_ids, today=business_date)
     log.info(
         "document.processed",
         document_id=doc.id,

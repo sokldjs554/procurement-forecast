@@ -1,0 +1,168 @@
+# yaml-language-server: $schema=https://render.com/schema/render.yaml.json
+# Billable production stack. Review docs/render-deployment.md before Blueprint creation.
+previews:
+  generation: "off"
+
+projects:
+  - name: procurement-forecast
+    environments:
+      - name: production
+        envVarGroups:
+          - name: procurement-forecast-production
+            envVars:
+              - key: APP_ENV
+                value: production
+              - key: APP_LOG_JSON
+                value: "true"
+              - key: APP_COOKIE_SECURE
+                value: "true"
+              - key: APP_DB_POOL_SIZE
+                value: "5"
+              - key: APP_JWT_SECRET
+                generateValue: true
+              - key: APP_BILLING_KEY_ENCRYPTION_KEY
+                generateValue: true
+              - key: APP_LLM_PROVIDER
+                value: heuristic
+              - key: APP_EMBEDDING_PROVIDER
+                value: hashing
+              - key: APP_PAYMENT_PROVIDER
+                value: toss
+              - key: APP_SMTP_PORT
+                value: "587"
+              - key: APP_SMTP_USE_TLS
+                value: "true"
+              - key: APP_WORKER_MAX_JOBS
+                value: "2"
+        databases:
+          - name: procurement-forecast-postgres
+            databaseName: procurement_forecast
+            user: procurement_forecast
+            postgresMajorVersion: "16"
+            region: singapore
+            plan: 0.1c-256mb
+            diskSizeGB: 1
+            ipAllowList: []
+        services:
+          - type: keyvalue
+            name: procurement-forecast-queue
+            region: singapore
+            plan: 256mb
+            maxmemoryPolicy: noeviction
+            persistenceMode: journal-snapshot
+            ipAllowList: []
+
+          - type: web
+            name: procurement-forecast-api
+            runtime: docker
+            region: singapore
+            plan: 0.5c-512mb
+            dockerfilePath: ./scripts/render-api.Dockerfile
+            dockerContext: .
+            dockerCommand: python /app/render-runtime.py api
+            preDeployCommand: python /app/render-runtime.py migrate
+            healthCheckPath: /readyz
+            autoDeployTrigger: "off"
+            maxShutdownDelaySeconds: 300
+            buildFilter:
+              paths: [apps/api/**, scripts/render-*, render.yaml]
+            envVars:
+              - fromGroup: procurement-forecast-production
+              - key: PORT
+                value: "10000"
+              - key: APP_DATABASE_URL
+                fromDatabase:
+                  name: procurement-forecast-postgres
+                  property: connectionString
+              - key: APP_REDIS_URL
+                fromService:
+                  type: keyvalue
+                  name: procurement-forecast-queue
+                  property: connectionString
+              - key: APP_STORAGE_URL
+                sync: false
+              - key: RENDER_GCP_CREDENTIALS_JSON
+                sync: false
+              - key: APP_PUBLIC_WEB_URL
+                sync: false
+              - key: APP_DATA_GO_KR_SERVICE_KEY
+                sync: false
+              - key: APP_TOSS_CLIENT_KEY
+                sync: false
+              - key: APP_TOSS_SECRET_KEY
+                sync: false
+              - key: APP_SMTP_HOST
+                sync: false
+              - key: APP_SMTP_USERNAME
+                sync: false
+              - key: APP_SMTP_PASSWORD
+                sync: false
+              - key: APP_MAIL_FROM
+                sync: false
+
+          - type: worker
+            name: procurement-forecast-worker
+            runtime: docker
+            region: singapore
+            plan: 1c-2g
+            dockerfilePath: ./scripts/render-api.Dockerfile
+            dockerContext: .
+            dockerCommand: python /app/render-runtime.py worker
+            autoDeployTrigger: "off"
+            maxShutdownDelaySeconds: 300
+            buildFilter:
+              paths: [apps/api/**, scripts/render-*, render.yaml]
+            envVars:
+              - fromGroup: procurement-forecast-production
+              - key: PORT
+                value: "10000"
+              - key: APP_DATABASE_URL
+                fromDatabase:
+                  name: procurement-forecast-postgres
+                  property: connectionString
+              - key: APP_REDIS_URL
+                fromService:
+                  type: keyvalue
+                  name: procurement-forecast-queue
+                  property: connectionString
+              - key: APP_STORAGE_URL
+                fromService: {type: web, name: procurement-forecast-api, envVarKey: APP_STORAGE_URL}
+              - key: RENDER_GCP_CREDENTIALS_JSON
+                fromService: {type: web, name: procurement-forecast-api, envVarKey: RENDER_GCP_CREDENTIALS_JSON}
+              - key: APP_PUBLIC_WEB_URL
+                fromService: {type: web, name: procurement-forecast-api, envVarKey: APP_PUBLIC_WEB_URL}
+              - key: APP_DATA_GO_KR_SERVICE_KEY
+                fromService: {type: web, name: procurement-forecast-api, envVarKey: APP_DATA_GO_KR_SERVICE_KEY}
+              - key: APP_TOSS_CLIENT_KEY
+                fromService: {type: web, name: procurement-forecast-api, envVarKey: APP_TOSS_CLIENT_KEY}
+              - key: APP_TOSS_SECRET_KEY
+                fromService: {type: web, name: procurement-forecast-api, envVarKey: APP_TOSS_SECRET_KEY}
+              - key: APP_SMTP_HOST
+                fromService: {type: web, name: procurement-forecast-api, envVarKey: APP_SMTP_HOST}
+              - key: APP_SMTP_USERNAME
+                fromService: {type: web, name: procurement-forecast-api, envVarKey: APP_SMTP_USERNAME}
+              - key: APP_SMTP_PASSWORD
+                fromService: {type: web, name: procurement-forecast-api, envVarKey: APP_SMTP_PASSWORD}
+              - key: APP_MAIL_FROM
+                fromService: {type: web, name: procurement-forecast-api, envVarKey: APP_MAIL_FROM}
+
+          - type: web
+            name: procurement-forecast-web
+            runtime: docker
+            region: singapore
+            plan: 0.5c-512mb
+            dockerfilePath: ./apps/web/Dockerfile
+            dockerContext: ./apps/web
+            dockerCommand: sh -c 'export API_ORIGIN="http://${RENDER_API_HOSTPORT}"; exec node server.js'
+            healthCheckPath: /login
+            autoDeployTrigger: "off"
+            buildFilter:
+              paths: [apps/web/**, render.yaml]
+            envVars:
+              - key: PORT
+                value: "10000"
+              - key: RENDER_API_HOSTPORT
+                fromService:
+                  type: web
+                  name: procurement-forecast-api
+                  property: hostport

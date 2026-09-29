@@ -10,6 +10,8 @@ the heuristic extractor) proposes, we check, without any model in the loop:
    from the located evidence or the quoted budget phrase. The model never gets the last word on
    a number.
 3. **Timing** — ``expected_year`` must follow from the quoted timing phrase and the meeting date.
+4. **Council intent** — explicit denials, conditions, and reported speech cannot silently
+   become an executive commitment. This is a conservative mismatch guard, not a semantic proof.
 
 The verdict routes the signal: ``accepted`` goes straight to linking, ``needs_review`` lands in
 the admin review queue, ``rejected`` is stored for eval but never shown to customers.
@@ -20,6 +22,7 @@ from __future__ import annotations
 import re
 from dataclasses import asdict, dataclass, field
 from datetime import date
+from itertools import pairwise
 from typing import Any, Literal
 
 from rapidfuzz import fuzz
@@ -50,17 +53,91 @@ _OFFICIAL_ENDINGS = (
     "대표이사",
 )
 
+# Narrow constructions, not individual negative words: "문제없습니다" and "차질 없이"
+# describe a feasible plan. Historical denials ("없었습니다") are not current denials.
+_DENIAL_RE = re.compile(
+    r"(?:계획|예정)(?:은|이|도)?\s*(?:전혀\s*)?없(?:습니다|다|으며|고)"
+    r"|(?:추진|발주|설치|구축|도입|구매|편성|반영|검토|착수)\s*하지\s*"
+    r"(?:않겠습니다|않습니다|않고|않는다고)"
+)
+_CONDITIONAL_RE = re.compile(
+    r"(?:확보|승인)(?:가|이)?\s*(?:되면|된다면|될\s*경우)"
+    r"|가능하다면"
+)
+_REVIEW_FIRST_RE = re.compile(r"검토\s*(?:후|이후)")
+_COMPLETED_ACTION_RE = re.compile(
+    r"(?:추진|발주|설치|구축|도입|구매|편성|반영|착수|확보|확정|승인)"
+    r"(?:하였습니다|했습니다|되었습니다|됐습니다)[.!。]?\s*$"
+)
+_QUOTED_RE = re.compile(r'"[^\"]*"|\'[^\']*\'|“[^”]*”|‘[^’]*’|「[^」]*」|『[^』]*』')
+_SENTENCE_END_RE = re.compile(r"[.!?。！？](?=\s|$)")
+_QUESTION_RE = re.compile(r"[?？]\s*$|(?:습니까|까요|나요|는지요)[.!。]?\s*$")
+_REPORTED_RE = re.compile(
+    r"(?:라고|다고|다는|냐고|냐는)\s*(?:말씀|말했|질문|물으|물었|요청|요구|전달|인용)"
+)
+_DIRECT_INTENT_RE = re.compile(
+    r"(?:추진|발주|설치|구축|도입|구매|편성|반영|검토|착수|확보|확정)"
+    r"|계획|예정"
+)
+
+
+def _direct_evidence_statements(speech: str, start: int, end: int) -> list[str]:
+    """Read only sentences touched by the located quote, with original source context.
+
+    Mask quoted text before splitting sentences so punctuation inside a citation cannot
+    turn the citation into a direct assertion. Offsets remain in the original speech.
+    This deliberately leaves ambiguous reported speech for human review.
+    """
+    direct = _QUOTED_RE.sub(lambda match: " " * len(match[0]), speech)
+    boundaries = [0, *(match.end() for match in _SENTENCE_END_RE.finditer(direct)), len(speech)]
+    statements: list[str] = []
+    for left, right in pairwise(boundaries):
+        if right <= start or left >= end:
+            continue
+        original = collapse_ws(speech[left:right]).strip()
+        statement = collapse_ws(direct[left:right]).strip()
+        if _QUESTION_RE.search(statement) or _REPORTED_RE.search(statement):
+            continue
+        if original != statement and not _DIRECT_INTENT_RE.search(statement):
+            continue
+        if statement:
+            statements.append(statement)
+    return statements
+
+
+def _commitment_evidence_issue(statements: list[str], commitment: str | None) -> str | None:
+    # Do not relabel correctly extracted review/decline, or general non-council evidence.
+    if commitment not in {"planned", "committed"}:
+        return None
+    if not any(len(statement.replace(" ", "")) >= 12 for statement in statements):
+        return "commitment_context_ambiguous"
+    if any(_DENIAL_RE.search(statement) for statement in statements):
+        return "commitment_denied"
+    if commitment == "committed" and any(
+        _CONDITIONAL_RE.search(statement)
+        or (_REVIEW_FIRST_RE.search(statement) and not _COMPLETED_ACTION_RE.search(statement))
+        for statement in statements
+    ):
+        return "commitment_conditional"
+    return None
+
 
 def official_evidence_issue(
-    document_text: str, checks: list[EvidenceCheck], *, char_start: int
+    document_text: str,
+    checks: list[EvidenceCheck],
+    *,
+    char_start: int,
+    commitment: str | None = None,
 ) -> str | None:
     """Attribute each located quote to ONE source turn, including continuation chunks.
 
     A member's question may supply the subject. At least one substantive quote must come
-    from an executive answer. This establishes attribution, not semantic correctness.
+    from an executive answer. Strong claims also need to pass the explicit mismatch guard;
+    passing it still does not establish complete semantic correctness.
     """
     turns = split_turns(document_text)
     official_quotes: list[str] = []
+    statements: list[str] = []
     for check in checks:
         if not check.found or check.start is None or check.end is None:
             continue
@@ -80,12 +157,20 @@ def official_evidence_issue(
             if quote.startswith(("○", "◯", "◎")):
                 quote = quote.split(turn.name, 1)[-1].strip()
             official_quotes.append(quote)
+            speech_start = document_text.index(turn.name, turn.start, turn.end) + len(turn.name)
+            statements.extend(
+                _direct_evidence_statements(
+                    document_text[speech_start : turn.end],
+                    max(0, start - speech_start),
+                    end - speech_start,
+                )
+            )
     if not official_quotes:
         return "official_evidence_missing"
     # A bare "네, 맞습니다" cannot turn the question into an executive commitment.
     if not any(len(q.replace(" ", "")) >= 12 for q in official_quotes):
         return "official_evidence_ambiguous"
-    return None
+    return _commitment_evidence_issue(statements, commitment)
 
 
 @dataclass(frozen=True, slots=True)
@@ -153,6 +238,7 @@ def verify_extraction(
     default_unit: int = 1,
     council_document: str | None = None,
     char_start: int = 0,
+    commitment: str | None = None,
 ) -> GroundingReport:
     checks = [locate_quote(source, q, min_score=min_score) for q in evidence_quotes]
     report = GroundingReport(
@@ -172,7 +258,9 @@ def verify_extraction(
         report.issues.append("partial_evidence")
 
     if council_document is not None:
-        issue = official_evidence_issue(council_document, checks, char_start=char_start)
+        issue = official_evidence_issue(
+            council_document, checks, char_start=char_start, commitment=commitment
+        )
         if issue:
             report.issues.append(issue)
 

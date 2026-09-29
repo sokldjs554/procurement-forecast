@@ -71,7 +71,7 @@ class WorkerSettings:
     redis_settings = redis_settings(_settings)
     on_startup = startup
     on_shutdown = shutdown
-    max_jobs = 8
+    max_jobs = _settings.worker_max_jobs
     job_timeout = 900
     max_tries = tasks.MAX_TRIES
     keep_result = 3600

@@ -140,30 +140,45 @@ async def reresolve_institutions(session: AsyncSession, runtime: Runtime) -> dic
     """Resolve again every document that had no institution at ingest, with the current table,
     and queue the ones that now resolve for processing. Stored documents keep the provider's
     code in ``structured``, so a better table needs no refetch (and no API quota)."""
+    from app.pipeline.process import ReprocessingProtectedError, protect_human_decisions
+
     code = Document.structured["provider_institution_code"].astext
     rows = (
         await session.execute(
-            select(Document.id, Document.publisher_raw, code).where(
-                Document.institution_code.is_(None)
-            )
+            select(Document.id, Document.publisher_raw, code)
+            .where(Document.institution_code.is_(None))
+            .order_by(Document.id)
+            .with_for_update(key_share=True)
         )
     ).all()
     groups: dict[tuple[str | None, str | None], list[int]] = {}
     for doc_id, raw, provider_code in rows:
         groups.setdefault((raw, provider_code), []).append(doc_id)
     by_method: Counter[str] = Counter()
+    protected = 0
     before = len(runtime.registry)
     # Coded names first: 사전규격 records carry no 수요기관코드 at all (0 of 9,286 on live data,
     # 2026-09-26), so they find a school or 공단 only by the exact name a coded 발주계획 or
     # 입찰공고 registered. Row order would leave that to chance.
     for (raw, provider_code), ids in sorted(groups.items(), key=lambda kv: kv[0][1] is None):
         res = await resolve_institution(session, runtime, raw, provider_code=provider_code)
-        by_method[res.method] += len(ids)
         if res.institution is None:
+            by_method[res.method] += len(ids)
+            continue
+        writable_ids: list[int] = []
+        for document_id in ids:
+            try:
+                await protect_human_decisions(session, document_id)
+            except ReprocessingProtectedError:
+                protected += 1
+            else:
+                writable_ids.append(document_id)
+        by_method[res.method] += len(writable_ids)
+        if not writable_ids:
             continue
         await session.execute(
             update(Document)
-            .where(Document.id.in_(ids))
+            .where(Document.id.in_(writable_ids))
             .values(
                 institution_code=res.institution.code,
                 department=func.coalesce(res.department, Document.department),
@@ -179,6 +194,7 @@ async def reresolve_institutions(session: AsyncSession, runtime: Runtime) -> dic
         "documents": len(rows),
         "names": len(groups),
         "resolved": resolved,
+        "protected": protected,
         "by_method": dict(by_method.most_common()),
         "institutions_added": len(runtime.registry) - before,
     }
@@ -188,14 +204,21 @@ async def upsert_record(
     session: AsyncSession, source: Source, rec: RawRecord, runtime: Runtime
 ) -> tuple[Document, str]:
     """Returns (document, "created" | "updated" | "skipped")."""
+    from app.pipeline.process import protect_human_decisions
+
     content_hash = rec.content_hash()
     existing = await session.scalar(
-        select(Document).where(
-            Document.source_id == source.id, Document.external_id == rec.external_id
-        )
+        select(Document)
+        .where(Document.source_id == source.id, Document.external_id == rec.external_id)
+        .with_for_update(key_share=True)
+        .execution_options(populate_existing=True)
     )
     if existing is not None and existing.content_hash == content_hash:
         return existing, "skipped"
+    if existing is not None:
+        # Source text and raw bytes are evidence for persisted human decisions. Refuse
+        # replacement before raw storage or metadata changes, under Document-first locks.
+        await protect_human_decisions(session, existing.id)
 
     resolution = await resolve_institution(
         session,
