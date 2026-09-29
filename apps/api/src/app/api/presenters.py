@@ -45,6 +45,8 @@ def category_label(key: str) -> str:
 
 
 def explain(opp: Opportunity, breakdown: dict[str, Any] | None) -> list[str]:
+    if opp.signal_count == 0:
+        return ["유효한 근거가 없어 검토가 필요합니다"]
     reasons: list[str] = []
     if breakdown:
         hits = breakdown.get("keyword_hits") or []
@@ -126,7 +128,7 @@ def card(
         bid_window_end=window_end,
         window_passed=passed,
         bid_published_at=opp.bid_published_at,
-        tender_out=tender_is_out(opp.stage, opp.bid_published_at),
+        tender_out=opp.signal_count > 0 and tender_is_out(opp.stage, opp.bid_published_at),
         conversion_prob=opp.conversion_prob,
         signal_count=opp.signal_count,
         first_seen_at=opp.first_seen_at,

@@ -34,6 +34,7 @@ class Settings(BaseSettings):
     db_echo: bool = False
     redis_url: str = "redis://localhost:6379/0"
     storage_url: str = "file://./.data/raw"
+    worker_max_jobs: int = Field(default=8, ge=1, le=64)
 
     jwt_secret: SecretStr = SecretStr(_DEV_JWT_SECRET)
     jwt_ttl_minutes: int = 60 * 12

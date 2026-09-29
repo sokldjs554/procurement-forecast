@@ -316,13 +316,15 @@ async def nightly_backtest(ctx: dict[str, Any]) -> dict[str, Any]:
 
 @tracked("relink_signal")
 async def relink_signal(ctx: dict[str, Any], signal_id: int) -> dict[str, Any]:
-    """After a reviewer approves a signal."""
+    """Repair legacy queued review jobs, including rejections and already-linked signals."""
+    from app.pipeline.review import reconcile_reviewed_signal
+
     async with session_scope() as s:
-        signal = await s.get(Signal, signal_id)
-        if signal is None or signal.verdict != "accepted":
+        signal = await s.get(Signal, signal_id, with_for_update=True)
+        if signal is None:
             return {"skipped": True}
-    await enqueue(ctx["redis"], "link_signals", [signal_id], job_id=f"link:review:{signal_id}")
-    return {"enqueued": True}
+        touched = await reconcile_reviewed_signal(s, _runtime(ctx), signal)
+    return {"opportunities": len(touched)}
 
 
 async def ingest_cron(ctx: dict[str, Any], keys: tuple[str, ...]) -> None:

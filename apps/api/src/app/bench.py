@@ -139,7 +139,66 @@ def _feed_sorted(order: str) -> str:
 
 def queries(vec: str, inst: str, ref_hit: str, ref_miss: str) -> list[Query]:
     open_ = "status IN ('open', 'bid_open')"
+    eligible_candidates = (
+        "SELECT o.* FROM opportunities o WHERE o.institution_code = $1 "
+        "AND o.signal_count > 0 AND o.last_signal_at >= date '2025-01-01' "
+        "AND o.first_seen_at <= date '2026-12-31' "
+        "AND EXISTS (SELECT os.signal_id FROM opportunity_signals os "
+        "JOIN signals s ON s.id = os.signal_id WHERE os.opportunity_id = o.id "
+        "AND NOT os.tentative AND s.verdict = 'accepted' AND s.institution_code = $1) "
+        "ORDER BY o.id"
+    )
+    scoped_reference = (
+        "SELECT DISTINCT o.* FROM opportunities o "
+        "JOIN opportunity_signals os ON os.opportunity_id = o.id "
+        "JOIN signals s ON s.id = os.signal_id "
+        "WHERE s.id <> 0 AND s.institution_code = $1 AND o.institution_code = $1 "
+        "AND s.verdict = 'accepted' AND NOT os.tentative "
+        "AND (s.external_refs @> $2::jsonb OR s.external_refs @> $3::jsonb) ORDER BY o.id"
+    )
+    eligible_refs = (
+        "SELECT os.opportunity_id, s.external_refs FROM opportunity_signals os "
+        "JOIN signals s ON s.id = os.signal_id "
+        f"WHERE os.opportunity_id IN (SELECT c.id FROM ({eligible_candidates}) c) "
+        "AND s.verdict = 'accepted' AND NOT os.tentative"
+    )
+    revalidation_page = (
+        "SELECT s.id FROM signals s JOIN documents d ON d.id = s.document_id "
+        "JOIN sources src ON src.id = d.source_id "
+        "WHERE s.verdict = 'accepted' AND s.id > $1 "
+        "AND d.doc_type IN ('council_minutes', 'budget_book') AND src.key = $2 "
+        "ORDER BY s.id LIMIT 1001"
+    )
     return [
+        Query(
+            "link_eligible_candidates",
+            "기회 연결: 승인된 확정 신호가 있는 기관·기간 내 전체 후보 (제한 없음)",
+            eligible_candidates,
+            eligible_candidates,
+            [inst],
+            exact=eligible_candidates,
+        ),
+        Query(
+            "link_reference_scoped",
+            "기회 연결: 기관·승인·확정 조건의 모든 번호 일치 대상 (모호성 검사)",
+            scoped_reference,
+            scoped_reference,
+            [inst, json.dumps({"order_plan_no": ref_hit}), json.dumps({"prespec_no": ref_miss})],
+        ),
+        Query(
+            "link_eligible_candidate_refs",
+            "기회 연결: 전체 적격 후보의 승인된 확정 번호 (계약 충돌 검사)",
+            eligible_refs,
+            eligible_refs,
+            [inst],
+        ),
+        Query(
+            "stored_revalidation_page",
+            "저장 신호 재검증: 수집원·문서 유형·승인 조건의 ID 커서 1,001건",
+            revalidation_page,
+            revalidation_page,
+            [100_000, "bench"],
+        ),
         Query(
             "backtest_public_dates",
             "백테스트: 승인된 확정 연결의 공개일·첫 신호 조회",
@@ -471,7 +530,7 @@ async def _load(conn: asyncpg.Connection, sizes: dict[str, int], log: Any) -> No
             "opportunity_signals",
             f"""INSERT INTO opportunity_signals (opportunity_id, signal_id, score, method,
                                                  tentative)
-            SELECT 1 + s.id % {n["opportunities"]}, s.id, 1.0, 'ref', false FROM signals s""",
+            SELECT 1 + (s.id - 1) % {n["opportunities"]}, s.id, 1.0, 'ref', false FROM signals s""",
         ),
         (
             "organizations",
@@ -516,11 +575,16 @@ async def _params(conn: asyncpg.Connection) -> dict[str, str]:
             FROM bench_topics WHERE topic = 0"""
     )
     inst = await conn.fetchval(
-        "SELECT institution_code FROM opportunities GROUP BY 1 ORDER BY count(*) DESC LIMIT 1"
+        "SELECT o.institution_code FROM opportunities o WHERE EXISTS "
+        "(SELECT 1 FROM signals s WHERE s.institution_code = o.institution_code "
+        "AND s.verdict = 'accepted' AND s.external_refs ? 'order_plan_no') "
+        "GROUP BY 1 ORDER BY count(*) DESC, o.institution_code LIMIT 1"
     )
     hit = await conn.fetchval(
         "SELECT external_refs->>'order_plan_no' FROM signals "
-        "WHERE external_refs ? 'order_plan_no' ORDER BY id DESC LIMIT 1"
+        "WHERE external_refs ? 'order_plan_no' AND institution_code = $1 "
+        "AND verdict = 'accepted' ORDER BY id DESC LIMIT 1",
+        inst,
     )
     return {"vec": vec, "inst": str(inst), "ref_hit": str(hit), "ref_miss": "R-NOT-SEEN-YET"}
 

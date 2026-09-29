@@ -25,6 +25,7 @@ from app.api.schemas import (
     ReviewItemOut,
     SourceOut,
 )
+from app.clock import now_utc
 from app.db.models import (
     Document,
     DocumentChunk,
@@ -34,6 +35,7 @@ from app.db.models import (
     JobRun,
     LLMCall,
     Opportunity,
+    OpportunitySignal,
     ReviewItem,
     Signal,
     Source,
@@ -282,13 +284,51 @@ async def review_queue(
 
 @router.post("/review/{item_id}", response_model=ReviewItemOut)
 async def decide_review(
-    item_id: int, body: ReviewDecisionIn, principal: StaffDep, session: SessionDep, queue: QueueDep
+    item_id: int,
+    body: ReviewDecisionIn,
+    principal: StaffDep,
+    session: SessionDep,
+    runtime: RuntimeDep,
 ) -> ReviewItemOut:
+    from app.pipeline.review import reconcile_reviewed_signal
+
     item = await session.get(ReviewItem, item_id)
     if item is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "review item not found")
-    signal = await session.get(Signal, item.signal_id)
-    assert signal is not None
+    # Same lock order as document reprocessing: evidence first, then its review.
+    signal = await session.scalar(
+        select(Signal)
+        .where(Signal.id == item.signal_id)
+        .with_for_update()
+        .execution_options(populate_existing=True)
+    )
+    if signal is None:
+        raise HTTPException(status.HTTP_409_CONFLICT, "signal changed; reload review")
+    await session.refresh(item, with_for_update=True)
+    old_link = await session.scalar(
+        select(OpportunitySignal).where(OpportunitySignal.signal_id == signal.id)
+    )
+    previous_link = (
+        {
+            "opportunity_id": old_link.opportunity_id,
+            "method": old_link.method,
+            "score": old_link.score,
+            "tentative": old_link.tentative,
+            "reasons": old_link.reasons,
+        }
+        if old_link is not None
+        else None
+    )
+    previous_resolution = {k: v for k, v in item.resolution.items() if k != "history"}
+    history = list(item.resolution.get("history", []))
+    if previous_resolution:
+        history.append(
+            previous_resolution
+            | {
+                "resolved_by": item.resolved_by,
+                "resolved_at": item.resolved_at.isoformat() if item.resolved_at else None,
+            }
+        )
     changes: dict[str, Any] = {}
     if body.action == "reject":
         signal.verdict = "rejected"
@@ -299,15 +339,22 @@ async def decide_review(
             if value is not None:
                 changes[field] = {"from": getattr(signal, field), "to": value}
                 setattr(signal, field, value)
+                if field == "title" and changes[field]["from"] != value:
+                    # An old vector must not assert semantic similarity for a corrected title.
+                    signal.embedding = None
         signal.verdict = "accepted"
         item.status = "edited" if changes else "approved"
-    item.resolution = {"action": body.action, "changes": changes}
+    item.resolution = {
+        "action": body.action,
+        "changes": changes,
+        "previous_link": previous_link,
+        "history": history,
+    }
     item.resolved_by = principal.user.id
-    item.resolved_at = datetime.now(UTC)
+    item.resolved_at = now_utc()
     await session.flush()
+    await reconcile_reviewed_signal(session, runtime, signal)
     await session.commit()
-    if signal.verdict == "accepted":
-        await enqueue(queue, "relink_signal", signal.id, job_id=f"relink:{signal.id}:{item.id}")
     return await _review_out(session, item)
 
 

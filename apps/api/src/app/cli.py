@@ -458,6 +458,54 @@ def pipeline_reresolve() -> None:
     typer.echo(json.dumps(_run(lambda: _with_session(go)), ensure_ascii=False, indent=2))
 
 
+@pipeline_app.command("revalidate")
+def pipeline_revalidate(
+    apply: bool = typer.Option(False, "--apply", help="Apply exactly the reviewed dry-run"),
+    expected_digest: str = typer.Option(None, help="Digest printed by the matching dry-run"),
+    source: list[str] = typer.Option(None, "--source", "-s", help="Repeatable source key"),
+    doc_type: list[str] = typer.Option(None, help="council_minutes or budget_book; repeatable"),
+    limit: int = typer.Option(1000, min=1, max=10000),
+    after_id: int = typer.Option(0, min=0),
+    today: str = typer.Option(None, help="Fixed business date (YYYY-MM-DD)"),
+    out: Path = typer.Option(None, help="Write the audit/apply JSON report"),
+) -> None:
+    """Audit stored evidence without model calls. Default is read-only; preserve human history.
+
+    Use identical scope/date and --expected-digest for --apply. Repeat with --after-id from
+    next_after_id while has_more is true, auditing each page before applying it.
+    """
+    from app.pipeline.revalidate import revalidate_signals
+
+    if apply != bool(expected_digest):
+        raise typer.BadParameter("--apply and --expected-digest must be supplied together")
+    configure_logging(json=False, level="WARNING", stream=sys.stderr)
+
+    async def go(session: Any, runtime: Any) -> dict[str, Any]:
+        result = await revalidate_signals(
+            session,
+            runtime,
+            apply=apply,
+            expected_digest=expected_digest,
+            source_keys=source,
+            doc_types=doc_type,
+            limit=limit,
+            after_id=after_id,
+            today=date.fromisoformat(today) if today else None,
+        )
+        if not apply:
+            await session.rollback()
+        return result.to_json()
+
+    try:
+        result = _run(lambda: _with_session(go))
+    except ValueError as exc:
+        raise typer.BadParameter(str(exc)) from exc
+    rendered = json.dumps(result, ensure_ascii=False, indent=2)
+    if out is not None:
+        out.write_text(rendered + "\n", encoding="utf-8")
+    typer.echo(rendered)
+
+
 @app.command()
 def bench(
     scale: float = typer.Option(1.0, help="Multiply the default row counts"),

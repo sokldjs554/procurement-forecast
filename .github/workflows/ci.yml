@@ -220,3 +220,13 @@ jobs:
           tags: app-${{ matrix.app }}:ci
           cache-from: type=gha,scope=${{ matrix.app }}
           cache-to: type=gha,mode=max,scope=${{ matrix.app }}
+      - name: Render production API and worker image
+        if: matrix.app == 'api'
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: scripts/render-api.Dockerfile
+          push: false
+          tags: procurement-render:ci
+          cache-from: type=gha,scope=render-api
+          cache-to: type=gha,mode=max,scope=render-api

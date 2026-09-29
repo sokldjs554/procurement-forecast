@@ -23,6 +23,15 @@ for variant in baseline changed; do
       .linking.pairwise.precision >= 0.95 and .linking.pairwise.recall >= 0.95 and
       .ocr.amount_token_accuracy_corrected >= 0.98 and .ocr.cer_corrected <= 0.03' "$audit_dir/$variant.json"
     cat "$audit_dir/$variant.json"
+    if [ "$variant" = changed ]; then
+      # Exercise the shipped CLI against a disposable populated DB, never production.
+      uv run manage pipeline revalidate --today 2026-09-29 \
+        --out "$audit_dir/revalidation-dry-run.json" > /dev/null
+      digest=$(jq -r .digest "$audit_dir/revalidation-dry-run.json")
+      uv run manage pipeline revalidate --today 2026-09-29 --apply --expected-digest "$digest" \
+        --out "$audit_dir/revalidation-apply.json" > /dev/null
+      jq -e '.applied == true' "$audit_dir/revalidation-apply.json"
+    fi
     createdb "replay_$variant"
     export APP_DATABASE_URL="postgresql+asyncpg://app:app@localhost:5432/replay_$variant"
     uv run manage db upgrade

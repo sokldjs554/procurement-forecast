@@ -6,6 +6,25 @@ from app.db.models import Opportunity
 TODAY = date(2026, 1, 1)
 
 
+def test_empty_historical_opportunity_does_not_claim_a_verified_tender() -> None:
+    from app.api.presenters import card
+
+    opp = Opportunity(
+        id=1,
+        title="withdrawn evidence",
+        category="other",
+        stage="bid_notice",
+        status="dormant",
+        signal_count=0,
+        conversion_prob=0,
+        first_seen_at=TODAY,
+        last_signal_at=TODAY,
+    )
+    shown = card(opp, {}, None, TODAY)
+    assert shown.tender_out is False
+    assert shown.reasons == ["유효한 근거가 없어 검토가 필요합니다"]
+
+
 def _opp(first: date, *, published: date | None = None, window: date | None = None) -> Opportunity:
     return Opportunity(first_seen_at=first, bid_published_at=published, bid_window_start=window)
 
