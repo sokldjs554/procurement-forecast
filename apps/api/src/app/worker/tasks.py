@@ -340,13 +340,23 @@ async def ingest_cron(ctx: dict[str, Any], keys: tuple[str, ...]) -> None:
         )
 
 
+# The sources each ingest cron enqueues (the enabled ones). Every live source belongs to one;
+# tests/unit/test_worker_runner.py checks, since a source left out is only ever fetched by hand.
+CRON_SOURCES: dict[str, tuple[str, ...]] = {
+    "ingest_procurement": ("g2b_order_plan", "g2b_prespec", "g2b_bid"),
+    "ingest_minutes": ("clik_minutes", "minutes_boards"),
+    # Books come out a few times a year; the boards are crawled incrementally, once a week.
+    "ingest_budget_books": ("lofin_budget", "budget_boards"),
+}
+
+
 async def ingest_procurement(ctx: dict[str, Any]) -> None:
-    await ingest_cron(ctx, ("g2b_order_plan", "g2b_prespec", "g2b_bid"))
+    await ingest_cron(ctx, CRON_SOURCES["ingest_procurement"])
 
 
 async def ingest_minutes(ctx: dict[str, Any]) -> None:
-    await ingest_cron(ctx, ("clik_minutes", "minutes_boards"))
+    await ingest_cron(ctx, CRON_SOURCES["ingest_minutes"])
 
 
 async def ingest_budget_books(ctx: dict[str, Any]) -> None:
-    await ingest_cron(ctx, ("lofin_budget",))
+    await ingest_cron(ctx, CRON_SOURCES["ingest_budget_books"])

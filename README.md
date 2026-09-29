@@ -72,7 +72,7 @@
 | 공고 | 이 저장소에서 | 위치 |
 |---|---|---|
 | FastAPI 기반 비동기 API 서버의 기능 개발과 운영 (데이터 수집·추출·추천·알림·결제 도메인 전반) | 앱 팩토리, async SQLAlchemy, 키셋 페이지네이션, 요청 ID·구조화 로그, 과금 API의 `Idempotency-Key`. 수집·추출·추천·알림·결제 라우터 전부 | [`api/`](apps/api/src/app/api) |
-| 작업 큐(Redis)와 cron 잡 위에서 도는 대용량 배치 파이프라인 설계·개선 | arq 워커 + KST cron(매시 조달, 매일 회의록, 매주 예산서, 10분 스윕, 아침 요약), 작업 ID 중복 제거, 한도 초과·서킷·일시 오류별 재시도, 종료 신호 시 재시도로 기록, 실행 이력 `job_runs` | [`worker/`](apps/api/src/app/worker), [ADR-0003](docs/adr/0003-arq-and-in-worker-cron.md) |
+| 작업 큐(Redis)와 cron 잡 위에서 도는 대용량 배치 파이프라인 설계·개선 | arq 워커 + KST cron(매시 조달, 매일 회의록, 매주 예산서 게시판 크롤링, 10분 스윕, 아침 요약), 모든 수집원이 cron에 걸려 있는지 테스트로 확인, 작업 ID 중복 제거, 한도 초과·서킷·일시 오류별 재시도, 종료 신호 시 재시도로 기록, 실행 이력 `job_runs` | [`worker/`](apps/api/src/app/worker), [ADR-0003](docs/adr/0003-arq-and-in-worker-cron.md) |
 | PostgreSQL 스키마 설계와 마이그레이션, 대용량 데이터 환경에서의 쿼리 최적화 | 24개 테이블, Alembic 비동기 마이그레이션. 공고 10만·신호 40만 건 벤치로 찾은 문제를 마이그레이션 0002로 해결: 벡터 후보 **13건·재현율 4% → 300건·100%**, 참조번호 조회 **99.5ms → 0.02ms**, 운영 집계 197 → 130ms. 인덱스는 `CONCURRENTLY` | [`migrations/`](apps/api/migrations), [performance.md](docs/performance.md), [ADR-0010](docs/adr/0010-measure-at-volume.md) |
 | Next.js·TypeScript 기반 사용자 웹과 운영자 콘솔(admin) 화면 개발 | 고객 앱(피드·기회 상세·프로필·알림·요금) + 운영 콘솔(개요·수집원·작업 로그·검토 대기열·LLM 비용·평가) | [`apps/web`](apps/web) |
 | LLM 파이프라인 개선 (프롬프트 설계, 구조화 출력, 결과 검증, 품질 평가, 비용 최적화) | 구조화 출력(엄격 JSON 스키마), 프롬프트 캐싱, effort 조절, 원문 근거 검증기, 합성 정답·수기 세트(54건) 평가, 모델·effort별 정확도·비용·지연 실측(Opus 5 low: 재현율 46% → 100%, 청크당 $0.0107; 측정으로 금액 파서 버그 발견·수정), 트리아지(청크 59% LLM 생략)·해시 캐시·일일 예산 가드 | [`llm/`](apps/api/src/app/llm), [`grounding.py`](apps/api/src/app/domain/grounding.py), [`eval/`](apps/api/src/app/eval), [ADR-0002](docs/adr/0002-grounded-extraction.md), [ADR-0006](docs/adr/0006-one-model-low-effort.md) |
@@ -91,7 +91,7 @@
 | 검색·추천·랭킹 시스템 설계 경험 | 벡터 + 트라이그램 + 분야로 후보 생성, 7개 특징 가중 랭킹과 추천 이유, 백테스트로 전환율 보정, 문서 간 기회 연결 | [`recommend.py`](apps/api/src/app/pipeline/recommend.py), [`link.py`](apps/api/src/app/pipeline/link.py) |
 | 결제·구독 시스템 연동 경험 (정기결제, 크레딧) | 토스페이먼츠 빌링 연동, 동시 사용에도 음수가 될 수 없는 크레딧 원장 | [`billing/`](apps/api/src/app/billing) |
 | AI 코딩 에이전트를 실제 개발 워크플로우에 녹여 본 경험 | 에이전트 지침, 평가 수치로 끝나는 작업 루프, 사람이 확인할 항목 명시 | [`AGENTS.md`](AGENTS.md), [AI 워크플로](docs/ai-workflow.md) |
-| 대규모 외부 공개 데이터를 다뤄 본 경험 | 국회도서관 지방의정포털, 조달청 나라장터 3종, 지방재정365, 지자체 누리집. 실데이터로 조달청 30일치 57,514건, 지방재정365 지자체 243곳 × 3년, CLIK 전국 회의록 178건을 받아 처리 | [데이터 소스](docs/data-sources.md), [30일 측정](docs/real-data-run.md) |
+| 대규모 외부 공개 데이터를 다뤄 본 경험 | 국회도서관 지방의정포털, 조달청 나라장터 3종, 지방재정365, 지자체 누리집. 실데이터로 조달청 30일치 57,514건, CLIK 전국 회의록 178건, 성남시 예산서 6권·회의록 34건을 받아 처리했고, 지방재정365에서는 지자체 243곳 × 3년의 예산서 게시판 목록을 받았습니다 | [데이터 소스](docs/data-sources.md), [30일 측정](docs/real-data-run.md) |
 
 <details>
 <summary><b>자격요건</b> (Backend · Frontend · Infra/운영 · 공통)</summary>
@@ -110,7 +110,7 @@
 | Docker 기반 개발 환경 구성 경험 | `docker compose up`으로 DB·Redis·메일·API·워커·웹 |
 | 로깅·에러 트래킹 기반 장애 대응 경험 | structlog JSON(요청·작업 ID), Sentry, 워커 헬스체크, 런북 |
 | Git 브랜치 전략과 코드 리뷰 기반 협업 경험 | 짧은 브랜치 + 트렁크, squash merge, Conventional Commits, PR 템플릿, CODEOWNERS. PR 예: [#6](https://github.com/sokldjs554/procurement-forecast/pull/6) 의존성 PR 검토(액션 10개 호환성 대조), [#7](https://github.com/sokldjs554/procurement-forecast/pull/7) 기능 PR(코드 리뷰 15건 중 13건 반영, 2건은 이유 답변). 초기 구축은 main 직접 커밋 ([CONTRIBUTING](CONTRIBUTING.md)) |
-| 테스트 작성 및 정적 타입 검사를 습관으로 갖춘 분 | pytest 399개(실제 PostgreSQL·Redis), vitest 47개(BFF 프록시 헤더, 과금 요청의 재시도·멱등 키 포함), Playwright E2E 3개(README 둘러보기를 실제 브라우저로), mypy strict, CI 필수 통과 |
+| 테스트 작성 및 정적 타입 검사를 습관으로 갖춘 분 | pytest 400개(실제 PostgreSQL·Redis), vitest 47개(BFF 프록시 헤더, 과금 요청의 재시도·멱등 키 포함), Playwright E2E 3개(README 둘러보기를 실제 브라우저로), mypy strict, CI 필수 통과 |
 | 명세가 불완전한 상태에서 구조를 세우고 문서로 남길 수 있는 능력 | 주요업무 9번 |
 
 </details>
