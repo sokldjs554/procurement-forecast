@@ -9,6 +9,8 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from app.domain.taxonomy import Category
+
 _EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
 
@@ -157,6 +159,7 @@ class SignalOut(BaseModel):
     observed_at: date
     title: str
     summary: str
+    category: str
     department: str | None
     budget_krw: int | None
     expected_year: int | None
@@ -355,6 +358,7 @@ class ReviewDecisionIn(BaseModel):
     expected_year: int | None = None
     commitment: Literal["committed", "planned", "reviewing", "declined"] | None = None
     institution_code: str | None = None
+    category: Category | None = None
 
 
 class LLMUsageRow(BaseModel):

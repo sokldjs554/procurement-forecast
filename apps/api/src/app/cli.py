@@ -21,7 +21,8 @@ import json
 import subprocess
 import sys
 from collections.abc import Awaitable, Callable, Coroutine
-from datetime import date
+from datetime import date, datetime
+from enum import StrEnum
 from pathlib import Path
 from typing import Any, TypeVar
 
@@ -425,6 +426,101 @@ def link_export(
     typer.echo(f"exported {_run(lambda: _with_session(go))} signals to {path}")
 
 
+@eval_app.command("export-reviews")
+def eval_export_reviews(
+    out: Path = typer.Option(..., help="Write a frozen human-reviewed JSONL dataset"),
+    source: list[str] = typer.Option(None, "--source"),
+    doc_type: list[str] = typer.Option(None, "--doc-type"),
+    limit: int = typer.Option(500, min=1, help="Maximum reviewed candidates; reports truncation"),
+    split_seed: str = typer.Option("review-v1"),
+    resolved_before: str = typer.Option(
+        None, help="Latest judgment cutoff (ISO timestamp with timezone)"
+    ),
+) -> None:
+    """Export grounded human decisions; never declares unreviewed fields to be gold."""
+    configure_logging(json=False, level="WARNING", stream=sys.stderr)
+    try:
+        cutoff = datetime.fromisoformat(resolved_before) if resolved_before else None
+        if cutoff is not None and cutoff.utcoffset() is None:
+            raise ValueError("resolved-before must include timezone")
+        if not split_seed.strip():
+            raise ValueError("split-seed must not be blank")
+    except ValueError as exc:
+        raise typer.BadParameter(str(exc)) from exc
+
+    async def go(session: Any, runtime: Any) -> dict[str, Any]:
+        from app.eval.review_dataset import export_review_dataset
+
+        report = await export_review_dataset(
+            session,
+            out,
+            source_keys=source or None,
+            doc_types=doc_type or None,
+            limit=limit,
+            split_seed=split_seed,
+            resolved_before=cutoff,
+        )
+        return report.to_json()
+
+    typer.echo(json.dumps(_run(lambda: _with_session(go)), ensure_ascii=False, indent=2))
+
+
+@sources_app.command("coverage")
+def sources_coverage(
+    out: Path = typer.Option(None, help="Save the collection coverage report as JSON"),
+    verify_raw: bool = typer.Option(
+        True, help="Check local raw files; remote storage stays unverified"
+    ),
+) -> None:
+    """Distinguish configured institutions from collected documents and available originals."""
+    configure_logging(json=False, level="WARNING", stream=sys.stderr)
+
+    async def go(session: Any, runtime: Any) -> dict[str, Any]:
+        from app.sources.coverage import coverage_report
+
+        return await coverage_report(session, verify_raw=verify_raw)
+
+    payload = json.dumps(_run(lambda: _with_session(go)), ensure_ascii=False, indent=2)
+    if out:
+        out.write_text(payload + "\n", encoding="utf-8")
+    typer.echo(payload)
+
+
+@eval_app.command("freeze")
+def eval_freeze(
+    out: Path = typer.Option(..., help="Atomically write the current observation snapshot"),
+    institution_code: str = typer.Option(..., help="Institution scope, e.g. LG-41130"),
+    code_revision: str = typer.Option(..., help="Operator-attested deployed Git revision"),
+    max_signals: int = typer.Option(
+        10000, min=1, help="Abort instead of writing a partial snapshot"
+    ),
+) -> None:
+    """Freeze current source/link/prediction inputs for later outcome evaluation; no backdating."""
+    configure_logging(json=False, level="WARNING", stream=sys.stderr)
+    if not institution_code.strip() or not code_revision.strip():
+        raise typer.BadParameter("institution-code and code-revision must not be blank")
+
+    async def go(session: Any, runtime: Any) -> dict[str, Any]:
+        from app.eval.forecast_snapshot import export_forecast_snapshot
+
+        report = await export_forecast_snapshot(
+            session,
+            out,
+            institution_code=institution_code,
+            code_revision=code_revision,
+            max_signals=max_signals,
+            settings=runtime.settings,
+        )
+        return report.to_json()
+
+    typer.echo(json.dumps(_run(lambda: _with_session(go)), ensure_ascii=False, indent=2))
+
+
+class LinkReplayOrder(StrEnum):
+    PUBLICATION = "publication"
+    REVERSE = "reverse"
+
+
 @link_app.command("replay")
 def link_replay(
     path: Path = typer.Argument(..., help="A file from `link export`"),
@@ -433,14 +529,22 @@ def link_replay(
     ),
     out: Path = typer.Option(None, help="Write the resulting opportunities (signal keys) here"),
     keep: bool = typer.Option(False, help="Commit, to look at the opportunities afterwards"),
+    order: LinkReplayOrder = typer.Option(LinkReplayOrder.PUBLICATION, help="Arrival order audit"),
+    today: str = typer.Option(None, help="Fixed evaluation date (YYYY-MM-DD, default KST today)"),
 ) -> None:
     """Link the exported signals with the current linker in a seeded database that has no
     opportunities, and compare with the run they came from. Rolled back unless --keep."""
     configure_logging(json=False, level="WARNING", stream=sys.stderr)
 
-    from app.pipeline.link_replay import ReplayResult, load_export
+    from app.pipeline.link_replay import ReplayOrder, ReplayResult, load_export, replay_batches
 
     records = load_export(path)
+    replay_order: ReplayOrder = "reverse" if order == LinkReplayOrder.REVERSE else "publication"
+    try:
+        replay_batches(records, first=first or None, order=replay_order)
+        evaluation_date = date.fromisoformat(today) if today else today_kst()
+    except ValueError as exc:
+        raise typer.BadParameter(str(exc)) from exc
 
     async def go(session: Any, runtime: Any) -> ReplayResult:
         from sqlalchemy import func, select
@@ -453,7 +557,12 @@ def link_replay(
             typer.echo("this database already has opportunities; replay into a fresh one", err=True)
             raise typer.Exit(2)
         result = await replay_links(
-            session, runtime, records, first=first or None, today=today_kst()
+            session,
+            runtime,
+            records,
+            first=first or None,
+            order=replay_order,
+            today=evaluation_date,
         )
         if not keep:
             await session.rollback()

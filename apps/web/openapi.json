@@ -1484,6 +1484,298 @@
         }
       }
     },
+    "/api/admin/relations": {
+      "get": {
+        "tags": [
+          "relations"
+        ],
+        "summary": "Admin Relations",
+        "operationId": "admin_relations_api_admin_relations_get",
+        "parameters": [
+          {
+            "name": "status",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "enum": [
+                    "proposed",
+                    "confirmed",
+                    "rejected"
+                  ],
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Status"
+            }
+          },
+          {
+            "name": "after_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "After Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RelationPageOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "relations"
+        ],
+        "summary": "Review Relation",
+        "operationId": "review_relation_api_admin_relations_post",
+        "parameters": [
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 128,
+              "title": "Idempotency-Key"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RelationDecisionIn"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RelationOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/relations/mixed": {
+      "get": {
+        "tags": [
+          "relations"
+        ],
+        "summary": "Mixed Relations",
+        "operationId": "mixed_relations_api_admin_relations_mixed_get",
+        "parameters": [
+          {
+            "name": "after_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "After Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MixedRelationPageOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/relations/{relation_id}": {
+      "get": {
+        "tags": [
+          "relations"
+        ],
+        "summary": "Admin Relation",
+        "operationId": "admin_relation_api_admin_relations__relation_id__get",
+        "parameters": [
+          {
+            "name": "relation_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Relation Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RelationOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/opportunities/{opportunity_id}/relations": {
+      "get": {
+        "tags": [
+          "relations"
+        ],
+        "summary": "Opportunity Relations",
+        "operationId": "opportunity_relations_api_opportunities__opportunity_id__relations_get",
+        "parameters": [
+          {
+            "name": "opportunity_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "title": "Opportunity Id"
+            }
+          },
+          {
+            "name": "after_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "default": 0,
+              "title": "After Id"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 100,
+              "minimum": 1,
+              "default": 50,
+              "title": "Limit"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RelationPageOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/me": {
       "get": {
         "tags": [
@@ -1812,6 +2104,23 @@
           "customer_key"
         ],
         "title": "CardIn"
+      },
+      "Category": {
+        "type": "string",
+        "enum": [
+          "smart_city",
+          "safety_cctv",
+          "public_sw",
+          "ai_data",
+          "mobility",
+          "energy_env",
+          "welfare_care",
+          "education",
+          "tourism_culture",
+          "facility",
+          "other"
+        ],
+        "title": "Category"
       },
       "CategoryOut": {
         "properties": {
@@ -2625,6 +2934,75 @@
         ],
         "title": "MeOut"
       },
+      "MixedRelationGroupOut": {
+        "properties": {
+          "opportunity": {
+            "$ref": "#/components/schemas/RelationEndpointOut"
+          },
+          "project_signal_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Project Signal Ids"
+          },
+          "contract_signal_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Contract Signal Ids"
+          },
+          "bid_notice_numbers": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Bid Notice Numbers"
+          },
+          "reason": {
+            "type": "string",
+            "title": "Reason"
+          }
+        },
+        "type": "object",
+        "required": [
+          "opportunity",
+          "project_signal_ids",
+          "contract_signal_ids",
+          "bid_notice_numbers",
+          "reason"
+        ],
+        "title": "MixedRelationGroupOut"
+      },
+      "MixedRelationPageOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/MixedRelationGroupOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "next_after_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next After Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "next_after_id"
+        ],
+        "title": "MixedRelationPageOut"
+      },
       "NotificationOut": {
         "properties": {
           "id": {
@@ -3431,6 +3809,439 @@
         "type": "object",
         "title": "ProfileIO"
       },
+      "RelationDecisionIn": {
+        "properties": {
+          "project_id": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Project Id"
+          },
+          "contract_id": {
+            "type": "integer",
+            "exclusiveMinimum": 0.0,
+            "title": "Contract Id"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "proposed",
+              "confirmed",
+              "rejected"
+            ],
+            "title": "Status"
+          },
+          "expected_version": {
+            "type": "integer",
+            "minimum": 0.0,
+            "title": "Expected Version",
+            "description": "0 for creation; otherwise the version shown to the reviewer"
+          },
+          "evidence_signal_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "maxItems": 20,
+            "title": "Evidence Signal Ids"
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 2000,
+            "minLength": 1,
+            "title": "Note"
+          }
+        },
+        "type": "object",
+        "required": [
+          "project_id",
+          "contract_id",
+          "status",
+          "expected_version",
+          "note"
+        ],
+        "title": "RelationDecisionIn"
+      },
+      "RelationEndpointOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "title": {
+            "type": "string",
+            "title": "Title"
+          },
+          "institution_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Institution Code"
+          },
+          "stage": {
+            "type": "string",
+            "title": "Stage"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "title",
+          "institution_code",
+          "stage"
+        ],
+        "title": "RelationEndpointOut"
+      },
+      "RelationEventOut": {
+        "properties": {
+          "version": {
+            "type": "integer",
+            "title": "Version"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "proposed",
+              "confirmed",
+              "rejected"
+            ],
+            "title": "Status"
+          },
+          "note": {
+            "type": "string",
+            "title": "Note"
+          },
+          "actor_user_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actor User Id"
+          },
+          "actor_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Actor Name"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "evidence_signal_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Evidence Signal Ids"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/RelationEvidenceOut"
+            },
+            "type": "array",
+            "title": "Evidence"
+          }
+        },
+        "type": "object",
+        "required": [
+          "version",
+          "status",
+          "note",
+          "actor_user_id",
+          "actor_name",
+          "created_at",
+          "evidence_signal_ids",
+          "evidence"
+        ],
+        "title": "RelationEventOut"
+      },
+      "RelationEvidenceOut": {
+        "properties": {
+          "signal_id": {
+            "type": "integer",
+            "title": "Signal Id"
+          },
+          "signal_title": {
+            "type": "string",
+            "title": "Signal Title"
+          },
+          "stage": {
+            "type": "string",
+            "title": "Stage"
+          },
+          "opportunity_id": {
+            "type": "integer",
+            "title": "Opportunity Id"
+          },
+          "document_id": {
+            "type": "integer",
+            "title": "Document Id"
+          },
+          "document_title": {
+            "type": "string",
+            "title": "Document Title"
+          },
+          "document_url": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Document Url"
+          },
+          "document_content_hash": {
+            "type": "string",
+            "title": "Document Content Hash"
+          },
+          "source_text_sha256": {
+            "type": "string",
+            "title": "Source Text Sha256"
+          },
+          "fingerprint": {
+            "type": "string",
+            "title": "Fingerprint"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/RelationQuoteOut"
+            },
+            "type": "array",
+            "title": "Evidence"
+          }
+        },
+        "type": "object",
+        "required": [
+          "signal_id",
+          "signal_title",
+          "stage",
+          "opportunity_id",
+          "document_id",
+          "document_title",
+          "document_url",
+          "document_content_hash",
+          "source_text_sha256",
+          "fingerprint",
+          "evidence"
+        ],
+        "title": "RelationEvidenceOut"
+      },
+      "RelationOut": {
+        "properties": {
+          "id": {
+            "type": "integer",
+            "title": "Id"
+          },
+          "kind": {
+            "type": "string",
+            "const": "project_contract",
+            "title": "Kind"
+          },
+          "project_id": {
+            "type": "integer",
+            "title": "Project Id"
+          },
+          "contract_id": {
+            "type": "integer",
+            "title": "Contract Id"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "proposed",
+              "confirmed",
+              "rejected"
+            ],
+            "title": "Status"
+          },
+          "effective_status": {
+            "type": "string",
+            "enum": [
+              "proposed",
+              "confirmed",
+              "rejected",
+              "stale"
+            ],
+            "title": "Effective Status"
+          },
+          "valid": {
+            "type": "boolean",
+            "title": "Valid"
+          },
+          "validity_reasons": {
+            "items": {
+              "type": "string"
+            },
+            "type": "array",
+            "title": "Validity Reasons"
+          },
+          "version": {
+            "type": "integer",
+            "title": "Version"
+          },
+          "evidence_signal_ids": {
+            "items": {
+              "type": "integer"
+            },
+            "type": "array",
+            "title": "Evidence Signal Ids"
+          },
+          "evidence": {
+            "items": {
+              "$ref": "#/components/schemas/RelationEvidenceOut"
+            },
+            "type": "array",
+            "title": "Evidence"
+          },
+          "note": {
+            "type": "string",
+            "title": "Note"
+          },
+          "updated_by": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Updated By"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "project": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RelationEndpointOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "contract": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RelationEndpointOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "history": {
+            "items": {
+              "$ref": "#/components/schemas/RelationEventOut"
+            },
+            "type": "array",
+            "title": "History"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "kind",
+          "project_id",
+          "contract_id",
+          "status",
+          "effective_status",
+          "valid",
+          "validity_reasons",
+          "version",
+          "evidence_signal_ids",
+          "evidence",
+          "note",
+          "updated_by",
+          "created_at",
+          "updated_at",
+          "project",
+          "contract",
+          "history"
+        ],
+        "title": "RelationOut"
+      },
+      "RelationPageOut": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/RelationOut"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "next_after_id": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next After Id"
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "next_after_id"
+        ],
+        "title": "RelationPageOut"
+      },
+      "RelationQuoteOut": {
+        "properties": {
+          "quote": {
+            "type": "string",
+            "title": "Quote"
+          },
+          "source_quote": {
+            "type": "string",
+            "title": "Source Quote"
+          },
+          "start": {
+            "type": "integer",
+            "title": "Start"
+          },
+          "end": {
+            "type": "integer",
+            "title": "End"
+          }
+        },
+        "type": "object",
+        "required": [
+          "quote",
+          "source_quote",
+          "start",
+          "end"
+        ],
+        "title": "RelationQuoteOut"
+      },
       "ReviewDecisionIn": {
         "properties": {
           "action": {
@@ -3502,6 +4313,16 @@
               }
             ],
             "title": "Institution Code"
+          },
+          "category": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Category"
+              },
+              {
+                "type": "null"
+              }
+            ]
           }
         },
         "type": "object",
@@ -3584,6 +4405,10 @@
           "summary": {
             "type": "string",
             "title": "Summary"
+          },
+          "category": {
+            "type": "string",
+            "title": "Category"
           },
           "department": {
             "anyOf": [
@@ -3703,6 +4528,7 @@
           "observed_at",
           "title",
           "summary",
+          "category",
           "department",
           "budget_krw",
           "expected_year",

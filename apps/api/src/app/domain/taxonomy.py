@@ -8,6 +8,7 @@ The lexicon doubles as the triage vocabulary and as feature weights for the offl
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from enum import StrEnum
 
@@ -328,6 +329,104 @@ def classify_category(text: str) -> tuple[Category, float]:
     best = max(scores, key=lambda c: scores[c])
     total = sum(scores.values())
     return best, round(scores[best] / total, 3)
+
+
+# Budget titles name the funded purpose. Account labels and technology used to deliver it
+# are weaker evidence: an IoT care service is care, a youth concert is culture, and a
+# library remodel buys construction rather than educational programming.
+_BUDGET_TARGETS: dict[Category, re.Pattern[str]] = {
+    Category.FACILITY: re.compile(
+        r"신축|증축|리모델링|개보수|보수공사|정비공사|시설개선공사|건립|"
+        # A named civil asset plus construction work is a purchase target. The generic
+        # word 공사 alone remains weak, and park CCTV/software installations keep their
+        # own target: 공원 must be immediately followed by the construction action.
+        r"(?:물놀이장|놀이터|보행교|교량|육교|산책로|공원|광장|배수로|옹벽)"
+        r"(?:설치|조성|확장|개설|개량)공사"
+    ),
+    Category.PUBLIC_SW: re.compile(r"홈페이지|누리집|웹접근성|정보시스템|챗봇|클라우드"),
+}
+_BUDGET_PURPOSES: dict[Category, re.Pattern[str]] = {
+    Category.WELFARE_CARE: re.compile(r"돌봄|고독사|안부확인|건강관리|건강증진|구강보건|치매"),
+    Category.EDUCATION: re.compile(r"교육|코딩|평생학습|메이커|에듀테크"),
+    Category.TOURISM_CULTURE: re.compile(
+        r"교향악|페스티벌|공연|축제|관광|전시|미디어아트|미디어파사드"
+    ),
+    Category.SAFETY_CCTV: re.compile(
+        r"침수|재난|인명구조|이안류|방범|선별관제|과속단속|산불감시|cctv"
+    ),
+    Category.ENERGY_ENV: re.compile(
+        r"태양광|에너지|탄소|폐기물|병해충|방제|미세먼지|쓰레기|수소|led.*(?:가로등|조명)"
+    ),
+    Category.MOBILITY: re.compile(r"주차|교통|(?<!메타)버스|모빌리티|수요응답|전기차"),
+}
+_BUDGET_SMART_ASSETS = re.compile(
+    r"스마트쉘터|스마트정류장|스마트버스정류장|스마트폴|디지털트윈|스마트가로등|스마트횡단보도"
+)
+_BUDGET_WEAK_WORDS = GENERIC_KEYWORDS | {"AI", "인공지능", "IoT", "사물인터넷", "예측"}
+_GENERIC_BUDGET_TITLE = re.compile(
+    r"(?:신규|노후|공공|관련)?(?:사업|장비|시설|물품|시스템)"
+    r"(?:추진|구입|구매|도입|구축|개선|교체|설치)?(?:사업)?"
+)
+_BUDGET_DETAIL = re.compile(r"^\s*[○ㅇ∘o°·-]\s*(.+)")
+_NEXT_BUDGET_ROW = re.compile(
+    r"^\s*세\s*부\s*사\s*업|^[가-힣A-Za-z(].*\s+\d[\d,]*\s+\d[\d,]*\s+△?\d[\d,]*\s*$"
+)
+
+
+def _budget_title_category(title: str) -> tuple[Category, float]:
+    compact = re.sub(r"\s+", "", title).lower()
+    targets = {category for category, pattern in _BUDGET_TARGETS.items() if pattern.search(compact)}
+    if targets:
+        return (next(iter(targets)), 0.9) if len(targets) == 1 else (Category.OTHER, 0.0)
+    purposes = set()
+    if _BUDGET_SMART_ASSETS.search(compact):
+        purposes.add(Category.SMART_CITY)
+        # "버스" inside a named smart shelter is not a second transport project.
+        compact = _BUDGET_SMART_ASSETS.sub("", compact)
+    purposes.update(
+        category for category, pattern in _BUDGET_PURPOSES.items() if pattern.search(compact)
+    )
+    if purposes:
+        return (next(iter(purposes)), 0.9) if len(purposes) == 1 else (Category.OTHER, 0.0)
+    scores = {
+        category: sum(
+            1 + len(keyword.replace(" ", "")) / 4
+            for keyword in info.keywords
+            if keyword not in _BUDGET_WEAK_WORDS and keyword.replace(" ", "").lower() in compact
+        )
+        for category, info in CATEGORIES.items()
+    }
+    total = sum(scores.values())
+    if not total:
+        return Category.OTHER, 0.0
+    best = max(scores, key=lambda category: scores[category])
+    confidence = scores[best] / total
+    return (best, round(confidence, 3)) if confidence >= 0.6 else (Category.OTHER, 0.0)
+
+
+def classify_budget_category(title: str, details: str = "") -> tuple[Category, float]:
+    """Use the project's purchase/purpose before incidental account or technology words.
+
+    Detail fallback is restricted to genuinely generic titles and explicit basis bullets.
+    A named but unrecognised program, multiple purposes, or conflicting details stays other;
+    a heuristic score is not a measured probability of correct classification.
+    """
+    category, confidence = _budget_title_category(title)
+    if category is not Category.OTHER:
+        return category, confidence
+    if not _GENERIC_BUDGET_TITLE.fullmatch(re.sub(r"\s+", "", title)):
+        return Category.OTHER, 0.0
+    categories: set[Category] = set()
+    for line in details.splitlines():
+        if _NEXT_BUDGET_ROW.search(line):
+            break
+        if match := _BUDGET_DETAIL.match(line):
+            category, _ = _budget_title_category(match[1])
+            if category is not Category.OTHER:
+                categories.add(category)
+            else:
+                return Category.OTHER, 0.0
+    return (next(iter(categories)), 0.6) if len(categories) == 1 else (Category.OTHER, 0.0)
 
 
 def commitment_level(text: str) -> str | None:

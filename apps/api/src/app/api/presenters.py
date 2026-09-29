@@ -148,6 +148,7 @@ def signal_out(
     link: OpportunitySignal | None,
 ) -> SignalOut:
     return SignalOut(
+        category=s.category,
         id=s.id,
         stage=s.stage,
         stage_label="입찰공고 취소"

@@ -81,6 +81,8 @@ class ReprocessingProtectedError(RuntimeError):
 
 async def protect_human_decisions(session: AsyncSession, document_id: int) -> None:
     """Refuse destructive source/derivation changes; caller holds the Document row lock."""
+    from app.pipeline.relations import has_relation_review_for_document
+
     # Review writers use the same Signal-first lock order. A separate query after acquiring
     # the locks observes any review committed while we waited (READ COMMITTED isolation).
     signal_ids = list(
@@ -92,6 +94,11 @@ async def protect_human_decisions(session: AsyncSession, document_id: int) -> No
         )
     )
     if not signal_ids:
+        if await has_relation_review_for_document(session, document_id):
+            raise ReprocessingProtectedError(
+                f"document {document_id} has human decisions in relation history; "
+                "source replacement requires an explicit migration"
+            )
         return
     protected = await session.scalar(
         select(Signal.id)
@@ -109,10 +116,10 @@ async def protect_human_decisions(session: AsyncSession, document_id: int) -> No
         )
         .limit(1)
     )
-    if protected is not None:
+    if protected is not None or await has_relation_review_for_document(session, document_id):
         raise ReprocessingProtectedError(
             f"document {document_id} has human decisions; re-extraction requires an explicit "
-            "review/manual-link migration"
+            "review/manual-link/relation migration"
         )
 
 

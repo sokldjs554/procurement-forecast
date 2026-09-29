@@ -26,7 +26,7 @@ from app.domain.institutions import (
 )
 from app.log import get_logger
 from app.runtime import Runtime
-from app.sources.base import FetchWindow, RawRecord, SkipsStored, SourceAdapter
+from app.sources.base import FetchWindow, RawRecord, SkipsStored, SourceAdapter, TracksRevisions
 from app.storage import store_raw
 
 log = get_logger(__name__)
@@ -267,7 +267,23 @@ async def run_ingest(
     session.add(run)
     await session.flush()
     stats = IngestStats()
-    if isinstance(adapter, SkipsStored):
+    if isinstance(adapter, TracksRevisions):
+
+        async def revisions(ids: list[str]) -> dict[str, dict[str, object]]:
+            rows = await session.execute(
+                select(
+                    Document.external_id,
+                    Document.structured["docid"].astext,
+                    Document.structured["revision_docids"],
+                ).where(Document.source_id == source.id, Document.external_id.in_(ids))
+            )
+            return {
+                external_id: {"docid": docid, "revision_docids": docids}
+                for external_id, docid, docids in rows
+            }
+
+        adapter.known_revision_metadata = revisions
+    elif isinstance(adapter, SkipsStored):
 
         async def known(ids: list[str]) -> set[str]:
             stored = await session.scalars(

@@ -350,6 +350,80 @@ class OpportunitySignal(TimestampMixin, Base):
     signal: Mapped[Signal] = relationship(back_populates="link")
 
 
+class OpportunityRelation(TimestampMixin, Base):
+    """A reviewed edge; never changes primary signal ownership or monetary aggregates."""
+
+    __tablename__ = "opportunity_relations"
+    __table_args__ = (
+        UniqueConstraint("kind", "project_id", "contract_id", name="uq_relation_pair"),
+        _check_in("kind", ("project_contract",), "ck_relation_kind"),
+        _check_in("status", ("proposed", "confirmed", "rejected"), "ck_relation_status"),
+        CheckConstraint("project_id <> contract_id", name="ck_relation_not_self"),
+        CheckConstraint("version >= 1", name="ck_relation_version"),
+        Index("ix_relations_project_status", "project_id", "status"),
+        Index("ix_relations_contract_status", "contract_id", "status"),
+        Index("ix_relations_status_id", "status", "id"),
+        Index(
+            "uq_relation_confirmed_contract",
+            "contract_id",
+            unique=True,
+            postgresql_where="status = 'confirmed'",
+        ),
+    )
+
+    id: Mapped[int] = _pk()
+    project_id: Mapped[int] = mapped_column(ForeignKey("opportunities.id", ondelete="RESTRICT"))
+    contract_id: Mapped[int] = mapped_column(ForeignKey("opportunities.id", ondelete="RESTRICT"))
+    kind: Mapped[str] = mapped_column(
+        String(32), default="project_contract", server_default="project_contract"
+    )
+    status: Mapped[str] = mapped_column(String(16), default="proposed", server_default="proposed")
+    version: Mapped[int] = mapped_column(Integer, default=1, server_default="1")
+    # IDs are anchors, not cascading FKs. Re-extraction must not destroy a human decision.
+    evidence_signal_ids: Mapped[list[int]] = mapped_column(
+        ARRAY(BigInteger), default=list, server_default="{}"
+    )
+    evidence_snapshot: Mapped[list[dict[str, Any]]] = mapped_column(
+        default=list, server_default="[]"
+    )
+    note: Mapped[str] = mapped_column(Text, default="", server_default="")
+    updated_by: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+
+
+class OpportunityRelationEvent(TimestampMixin, Base):
+    """Append-only decisions, including their exact evidence and idempotency identity."""
+
+    __tablename__ = "opportunity_relation_events"
+    __table_args__ = (
+        UniqueConstraint("relation_id", "version", name="uq_relation_event_version"),
+        CheckConstraint("version >= 1", name="ck_relation_event_version"),
+        _check_in("status", ("proposed", "confirmed", "rejected"), "ck_relation_event_status"),
+        Index(
+            "ix_relation_events_evidence",
+            "evidence_snapshot",
+            postgresql_using="gin",
+            postgresql_ops={"evidence_snapshot": "jsonb_path_ops"},
+        ),
+    )
+
+    id: Mapped[int] = _pk()
+    relation_id: Mapped[int] = mapped_column(
+        ForeignKey("opportunity_relations.id", ondelete="RESTRICT")
+    )
+    version: Mapped[int] = mapped_column(Integer)
+    status: Mapped[str] = mapped_column(String(16))
+    idempotency_key: Mapped[str] = mapped_column(String(128), unique=True)
+    request_digest: Mapped[str] = mapped_column(String(64))
+    actor_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id", ondelete="SET NULL"))
+    actor_snapshot: Mapped[dict[str, Any]] = mapped_column(default=dict, server_default="{}")
+    evidence_signal_ids: Mapped[list[int]] = mapped_column(ARRAY(BigInteger))
+    evidence_snapshot: Mapped[list[dict[str, Any]]] = mapped_column()
+    note: Mapped[str] = mapped_column(Text)
+
+
 class Recommendation(Base):
     __tablename__ = "recommendations"
     __table_args__ = (

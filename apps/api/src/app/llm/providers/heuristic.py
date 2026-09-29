@@ -13,12 +13,13 @@ from __future__ import annotations
 import re
 from typing import cast
 
-from app.domain.krw import detect_table_unit, find_amounts
+from app.domain.krw import detect_table_unit, find_amounts, parse_krw
 from app.domain.taxonomy import (
     CATEGORIES,
     COMMITMENT_LADDER,
     PROCUREMENT_VERBS,
     Category,
+    classify_budget_category,
     classify_category,
     commitment_level,
 )
@@ -26,9 +27,9 @@ from app.domain.timing import resolve_timing
 from app.llm.prompts import EXTRACT_PROMPT_VERSION, BriefFacts, ChunkContext
 from app.llm.schemas import Commitment, ExtractedSignal, ExtractionOutput
 from app.llm.types import LLMResult
-from app.parsing.chunking import match_member
+from app.parsing.chunking import budget_project_row, chunk_budget, match_member
 
-HEURISTIC_VERSION = "heuristic-v2"
+HEURISTIC_VERSION = "heuristic-v3"
 
 _SENTENCE_RE = re.compile(r"[^.?!。]+[.?!。]?")
 _SPEAKER_PREFIX_RE = re.compile(r"^[○◯◎]\s*[가-힣A-Za-z·]+\s+[가-힣]{2,4}\s+")
@@ -64,16 +65,7 @@ _OPERATING_WORDS = (
     "지원",
     "기본경비",  # every 부서's 행정운영경비 row in real books
 )
-_BUDGET_LINE_RE = re.compile(
-    r"세\s*부\s*사\s*업\s*[:：]?\s*(?P<name>.+?)\s+(?P<amount>\d{1,3}(?:,\d{3})+|\d{4,})"
-)
-# Real 세출예산사업명세서 rows carry no "세부사업" label: "상권활성화재단 출연 4,039,360
-# 3,864,360 175,000" (예산액, 전년도/기정액, 증감 with △ for a cut). The chunker only starts a
-# chunk on such a row when a 편성목 follows it, which is what separates it from subtotals.
-_NUM = r"(?:\d{1,3}(?:,\d{3})+|\d+)"
-_TABLE_ROW_RE = re.compile(
-    rf"^\s*(?P<name>[가-힣A-Za-z(][^\n]*?)\s+(?P<amount>{_NUM})\s+{_NUM}\s+△?{_NUM}\s*$"
-)
+_WAGE_ROW_RE = re.compile(r"(?:근로자|직원|공무원|인력)\s*(?:등\s*)?보수(?:\s|$)")
 _MEMBER_ROLES = ("위원", "의원", "위원장", "의장")
 _GENERIC_TITLE_HEADS = (
     "예산",
@@ -349,20 +341,21 @@ def _extract_exchange(ctx: ChunkContext) -> list[ExtractedSignal]:
 
 
 def _extract_budget_line(ctx: ChunkContext, table_unit: int) -> list[ExtractedSignal]:
+    """Extract one row after structural splitting; no neighboring project text is used."""
     first_line = ctx.text.splitlines()[0] if ctx.text else ""
-    m = _BUDGET_LINE_RE.search(first_line) or _TABLE_ROW_RE.match(first_line)
-    if not m:
+    row = budget_project_row(first_line)
+    if row is None:
         return []
-    name = m.group("name").strip()
+    name, amount_text = row
+    if _WAGE_ROW_RE.search(name):
+        return []
     if any(w in name for w in _OPERATING_WORDS) and not any(
         v in name for v in ("설치", "구축", "조성", "도입", "교체", "보급", "전환", "리모델링")
     ):
         return []
-    category, conf = classify_category(ctx.text)
-    if category is Category.OTHER:
-        return []
-    amount_k = int(m.group("amount").replace(",", ""))
-    if amount_k == 0:
+    category, conf = classify_budget_category(name, "\n".join(ctx.text.splitlines()[1:]))
+    amount_krw = parse_krw(amount_text, default_unit=table_unit)
+    if not amount_krw:
         return []  # cut to nothing in a 추경 ("사업 0 73,080 △73,080"): no longer a plan
     dept = next(
         (lbl.split(":", 1)[1].strip() for lbl in ctx.labels if lbl.startswith("부서")), None
@@ -374,16 +367,17 @@ def _extract_budget_line(ctx: ChunkContext, table_unit: int) -> list[ExtractedSi
             category=category,
             institution_mention=ctx.institution,
             department=dept,
-            budget_text=m.group("amount"),
-            budget_krw=amount_k * table_unit,
+            budget_text=amount_text,
+            budget_krw=amount_krw,
             timing_text=None,
             expected_year=ctx.fiscal_year,
             expected_half=None,
             commitment="committed",
             procurement_type="unknown",
-            keywords=_keywords(ctx.text) or [name],
+            keywords=_keywords(name) or [name],
             evidence=[first_line.strip()],
-            confidence=round(0.7 + 0.1 * min(conf, 1.0), 2),
+            # Keep unresolved classification visible to the existing grounding review gate.
+            confidence=0.35 if category is Category.OTHER else round(0.7 + 0.1 * min(conf, 1.0), 2),
         )
     ]
 
@@ -400,7 +394,18 @@ class HeuristicProvider:
     async def extract(self, ctx: ChunkContext) -> LLMResult[ExtractionOutput]:
         if ctx.doc_type == "budget_book":
             unit = detect_table_unit(ctx.text) or self._unit
-            signals = _extract_budget_line(ctx, unit)
+            signals = []
+            for chunk in chunk_budget(ctx.text, standalone=True):
+                row_context = ChunkContext(
+                    ctx.doc_type,
+                    ctx.title,
+                    ctx.institution,
+                    ctx.document_date,
+                    chunk.labels or ctx.labels,
+                    chunk.text,
+                    ctx.fiscal_year,
+                )
+                signals.extend(_extract_budget_line(row_context, unit))
         elif ctx.doc_type == "council_minutes":
             signals = _extract_exchange(ctx)
         else:

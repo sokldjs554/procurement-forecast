@@ -555,6 +555,75 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/admin/relations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Admin Relations */
+        get: operations["admin_relations_api_admin_relations_get"];
+        put?: never;
+        /** Review Relation */
+        post: operations["review_relation_api_admin_relations_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/relations/mixed": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Mixed Relations */
+        get: operations["mixed_relations_api_admin_relations_mixed_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/admin/relations/{relation_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Admin Relation */
+        get: operations["admin_relation_api_admin_relations__relation_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/opportunities/{opportunity_id}/relations": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Opportunity Relations */
+        get: operations["opportunity_relations_api_opportunities__opportunity_id__relations_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/me": {
         parameters: {
             query?: never;
@@ -711,6 +780,11 @@ export interface components {
             /** Customer Key */
             customer_key: string;
         };
+        /**
+         * Category
+         * @enum {string}
+         */
+        Category: "smart_city" | "safety_cctv" | "public_sw" | "ai_data" | "mobility" | "energy_env" | "welfare_care" | "education" | "tourism_culture" | "facility" | "other";
         /** CategoryOut */
         CategoryOut: {
             /** Key */
@@ -997,6 +1071,25 @@ export interface components {
             /** Extractor Mode */
             extractor_mode: string;
         };
+        /** MixedRelationGroupOut */
+        MixedRelationGroupOut: {
+            opportunity: components["schemas"]["RelationEndpointOut"];
+            /** Project Signal Ids */
+            project_signal_ids: number[];
+            /** Contract Signal Ids */
+            contract_signal_ids: number[];
+            /** Bid Notice Numbers */
+            bid_notice_numbers: string[];
+            /** Reason */
+            reason: string;
+        };
+        /** MixedRelationPageOut */
+        MixedRelationPageOut: {
+            /** Items */
+            items: components["schemas"]["MixedRelationGroupOut"][];
+            /** Next After Id */
+            next_after_id: number | null;
+        };
         /** NotificationOut */
         NotificationOut: {
             /** Id */
@@ -1257,6 +1350,158 @@ export interface components {
             /** Budget Max */
             budget_max?: number | null;
         };
+        /** RelationDecisionIn */
+        RelationDecisionIn: {
+            /** Project Id */
+            project_id: number;
+            /** Contract Id */
+            contract_id: number;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "proposed" | "confirmed" | "rejected";
+            /**
+             * Expected Version
+             * @description 0 for creation; otherwise the version shown to the reviewer
+             */
+            expected_version: number;
+            /** Evidence Signal Ids */
+            evidence_signal_ids?: number[];
+            /** Note */
+            note: string;
+        };
+        /** RelationEndpointOut */
+        RelationEndpointOut: {
+            /** Id */
+            id: number;
+            /** Title */
+            title: string;
+            /** Institution Code */
+            institution_code: string | null;
+            /** Stage */
+            stage: string;
+        };
+        /** RelationEventOut */
+        RelationEventOut: {
+            /** Version */
+            version: number;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "proposed" | "confirmed" | "rejected";
+            /** Note */
+            note: string;
+            /** Actor User Id */
+            actor_user_id: number | null;
+            /** Actor Name */
+            actor_name: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** Evidence Signal Ids */
+            evidence_signal_ids: number[];
+            /** Evidence */
+            evidence: components["schemas"]["RelationEvidenceOut"][];
+        };
+        /** RelationEvidenceOut */
+        RelationEvidenceOut: {
+            /** Signal Id */
+            signal_id: number;
+            /** Signal Title */
+            signal_title: string;
+            /** Stage */
+            stage: string;
+            /** Opportunity Id */
+            opportunity_id: number;
+            /** Document Id */
+            document_id: number;
+            /** Document Title */
+            document_title: string;
+            /** Document Url */
+            document_url: string | null;
+            /** Document Content Hash */
+            document_content_hash: string;
+            /** Source Text Sha256 */
+            source_text_sha256: string;
+            /** Fingerprint */
+            fingerprint: string;
+            /** Evidence */
+            evidence: components["schemas"]["RelationQuoteOut"][];
+        };
+        /** RelationOut */
+        RelationOut: {
+            /** Id */
+            id: number;
+            /**
+             * Kind
+             * @constant
+             */
+            kind: "project_contract";
+            /** Project Id */
+            project_id: number;
+            /** Contract Id */
+            contract_id: number;
+            /**
+             * Status
+             * @enum {string}
+             */
+            status: "proposed" | "confirmed" | "rejected";
+            /**
+             * Effective Status
+             * @enum {string}
+             */
+            effective_status: "proposed" | "confirmed" | "rejected" | "stale";
+            /** Valid */
+            valid: boolean;
+            /** Validity Reasons */
+            validity_reasons: string[];
+            /** Version */
+            version: number;
+            /** Evidence Signal Ids */
+            evidence_signal_ids: number[];
+            /** Evidence */
+            evidence: components["schemas"]["RelationEvidenceOut"][];
+            /** Note */
+            note: string;
+            /** Updated By */
+            updated_by: number | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Updated At
+             * Format: date-time
+             */
+            updated_at: string;
+            project: components["schemas"]["RelationEndpointOut"] | null;
+            contract: components["schemas"]["RelationEndpointOut"] | null;
+            /** History */
+            history: components["schemas"]["RelationEventOut"][];
+        };
+        /** RelationPageOut */
+        RelationPageOut: {
+            /** Items */
+            items: components["schemas"]["RelationOut"][];
+            /** Next After Id */
+            next_after_id: number | null;
+        };
+        /** RelationQuoteOut */
+        RelationQuoteOut: {
+            /** Quote */
+            quote: string;
+            /** Source Quote */
+            source_quote: string;
+            /** Start */
+            start: number;
+            /** End */
+            end: number;
+        };
         /** ReviewDecisionIn */
         ReviewDecisionIn: {
             /**
@@ -1274,6 +1519,7 @@ export interface components {
             commitment?: ("committed" | "planned" | "reviewing" | "declined") | null;
             /** Institution Code */
             institution_code?: string | null;
+            category?: components["schemas"]["Category"] | null;
         };
         /** ReviewItemOut */
         ReviewItemOut: {
@@ -1309,6 +1555,8 @@ export interface components {
             title: string;
             /** Summary */
             summary: string;
+            /** Category */
+            category: string;
             /** Department */
             department: string | null;
             /** Budget Krw */
@@ -2430,6 +2678,171 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DocumentDetailOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_relations_api_admin_relations_get: {
+        parameters: {
+            query?: {
+                status?: ("proposed" | "confirmed" | "rejected") | null;
+                after_id?: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RelationPageOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    review_relation_api_admin_relations_post: {
+        parameters: {
+            query?: never;
+            header: {
+                "Idempotency-Key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RelationDecisionIn"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RelationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    mixed_relations_api_admin_relations_mixed_get: {
+        parameters: {
+            query?: {
+                after_id?: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MixedRelationPageOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    admin_relation_api_admin_relations__relation_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                relation_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RelationOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    opportunity_relations_api_opportunities__opportunity_id__relations_get: {
+        parameters: {
+            query?: {
+                after_id?: number;
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                opportunity_id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["RelationPageOut"];
                 };
             };
             /** @description Validation Error */

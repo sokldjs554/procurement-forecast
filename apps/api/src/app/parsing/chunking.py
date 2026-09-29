@@ -132,27 +132,62 @@ def chunk_minutes(text: str) -> list[Chunk]:
 
 
 _DEPT_RE = re.compile(r"^\s*부\s*서\s*[:：]\s*(?P<dept>\S.*?)\s*$")  # "부서: 분당구 건설과"
-_PROJECT_RE = re.compile(
-    r"^\s*(?:세\s*부\s*사\s*업\s*[:：]?\s*)?(?P<name>[가-힣A-Za-z0-9·()\-\s]{3,60}?)\s+"
-    r"(?P<amount>\d{1,3}(?:,\d{3})+|\d{4,})(?:\s|$)"
+_PROJECT_LABEL_RE = re.compile(r"^\s*세\s*부\s*사\s*업\s*[:：]?\s*")
+_CELL_NUMBER = r"(?:\d{1,3}(?:,\d{3})+|\d+)"
+_PROJECT_ROW_RE = re.compile(
+    rf"^(?P<name>[가-힣A-Za-z0-9(].*?)\s+(?P<amount>{_CELL_NUMBER})"
+    rf"\s+{_CELL_NUMBER}\s+[△−-]?{_CELL_NUMBER}\s*$"
+)
+_LABELED_AMOUNT_RE = re.compile(
+    rf"^(?P<name>[가-힣A-Za-z0-9(].*?)\s+(?P<amount>{_CELL_NUMBER})\s*$"
 )
 _BASIS_RE = re.compile(r"^\s*(?:[∘ㅇ○o°·\-]|\d\))\s*")
 # Real 세출예산사업명세서 rows (성남시, 2026): "306 출연금 2,900,000 …" is a 편성목, "01 출연금 …"
 # a 통계목, and "도 113,293 …" a funding source (국·도·시비, 균특, 기금, 조정교부금).
 _OBJECT_RE = re.compile(r"^\s*\d{3}\s+\S")
 _ITEM_RE = re.compile(r"^\s*(?:\d{2,3}\s+\S|[국도시균기조특]\s+△?\d)")
-_AMOUNT_RE = re.compile(r"\d{1,3}(?:,\d{3})+|\d{4,}")
 _AMOUNT_TAIL_RE = re.compile(r"\d\s*$")
+
+
+def budget_project_row(line: str) -> tuple[str, str] | None:
+    """Read a project name and current-budget cell, never column headings or account rows.
+
+    This is syntactic only: unlabeled rows still need structural context in the chunker
+    to distinguish projects from department/policy subtotals. Keep source text untouched.
+    """
+    normalized = line.replace("|", " ").strip()
+    labeled = _PROJECT_LABEL_RE.match(normalized)
+    body = normalized[labeled.end() :] if labeled else normalized
+    if _BASIS_RE.match(body) or _ITEM_RE.match(body):
+        return None
+    match = _PROJECT_ROW_RE.fullmatch(body)
+    if match is None and labeled:
+        match = _LABELED_AMOUNT_RE.fullmatch(body)
+    if match is None:
+        return None
+    name = match.group("name").strip()
+    if len(name) < 2 or name in {"세부사업", "사업명", "예산액", "합계", "소계", "총계"}:
+        return None
+    return name, match.group("amount")
+
+
+def _project_table_header(line: str) -> bool:
+    cells = [cell.strip().replace(" ", "") for cell in line.strip().strip("|").split("|")]
+    return (
+        len(cells) > 1
+        and cells[0] in {"세부사업", "사업명"}
+        and any("예산액" in cell for cell in cells[1:])
+    )
 
 
 def _is_project_row(lines: list[str], i: int) -> bool:
     """An unlabeled "name 예산액 전년도 증감" row. 부서·정책·단위사업 subtotals look the same;
     only a 세부사업 is followed (after its funding lines) by a 편성목 row."""
     content = lines[i]
-    if not _PROJECT_RE.match(content) or _BASIS_RE.match(content) or _ITEM_RE.match(content):
+    if budget_project_row(content) is None:
         return False
     prev = next((ln for ln in reversed(lines[:i]) if ln.strip()), "")
-    if _BASIS_RE.match(prev) and not _AMOUNT_TAIL_RE.search(prev):
+    if content[:1].isspace() and _BASIS_RE.match(prev) and not _AMOUNT_TAIL_RE.search(prev):
         return False  # the tail of a wrapped "○…" basis line: " 및 컨설팅 44,935 65,375 △20,440"
     for nxt in lines[i + 1 :]:
         if not nxt.strip() or (_ITEM_RE.match(nxt) and not _OBJECT_RE.match(nxt)):
@@ -161,13 +196,15 @@ def _is_project_row(lines: list[str], i: int) -> bool:
     return False
 
 
-def chunk_budget(text: str) -> list[Chunk]:
+def chunk_budget(text: str, *, standalone: bool = False) -> list[Chunk]:
     chunks: list[Chunk] = []
     dept: str | None = None
     current: list[tuple[int, int]] = []
     current_dept: str | None = None
     offset = 0
     lines = [line.rstrip("\r\n") for line in text.splitlines(keepends=True)]
+    first_content = next((i for i, line in enumerate(lines) if line.strip()), -1)
+    project_table = False
 
     def flush() -> None:
         nonlocal current
@@ -186,17 +223,30 @@ def chunk_budget(text: str) -> list[Chunk]:
         if m := _DEPT_RE.match(content):
             flush()
             dept = m.group("dept")
+            project_table = False
             continue
-        # "세부사업" with an amount: a labeled row, not the "…ㆍ세부사업ㆍ편성목 예산액" header
-        labeled = "세부사업" in content.replace(" ", "") and _AMOUNT_RE.search(content)
-        if labeled or _is_project_row(lines, i):
+        if _project_table_header(content):
+            flush()
+            project_table = True
+            continue
+        normalized = content.replace("|", " ").strip()
+        row = budget_project_row(content)
+        labeled = bool(_PROJECT_LABEL_RE.match(normalized))
+        # Extraction can receive an already-isolated unlabeled row. Only the first line
+        # gets that allowance; full books still require a label/header or following account.
+        isolated = standalone and i == first_content
+        if row and (
+            labeled or (project_table and "|" in content) or isolated or _is_project_row(lines, i)
+        ):
             flush()
             current = [(start, end)]
             current_dept = dept
-        elif current and (_BASIS_RE.match(content) or _ITEM_RE.match(content)):
+        elif current and (_BASIS_RE.match(normalized) or _ITEM_RE.match(normalized)):
             current.append((start, end))
         else:
             flush()
+            if "|" not in content:
+                project_table = False
     flush()
     return chunks
 

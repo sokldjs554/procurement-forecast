@@ -334,7 +334,14 @@ async def decide_review(
         signal.verdict = "rejected"
         item.status = "rejected"
     else:
-        for field in ("title", "budget_krw", "expected_year", "commitment", "institution_code"):
+        for field in (
+            "title",
+            "budget_krw",
+            "expected_year",
+            "commitment",
+            "institution_code",
+            "category",
+        ):
             value = getattr(body, field)
             if value is not None:
                 changes[field] = {"from": getattr(signal, field), "to": value}
