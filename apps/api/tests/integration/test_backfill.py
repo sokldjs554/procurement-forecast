@@ -842,9 +842,9 @@ async def test_what_was_paid_for_survives_a_stop_mid_document(demo_world, runtim
     assert len(again.sent) >= 1
 
 
-def _book_rows(*rows: tuple[str, int]) -> str:
+def _book_rows(*rows: tuple[str, int], department: str = "수정구 청소년과") -> str:
     """세출예산사업명세서 rows in one department, the way the live 성남시 books print them."""
-    out = ["부서: 수정구 청소년과", "정책: 청소년 시설 운영", "단위: 청소년 시설 (단위:천원)"]
+    out = [f"부서: {department}", "정책: 청소년 시설 운영", "단위: 청소년 시설 (단위:천원)"]
     for name, amount in rows:
         out += [
             f"{name} {amount:,} 0 {amount:,}",
@@ -917,3 +917,68 @@ async def test_rows_of_two_books_join_only_under_the_same_name(demo_world, runti
     }
     assert rows["탄천 보행교 설치공사"] == rows["탄천 보행교 설치 공사"]  # one project, two books
     assert rows["중원청소년수련관 시설개선공사"] != rows["수정청소년수련관 시설 개선공사"]
+
+
+async def test_a_name_every_dong_carries_joins_the_same_dongs_row(demo_world, runtime) -> None:  # type: ignore[no-untyped-def]
+    # "소규모 정비공사" is a row of every 동 (45 in one live 성남시 book, real-data-minutes.md
+    # §10): the name cannot tell them apart, the department can.
+    def book(year: int, amounts: dict[str, int]) -> RawRecord:
+        return RawRecord(
+            external_id=f"/humanframe/file/sncity/bgt/{year}/dong-test.pdf",
+            doc_type="budget_book",
+            title=f"{year}년 본예산 세입세출예산서 › 세출예산사업명세서",
+            published_at=date(year - 1, 12, 31),
+            mime="text/plain",
+            publisher_raw="경기도 성남시",
+            institution_code_hint="LG-41130",
+            content="".join(
+                _book_rows(("소규모 정비공사", amount), department=dept)
+                for dept, amount in amounts.items()
+            ).encode(),
+            structured={"fiscal_year": year, "budget_kind": "본"},
+        )
+
+    books = [
+        book(2025, {"분당구 수내1동": 30_000, "분당구 정자1동": 30_000, "중원구 성남동": 30_000}),
+        # 은행1동 has no row of that name in 2025: generic, so no other 동's row will do.
+        # Linked first, before the other 동 rows of its book could rule those opportunities out.
+        # …nor 하대원동, linked last: the other 동 rows of its book have taken their 2025
+        # opportunities out, and 성남동's, of another department, is the one candidate left.
+        book(
+            2026,
+            {
+                "분당구 은행1동": 30_000,
+                "분당구 정자1동": 30_000,
+                "분당구 수내1동": 30_000,
+                "중원구 하대원동": 30_000,
+            },
+        ),
+    ]
+    async with get_sessionmaker()() as s:
+        source = Source(key="test_dong_rows", name="t", adapter="crawler", enabled=False, config={})
+        s.add(source)
+        await s.flush()
+        ids: list[int] = []
+        for rec in books:
+            doc, _ = await upsert_record(s, source, rec, runtime)
+            ids += (await process_document(s, runtime, doc.id)).signal_ids
+        await link_signals(s, runtime, ids, today=date(2026, 9, 26))
+        rows = (
+            await s.execute(
+                select(Signal.department, Signal.expected_year, OpportunitySignal.opportunity_id)
+                .join(OpportunitySignal, OpportunitySignal.signal_id == Signal.id)
+                .where(Signal.id.in_(ids))
+            )
+        ).all()
+        await s.rollback()
+    opp = {(dept, year): opp_id for dept, year, opp_id in rows}
+    assert len(opp) == 7
+    assert opp[("분당구 수내1동", 2025)] == opp[("분당구 수내1동", 2026)]
+    assert opp[("분당구 정자1동", 2025)] == opp[("분당구 정자1동", 2026)]
+    assert opp[("분당구 수내1동", 2025)] != opp[("분당구 정자1동", 2025)]
+    for alone, year in (
+        ("분당구 은행1동", 2026),
+        ("중원구 하대원동", 2026),
+        ("중원구 성남동", 2025),
+    ):
+        assert opp[(alone, year)] not in {opp[k] for k in opp if k[0] != alone}

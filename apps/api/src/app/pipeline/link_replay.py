@@ -21,7 +21,7 @@ from datetime import date
 from pathlib import Path
 from typing import Any
 
-from sqlalchemy import select
+from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models import Document, DocumentChunk, OpportunitySignal, Signal, Source
@@ -232,6 +232,10 @@ async def replay_links(
         session.add(signal)
         await session.flush()
         ids_by_key[r["key"]] = signal.id
+    # Everything so far is one uncommitted transaction, which autovacuum never analyzes: with
+    # no statistics the planner scanned every signal, embeddings and all, for each opportunity
+    # refresh (0.6 s a time, over ten minutes a replay). A live run commits as it goes.
+    await session.execute(text("ANALYZE signals, opportunity_signals, opportunities"))
 
     def run_order(rs: list[dict[str, Any]]) -> list[int]:
         # Documents by publication, and within one the signals as they were created. Records

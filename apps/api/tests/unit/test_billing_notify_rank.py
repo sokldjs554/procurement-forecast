@@ -227,6 +227,10 @@ def test_budget_rows_keep_their_names_across_books() -> None:
     assert not budget_names_agree("수내교 전면개축 공사", "수내교 전면개축 실시설계")
     # Same field and amount, nothing else in common (§9.6 of real-data-minutes.md).
     assert not budget_names_agree("산성공원 관리", "국가암관리")
+    # Words dropped on one side and others added on the other: two CCTV projects.
+    assert not budget_names_agree("CCTV 관제센터 구축 및 운영", "수정구 생활안전 CCTV 구축")
+    assert not budget_names_agree("청사시설 내외부 개보수", "리모델링 지원사업")
+    assert budget_names_agree("대장지구 공공도서관", "대장지구 공공도서관 건립(전환사업)")
 
 
 def _opp(**kw: object) -> Opportunity:
