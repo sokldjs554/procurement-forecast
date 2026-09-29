@@ -32,13 +32,20 @@ for variant in baseline changed; do
         --out "$audit_dir/revalidation-apply.json" > /dev/null
       jq -e '.applied == true' "$audit_dir/revalidation-apply.json"
     fi
-    createdb "replay_$variant"
-    export APP_DATABASE_URL="postgresql+asyncpg://app:app@localhost:5432/replay_$variant"
-    uv run manage db upgrade
-    uv run manage seed --anchor 2026-09-25
     for attempt in 1 2; do
+      # replay rolls back its inserts, but rollback does not remove heap/index bloat or
+      # reset planner statistics. Use independently initialized databases so the second
+      # reproducibility run cannot inherit the first run's physical storage state.
+      replay_db="replay_${variant}_${attempt}"
+      createdb "$replay_db"
+      export APP_DATABASE_URL="postgresql+asyncpg://app:app@localhost:5432/$replay_db"
+      uv run manage db upgrade
+      uv run manage seed --anchor 2026-09-25
+      attempt_started=$SECONDS
+      echo "Starting $variant replay $attempt in $replay_db"
       uv run manage link replay "$repo_dir/docs/data/seongnam-link-signals.jsonl.gz" \
         --out "$audit_dir/$variant-groups-$attempt.json" > "$audit_dir/$variant-replay-$attempt.json"
+      echo "Completed $variant replay $attempt in $((SECONDS - attempt_started)) seconds"
     done
     cat "$audit_dir/$variant-replay-1.json"
     diff -u "$audit_dir/$variant-groups-1.json" "$audit_dir/$variant-groups-2.json"
