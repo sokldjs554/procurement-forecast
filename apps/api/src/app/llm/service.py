@@ -3,20 +3,22 @@
 Every attempt — hit, miss, refusal, budget skip — is written to ``llm_calls`` so the admin
 console can show cost per task/model/prompt version, cache hit rate and degraded-mode rate.
 A setup error (bad key, no credit, unknown model) is the exception: extraction stops rather
-than degrading, the job's transaction rolls back with its row, and the failure lands in
-``job_runs`` instead.
+than degrading and the failure lands in ``job_runs``. What was already paid for survives that
+stop: with ``durable`` set, each ``llm_calls`` row and cached response is committed on its own.
 """
 
 from __future__ import annotations
 
 import hashlib
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass
 from decimal import Decimal
 from typing import Any, Protocol
 
 from sqlalchemy import update
 from sqlalchemy.dialects.postgresql import insert
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import SQLAlchemyError
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
 from app.db.models import LLMCacheEntry, LLMCall
 from app.llm.budget import SpendGuard
@@ -91,11 +93,35 @@ class LLMService:
         fallback: Provider,
         guard: SpendGuard,
         use_cache: bool = True,
+        durable: Callable[[], async_sessionmaker[AsyncSession]] | None = None,
     ) -> None:
+        """``durable`` gives the service sessions of its own for what a call was paid for — its
+        ``llm_calls`` row and cached response — committed at once. A document whose work rolls
+        back later (a chunk further on hits ``LLMSetupError``, the process dies) then keeps
+        them: the cost stays on the books and the next run reads the response from the cache
+        instead of paying again. On a live run, a stop mid-document lost about $1.04 of answers
+        this way (docs/real-data-minutes-claude.md §10.4). Without it (unit tests) they ride the
+        caller's session."""
         self.primary = primary
         self.fallback = fallback
         self.guard = guard
         self.use_cache = use_cache
+        self.durable = durable
+
+    async def _persist(
+        self, session: AsyncSession, write: Callable[[AsyncSession], Awaitable[None]]
+    ) -> None:
+        if self.durable is not None:
+            try:
+                async with self.durable()() as own:
+                    await write(own)
+                    await own.commit()
+                return
+            except SQLAlchemyError as exc:
+                # E.g. the document is not committed yet, so its row is invisible to a new
+                # transaction: keep the record with the caller's work instead.
+                log.warning("llm.record.not_durable", error=str(exc)[:300])
+        await write(session)
 
     async def _record(
         self,
@@ -111,25 +137,28 @@ class LLMService:
         error: str | None = None,
     ) -> None:
         usage = result.usage if result else Usage()
-        session.add(
-            LLMCall(
-                task=task,
-                provider=provider,
-                model=model,
-                prompt_version=prompt_version,
-                document_id=document_id,
-                input_tokens=usage.input_tokens,
-                output_tokens=usage.output_tokens,
-                cache_read_tokens=usage.cache_read_tokens,
-                cache_write_tokens=usage.cache_write_tokens,
-                cost_usd=usage.cost_usd(model) if provider != "heuristic" else Decimal(0),
-                latency_ms=result.latency_ms if result else 0,
-                status=status,
-                served_by=result.served_by if result else None,
-                request_id=result.request_id if result else None,
-                error=error[:2000] if error else None,
-            )
-        )
+        fields: dict[str, Any] = {
+            "task": task,
+            "provider": provider,
+            "model": model,
+            "prompt_version": prompt_version,
+            "document_id": document_id,
+            "input_tokens": usage.input_tokens,
+            "output_tokens": usage.output_tokens,
+            "cache_read_tokens": usage.cache_read_tokens,
+            "cache_write_tokens": usage.cache_write_tokens,
+            "cost_usd": usage.cost_usd(model) if provider != "heuristic" else Decimal(0),
+            "latency_ms": result.latency_ms if result else 0,
+            "status": status,
+            "served_by": result.served_by if result else None,
+            "request_id": result.request_id if result else None,
+            "error": error[:2000] if error else None,
+        }
+
+        async def add(s: AsyncSession) -> None:
+            s.add(LLMCall(**fields))
+
+        await self._persist(session, add)
 
     async def _fallback_extract(
         self, session: AsyncSession, ctx: ChunkContext, document_id: int | None, reason: str
@@ -246,7 +275,7 @@ class LLMService:
             result=result,
         )
         if self.use_cache:
-            await session.execute(
+            stmt = (
                 insert(LLMCacheEntry)
                 .values(
                     key=key,
@@ -258,6 +287,11 @@ class LLMService:
                 )
                 .on_conflict_do_nothing(index_elements=["key"])
             )
+
+            async def store(s: AsyncSession) -> None:
+                await s.execute(stmt)
+
+            await self._persist(session, store)
         return ExtractionAttempt(result.value, extractor_id, degraded=False)
 
     async def brief(

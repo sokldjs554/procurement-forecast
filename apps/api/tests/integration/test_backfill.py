@@ -11,7 +11,17 @@ import httpx
 from pydantic import SecretStr
 from sqlalchemy import delete, func, select, update
 
-from app.db.models import Document, IngestRun, InstitutionRow, OpportunitySignal, Signal, Source
+from app.db.models import (
+    Document,
+    DocumentChunk,
+    IngestRun,
+    InstitutionRow,
+    LLMCacheEntry,
+    LLMCall,
+    OpportunitySignal,
+    Signal,
+    Source,
+)
 from app.db.session import get_sessionmaker, session_scope
 from app.domain.institutions import InstitutionRegistry, load_registry_csv
 from app.llm.budget import MemorySpendGuard
@@ -729,3 +739,104 @@ async def test_a_statement_linked_after_the_book_it_announced_still_joins_it(
         ("council_mention", "오리공원 물놀이장 설치 공사"),
     ]
     assert rows[0].opportunity_id == rows[1].opportunity_id
+
+
+def _empty_answer() -> Any:
+    """A successful extraction that found nothing — enough to be paid for and cached."""
+    return SimpleNamespace(
+        content=[SimpleNamespace(type="text", text='{"signals": []}')],
+        stop_reason="end_turn",
+        stop_details=None,
+        model="claude-opus-5",
+        usage=SimpleNamespace(
+            input_tokens=400,
+            output_tokens=10,
+            cache_read_input_tokens=0,
+            cache_creation_input_tokens=0,
+        ),
+        _request_id="req_test",
+    )
+
+
+class _PaysOnceThenNoCredit(_NoCredit):
+    def __init__(self, paid: int) -> None:
+        super().__init__()
+        self.paid = paid
+        self.sent: list[str] = []
+
+    async def create(self, **kwargs: Any) -> Any:
+        self.sent.append(kwargs["messages"][0]["content"])
+        if len(self.sent) <= self.paid:
+            return _empty_answer()
+        return await super().create(**kwargs)
+
+
+def _provider_on(messages: Any) -> AnthropicProvider:
+    return AnthropicProvider(
+        api_key="test",
+        extract_model="claude-opus-5",
+        extract_effort="low",
+        brief_model="claude-opus-5",
+        brief_effort="medium",
+        client=SimpleNamespace(beta=SimpleNamespace(messages=messages)),  # type: ignore[arg-type]
+    )
+
+
+async def test_what_was_paid_for_survives_a_stop_mid_document(demo_world, runtime) -> None:  # type: ignore[no-untyped-def]
+    first = _PaysOnceThenNoCredit(paid=1)
+    llm = LLMService(
+        primary=_provider_on(first),
+        fallback=HeuristicProvider(),
+        guard=MemorySpendGuard(10),
+        durable=get_sessionmaker,
+    )
+    async with session_scope() as s:
+        assert not await pending_document_ids(s)
+        doc_id = await s.scalar(
+            select(DocumentChunk.document_id)
+            .join(Document, Document.id == DocumentChunk.document_id)
+            .where(Document.doc_type == "council_minutes", DocumentChunk.triage_passed)
+            .group_by(DocumentChunk.document_id)
+            .having(func.count() >= 2)
+            .order_by(DocumentChunk.document_id)
+            .limit(1)
+        )
+        cached_before = set((await s.scalars(select(LLMCacheEntry.key))).all())
+        await s.execute(
+            update(Document).where(Document.id == doc_id).values(parse_status="pending")
+        )
+    try:
+        async with session_scope() as s:
+            report = await process_pending(s, dataclasses.replace(runtime, llm=llm))
+        async with session_scope() as s:
+            status = await s.scalar(select(Document.parse_status).where(Document.id == doc_id))
+            calls = (
+                await s.scalars(select(LLMCall.status).where(LLMCall.document_id == doc_id))
+            ).all()
+            new_keys = set((await s.scalars(select(LLMCacheEntry.key))).all()) - cached_before
+
+        # Run it again with the credit back: the chunk already paid for comes from the cache.
+        again = _PaysOnceThenNoCredit(paid=100)
+        llm_again = LLMService(
+            primary=_provider_on(again),
+            fallback=HeuristicProvider(),
+            guard=MemorySpendGuard(10),
+            durable=get_sessionmaker,
+        )
+        async with get_sessionmaker()() as s:
+            await process_document(s, dataclasses.replace(runtime, llm=llm_again), doc_id)
+            await s.rollback()
+    finally:
+        async with session_scope() as s:
+            await s.execute(delete(LLMCall).where(LLMCall.document_id == doc_id))
+            await s.execute(delete(LLMCacheEntry).where(LLMCacheEntry.key.notin_(cached_before)))
+            await s.execute(
+                update(Document).where(Document.id == doc_id).values(parse_status="parsed")
+            )
+    assert report["stopped"].startswith("LLMSetupError")
+    assert status == "pending"
+    assert len(first.sent) == 2  # one answer paid for, then out of credit
+    assert list(calls) == ["ok"]  # the paid call is on the books although the document rolled back
+    assert len(new_keys) == 1  # …and so is its answer
+    assert first.sent[0] not in again.sent  # the next run does not pay for it twice
+    assert len(again.sent) >= 1
