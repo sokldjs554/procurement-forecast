@@ -22,8 +22,13 @@ live on 2026-09-28 (``docs/real-data-clik.md``):
 * **One meeting, many DOCIDs.** CLIK keeps each revision of a council's minutes (임시 → 수정 →
   확정) as its own DOCID with nothing in the list to tell them apart — 110 DOCIDs for 성남시의회's
   34 본회의·예결특위 meetings in a year. Rows are grouped by meeting and only one detail call is
-  made per meeting (the first listed), and none for a meeting already stored
-  (``known_external_ids``). The external id is the meeting, not the DOCID.
+  made per meeting. For stored meetings, a newly observed DOCID is fetched even when an old
+  revision is listed first; unchanged revision sets cost no detail call. CLIK supplies no
+  revision chronology or finality, so "newly observed" is not a claim of a final transcript.
+  Revision-aware ingestion lists at least the last 30 days ending at the requested window's
+  end, but only stored meetings may be refreshed outside the requested window. Older revisions
+  require a wider explicit backfill; the lookback does not collect unknown delayed meetings.
+  The external id is the meeting, not the DOCID.
 * ``MINTS_HTML`` is whatever the council publishes: for some councils a clean fragment, for
   성남시의회 the whole viewer page (header, menus, font pickers). :func:`html_to_text` drops page
   chrome and keeps the two spaces after a bold speaker label that ``parsing/chunking.py`` uses
@@ -38,6 +43,7 @@ import hashlib
 import re
 from collections import Counter
 from collections.abc import AsyncIterator, Awaitable, Callable
+from datetime import timedelta
 from html.parser import HTMLParser
 from typing import Any
 
@@ -56,6 +62,9 @@ DEFAULTS: dict[str, Any] = {
     # Stop after this many detail calls in one run (None: no cap). The daily quota is shared by
     # every council, so a first backfill of all councils is spread over several days.
     "max_details": None,
+    # Recheck stored meetings outside a narrow incremental window. Explicit wider backfills
+    # keep their full window. Zero disables this extension; list calls still share the quota.
+    "revision_lookback_days": 30,
 }
 
 _QUOTA_CODES = {"ERROR09"}  # 일별 허용 트래픽 초과
@@ -143,6 +152,9 @@ class ClikMinutesAdapter:
         self._meeting_re = re.compile(pattern) if pattern else None
         # Set by ``run_ingest``: which of these external ids are stored already.
         self.known_external_ids: Callable[[list[str]], Awaitable[set[str]]] | None = None
+        self.known_revision_metadata: (
+            Callable[[list[str]], Awaitable[dict[str, dict[str, Any]]]] | None
+        ) = None
         # listed / in_window / meetings / revisions / skipped:<why> / details / empty
         self.stats: Counter[str] = Counter()
 
@@ -150,24 +162,64 @@ class ClikMinutesAdapter:
         await self.client.aclose()
 
     async def fetch(self, window: FetchWindow) -> AsyncIterator[RawRecord]:
+        list_window = window
+        if self.known_revision_metadata is not None:
+            lookback_days = int(self._cfg["revision_lookback_days"])
+            if lookback_days < 0:
+                raise ValueError("revision_lookback_days must be nonnegative")
+            list_window = FetchWindow(
+                min(window.since, window.until - timedelta(days=lookback_days)), window.until
+            )
         meetings: dict[MeetingKey, list[dict[str, Any]]] = {}
         for council in self._councils:
-            async for row in self._list(council, window):
+            async for row in self._list(council, list_window):
                 meetings.setdefault(meeting_key(row), []).append(row)
         self.stats["meetings"] = len(meetings)
         self.stats["revisions"] = sum(len(rows) - 1 for rows in meetings.values())
         ids = {external_id(k): k for k in meetings}
-        known = await self.known_external_ids(list(ids)) if self.known_external_ids else set()
+        revisions = (
+            await self.known_revision_metadata(list(ids)) if self.known_revision_metadata else None
+        )
+        # Retain the old callback for external callers; run_ingest always supplies revisions.
+        known = (
+            await self.known_external_ids(list(ids))
+            if revisions is None and self.known_external_ids
+            else set()
+        )
         cap = self._cfg.get("max_details")
         for ext, mk in ids.items():
+            rows = meetings[mk]
+            meeting_day = parse_compact_date(rows[0].get("MTG_DE"))
+            if (
+                meeting_day is not None
+                and meeting_day < window.since
+                and (revisions is None or ext not in revisions)
+            ):
+                self.stats["skipped:unknown_lookback"] += 1
+                continue
+            selected_docid: str | None = None
+            if revisions is not None and ext in revisions:
+                previous = revisions[ext]
+                seen_ids = {str(previous["docid"])} if previous.get("docid") else set()
+                stored_ids = previous.get("revision_docids")
+                if isinstance(stored_ids, list):
+                    seen_ids.update(str(value) for value in stored_ids if value)
+                unseen = [str(row["DOCID"]) for row in rows if str(row["DOCID"]) not in seen_ids]
+                if seen_ids and not unseen:
+                    self.stats["skipped:unchanged"] += 1
+                    continue
+                if unseen:
+                    selected_docid = unseen[0]
             if ext in known:
                 self.stats["skipped:known"] += 1
                 continue
             if cap is not None and self.stats["details"] >= int(cap):
                 self.stats["skipped:cap"] += 1
                 continue
-            rec = await self.read_meeting(ext, meetings[mk])
+            rec = await self.read_meeting(ext, rows, selected_docid=selected_docid)
             if rec is not None:
+                if revisions is not None and ext in revisions:
+                    self.stats["revised"] += 1
                 yield rec
 
     async def _list(self, council: str, window: FetchWindow) -> AsyncIterator[dict[str, Any]]:
@@ -206,9 +258,15 @@ class ClikMinutesAdapter:
                 return
             start += size
 
-    async def read_meeting(self, ext: str, rows: list[dict[str, Any]]) -> RawRecord | None:
-        """One detail call for the first of a meeting's revisions."""
-        row = rows[0]
+    async def read_meeting(
+        self,
+        ext: str,
+        rows: list[dict[str, Any]],
+        *,
+        selected_docid: str | None = None,
+    ) -> RawRecord | None:
+        """One detail call; prefer a newly observed revision when the meeting exists."""
+        row = next((r for r in rows if str(r["DOCID"]) == selected_docid), rows[0])
         docid = str(row["DOCID"])
         self.stats["details"] += 1
         payload = await self.client.get_json(

@@ -3,6 +3,7 @@
 from datetime import date
 from types import SimpleNamespace
 
+import pytest
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from test_stored_revalidation_sql import world
@@ -14,7 +15,8 @@ from app.pipeline.review import reconcile_reviewed_signal
 DAY = date(2026, 9, 29)
 
 
-async def test_review_route_commits_rejection_and_history_together(runtime):  # type: ignore[no-untyped-def]
+@pytest.mark.parametrize("action", ["reject", "category"])
+async def test_review_route_commits_decision_and_history_together(runtime, action):  # type: ignore[no-untyped-def]
     from app.api.routers.admin import decide_review
     from app.api.schemas import ReviewDecisionIn
 
@@ -40,16 +42,26 @@ async def test_review_route_commits_rejection_and_history_together(runtime):  # 
                 await session.flush()
                 response = await decide_review(
                     item.id,
-                    ReviewDecisionIn(action="reject"),
+                    ReviewDecisionIn.model_validate(
+                        {"action": "reject"}
+                        if action == "reject"
+                        else {"action": "edit", "category": "facility"}
+                    ),
                     SimpleNamespace(user=user),
                     session,
                     runtime,
                 )
-                assert response.status == "rejected"
-                assert opportunity.status == "dormant" and recommendation.score == 0
                 assert item.resolved_by == user.id
                 assert item.resolution["previous_link"]["opportunity_id"] == opportunity.id
-                assert signal.verdict == "rejected"
+                if action == "reject":
+                    assert response.status == "rejected"
+                    assert opportunity.status == "dormant" and recommendation.score == 0
+                    assert signal.verdict == "rejected"
+                else:
+                    assert response.status == "edited"
+                    assert signal.category == opportunity.category == "facility"
+                    assert item.resolution["changes"]["category"]["to"] == "facility"
+                    assert recommendation.feedback == "relevant"
         finally:
             await transaction.rollback()
 

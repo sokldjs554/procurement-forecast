@@ -371,6 +371,20 @@ async def _without_conflicting_numbers(
     return [o for o in candidates if o.id not in conflicting]
 
 
+_BUDGET_DISTRICT_RE = re.compile(r"^([가-힣]{1,5}구)(?=\s|보건소|청|$)")
+
+
+def budget_jurisdictions_conflict(left: str | None, right: str | None) -> bool:
+    """An explicitly different 구 is not a department rename within the same city.
+
+    Unknown geography supplies no veto. This intentionally recognizes only leading district
+    labels in department paths; it does not infer jurisdiction from arbitrary project words.
+    """
+    a = _BUDGET_DISTRICT_RE.match((left or "").strip())
+    b = _BUDGET_DISTRICT_RE.match((right or "").strip())
+    return bool(a and b and a.group(1) != b.group(1))
+
+
 async def _without_other_budget_rows(
     session: AsyncSession, signal: Signal, candidates: list[Opportunity]
 ) -> list[Opportunity]:
@@ -413,8 +427,10 @@ async def _without_other_budget_rows(
     agree = [budget_names_agree(signal.title, title) for _, _, title, _ in rows]
     apart = {
         opp_id
-        for (opp_id, document_id, _, _), same in zip(rows, agree, strict=True)
-        if document_id == signal.document_id or not same
+        for (opp_id, document_id, _, dept), same in zip(rows, agree, strict=True)
+        if document_id == signal.document_id
+        or not same
+        or budget_jurisdictions_conflict(signal.department, dept)
     }
     named = {opp_id for opp_id, *_ in rows if opp_id not in apart}
     same_department = {

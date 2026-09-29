@@ -7,6 +7,7 @@ import ReactMarkdown from "react-markdown";
 
 import { BarList } from "@/components/charts/bar-list";
 import { BudgetLine, StatTile } from "@/components/charts/budget-line";
+import { OpportunityRelations } from "@/components/opportunity/relations";
 import { HeadStart } from "@/components/opportunity/head-start";
 import { SignalTimeline } from "@/components/opportunity/signal-timeline";
 import { StageRail } from "@/components/opportunity/stage-rail";
@@ -194,6 +195,8 @@ export default function OpportunityPage() {
       <Card className="px-5 py-4">
         <StageRail stage={data.stage} reached={reached} />
       </Card>
+
+      <OpportunityRelations opportunityId={data.id} />
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
         <Card>

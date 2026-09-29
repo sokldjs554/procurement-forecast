@@ -19,7 +19,7 @@ from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 from datetime import date
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal
 
 from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -32,6 +32,7 @@ from app.runtime import Runtime
 REPLAY_SOURCE = "link-replay"
 # backfill.process_pending links the signals of a run in slices of this many, each in date order.
 LINK_SLICE = 2000
+ReplayOrder = Literal["publication", "reverse"]
 _DOC_KEYS = ("fiscal_year", "budget_kind", "meeting_date", "published_from")
 _SIGNAL_FIELDS = (
     "stage",
@@ -118,6 +119,45 @@ def load_export(path: Path) -> list[dict[str, Any]]:
         return [json.loads(line) for line in f if line.strip()]
 
 
+def replay_batches(
+    records: list[dict[str, Any]],
+    *,
+    first: list[str] | None = None,
+    order: ReplayOrder = "publication",
+) -> list[list[str]]:
+    """Make arrival order observable instead of letting link_signals sort it away.
+
+    The normal mode preserves the historical 2,000-signal batch behavior. Reverse arrival
+    sends one signal per batch because the production linker sorts each batch by observation.
+    This is a diagnostic of online decisions, not a frozen historical forecasting replay.
+    """
+    if order not in ("publication", "reverse"):
+        raise ValueError(f"unknown replay order: {order}")
+    if first and order != "publication":
+        raise ValueError("cannot combine --first and --order reverse")
+    keys = [r["key"] for r in records]
+    if len(set(keys)) != len(keys):
+        raise ValueError("duplicate signal keys in replay input")
+    if first and set(first) - {r["document"]["doc_type"] for r in records}:
+        raise ValueError("--first contains document types absent from input")
+    if order == "reverse":
+        ordered = sorted(records, key=lambda r: r["document"]["published_at"])
+        return [[r["key"]] for r in ordered[::-1]]
+    runs = (
+        [
+            [r for r in records if r["document"]["doc_type"] in first],
+            [r for r in records if r["document"]["doc_type"] not in first],
+        ]
+        if first
+        else [records]
+    )
+    batches: list[list[str]] = []
+    for run in runs:
+        keys = [r["key"] for r in sorted(run, key=lambda r: r["document"]["published_at"])]
+        batches.extend(keys[at : at + LINK_SLICE] for at in range(0, len(keys), LINK_SLICE))
+    return batches
+
+
 @dataclass(slots=True)
 class ReplayResult:
     signals: int
@@ -127,10 +167,16 @@ class ReplayResult:
     # Compared with the opportunities recorded in the file (None when it recorded none).
     same_as_recorded: int | None = None
     recorded: int | None = None
+    order: str = "publication"
+    input_digest: str | None = None
 
     def summary(self) -> dict[str, Any]:
         sizes = Counter(len(g) for g in self.groups)
         out: dict[str, Any] = {
+            "scope": "retrospective_link_replay",
+            "accuracy_evaluated": False,
+            "order": self.order,
+            "input_digest": self.input_digest,
             "signals": self.signals,
             "linked": self.linked,
             "opportunities": len(self.groups),
@@ -165,12 +211,14 @@ async def replay_links(
     records: list[dict[str, Any]],
     *,
     first: list[str] | None = None,
+    order: ReplayOrder = "publication",
     today: date,
 ) -> ReplayResult:
     """Load ``records`` (from ``export_signals``) and link them. ``first`` names document types
     processed and linked in a run of their own before the rest — the "budget books first" order
     of docs/real-data-minutes.md §8.1 — otherwise all go in one run, as one ``pipeline run``
     over everything pending would. Expects a seeded database with no opportunities yet."""
+    batches = replay_batches(records, first=first, order=order)
     source = await _source(session)
     documents: dict[tuple[str, str], Document] = {}
     chunks: dict[tuple[str, str, tuple[str, ...]], DocumentChunk] = {}
@@ -237,25 +285,9 @@ async def replay_links(
     # refresh (0.6 s a time, over ten minutes a replay). A live run commits as it goes.
     await session.execute(text("ANALYZE signals, opportunity_signals, opportunities"))
 
-    def run_order(rs: list[dict[str, Any]]) -> list[int]:
-        # Documents by publication, and within one the signals as they were created. Records
-        # are in creation order already; sorted() is stable.
-        ordered = sorted(rs, key=lambda r: r["document"]["published_at"])
-        return [ids_by_key[r["key"]] for r in ordered]
-
-    runs = (
-        [
-            [r for r in records if r["document"]["doc_type"] in first],
-            [r for r in records if r["document"]["doc_type"] not in first],
-        ]
-        if first
-        else [records]
-    )
-    for run in runs:
-        ids = run_order(run)
-        for at in range(0, len(ids), LINK_SLICE):
-            await link_signals(session, runtime, ids[at : at + LINK_SLICE], today=today)
-            await session.flush()
+    for batch in batches:
+        await link_signals(session, runtime, [ids_by_key[key] for key in batch], today=today)
+        await session.flush()
 
     rows = (
         await session.execute(
@@ -268,7 +300,15 @@ async def replay_links(
     for opp_id, key in rows:
         by_opp[opp_id].append(key)
     groups = sorted(sorted(keys) for keys in by_opp.values())
-    result = ReplayResult(signals=len(records), linked=len(rows), groups=groups)
+    result = ReplayResult(
+        signals=len(records),
+        linked=len(rows),
+        groups=groups,
+        order="first:" + ",".join(first) if first else order,
+        input_digest=hashlib.sha256(
+            json.dumps(records, sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode()
+        ).hexdigest(),
+    )
     recorded = recorded_groups(records)
     if recorded:
         mine = {tuple(g) for g in groups}

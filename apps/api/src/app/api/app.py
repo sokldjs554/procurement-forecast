@@ -14,7 +14,7 @@ from redis.asyncio import Redis
 from sqlalchemy import text
 
 from app import __version__
-from app.api.routers import admin, alerts, auth, billing, opportunities, profile
+from app.api.routers import admin, alerts, auth, billing, opportunities, profile, relations
 from app.db.session import dispose_engine, get_engine
 from app.log import bind_contextvars, clear_contextvars, configure_logging, get_logger
 from app.observability import init_sentry
@@ -111,7 +111,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             {"status": "ok" if ok else "degraded", **checks}, status_code=200 if ok else 503
         )
 
-    for module in (auth, profile, opportunities, alerts, billing, admin):
+    for module in (auth, profile, opportunities, alerts, billing, admin, relations):
         app.include_router(module.router)
     app.include_router(auth.me_router)
     app.include_router(billing.webhook_router)

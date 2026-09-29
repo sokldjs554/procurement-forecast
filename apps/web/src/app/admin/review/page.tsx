@@ -9,7 +9,7 @@ import { Segmented } from "@/components/ui/controls";
 import { Badge, Card, EmptyState, ErrorNote, Field, Input, PageHeader, Select, Skeleton } from "@/components/ui/primitives";
 import { useToast } from "@/components/ui/toast";
 import type { Schemas } from "@/lib/api/client";
-import { useDecideReview, useInstitutions, useReviewQueue } from "@/lib/api/hooks";
+import { useCategories, useDecideReview, useInstitutions, useReviewQueue } from "@/lib/api/hooks";
 import { formatDate, formatKRW } from "@/lib/format";
 import { COMMITMENT_LABEL } from "@/lib/utils";
 
@@ -34,6 +34,7 @@ type Commitment = NonNullable<Schemas["ReviewDecisionIn"]["commitment"]>;
 function ReviewCard({ item }: { item: Item }) {
   const decide = useDecideReview();
   const institutions = useInstitutions();
+  const categories = useCategories();
   const toast = useToast();
   const s = item.signal;
   const [title, setTitle] = useState(s.title);
@@ -41,6 +42,7 @@ function ReviewCard({ item }: { item: Item }) {
   const [year, setYear] = useState(s.expected_year ? String(s.expected_year) : "");
   const [commitment, setCommitment] = useState<string>(s.commitment ?? "");
   const [institution, setInstitution] = useState("");
+  const [category, setCategory] = useState(s.category);
   const needsInstitution = item.reasons.includes("institution_unresolved");
 
   const submit = (action: "approve" | "edit" | "reject") => {
@@ -51,6 +53,7 @@ function ReviewCard({ item }: { item: Item }) {
       if (year && Number(year) !== s.expected_year) body.expected_year = Number(year);
       if (commitment && commitment !== s.commitment) body.commitment = commitment as Commitment;
       if (institution) body.institution_code = institution;
+      if (category !== s.category) body.category = category as Schemas["Category"];
     }
     decide.mutate(
       { id: item.id, body },
@@ -78,6 +81,12 @@ function ReviewCard({ item }: { item: Item }) {
       <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Field label="사업명" htmlFor={`t-${item.id}`}>
           <Input id={`t-${item.id}`} value={title} onChange={(e) => setTitle(e.target.value)} />
+        </Field>
+        <Field label="분야" htmlFor={`category-${item.id}`}>
+          <Select id={`category-${item.id}`} value={category} onChange={(e) => setCategory(e.target.value)}>
+            <option value="other">기타·분야 미확인</option>
+            {categories.data?.map((cat) => <option key={cat.key} value={cat.key}>{cat.label}</option>)}
+          </Select>
         </Field>
         <Field label="금액 (원)" htmlFor={`b-${item.id}`} hint={s.budget_krw ? `추출값 ${formatKRW(s.budget_krw)}` : undefined}>
           <Input id={`b-${item.id}`} inputMode="numeric" value={budget} onChange={(e) => setBudget(e.target.value.replace(/\D/g, ""))} />

@@ -67,6 +67,17 @@ class SkipsStored(Protocol):
     known_external_ids: Callable[[list[str]], Awaitable[set[str]]] | None
 
 
+@runtime_checkable
+class TracksRevisions(Protocol):
+    """A detail adapter compares current provider revision IDs with stored evidence metadata.
+
+    A stored external ID alone cannot establish that the current revision is unchanged.
+    ``run_ingest`` supplies the callback; adapters do not access the database themselves.
+    """
+
+    known_revision_metadata: Callable[[list[str]], Awaitable[dict[str, dict[str, Any]]]] | None
+
+
 def pick(record: dict[str, Any], *names: str) -> Any:
     """First non-empty field among ``names`` — providers rename fields between API versions."""
     for name in names:

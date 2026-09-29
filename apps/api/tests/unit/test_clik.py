@@ -218,6 +218,113 @@ async def test_clik_skips_stored_meetings_and_caps_detail_calls() -> None:
     assert adapter.stats["skipped:known"] == 1 and adapter.stats["skipped:cap"] == 1
 
 
+async def test_clik_refetches_new_docid_even_when_old_revision_is_listed_first() -> None:
+    page = [_row("OLD", "20260907", "2"), _row("CORRECTED", "20260907", "2")]
+    adapter, seen = _adapter([page], {"CORRECTED": DETAIL})
+
+    async def known(ids: list[str]) -> set[str]:
+        return set(ids)
+
+    async def revisions(ids: list[str]) -> dict[str, dict]:
+        return {ids[0]: {"docid": "OLD", "revision_docids": ["OLD"]}}
+
+    adapter.known_external_ids = known
+    adapter.known_revision_metadata = revisions
+    records = [r async for r in adapter.fetch(FetchWindow(date(2026, 9, 1), date(2026, 9, 28)))]
+    assert len(records) == 1
+    assert records[0].structured["docid"] == "CORRECTED"
+    assert records[0].structured["revision_docids"] == ["OLD", "CORRECTED"]
+    assert [q["docid"] for q in seen if q["displayType"] == ["detail"]] == [["CORRECTED"]]
+
+
+async def test_clik_unchanged_revision_set_skips_detail_despite_list_reordering() -> None:
+    page = [_row("B", "20260907", "2"), _row("A", "20260907", "2")]
+    adapter, seen = _adapter([page], {"A": DETAIL, "B": DETAIL})
+
+    async def revisions(ids: list[str]) -> dict[str, dict]:
+        return {ids[0]: {"docid": "A", "revision_docids": ["A", "B"]}}
+
+    adapter.known_revision_metadata = revisions
+    records = [r async for r in adapter.fetch(FetchWindow(date(2026, 9, 1), date(2026, 9, 28)))]
+    assert records == []
+    assert [q["displayType"] for q in seen] == [["list"]]
+
+
+async def test_clik_legacy_docid_metadata_detects_revision_without_prior_list() -> None:
+    page = [_row("OLD", "20260907", "2"), _row("NEW", "20260907", "2")]
+    adapter, _ = _adapter([page], {"NEW": DETAIL})
+
+    async def revisions(ids: list[str]) -> dict[str, dict]:
+        return {ids[0]: {"docid": "OLD"}}
+
+    adapter.known_revision_metadata = revisions
+    records = [r async for r in adapter.fetch(FetchWindow(date(2026, 9, 1), date(2026, 9, 28)))]
+    assert len(records) == 1
+    assert records[0].structured["docid"] == "NEW"
+
+
+@pytest.mark.parametrize("cap", [None, 1])
+async def test_clik_incremental_window_revisits_only_stored_older_meetings(cap: int | None) -> None:
+    pages = [
+        [_row("TODAY", "20260929", "1"), _row("UNKNOWN", "20260920", "1")],
+        [_row("OLD", "20260907", "2"), _row("NEW", "20260907", "2")],
+        [_row("TOO_OLD", "20260801", "3")],
+    ]
+    adapter, seen = _adapter(
+        pages,
+        {docid: {"MINTS_HTML": "<p>회의록</p>"} for docid in ("TODAY", "NEW", "UNKNOWN")},
+        overrides={"page_size": 2, "max_details": cap},
+    )
+    stored_id = external_id(meeting_key(pages[1][0]["ROW"]))
+    too_old_id = external_id(meeting_key(pages[2][0]["ROW"]))
+    checked: list[str] = []
+
+    async def revisions(ids: list[str]) -> dict[str, dict]:
+        checked.extend(ids)
+        return {stored_id: {"docid": "OLD", "revision_docids": ["OLD"]}}
+
+    adapter.known_revision_metadata = revisions
+    records = [r async for r in adapter.fetch(FetchWindow(date(2026, 9, 28), date(2026, 9, 29)))]
+    expected = ["TODAY", "NEW"] if cap is None else ["TODAY"]
+    assert [record.structured["docid"] for record in records] == expected
+    assert stored_id in checked and too_old_id not in checked
+    assert [q["startCount"] for q in seen if q["displayType"] == ["list"]] == [["0"], ["2"], ["4"]]
+    assert [q["docid"][0] for q in seen if q["displayType"] == ["detail"]] == expected
+    assert adapter.stats["skipped:unknown_lookback"] == 1
+    assert adapter.stats["skipped:cap"] == (0 if cap is None else 1)
+
+
+async def test_clik_revision_lookback_is_configurable_and_keeps_wider_backfill() -> None:
+    pages = [[_row("OLD", "20260907", "2"), _row("NEW", "20260907", "2")]]
+
+    async def revisions(ids: list[str]) -> dict[str, dict]:
+        return {ids[0]: {"docid": "OLD"}} if ids else {}
+
+    short, short_seen = _adapter(pages, {"NEW": DETAIL}, overrides={"revision_lookback_days": 7})
+    short.known_revision_metadata = revisions
+    assert [r async for r in short.fetch(FetchWindow(date(2026, 9, 28), date(2026, 9, 29)))] == []
+    assert [q["displayType"] for q in short_seen] == [["list"]]
+
+    wider, wider_seen = _adapter(pages, {"NEW": DETAIL}, overrides={"revision_lookback_days": 7})
+    wider.known_revision_metadata = revisions
+    records = [r async for r in wider.fetch(FetchWindow(date(2026, 8, 1), date(2026, 9, 29)))]
+    assert [record.structured["docid"] for record in records] == ["NEW"]
+    assert [q["docid"] for q in wider_seen if q["displayType"] == ["detail"]] == [["NEW"]]
+
+
+async def test_clik_without_revision_callback_keeps_requested_window() -> None:
+    pages = [
+        [_row("TODAY", "20260929", "1"), _row("OLD", "20260907", "2")],
+        [_row("NEW", "20260907", "2")],
+    ]
+    adapter, seen = _adapter(
+        pages, {"TODAY": {"MINTS_HTML": "<p>회의록</p>"}}, overrides={"page_size": 2}
+    )
+    records = [r async for r in adapter.fetch(FetchWindow(date(2026, 9, 28), date(2026, 9, 29)))]
+    assert [record.structured["docid"] for record in records] == ["TODAY"]
+    assert [q["startCount"] for q in seen if q["displayType"] == ["list"]] == [["0"]]
+
+
 @pytest.mark.parametrize(
     ("answer", "error"),
     [

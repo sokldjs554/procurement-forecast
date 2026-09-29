@@ -10,7 +10,8 @@ a whole table. This command makes them visible:
 3. runs the application's hot queries under ``EXPLAIN (ANALYZE, BUFFERS)``, in the shape the code
    used before tuning, and measures vector-search recall against an exact scan;
 4. migrates to **head** and runs the tuned query shapes;
-5. writes the comparison to ``docs/performance.md``.
+5. loads explicitly synthetic fixtures for new head-only queries, with no prior timing;
+6. writes the comparison to ``docs/performance.md``.
 
 Timings are medians of warm runs on whatever machine runs the command; the report states the
 machine. Plans and row counts are the part to read — they don't depend on hardware.
@@ -31,9 +32,26 @@ from pathlib import Path
 from typing import Any
 
 import asyncpg
+from sqlalchemy import cast, func, literal, or_, select
+from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql.base import PGDialect
+from sqlalchemy.orm import defer
+from sqlalchemy.sql import ClauseElement
 
-from app.db.models import Opportunity
+from app.db.models import (
+    Document,
+    DocumentChunk,
+    Opportunity,
+    OpportunityRelation,
+    OpportunityRelationEvent,
+    OpportunitySignal,
+    ReviewItem,
+    Signal,
+)
+from app.eval.review_dataset import RESOLVED_STATUSES
+from app.pipeline.relations import CONTRACT_STAGES, PROJECT_STAGES
 from app.settings import get_settings
+from app.sources.coverage import coverage_documents_query, latest_source_runs_query
 
 SIZES: dict[str, int] = {
     "institutions": 250,
@@ -119,7 +137,7 @@ def _arr(values: tuple[str, ...]) -> str:
 class Query:
     key: str
     title: str
-    before: str
+    before: str | None
     after: str
     params: list[Any] = field(default_factory=list)
     setup_after: tuple[str, ...] = ()
@@ -405,8 +423,12 @@ async def _ids(
         return {r[0] for r in await conn.fetch(sql, *params)}
 
 
-async def run_query(conn: asyncpg.Connection, q: Query, phase: str, repeats: int = 5) -> Result:
+async def run_query(
+    conn: asyncpg.Connection, q: Query, phase: str, repeats: int = 5
+) -> Result | None:
     sql = q.before if phase == "before" else q.after
+    if sql is None:
+        return None
     setup = () if phase == "before" else q.setup_after
     times: list[float] = []
     rows = 0
@@ -421,6 +443,103 @@ async def run_query(conn: asyncpg.Connection, q: Query, phase: str, repeats: int
         got = await _ids(conn, sql, q.params, setup)
         recall = len(truth & got) / len(truth) if truth else 1.0
     return Result(statistics.median(times[1:] or times), rows, plan, recall)
+
+
+def additional_queries() -> list[Query]:
+    """Head-only application queries; initial-schema timings do not exist.
+
+    Compile ORM projections so document/embedding payload choices match the application.
+    All literals below are fixed benchmark probes, never user-controlled SQL.
+    """
+
+    def query(key: str, title: str, stmt: ClauseElement) -> Query:
+        # This third-party dialect constructor has no type annotations. Named parameters
+        # also avoid DBAPI percent escaping in the SQL passed directly to asyncpg.
+        pg = PGDialect(paramstyle="named")  # type: ignore[no-untyped-call]
+        sql = str(stmt.compile(dialect=pg, compile_kwargs={"literal_binds": True}))
+        return Query(key, title, None, sql)
+
+    endpoint = select(OpportunityRelation).where(
+        OpportunityRelation.id > 0,
+        or_(OpportunityRelation.project_id == 1, OpportunityRelation.contract_id == 1),
+    )
+    result = [
+        query(
+            "coverage_documents",
+            "수집 현황: 전체 문서의 좁은 메타데이터 투영",
+            coverage_documents_query(),
+        ),
+        query(
+            "coverage_latest_runs", "수집 현황: 수집원별 최신 실행 기록", latest_source_runs_query()
+        ),
+        query(
+            "relation_endpoint_page",
+            "사업·계약 관계: 양쪽 ID + 커서 51건",
+            endpoint.order_by(OpportunityRelation.id).limit(51),
+        ),
+        query(
+            "relation_endpoint_status_page",
+            "사업·계약 관계: 양쪽 ID + 확정 상태 + 커서 51건",
+            endpoint.where(OpportunityRelation.status == "confirmed")
+            .order_by(OpportunityRelation.id)
+            .limit(51),
+        ),
+        query(
+            "relation_status_page",
+            "사업·계약 관계: 제안 상태 + ID 커서 51건",
+            select(OpportunityRelation)
+            .where(OpportunityRelation.id > 0, OpportunityRelation.status == "proposed")
+            .order_by(OpportunityRelation.id)
+            .limit(51),
+        ),
+    ]
+    for label, document_id in (("hit", 2), ("miss", 0)):
+        result.append(
+            query(
+                f"relation_evidence_protection_{label}",
+                f"관계 이력: 문서 근거 재처리 보호 JSONB ({label})",
+                select(OpportunityRelationEvent.id)
+                .where(
+                    OpportunityRelationEvent.evidence_snapshot.contains(
+                        cast(literal(json.dumps([{"document_id": document_id}])), JSONB)
+                    )
+                )
+                .limit(1),
+            )
+        )
+    result += [
+        query(
+            "relation_mixed_audit",
+            "기존 혼합 그룹 감사: 사업·계약 단계 HAVING + 커서 51건",
+            select(OpportunitySignal.opportunity_id)
+            .join(Signal, Signal.id == OpportunitySignal.signal_id)
+            .where(
+                OpportunitySignal.opportunity_id > 0,
+                Signal.verdict == "accepted",
+                OpportunitySignal.tentative.is_(False),
+            )
+            .group_by(OpportunitySignal.opportunity_id)
+            .having(
+                func.count().filter(Signal.stage.in_(PROJECT_STAGES)) > 0,
+                func.count().filter(Signal.stage.in_(CONTRACT_STAGES)) > 0,
+            )
+            .order_by(OpportunitySignal.opportunity_id)
+            .limit(51),
+        ),
+        query(
+            "review_export_page",
+            "사람 검토 내보내기: 리뷰·신호·문서·청크 첫 501건 (벡터 제외)",
+            select(ReviewItem, Signal, Document, DocumentChunk)
+            .join(Signal, Signal.id == ReviewItem.signal_id)
+            .join(Document, Document.id == Signal.document_id)
+            .outerjoin(DocumentChunk, DocumentChunk.id == Signal.chunk_id)
+            .where(ReviewItem.status.in_(RESOLVED_STATUSES))
+            .order_by(ReviewItem.id)
+            .options(defer(Signal.embedding))
+            .limit(501),
+        ),
+    ]
+    return result
 
 
 # ------------------------------------------------------------------------------------------------
@@ -486,7 +605,8 @@ async def _load(conn: asyncpg.Connection, sizes: dict[str, int], log: Any) -> No
         ),
         (
             "sources",
-            "INSERT INTO sources (key, name, adapter) VALUES ('bench', 'bench', 'fixture')",
+            "INSERT INTO sources (key, name, adapter, enabled) "
+            "VALUES ('bench', 'Synthetic query-volume benchmark only', 'benchmark', false)",
         ),
         (
             "documents",
@@ -582,6 +702,102 @@ async def _load(conn: asyncpg.Connection, sizes: dict[str, int], log: Any) -> No
     await conn.execute("VACUUM ANALYZE")
 
 
+async def _load_additional(
+    conn: asyncpg.Connection, sizes: dict[str, int], log: Any
+) -> dict[str, int]:
+    """Synthetic query-volume fixtures, added only after the original before/after runs.
+
+    Relation endpoints and review resolutions are not semantic ground truth. Keep the
+    original row counts and distributions intact until their comparison is complete.
+    """
+    relations = sizes["opportunities"] // 2
+    reviews = sizes["signals"] // 20
+    ingest_runs = sizes["opportunities"] // 10
+    project_width = max(1, min(relations, 200))
+    counts: dict[str, int] = {}
+    steps = [
+        (
+            "opportunity_relations",
+            f"""INSERT INTO opportunity_relations
+                (project_id, contract_id, kind, status, version, evidence_signal_ids,
+                 evidence_snapshot, note)
+            SELECT 1 + (i - 1) % {project_width}, {relations} + i, 'project_contract',
+                   {_arr(("proposed", "confirmed", "rejected"))}[1 + i % 3], 2,
+                   ARRAY[1 + (i - 1) % {sizes["signals"]}]::bigint[],
+                   jsonb_build_array(jsonb_build_object(
+                       'document_id', 1 + (1 + (i - 1) % {sizes["signals"]}) % {sizes["documents"]},
+                       'synthetic_benchmark', true)),
+                   'Query-volume fixture; not a validated project/contract relationship'
+            FROM generate_series(1, {relations}) i""",
+        ),
+        (
+            "opportunity_relation_events",
+            """INSERT INTO opportunity_relation_events
+                (relation_id, version, status, idempotency_key, request_digest,
+                 actor_snapshot, evidence_signal_ids, evidence_snapshot, note)
+            SELECT r.id, v, CASE WHEN v = 1 THEN 'proposed' ELSE r.status END,
+                   'benchmark:' || r.id || ':' || v,
+                   repeat(md5(r.id::text || ':' || v::text), 2),
+                   '{"benchmark_only": true}'::jsonb,
+                   r.evidence_signal_ids, r.evidence_snapshot, r.note
+            FROM opportunity_relations r CROSS JOIN generate_series(1, 2) v""",
+        ),
+        (
+            "review_items",
+            f"""INSERT INTO review_items
+                (signal_id, reasons, status, resolution, resolved_at)
+            SELECT i, ARRAY['synthetic_query_volume'],
+                   {_arr(RESOLVED_STATUSES)}[1 + i % 3],
+                   '{{"benchmark_only": true}}'::jsonb, now()
+            FROM generate_series(1, {reviews}) i""",
+        ),
+        (
+            "ingest_runs",
+            f"""INSERT INTO ingest_runs
+                (source_id, status, started_at, finished_at, fetched, created, updated,
+                 skipped, stats)
+            SELECT (SELECT id FROM sources WHERE key = 'bench'),
+                   {_arr(("succeeded", "partial", "failed"))}[1 + i % 3],
+                   now() - i * interval '1 minute',
+                   now() - i * interval '1 minute' + interval '10 seconds',
+                   10, 5, 2, 3, '{{"benchmark_only": true}}'::jsonb
+            FROM generate_series(1, {ingest_runs}) i""",
+        ),
+    ]
+    for name, sql in steps:
+        await conn.execute(sql)
+        counts[name] = int(await conn.fetchval(f"SELECT count(*) FROM {name}"))
+        log(f"  loaded head-only {name}: {counts[name]:,}")
+    # The baseline maps stages periodically, so default memberships have no mixed stages.
+    # Retype two accepted members in up to 1,000 groups after baseline measurement to
+    # exercise a real 51-row audit page, without adding or deleting opportunities/signals.
+    retyped = await conn.fetchval(
+        """WITH eligible AS (
+            SELECT os.opportunity_id FROM opportunity_signals os
+            JOIN signals s ON s.id = os.signal_id
+            WHERE s.verdict = 'accepted' AND NOT os.tentative
+            GROUP BY os.opportunity_id HAVING count(*) >= 2
+            ORDER BY os.opportunity_id LIMIT 1000
+        ), numbered AS (
+            SELECT s.id, row_number() OVER (
+                PARTITION BY os.opportunity_id ORDER BY s.id
+            ) AS n FROM eligible e
+            JOIN opportunity_signals os ON os.opportunity_id = e.opportunity_id
+            JOIN signals s ON s.id = os.signal_id
+            WHERE s.verdict = 'accepted' AND NOT os.tentative
+        ), changed AS (
+            UPDATE signals s SET stage = CASE WHEN n.n = 1 THEN 'budget_line' ELSE 'bid_notice' END
+            FROM numbered n WHERE s.id = n.id AND n.n <= 2 RETURNING s.id
+        ) SELECT count(*) FROM changed"""
+    )
+    counts["signals_retyped_for_mixed_audit"] = int(retyped)
+    counts["mixed_groups_seeded"] = int(retyped) // 2
+    counts["coverage_documents"] = int(await conn.fetchval("SELECT count(*) FROM documents"))
+    counts["coverage_sources"] = int(await conn.fetchval("SELECT count(*) FROM sources"))
+    await conn.execute("VACUUM ANALYZE")
+    return counts
+
+
 async def _params(conn: asyncpg.Connection) -> dict[str, str]:
     # A company profile close to one project type (e.g. a 스마트쉘터 maker).
     vec = await conn.fetchval(
@@ -626,12 +842,21 @@ async def run_bench(sizes: dict[str, int], report: Path, log: Any = print) -> di
     try:
         await conn.execute("ANALYZE")
         after = {q.key: await run_query(conn, q, "after") for q in qs}
+        log("loading head-only synthetic query-volume fixtures …")
+        supplemental_sizes = await _load_additional(conn, sizes, log)
+        for q in additional_queries():
+            qs.append(q)
+            before[q.key] = None
+            after[q.key] = await run_query(conn, q, "after")
         version = await conn.fetchval("SELECT version()")
         vector_v = await conn.fetchval("SELECT extversion FROM pg_extension WHERE extname='vector'")
     finally:
         await conn.close()
     results = {
         "sizes": sizes,
+        "supplemental_sizes": supplemental_sizes,
+        "supplemental_scope": "synthetic_query_volume_only_after_baseline_comparison",
+        "benchmark_source_adapter": "benchmark",
         "migrate_seconds": round(migrate_s, 1),
         "postgres": version,
         "pgvector": vector_v,
@@ -653,7 +878,9 @@ async def run_bench(sizes: dict[str, int], report: Path, log: Any = print) -> di
     return results
 
 
-def _res(r: Result) -> dict[str, Any]:
+def _res(r: Result | None) -> dict[str, Any] | None:
+    if r is None:
+        return None
     return {"ms": round(r.ms, 2), "rows": r.rows, "plan": r.plan, "recall": r.recall}
 
 
@@ -687,23 +914,46 @@ def render(r: dict[str, Any]) -> str:
         "| 쿼리 | 전 | 후 | 전: 행 / 재현율 | 후: 행 / 재현율 |",
         "|---|---:|---:|---|---|",
     ]
+    if extra := r.get("supplemental_sizes"):
+        lines[4:4] = [
+            "신규 쿼리는 기존 전후 비교가 끝난 뒤 head 전용 합성 fixture를 추가하여 측정했습니다. "
+            f"관계 {extra['opportunity_relations']:,} · 관계 이력 "
+            f"{extra['opportunity_relation_events']:,} · 리뷰 {extra['review_items']:,} · "
+            f"수집 실행 {extra['ingest_runs']:,}. 혼합 감사 페이지용으로 "
+            f"기존 {extra['mixed_groups_seeded']:,}개 그룹의 승인 신호 "
+            f"{extra['signals_retyped_for_mixed_audit']:,}건 단계만 이 추가 측정 전에 바꿨습니다.",
+            "",
+            f"커버리지 SQL 입력은 문서 {extra['coverage_documents']:,}건·"
+            f"수집원 {extra['coverage_sources']:,}개이며, fixture 제외 조건을 통과시키는 "
+            "비활성 벤치 전용 adapter `benchmark`를 사용합니다. 원문·기관별 실제 수집·사람 검토 "
+            "정답·사업/계약 관계의 의미적 정확성을 검증하는 데이터가 아닙니다. "
+            "파일 읽기·원문 유효성 검사·보고서 Python 집계 비용도 SQL 시간에 포함하지 않습니다. "
+            "신규 기능의 전 결과는 미구현으로 표시하며 속도 개선율을 계산하지 않습니다.",
+            "",
+        ]
     for q in r["queries"]:
         b, a = q["before"], q["after"]
 
-        def rr(x: dict[str, Any]) -> str:
+        def rr(x: dict[str, Any] | None) -> str:
+            if x is None:
+                return "—"
             rec = f" / {x['recall'] * 100:.0f}%" if x["recall"] is not None else ""
             return f"{x['rows']}{rec}"
 
-        lines.append(f"| {q['title']} | {_ms(b['ms'])} | {_ms(a['ms'])} | {rr(b)} | {rr(a)} |")
+        before_ms = _ms(b["ms"]) if b is not None else "미구현"
+        lines.append(f"| {q['title']} | {before_ms} | {_ms(a['ms'])} | {rr(b)} | {rr(a)} |")
     lines += ["", "## 실행 계획", ""]
     for q in r["queries"]:
         lines += [
             f"### {q['title']}",
             "",
-            f"- 전: `{_plan(q['before']['plan'])}`",
+            f"- 전: `{_plan(q['before']['plan'])}`" if q["before"] is not None else "- 전: 미구현",
             f"- 후: `{_plan(q['after']['plan'])}`"
             + (f" (세션 설정: `{'; '.join(q['setup_after'])}`)" if q["setup_after"] else ""),
             "",
         ]
-    lines += [f"마이그레이션 0002 적용 시간(데이터가 있는 상태): {r['migrate_seconds']}초", ""]
+    lines += [
+        f"마이그레이션 0001 → head 적용 시간(데이터가 있는 상태): {r['migrate_seconds']}초",
+        "",
+    ]
     return "\n".join(lines)

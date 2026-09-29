@@ -10,6 +10,7 @@ import {
   FlaskConical,
   Gauge,
   ListChecks,
+  Link2,
   LogOut,
   Radar,
   UserRound,
@@ -23,6 +24,7 @@ import { ThemeToggle } from "@/components/ui/controls";
 import { Skeleton } from "@/components/ui/primitives";
 import { ApiError } from "@/lib/api/client";
 import { useLogout, useMe } from "@/lib/api/hooks";
+import { DEMO_STATIC } from "@/lib/demo/fetch";
 import { cn } from "@/lib/utils";
 
 export function Logo({ className }: { className?: string }) {
@@ -144,6 +146,7 @@ const ADMIN_NAV = [
   { href: "/admin/sources", label: "수집원", icon: Database },
   { href: "/admin/jobs", label: "작업 로그", icon: ListChecks },
   { href: "/admin/review", label: "검토 대기열", icon: ClipboardCheck },
+  ...(!DEMO_STATIC ? [{ href: "/admin/relations", label: "사업·계약 관계", icon: Link2 }] : []),
   { href: "/admin/llm", label: "LLM 비용", icon: Bot },
   { href: "/admin/evals", label: "평가·백테스트", icon: FlaskConical },
 ];

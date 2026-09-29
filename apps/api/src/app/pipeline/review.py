@@ -43,6 +43,7 @@ async def reconcile_reviewed_signal(
                     "commitment",
                     "verdict",
                     "stage",
+                    "category",
                 )
             },
             sort_keys=True,
