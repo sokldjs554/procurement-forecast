@@ -335,7 +335,14 @@ def classify_category(text: str) -> tuple[Category, float]:
 # are weaker evidence: an IoT care service is care, a youth concert is culture, and a
 # library remodel buys construction rather than educational programming.
 _BUDGET_TARGETS: dict[Category, re.Pattern[str]] = {
-    Category.FACILITY: re.compile(r"신축|증축|리모델링|개보수|보수공사|정비공사|시설개선공사|건립"),
+    Category.FACILITY: re.compile(
+        r"신축|증축|리모델링|개보수|보수공사|정비공사|시설개선공사|건립|"
+        # A named civil asset plus construction work is a purchase target. The generic
+        # word 공사 alone remains weak, and park CCTV/software installations keep their
+        # own target: 공원 must be immediately followed by the construction action.
+        r"(?:물놀이장|놀이터|보행교|교량|육교|산책로|공원|광장|배수로|옹벽)"
+        r"(?:설치|조성|확장|개설|개량)공사"
+    ),
     Category.PUBLIC_SW: re.compile(r"홈페이지|누리집|웹접근성|정보시스템|챗봇|클라우드"),
 }
 _BUDGET_PURPOSES: dict[Category, re.Pattern[str]] = {

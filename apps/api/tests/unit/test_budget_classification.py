@@ -114,3 +114,75 @@ async def test_unknown_named_program_does_not_borrow_a_detail_category() -> None
 async def test_budget_keywords_do_not_borrow_another_projects_technology() -> None:
     signal, _ = await _extract("공공도서관 리모델링", "○홈페이지 정보시스템 클라우드 전환")
     assert set(signal.keywords) == {"도서관", "리모델링"}
+
+
+@pytest.mark.parametrize(
+    "title",
+    [
+        "오리공원 물놀이장 설치공사",
+        "탄천 보행교 설치공사",
+        "탄천 보행교 설치 공사",
+        "달빛천 교량 설치 공사",
+        "솔마루 어린이놀이터 조성공사",
+        "주민 산책로 개설공사",
+    ],
+)
+async def test_named_civil_construction_target_is_grounded_and_link_eligible(title: str) -> None:
+    # The first three names reproduce failed pre-existing integration fixtures. The
+    # remaining names independently exercise construction assets/actions and spacing.
+    from app.parsing.chunking import chunk_budget
+
+    text = (
+        "부서: 시설과\n정책: 공공시설 확충\n단위: 생활시설 (단위:천원)\n"
+        f"{title} 1,000,000 0 1,000,000\n"
+        "401 시설비및부대비 1,000,000 0 1,000,000\n"
+        "01 시설비 1,000,000 0 1,000,000\n"
+        f" ○{title}\n1,000,000\n"
+    )
+    chunks = chunk_budget(text)
+    assert len(chunks) == 1
+    chunk = chunks[0]
+    result = await HeuristicProvider().extract(
+        ChunkContext(
+            "budget_book",
+            "2026년 예산서",
+            "성남시",
+            date(2026, 6, 18),
+            chunk.labels,
+            chunk.text,
+            fiscal_year=2026,
+        )
+    )
+    assert len(result.value.signals) == 1
+    signal = result.value.signals[0]
+    assert signal.title == title
+    assert signal.category is Category.FACILITY
+    assert signal.budget_krw == 1_000_000_000
+    checked = check_signal(
+        signal,
+        text=text,
+        doc_type="budget_book",
+        reference_date=date(2026, 6, 18),
+        fiscal_year=2026,
+        table_unit=1000,
+        min_score=88,
+    )
+    assert checked.report.verdict == "accepted"
+
+
+@pytest.mark.parametrize(
+    ("title", "category"),
+    [
+        ("도심 CCTV 설치공사", Category.SAFETY_CCTV),
+        ("공원 스마트쉘터 설치공사", Category.SMART_CITY),
+        ("공원 정보시스템 설치공사", Category.PUBLIC_SW),
+        ("신규 설치공사", Category.OTHER),
+    ],
+)
+async def test_generic_construction_word_never_overrides_purchase_target(
+    title: str, category: Category
+) -> None:
+    signal, _ = await _extract(title, "401 시설비및부대비\n○공사 설계 시설 정비")
+    assert signal.category is category
+    if category is Category.OTHER:
+        assert signal.confidence == 0.35
