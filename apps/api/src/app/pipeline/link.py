@@ -49,6 +49,13 @@ from app.runtime import Runtime
 log = get_logger(__name__)
 
 WEIGHTS = {"semantic": 0.35, "title": 0.30, "category": 0.15, "budget": 0.10, "timeline": 0.10}
+# How far a signal may sit from an opportunity's span, on either side, to be scored against it.
+# Symmetric so the order signals are linked in does not decide the answer: a statement linked
+# after the budget row it announced has to see that row's opportunity, just as the row, linked
+# after the statement, sees the statement's. The one-sided 90 days this replaces left 2026
+# 추경 statements (2026-03-12) out of the books' opportunities (2026-06-18) when the books
+# went first (docs/real-data-minutes.md §8).
+SPAN_DAYS = 720
 _COMMITMENT_RANK = {"declined": 0, "reviewing": 1, "planned": 2, "committed": 3}
 _REF_KEYS = ("order_plan_no", "prespec_no")
 
@@ -84,7 +91,14 @@ def budget_similarity(a: int | None, b: int | None) -> float:
 def timeline_plausibility(signal: Signal, opp: Opportunity) -> float:
     s_rank = STAGE_ORDER[Stage(signal.stage)]
     o_rank = STAGE_ORDER[Stage(opp.stage)]
-    gap_days = (signal.observed_at - opp.last_signal_at).days
+    # Days between the signal and the opportunity's span, before its first signal or after
+    # its last — the same distance whichever of the two was linked first.
+    if signal.observed_at > opp.last_signal_at:
+        gap_days = (signal.observed_at - opp.last_signal_at).days
+    elif signal.observed_at < opp.first_seen_at:
+        gap_days = (opp.first_seen_at - signal.observed_at).days
+    else:
+        gap_days = 0
     score = 1.0
     if gap_days > 540:
         score -= 0.6  # a year and a half of silence: probably a different project
@@ -94,8 +108,6 @@ def timeline_plausibility(signal: Signal, opp: Opportunity) -> float:
         and signal.observed_at > opp.bid_published_at + timedelta(days=60)
     ):
         score -= 0.7  # talk about a project whose tender already happened → next phase
-    if s_rank < STAGE_ORDER[Stage.BID] and gap_days < -120:
-        score -= 0.3  # signal is much older than what we already have
     return max(score, 0.0)
 
 
@@ -174,8 +186,8 @@ async def _reference_match(session: AsyncSession, signal: Signal) -> int | None:
 async def _candidates(session: AsyncSession, signal: Signal, limit: int = 12) -> list[Opportunity]:
     stmt = select(Opportunity).where(
         Opportunity.institution_code == signal.institution_code,
-        Opportunity.last_signal_at >= signal.observed_at - timedelta(days=720),
-        Opportunity.first_seen_at <= signal.observed_at + timedelta(days=90),
+        Opportunity.last_signal_at >= signal.observed_at - timedelta(days=SPAN_DAYS),
+        Opportunity.first_seen_at <= signal.observed_at + timedelta(days=SPAN_DAYS),
     )
     if signal.embedding is not None:
         stmt = stmt.order_by(Opportunity.embedding.cosine_distance(signal.embedding))
