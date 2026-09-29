@@ -19,9 +19,11 @@ Deterministic where possible, probabilistic where necessary:
 from __future__ import annotations
 
 import math
+import re
 from collections import Counter
 from dataclasses import dataclass
 from datetime import date, timedelta
+from difflib import SequenceMatcher
 from typing import Any
 
 from sqlalchemy import select
@@ -56,6 +58,11 @@ WEIGHTS = {"semantic": 0.35, "title": 0.30, "category": 0.15, "budget": 0.10, "t
 # 추경 statements (2026-03-12) out of the books' opportunities (2026-06-18) when the books
 # went first (docs/real-data-minutes.md §8).
 SPAN_DAYS = 720
+# A 세부사업 keeps its name from one book to the next, give or take spacing or a word added
+# ("시설개선" → "시설 개선 공사"). Below this similarity, or with a word replaced, two rows are two
+# projects however alike their field and amount (docs/real-data-minutes.md §10).
+BUDGET_NAME_FLOOR = 0.5
+_NAME_NOISE_RE = re.compile(r"[\s()\[\]{}·ㆍ,.\-_/]")
 _COMMITMENT_RANK = {"declined": 0, "reviewing": 1, "planned": 2, "committed": 3}
 _REF_KEYS = ("order_plan_no", "prespec_no")
 
@@ -109,6 +116,19 @@ def timeline_plausibility(signal: Signal, opp: Opportunity) -> float:
     ):
         score -= 0.7  # talk about a project whose tender already happened → next phase
     return max(score, 0.0)
+
+
+def budget_names_agree(a: str, b: str) -> bool:
+    """Two 세부사업명 from different books name the same project. A word *replaced* makes
+    another one — "중원청소년수련관" for "수정청소년수련관", "보도" for "도로표지판", 1 for 2 — even
+    when the rest is shared; a word added or dropped does not."""
+    x, y = (_NAME_NOISE_RE.sub("", canonicalize(canonical_title(t))) for t in (a, b))
+    if x == y:
+        return True
+    if title_similarity(a, b) < BUDGET_NAME_FLOOR:
+        return False
+    ops = SequenceMatcher(None, x, y, autojunk=False).get_opcodes()
+    return not any(tag == "replace" for tag, *_ in ops)
 
 
 def terms_conflict(a: str, b: str) -> bool:
@@ -217,26 +237,34 @@ async def _without_conflicting_numbers(
     return [o for o in candidates if o.id not in conflicting]
 
 
-async def _without_rows_of_the_same_book(
+async def _without_other_budget_rows(
     session: AsyncSession, signal: Signal, candidates: list[Opportunity]
 ) -> list[Opportunity]:
-    """Drop opportunities that already hold another row of the same 예산서: a book lists each
-    세부사업 once, so two rows are two projects. On six live 성남시 books (2026-09-27), 1,542 of
-    2,327 rows ended up in opportunities holding more than one 사업명 — up to 32 in one, and one
-    held 54 signals around "…정비공사" rows."""
+    """For a 예산서 row, drop opportunities that already hold another row of the same book, or a
+    row of another book under another name (``budget_names_agree``).
+
+    A book lists each 세부사업 once, so two of its rows are two projects: on six live 성남시 books
+    (2026-09-27), 1,542 of 2,327 rows ended up in opportunities holding more than one 사업명 — up
+    to 32 in one. Across books the name is what carries a project from year to year; field,
+    amount and wording alike put "중원청소년수련관 시설개선" (2025) and "수정청소년수련관 시설 개선"
+    (2026 추경) in one opportunity (docs/real-data-minutes.md §9.4)."""
     if signal.stage != "budget_line" or not candidates:
         return candidates
-    rows = await session.scalars(
-        select(OpportunitySignal.opportunity_id)
+    rows = await session.execute(
+        select(OpportunitySignal.opportunity_id, Signal.document_id, Signal.title)
         .join(Signal, Signal.id == OpportunitySignal.signal_id)
         .where(
             OpportunitySignal.opportunity_id.in_([o.id for o in candidates]),
-            Signal.document_id == signal.document_id,
+            Signal.stage == signal.stage,
             Signal.id != signal.id,
         )
     )
-    taken = set(rows.all())
-    return [o for o in candidates if o.id not in taken]
+    apart = {
+        opp_id
+        for opp_id, document_id, title in rows
+        if document_id == signal.document_id or not budget_names_agree(signal.title, title)
+    }
+    return [o for o in candidates if o.id not in apart]
 
 
 async def decide(session: AsyncSession, runtime: Runtime, signal: Signal) -> LinkDecision | None:
@@ -247,7 +275,7 @@ async def decide(session: AsyncSession, runtime: Runtime, signal: Signal) -> Lin
         return None
     threshold = runtime.settings.link_threshold
     band = runtime.settings.link_review_band
-    candidates = await _without_rows_of_the_same_book(
+    candidates = await _without_other_budget_rows(
         session,
         signal,
         await _without_conflicting_numbers(session, signal, await _candidates(session, signal)),

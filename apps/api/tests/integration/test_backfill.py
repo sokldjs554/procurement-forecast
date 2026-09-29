@@ -840,3 +840,80 @@ async def test_what_was_paid_for_survives_a_stop_mid_document(demo_world, runtim
     assert len(new_keys) == 1  # …and so is its answer
     assert first.sent[0] not in again.sent  # the next run does not pay for it twice
     assert len(again.sent) >= 1
+
+
+def _book_rows(*rows: tuple[str, int]) -> str:
+    """세출예산사업명세서 rows in one department, the way the live 성남시 books print them."""
+    out = ["부서: 수정구 청소년과", "정책: 청소년 시설 운영", "단위: 청소년 시설 (단위:천원)"]
+    for name, amount in rows:
+        out += [
+            f"{name} {amount:,} 0 {amount:,}",
+            f"401 시설비및부대비 {amount:,} 0 {amount:,}",
+            f"01 시설비 {amount:,} 0 {amount:,}",
+            f" ○{name}",
+            f"{amount:,}",
+        ]
+    return "\n".join(out) + "\n"
+
+
+async def test_rows_of_two_books_join_only_under_the_same_name(demo_world, runtime) -> None:  # type: ignore[no-untyped-def]
+    # 2025 본예산 and 2026 제1회 추경, as on the live run (real-data-minutes.md §9.4): the
+    # 중원 hall's row and the 수정 hall's row shared an opportunity; the bridge is one project.
+    books = [
+        RawRecord(
+            external_id=f"/humanframe/file/sncity/bgt/{year}/names-test.pdf",
+            doc_type="budget_book",
+            title=title,
+            published_at=published,
+            mime="text/plain",
+            publisher_raw="경기도 성남시",
+            institution_code_hint="LG-41130",
+            content=_book_rows(*rows).encode(),
+            structured={"fiscal_year": year, "budget_kind": kind},
+        )
+        for year, kind, title, published, rows in (
+            (
+                2025,
+                "본예산",
+                "2025년 본예산 세입세출예산서 › 세출예산사업명세서",
+                date(2024, 12, 31),
+                [("중원청소년수련관 시설개선공사", 278_774), ("탄천 보행교 설치공사", 4_100_000)],
+            ),
+            (
+                2026,
+                "제1회 추가경정",
+                "2026년 1회 추경 세입세출예산서 › 세출예산사업명세서",
+                date(2026, 6, 18),
+                [("수정청소년수련관 시설 개선공사", 2_014_000), ("탄천 보행교 설치 공사", 900_000)],
+            ),
+        )
+    ]
+    async with get_sessionmaker()() as s:
+        source = Source(
+            key="test_book_names", name="t", adapter="crawler", enabled=False, config={}
+        )
+        s.add(source)
+        await s.flush()
+        ids: list[int] = []
+        for rec in books:
+            doc, _ = await upsert_record(s, source, rec, runtime)
+            ids += (await process_document(s, runtime, doc.id)).signal_ids
+        await link_signals(s, runtime, ids, today=date(2026, 9, 26))
+        rows = dict(
+            (
+                await s.execute(
+                    select(Signal.title, OpportunitySignal.opportunity_id)
+                    .join(OpportunitySignal, OpportunitySignal.signal_id == Signal.id)
+                    .where(Signal.id.in_(ids))
+                )
+            ).all()
+        )
+        await s.rollback()
+    assert set(rows) == {
+        "중원청소년수련관 시설개선공사",
+        "탄천 보행교 설치공사",
+        "수정청소년수련관 시설 개선공사",
+        "탄천 보행교 설치 공사",
+    }
+    assert rows["탄천 보행교 설치공사"] == rows["탄천 보행교 설치 공사"]  # one project, two books
+    assert rows["중원청소년수련관 시설개선공사"] != rows["수정청소년수련관 시설 개선공사"]

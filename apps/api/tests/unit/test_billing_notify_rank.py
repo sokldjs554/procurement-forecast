@@ -12,7 +12,7 @@ from app.demo.synth import build_world, josa, spoken_krw
 from app.notify.channels import PermanentDeliveryError, SlackChannel, TransientDeliveryError
 from app.notify.dispatch import _quiet_until
 from app.notify.render import render_email, render_kakao_variables, render_slack
-from app.pipeline.link import terms_conflict, title_similarity
+from app.pipeline.link import budget_names_agree, terms_conflict, title_similarity
 from app.pipeline.process import canonical_title
 from app.pipeline.recommend import score_opportunity
 from app.pipeline.triage import triage_chunk
@@ -215,6 +215,18 @@ def test_title_similarity_sees_through_synonyms() -> None:
     assert title_similarity("스마트쉘터 설치", "공공도서관 리모델링") < 0.2
     assert terms_conflict("스마트쉘터 설치", "스마트폴 설치")
     assert not terms_conflict("수요응답형 교통(DRT) 도입", "DRT 시범운영 용역")
+
+
+def test_budget_rows_keep_their_names_across_books() -> None:
+    # Spacing, or a word added, is the same 세부사업 in next year's book…
+    assert budget_names_agree("수내교 전면개축 공사", "수내교 전면 개축공사")
+    assert budget_names_agree("여수동 복합문화시설 조성", "여수동 공공부지 복합문화시설 조성")
+    # …a word replaced is another one, however much of the name is shared.
+    assert not budget_names_agree("중원청소년수련관 시설개선", "수정청소년수련관 시설 개선")
+    assert not budget_names_agree("제1공영주차장 조성", "제2공영주차장 조성")
+    assert not budget_names_agree("수내교 전면개축 공사", "수내교 전면개축 실시설계")
+    # Same field and amount, nothing else in common (§9.6 of real-data-minutes.md).
+    assert not budget_names_agree("산성공원 관리", "국가암관리")
 
 
 def _opp(**kw: object) -> Opportunity:
