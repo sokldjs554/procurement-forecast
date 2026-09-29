@@ -30,7 +30,7 @@ async def test_only_accepted_confirmed_public_signals_count(demo_world):
                 OpportunitySignal(
                     opportunity_id=opp.id,
                     signal_id=sig.id,
-                    method="test",
+                    method="similarity",
                     score=1,
                     tentative=False,
                     reasons={},

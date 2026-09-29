@@ -351,7 +351,8 @@ def render_report(r: dict[str, Any]) -> str:
         f"추출기 `{c.get('extractor_mode')}`",
         "",
         "## 추출 (합성 정답 대비)",
-        f"- 정밀도 {_pct(e['precision'])} · 재현율 {_pct(e['recall'])} (정답 {e['gold']}건, 예측 {e['predicted']}건)",
+        f"- 정밀도 {_pct(e['precision'])} · 재현율 {_pct(e['recall'])} (정답 {e['gold']}건, 예측 {e['predicted']}건; 검토 대기 포함)",
+        f"- 자동 승인 {e['verdicts']['accepted']}건 · 검토 대기 {e['verdicts']['needs_review']}건. 저장 재현율은 자동 승인 재현율이 아닙니다.",
         "- 필드 정확도: " + ", ".join(f"{k} {_pct(v)}" for k, v in e["field_accuracy"].items()),
         f"- 트리아지: 청크 {e['triage']['chunks']}개 중 {_pct(e['triage']['skipped_rate'])}를 LLM 호출 없이 건너뜀, "
         f"그 상태에서 정답 신호 재현율 {_pct(e['triage']['gold_recall_after_triage'])}",
