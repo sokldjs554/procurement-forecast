@@ -1,5 +1,7 @@
 import createClient from "openapi-fetch";
 
+import { DEMO_STATIC, demoFetch } from "@/lib/demo/fetch";
+
 import type { components, paths } from "./schema";
 
 export type Schemas = components["schemas"];
@@ -7,9 +9,14 @@ export type Schemas = components["schemas"];
 /**
  * Typed API client. Requests go to the same origin (`/api/*`), which the Next.js BFF route
  * forwards to the FastAPI service — so the httpOnly session cookie is first-party and the
- * browser never needs CORS.
+ * browser never needs CORS. The static public demo has no server: there it answers from the
+ * recorded demo world instead (lib/demo/fetch.ts).
  */
-export const api = createClient<paths>({ baseUrl: "", credentials: "include" });
+export const api = createClient<paths>({
+  baseUrl: "",
+  credentials: "include",
+  ...(DEMO_STATIC ? { fetch: demoFetch } : {}),
+});
 
 export class ApiError extends Error {
   constructor(

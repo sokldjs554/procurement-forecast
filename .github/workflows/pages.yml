@@ -1,0 +1,102 @@
+name: Public demo (GitHub Pages)
+
+# The real web app exported to static files, reading what the real API answered for the seeded demo
+# world (apps/api/src/app/demo/snapshot.py, apps/web/src/lib/demo/fetch.ts). Rebuilt on every merge
+# and every Monday, because the world is seeded around the build date (lead times, "D-n").
+on:
+  push:
+    branches: [main]
+  pull_request: # build only, so a change that breaks the export shows up before merge
+    paths: [apps/**, .github/workflows/pages.yml]
+  schedule:
+    - cron: "17 21 * * 0" # Monday 06:17 KST
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Record the demo world and export the web app
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: app
+          POSTGRES_PASSWORD: app
+          POSTGRES_DB: app
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U app" --health-interval 3s --health-timeout 3s --health-retries 20
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping" --health-interval 3s --health-timeout 3s --health-retries 20
+    env:
+      APP_LOG_JSON: "false"
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v7
+      - name: OCR engine and Korean fonts (the demo world includes scanned budget books)
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-kor fonts-nanum
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.8.17"
+          python-version: "3.11"
+          enable-cache: true
+          cache-dependency-glob: apps/api/uv.lock
+      - name: Seed the demo world (the same one the E2E walkthrough uses)
+        working-directory: apps/api
+        run: |
+          uv sync --frozen
+          uv run manage db upgrade
+          uv run manage seed --anchor "$(TZ=Asia/Seoul date +%F)" --scale 1.5
+          uv run manage demo run
+      - name: Record the API's answers
+        working-directory: apps/api
+        run: |
+          nohup uv run uvicorn --factory app.api.app:create_app --port 8000 > "$RUNNER_TEMP/api.log" 2>&1 &
+          for _ in $(seq 1 30); do curl -fsS localhost:8000/healthz > /dev/null && break; sleep 1; done
+          uv run manage demo snapshot ../web/public/demo --base-url http://127.0.0.1:8000 || { cat "$RUNNER_TEMP/api.log"; exit 1; }
+      - uses: pnpm/action-setup@v6
+        with:
+          package_json_file: apps/web/package.json
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: apps/web/pnpm-lock.yaml
+      - name: Export the web app
+        working-directory: apps/web
+        env:
+          NEXT_PUBLIC_DEMO_STATIC: "1"
+          NEXT_PUBLIC_BASE_PATH: /${{ github.event.repository.name }}
+        # the BFF route (src/app/api) forwards to a server; a static export has none
+        run: |
+          pnpm install --frozen-lockfile
+          rm -rf src/app/api
+          pnpm build
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: apps/web/out
+
+  deploy:
+    name: Publish
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

@@ -104,6 +104,27 @@ def seed(
     _run(lambda: _with_session(go))
 
 
+@demo_app.command("snapshot")
+def demo_snapshot(
+    out: Path = typer.Argument(..., help="Directory the static demo reads (apps/web/public/demo)"),
+    base_url: str = typer.Option("http://127.0.0.1:8000", help="A running API over the demo world"),
+) -> None:
+    """Record the API's answers for the static public demo (see app/demo/snapshot.py). Makes a
+    brief per opportunity in the demo company's feed, so run it on a throwaway database."""
+    configure_logging(json=False, level="WARNING", stream=sys.stderr)
+
+    async def go() -> dict[str, int]:
+        from app.db.session import dispose_engine
+        from app.demo.snapshot import record_snapshot
+
+        try:
+            return await record_snapshot(base_url, out)
+        finally:
+            await dispose_engine()
+
+    typer.echo(json.dumps(_run(go), ensure_ascii=False))
+
+
 @demo_app.command("run")
 def demo_run(anchor: str = typer.Option(None)) -> None:
     """Ingest the synthetic world and run every pipeline stage in-process."""

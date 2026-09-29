@@ -11,6 +11,8 @@
 
 구조로 보면 **공개 데이터를 매일 수집·구조화해 기업마다 맞춤 추천하고 알리는 B2B SaaS**입니다: 수집(공공 API·누리집 크롤링) → 추출·검증(LLM + 원문 대조) → 추천 → 알림 → 구독·크레딧 과금.
 
+**공개 데모: [sokldjs554.github.io/procurement-forecast](https://sokldjs554.github.io/procurement-forecast/)** — 설치 없이 브라우저에서 바로 열립니다. 실제 웹 앱을 정적 파일로 내보내고, 서버 대신 실제 API가 합성 데모 세계에 답한 내용을 녹화해 읽습니다(`manage demo snapshot`, [pages.yml](.github/workflows/pages.yml)). 운영 콘솔은 `admin@example.com` / `admin-pass-1234`로 로그인하면 보이고, 바꾼 내용은 저장되지 않습니다. 수집부터 알림까지 실제로 도는 모습은 [실행하기](#실행하기)대로 로컬에서 볼 수 있습니다.
+
 **30초 둘러보기** — 랜딩에서 한 번 눌러 데모로 들어가, 기회 피드의 정렬과 단계별 건수를 보고, '입찰 진행' 탭에서 입찰공고 12개월 전에 찾아낸 사업을 열어 원문 근거가 칠해진 신호 타임라인을 본 뒤 영업 브리핑을 만듭니다.
 
 ![30초 둘러보기: 랜딩 → 데모 → 기회 피드 → 기회 상세 → 영업 브리핑](docs/screenshots/walkthrough.gif)

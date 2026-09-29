@@ -49,3 +49,6 @@ service-account*.json
 !*.tfvars.example
 *.tfplan
 dump.rdb
+
+# The static demo's recorded API answers: made in CI by `manage demo snapshot` (.github/workflows/pages.yml)
+apps/web/public/demo/

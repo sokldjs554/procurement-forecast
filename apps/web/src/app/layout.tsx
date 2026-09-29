@@ -3,6 +3,8 @@ import type { Metadata, Viewport } from "next";
 // Self-hosted Pretendard (unicode-range subsets, so a page only downloads the glyphs it uses):
 // no third-party request, and it renders the same behind proxies and in CI screenshots.
 import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css";
+import { DemoBanner } from "@/components/layout/demo-banner";
+
 import "./globals.css";
 import { Providers } from "./providers";
 
@@ -29,6 +31,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body className="min-h-dvh">
+        <DemoBanner />
         <Providers>{children}</Providers>
       </body>
     </html>

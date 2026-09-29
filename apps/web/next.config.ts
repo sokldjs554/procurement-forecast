@@ -7,14 +7,27 @@ const securityHeaders = [
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
 ];
 
-const nextConfig: NextConfig = {
-  // Self-contained server bundle for the Cloud Run container (see apps/web/Dockerfile).
-  output: "standalone",
-  poweredByHeader: false,
-  reactStrictMode: true,
-  async headers() {
-    return [{ source: "/:path*", headers: securityHeaders }];
-  },
-};
+// The public demo: static files on GitHub Pages under the repository's path, no server, the API
+// answered from the recorded demo world (src/lib/demo/fetch.ts, .github/workflows/pages.yml).
+const demoStatic = process.env.NEXT_PUBLIC_DEMO_STATIC === "1";
+
+const nextConfig: NextConfig = demoStatic
+  ? {
+      output: "export",
+      basePath: process.env.NEXT_PUBLIC_BASE_PATH || undefined,
+      trailingSlash: true,
+      images: { unoptimized: true },
+      poweredByHeader: false,
+      reactStrictMode: true,
+    }
+  : {
+      // Self-contained server bundle for the Cloud Run container (see apps/web/Dockerfile).
+      output: "standalone",
+      poweredByHeader: false,
+      reactStrictMode: true,
+      async headers() {
+        return [{ source: "/:path*", headers: securityHeaders }];
+      },
+    };
 
 export default nextConfig;
