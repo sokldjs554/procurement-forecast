@@ -37,7 +37,8 @@ Real sites stray from that shape in three ways, each handled by configuration:
   "url": "/files/\\1/\\2"}]`` (``re`` group references).
 * **One page, no board** (``"layout": "page"``). Every attachment on the page is a document;
   its title is the headings above it plus its list item's text, the fiscal year in that title
-  decides whether it is in the window, and the file's ``Last-Modified`` is its date.
+  decides whether it is in the window, and the file's ``Last-Modified`` is its date — no later
+  than the book can have been adopted (``adopted_by``).
 
 Any of ``layout``, ``detail_pattern``, ``attachment_pattern``, ``id_param``, ``page_param``,
 ``title_keywords``, ``title_pattern`` (a regex the title must match), ``script_links`` and
@@ -359,6 +360,18 @@ def budget_title_facts(title: str) -> dict[str, Any]:
     return facts
 
 
+def adopted_by(facts: dict[str, Any]) -> date | None:
+    """The last day a budget book can have been adopted, from its title: a 본예산 before its
+    fiscal year starts, an 추경 within it. A page with no posting dates gives only the file's
+    ``Last-Modified``, and one upload can date every year's book alike: all six 성남시 books
+    read 2026-06-18 (2026-09-27), which made the 2025 본예산 news in June 2026 and left the
+    statements that led to the 2026 본예산 outside the linker's window."""
+    year, kind = facts.get("fiscal_year"), facts.get("budget_kind")
+    if year is None or kind is None:
+        return None
+    return date(year - 1, 12, 31) if kind == "본" else date(year, 12, 31)
+
+
 def canonical_url(url: str, keep: tuple[str, ...]) -> str:
     """Drop session/tracking parameters so the same post always has the same URL."""
     parts = urlsplit(url)
@@ -618,7 +631,8 @@ class BoardCrawlerAdapter:
                 continue
             # No posting date on the page: the fiscal year decides. Next year's 본예산 is
             # published in December, so the window's last year + 1 still counts.
-            year = budget_title_facts(title).get("fiscal_year")
+            facts = budget_title_facts(title)
+            year = facts.get("fiscal_year")
             if year is not None and not (window.since.year <= year <= window.until.year + 1):
                 self.stats.skipped_window += 1
                 continue
@@ -627,16 +641,21 @@ class BoardCrawlerAdapter:
             if got is None:
                 continue
             content, mime, modified = got
+            posted, date_from = modified or today_kst(), "last_modified" if modified else "crawled"
+            bound = adopted_by(facts) if self.doc_type == "budget_book" else None
+            if bound is not None and bound < posted:
+                posted, date_from = bound, "fiscal_year"
             yield self._record(
                 board,
                 external_id=file_key(att.href),
                 title=title,
-                posted=modified or today_kst(),
+                posted=posted,
                 url=att.href,
                 att=att,
                 content=content,
                 mime=mime,
-                date_from="last_modified" if modified else "crawled",
+                date_from=date_from,
+                last_modified=modified,
             )
 
     def _capped(self) -> bool:
@@ -674,6 +693,7 @@ class BoardCrawlerAdapter:
         content: bytes,
         mime: str,
         date_from: str | None = None,
+        last_modified: date | None = None,
     ) -> RawRecord:
         return RawRecord(
             external_id=external_id,
@@ -691,6 +711,7 @@ class BoardCrawlerAdapter:
                 "file_url": att.href,
                 "board_url": board.url,
                 **({"published_from": date_from} if date_from else {}),
+                **({"last_modified": last_modified.isoformat()} if last_modified else {}),
                 **self.extra_structured,
             },
         )
