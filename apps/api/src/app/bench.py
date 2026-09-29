@@ -32,6 +32,7 @@ from typing import Any
 
 import asyncpg
 
+from app.db.models import Opportunity
 from app.settings import get_settings
 
 SIZES: dict[str, int] = {
@@ -148,6 +149,13 @@ def queries(vec: str, inst: str, ref_hit: str, ref_miss: str) -> list[Query]:
         "AND NOT os.tentative AND s.verdict = 'accepted' AND s.institution_code = $1) "
         "ORDER BY o.id"
     )
+    metadata_columns = ", ".join(
+        f"o.{column.name}" for column in Opportunity.__table__.columns if column.name != "embedding"
+    )
+    eligible_metadata = eligible_candidates.replace("SELECT o.*", f"SELECT {metadata_columns}", 1)
+    surviving_embeddings = (
+        "SELECT id, embedding FROM opportunities WHERE id = ANY($1::bigint[]) ORDER BY id"
+    )
     scoped_reference = (
         "SELECT DISTINCT o.* FROM opportunities o "
         "JOIN opportunity_signals os ON os.opportunity_id = o.id "
@@ -172,11 +180,18 @@ def queries(vec: str, inst: str, ref_hit: str, ref_miss: str) -> list[Query]:
     return [
         Query(
             "link_eligible_candidates",
-            "기회 연결: 승인된 확정 신호가 있는 기관·기간 내 전체 후보 (제한 없음)",
+            "기회 연결: 기관·기간 내 전체 후보 (전: 벡터 포함, 후: 메타데이터만)",
             eligible_candidates,
-            eligible_candidates,
+            eligible_metadata,
             [inst],
             exact=eligible_candidates,
+        ),
+        Query(
+            "link_surviving_embeddings",
+            "기회 연결: 구조 필터를 통과한 후보의 벡터 일괄 조회 (4건 예시)",
+            surviving_embeddings,
+            surviving_embeddings,
+            [[11, 22, 33, 44]],
         ),
         Query(
             "link_reference_scoped",
@@ -662,6 +677,9 @@ def render(r: dict[str, Any]) -> str:
         f"환경: {r['postgres'].split(',')[0]}, pgvector {r['pgvector']}, {r['machine']}. "
         "시간은 따뜻한 캐시에서 5회 실행의 중앙값이며 기계마다 다릅니다. "
         "실행 계획과 반환 행 수·재현율이 읽어야 할 부분입니다.",
+        "",
+        "시간은 PostgreSQL EXPLAIN ANALYZE의 서버 실행 시간입니다. 네트워크 전송, 벡터 디코딩, "
+        "ORM 객체 생성과 Python 연결 점수 계산은 포함하지 않으므로 전체 연결 시간은 replay로 따로 측정합니다.",
         "",
         f"벡터는 사업 유형 {len(_TITLES)}개를 중심으로 뭉친 {DIM}차원 합성 임베딩입니다(실제 사업 설명 "
         "임베딩처럼). 재현율은 같은 쿼리를 인덱스 없이 전체 정렬한 정확한 결과와 비교한 값입니다.",

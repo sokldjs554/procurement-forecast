@@ -1,5 +1,10 @@
 # 평가 결과 (자동 생성: `manage eval all --report`)
 
+이 문서 본문의 수치는 PR #49 병합 기준입니다. 후속 [PR #50](https://github.com/sokldjs554/procurement-forecast/pull/50)의
+동일 조건 전후 수치와 최종 검증 실행 링크는 해당 PR에 기록합니다. 각 실행의 `integrity-audit`
+아티팩트에는 `baseline.json`, `changed.json`, 전체 생성 보고서 및 저장 원문 재검증 결과가
+포함됩니다. 이전 결과를 후속 코드의 실측값으로 간주하지 않습니다.
+
 > 합성 세계(synthetic world) 결과는 파이프라인이 설계대로 동작하는지 보여줄 뿐, 실제 데이터에서의
 > 정확도를 주장하지 않습니다. 실제 문장에 가까운 수기 작성 세트(realistic)를 따로 둔 이유입니다.
 

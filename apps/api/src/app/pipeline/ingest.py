@@ -148,7 +148,7 @@ async def reresolve_institutions(session: AsyncSession, runtime: Runtime) -> dic
             select(Document.id, Document.publisher_raw, code)
             .where(Document.institution_code.is_(None))
             .order_by(Document.id)
-            .with_for_update()
+            .with_for_update(key_share=True)
         )
     ).all()
     groups: dict[tuple[str | None, str | None], list[int]] = {}
@@ -210,7 +210,7 @@ async def upsert_record(
     existing = await session.scalar(
         select(Document)
         .where(Document.source_id == source.id, Document.external_id == rec.external_id)
-        .with_for_update()
+        .with_for_update(key_share=True)
         .execution_options(populate_existing=True)
     )
     if existing is not None and existing.content_hash == content_hash:

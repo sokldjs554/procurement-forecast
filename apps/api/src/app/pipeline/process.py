@@ -324,7 +324,11 @@ def _text_signal(
 async def process_document(
     session: AsyncSession, runtime: Runtime, document_id: int, *, final_attempt: bool = True
 ) -> ProcessResult:
-    doc = await session.get(Document, document_id, with_for_update=True, populate_existing=True)
+    # PostgreSQL NO KEY UPDATE serializes source edits/reprocessing while permitting the
+    # independent paid-call/cache transaction's foreign-key KEY SHARE on this document.
+    doc = await session.get(
+        Document, document_id, with_for_update={"key_share": True}, populate_existing=True
+    )
     if doc is None:
         raise LookupError(f"document {document_id} not found")
     await protect_human_decisions(session, document_id)

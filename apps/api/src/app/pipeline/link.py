@@ -28,6 +28,8 @@ from typing import Any
 
 from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import defer
+from sqlalchemy.orm.attributes import set_committed_value
 from sqlalchemy.sql.elements import ColumnElement
 
 from app.clock import today_kst
@@ -266,17 +268,37 @@ async def _candidates(session: AsyncSession, signal: Signal) -> list[Opportunity
         )
         .exists()
     )
-    stmt = select(Opportunity).where(
-        Opportunity.institution_code == signal.institution_code,
-        Opportunity.signal_count > 0,
-        Opportunity.last_signal_at >= signal.observed_at - timedelta(days=SPAN_DAYS),
-        Opportunity.first_seen_at <= signal.observed_at + timedelta(days=SPAN_DAYS),
-        eligible_member,
+    stmt = (
+        select(Opportunity)
+        .options(defer(Opportunity.embedding, raiseload=True))
+        .where(
+            Opportunity.institution_code == signal.institution_code,
+            Opportunity.signal_count > 0,
+            Opportunity.last_signal_at >= signal.observed_at - timedelta(days=SPAN_DAYS),
+            Opportunity.first_seen_at <= signal.observed_at + timedelta(days=SPAN_DAYS),
+            eligible_member,
+        )
     )
     # Score the complete eligible population: filtering a nearest-12 slice hid valid #13,
     # and vector order cannot bound the combined title/category/budget/timeline score.
     # ID ordering also makes ties deterministic, including signals without embeddings.
     return list((await session.scalars(stmt.order_by(Opportunity.id))).all())
+
+
+async def _load_candidate_embeddings(session: AsyncSession, candidates: list[Opportunity]) -> None:
+    """Fetch vectors only after every structural gate, in one explicit query.
+
+    Mark them loaded without marking the opportunities dirty. Deferred attributes raise on
+    access, so scoring can never accidentally issue one lazy query per candidate.
+    """
+    rows = await session.execute(
+        select(Opportunity.id, Opportunity.embedding).where(
+            Opportunity.id.in_([opp.id for opp in candidates])
+        )
+    )
+    vectors = dict(rows.all())
+    for opp in candidates:
+        set_committed_value(opp, "embedding", vectors.get(opp.id))
 
 
 async def _without_conflicting_numbers(
@@ -389,6 +411,8 @@ async def decide(session: AsyncSession, runtime: Runtime, signal: Signal) -> Lin
         signal,
         await _without_conflicting_numbers(session, signal, await _candidates(session, signal)),
     )
+    if candidates and signal.embedding is not None:
+        await _load_candidate_embeddings(session, candidates)
     best: tuple[float, Opportunity, dict[str, float]] | None = None
     for opp in candidates:
         score, parts = score_candidate(signal, opp)

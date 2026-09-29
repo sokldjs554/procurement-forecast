@@ -7,6 +7,7 @@ from unittest.mock import AsyncMock
 import pytest
 
 from app.db.models import Opportunity, Signal
+from app.pipeline import link
 from app.pipeline.link import _without_conflicting_numbers, decide, refresh_opportunity
 
 TODAY = date(2026, 9, 29)
@@ -121,3 +122,31 @@ async def test_empty_eligible_thread_keeps_history_without_active_summary():
     assert opp.bid_window_start is None and opp.bid_window_end is None
     assert opp.embedding is None and opp.keywords == []
     assert opp.id == 1 and opp.title == "청사 냉난방기 교체"
+
+
+async def test_surviving_candidate_uses_its_stored_vector_after_structural_filters(monkeypatch):
+    opp = opportunity()
+    opp.title = "본관 기계설비 개선"
+    opp.est_budget_krw = None
+    opp.embedding = None  # metadata retrieval has not loaded the persisted vector
+    session = SimpleNamespace(
+        execute=AsyncMock(return_value=SimpleNamespace(all=lambda: [(opp.id, [1.0] + [0.0] * 511)]))
+    )
+    signal = Signal(
+        id=2,
+        institution_code="TEST",
+        external_refs={},
+        title="청사 냉난방기 교체",
+        category="facility",
+        stage="order_plan",
+        budget_krw=None,
+        observed_at=TODAY,
+        embedding=[1.0] + [0.0] * 511,
+    )
+    monkeypatch.setattr(link, "_reference_match", AsyncMock(return_value=None))
+    monkeypatch.setattr(link, "_candidates", AsyncMock(return_value=[opp]))
+    monkeypatch.setattr(link, "_without_conflicting_numbers", AsyncMock(return_value=[opp]))
+    monkeypatch.setattr(link, "_without_other_budget_rows", AsyncMock(return_value=[opp]))
+    runtime = SimpleNamespace(settings=SimpleNamespace(link_threshold=0.6, link_review_band=0.08))
+    result = await decide(session, runtime, signal)
+    assert result is not None and result.opportunity_id == opp.id

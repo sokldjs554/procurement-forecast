@@ -4,6 +4,7 @@ from datetime import date
 from types import SimpleNamespace
 
 import pytest
+from sqlalchemy import inspect
 
 from app.db.models import Document, InstitutionRow, Opportunity, OpportunitySignal, Signal, Source
 from app.db.session import get_sessionmaker
@@ -178,6 +179,34 @@ async def test_valid_candidate_beyond_twelve_conflicting_threads_is_retrieved(li
     new = await signal(session, source, "new", refs={"order_plan_no": "NEW"}, embedding=embedding)
     result = await decide(session, RUNTIME, new)
     assert result and result.opportunity_id == eligible.id
+
+
+async def test_metadata_filters_defer_vectors_until_survivors_are_scored(link_db):
+    session, source = link_db
+    valid = await thread(session, await signal(session, source, "valid"))
+    valid.title = "본관 기계설비 개선"
+    valid.est_budget_krw = None
+    valid_id = valid.id
+    invalid = await thread(
+        session, await signal(session, source, "invalid", refs={"order_plan_no": "OTHER"})
+    )
+    invalid_id = invalid.id
+    await session.flush()
+    # Fresh identities model normal retrieval, rather than fixture objects with loaded vectors.
+    session.expunge_all()
+    source = await session.get(Source, source.id)
+    assert source is not None
+    incoming = await signal(session, source, "new", refs={"order_plan_no": "NEW"})
+    incoming.budget_krw = None
+    candidates = await _candidates(session, incoming)
+    assert {candidate.id for candidate in candidates} == {valid_id, invalid_id}
+    assert all("embedding" in inspect(candidate).unloaded for candidate in candidates)
+    result = await decide(session, RUNTIME, incoming)
+    assert result and result.opportunity_id == valid_id
+    survivor = next(candidate for candidate in candidates if candidate.id == valid_id)
+    rejected = next(candidate for candidate in candidates if candidate.id == invalid_id)
+    assert "embedding" not in inspect(survivor).unloaded
+    assert "embedding" in inspect(rejected).unloaded
 
 
 @pytest.mark.parametrize(
