@@ -169,6 +169,8 @@ def check_signal(
     fiscal_year: int | None,
     table_unit: int,
     min_score: float,
+    document_text: str | None = None,
+    char_start: int = 0,
 ) -> CheckedSignal:
     expected_year = sig.expected_year
     if doc_type == "budget_book" and fiscal_year:
@@ -184,6 +186,10 @@ def check_signal(
         confidence=sig.confidence,
         min_score=min_score,
         default_unit=table_unit if doc_type == "budget_book" else 1,
+        council_document=(document_text if document_text is not None else text)
+        if doc_type == "council_minutes"
+        else None,
+        char_start=char_start,
     )
     budget = sig.budget_krw
     if report.budget_grounded is False and report.budget_parsed:
@@ -211,6 +217,8 @@ def _text_signal(
         fiscal_year=fiscal_year,
         table_unit=table_unit,
         min_score=runtime.settings.grounding_min_score,
+        document_text=doc.text,
+        char_start=chunk.char_start,
     )
     report = checked.report
     owner = _demand_owner(runtime, doc)

@@ -16,12 +16,15 @@ from collections import defaultdict
 from datetime import date, timedelta
 from typing import Any
 
-from sqlalchemy import select
+from sqlalchemy import Row, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.clock import today_kst
-from app.db.models import EvalRun, Opportunity, OpportunitySignal, Signal
-from app.domain.stages import PRE_PROCUREMENT, Stage
+from app.db.models import Document, EvalRun, Opportunity, OpportunitySignal, Signal
+from app.domain.stages import CANCELS_KEY, PRE_PROCUREMENT, Stage
+
+METHOD_VERSION = "public-date-cohort-v2"
+UNCERTAIN_DATE_SOURCES = frozenset({"fiscal_year", "last_modified", "crawled", "meeting_date"})
 
 
 async def run_backtest(
@@ -32,50 +35,77 @@ async def run_backtest(
     min_samples: int = 5,
 ) -> dict[str, Any]:
     today = today or today_kst()
+    if horizon_days <= 0 or min_samples <= 0:
+        raise ValueError("horizon_days and min_samples must be positive")
     rows = (
         await session.execute(
-            select(Opportunity, Signal)
+            select(
+                Opportunity.id.label("opportunity_id"),
+                Signal.id,
+                Signal.stage,
+                Signal.observed_at,
+                Signal.commitment,
+                Signal.external_refs,
+                Document.published_at,
+                Document.structured,
+            )
             .join(OpportunitySignal, OpportunitySignal.opportunity_id == Opportunity.id)
             .join(Signal, Signal.id == OpportunitySignal.signal_id)
-            .order_by(Opportunity.id, Signal.observed_at)
+            .join(Document, Document.id == Signal.document_id)
+            .where(Signal.verdict == "accepted", OpportunitySignal.tentative.is_(False))
+            .order_by(Opportunity.id, Document.published_at, Signal.id)
         )
     ).all()
-    by_opp: dict[int, tuple[Opportunity, list[Signal]]] = {}
-    for opp, sig in rows:
-        by_opp.setdefault(opp.id, (opp, []))[1].append(sig)
+    by_opp: dict[int, list[tuple[Row[Any], date]]] = defaultdict(list)
+    excluded_uncertain_dates = 0
+    for sig in rows:
+        # Meeting/adoption dates are event dates, not proof of public availability.
+        provenance = sig.structured.get("published_from")
+        if provenance in UNCERTAIN_DATE_SOURCES or (
+            "council_id" in sig.structured and provenance is None
+        ):
+            excluded_uncertain_dates += 1
+            continue
+        available = max(sig.published_at, sig.observed_at)
+        if available <= today:
+            by_opp[sig.opportunity_id].append((sig, available))
 
     cohorts: dict[str, list[int]] = defaultdict(list)  # key -> [converted 0/1]
     lead_days: list[int] = []
     lead_by_first_stage: dict[str, list[int]] = defaultdict(list)
     tenders_total = 0
     tenders_with_early = 0
-    for opp, sigs in by_opp.values():
-        first = sigs[0]
-        bid_at = opp.bid_published_at
-        if bid_at is not None and opp.category != "other":
+    censored = 0
+    for records in by_opp.values():
+        records.sort(key=lambda r: (r[1], r[0].id))
+        first, first_at = records[0]
+        # Never use Opportunity.bid_published_at: that summary can contain future data.
+        bids = [
+            at
+            for sig, at in records
+            if sig.stage == Stage.BID.value and CANCELS_KEY not in sig.external_refs
+        ]
+        bid_at = min(bids) if bids else None
+        if bid_at is not None:
             tenders_total += 1
             early = [
-                s for s in sigs if Stage(s.stage) in PRE_PROCUREMENT and s.observed_at < bid_at
+                (sig, at)
+                for sig, at in records
+                if Stage(sig.stage) in PRE_PROCUREMENT and at < bid_at
             ]
             if early:
                 tenders_with_early += 1
-                lead = (bid_at - early[0].observed_at).days
+                lead = (bid_at - early[0][1]).days
                 lead_days.append(lead)
-                lead_by_first_stage[early[0].stage].append(lead)
+                lead_by_first_stage[early[0][0].stage].append(lead)
         if Stage(first.stage) not in PRE_PROCUREMENT:
             continue
-        if first.observed_at > today - timedelta(days=horizon_days) and bid_at is None:
-            continue  # too young to judge
-        commitment = (
-            max(
-                (s.commitment for s in sigs if s.stage == first.stage and s.commitment),
-                key=("declined", "reviewing", "planned", "committed").index,
-                default=None,
-            )
-            if first.stage == Stage.COUNCIL.value
-            else "committed"
-        )
-        converted = int(bid_at is not None)
+        horizon_end = first_at + timedelta(days=horizon_days)
+        if horizon_end > today:
+            censored += 1
+            continue  # apply the SAME follow-up requirement to successes and non-successes
+        commitment = first.commitment if first.stage == Stage.COUNCIL.value else "committed"
+        converted = int(bid_at is not None and first_at < bid_at <= horizon_end)
         cohorts[f"{first.stage}:{commitment or 'none'}"].append(converted)
         cohorts[f"{first.stage}:*"].append(converted)
 
@@ -89,7 +119,15 @@ async def run_backtest(
     }
     metrics = {
         "as_of": today.isoformat(),
+        "method_version": METHOD_VERSION,
+        "evaluation_scope": "retrospective_linked_signals",
+        "limitations": [
+            "Current link groups are used; this is not a historical prediction replay.",
+            "Missing tenders can reflect incomplete source coverage, not non-procurement.",
+        ],
         "horizon_days": horizon_days,
+        "censored_opportunities": censored,
+        "excluded_uncertain_dates": excluded_uncertain_dates,
         "conversion_by_first_signal": conversion,
         "calibration": calibration,
         "lead_time_days": {
@@ -120,5 +158,7 @@ async def latest_calibration(session: AsyncSession) -> dict[str, float] | None:
     )
     if run is None:
         return None
+    if run.metrics.get("method_version") != METHOD_VERSION:
+        return None  # old, potentially biased results must not silently calibrate new rankings
     cal = run.metrics.get("calibration")
     return {str(k): float(v) for k, v in cal.items()} if isinstance(cal, dict) else None

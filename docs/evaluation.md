@@ -6,13 +6,14 @@
 조건: 기준일 2026-09-25 · 시드 7 · 규모 1.0 · 스캔 비율 기본값 · 추출기 `heuristic`
 
 ## 추출 (합성 정답 대비)
-- 정밀도 100.0% · 재현율 100.0% (정답 106건, 예측 106건)
+- 정밀도 100.0% · 재현율 100.0% (정답 106건, 예측 106건; 검토 대기 포함)
+- 자동 승인 103건 · 검토 대기 3건. 저장 재현율은 자동 승인 재현율이 아닙니다.
 - 필드 정확도: budget 100.0%, expected_year 100.0%, commitment 100.0%, category 97.2%, institution 100.0%
 - 트리아지: 청크 807개 중 59.4%를 LLM 호출 없이 건너뜀, 그 상태에서 정답 신호 재현율 99.1%
 
 ## 기회 연결 (linking)
-- 쌍(pairwise) 정밀도 100.0% · 재현율 100.0% · F1 1.0
-- 한 기회로 온전히 묶인 실제 사업 비율 100.0%, 순수한 기회 비율 100.0%
+- 쌍(pairwise) 정밀도 100.0% · 재현율 98.5% · F1 0.992
+- 한 기회로 온전히 묶인 실제 사업 비율 98.6%, 순수한 기회 비율 100.0%
 
 ## OCR (스캔 예산서)
 - 문서 6건 · CER 0.0113 → 보정 후 0.0099
@@ -24,14 +25,17 @@
 - 검증기 통과 후(저장되는 값): 정밀도 92.0% · 재현율 46.0% · category 82.6%, commitment 82.6%, budget 78.3%, expected_year 91.3% · 근거를 찾지 못해 버린 신호 0건
 - 모델별 비교는 `manage eval llm` → [evaluation-llm.md](evaluation-llm.md)
 
-## 백테스트
-- 입찰공고 48건 중 75.0%가 공고 이전에 공개 신호를 가짐
-- 선행 기간 중앙값 308.0일 (p25 194.75, p75 378.75)
+## 백테스트 (현재 연결의 회고적 진단)
+- 방법: `public-date-cohort-v2` · 기준일 2026-09-25 · 관측기간 540일
+- 관측기간 미충족 기회 35건 · 공개일 불확실 제외 신호 0건
+- 합성 데이터 실행 수치는 실제 예측 성능이 아닙니다. 현재 연결을 사용하므로 과거 시점 예측 재현도 아닙니다.
+- 입찰공고 63건 중 54.0%가 공고 이전에 공개 신호를 가짐
+- 선행 기간 중앙값 273.5일 (p25 192.75, p75 347.75)
 - 첫 신호 유형별 입찰 전환율:
-  - `budget_line:*` n=13 → 100.0%
-  - `council_mention:*` n=33 → 63.6%
-  - `budget_line:committed` n=13 → 100.0%
+  - `budget_line:*` n=9 → 77.8%
+  - `council_mention:*` n=25 → 56.0%
+  - `budget_line:committed` n=9 → 77.8%
   - `council_mention:planned` n=3 → 100.0%
-  - `council_mention:declined` n=3 → 33.3%
-  - `council_mention:committed` n=17 → 88.2%
-  - `council_mention:reviewing` n=10 → 20.0%
+  - `council_mention:declined` n=2 → 0.0%
+  - `council_mention:committed` n=11 → 81.8%
+  - `council_mention:reviewing` n=9 → 22.2%

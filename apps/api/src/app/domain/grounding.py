@@ -17,6 +17,7 @@ the admin review queue, ``rejected`` is stored for eval but never shown to custo
 
 from __future__ import annotations
 
+import re
 from dataclasses import asdict, dataclass, field
 from datetime import date
 from typing import Any, Literal
@@ -26,8 +27,65 @@ from rapidfuzz import fuzz
 from app.domain.krw import amounts_agree, find_amounts
 from app.domain.text import collapse_ws, normalize_with_map
 from app.domain.timing import resolve_timing
+from app.parsing.chunking import split_turns
 
 Verdict = Literal["accepted", "needs_review", "rejected"]
+
+# Unknown roles stay reviewable; an unrecognised speaker is never an executive by default.
+_OFFICIAL_ENDINGS = (
+    "시장",
+    "군수",
+    "구청장",
+    "국장",
+    "과장",
+    "실장",
+    "팀장",
+    "담당관",
+    "소장",
+    "본부장",
+    "원장",
+    "센터장",
+    "관장",
+    "사장",
+    "대표이사",
+)
+
+
+def official_evidence_issue(
+    document_text: str, checks: list[EvidenceCheck], *, char_start: int
+) -> str | None:
+    """Attribute each located quote to ONE source turn, including continuation chunks.
+
+    A member's question may supply the subject. At least one substantive quote must come
+    from an executive answer. This establishes attribution, not semantic correctness.
+    """
+    turns = split_turns(document_text)
+    official_quotes: list[str] = []
+    for check in checks:
+        if not check.found or check.start is None or check.end is None:
+            continue
+        start, end = char_start + check.start, char_start + check.end
+        turn = next((t for t in turns if t.start <= start and end <= t.end), None)
+        if (
+            turn
+            and not turn.is_member
+            and not turn.is_chair
+            and not turn.role.endswith(("위원", "의원", "위원장", "의장"))
+            and turn.role.endswith(_OFFICIAL_ENDINGS)
+            # An unknown speaker heading must not inherit the preceding official's role.
+            and not re.search(r"(?m)^[ \t]*[○◯◎]", document_text[turn.start + 1 : end])
+        ):
+            quote = collapse_ws(document_text[start:end])
+            # Quotes including a speaker header must not gain length from the role/name.
+            if quote.startswith(("○", "◯", "◎")):
+                quote = quote.split(turn.name, 1)[-1].strip()
+            official_quotes.append(quote)
+    if not official_quotes:
+        return "official_evidence_missing"
+    # A bare "네, 맞습니다" cannot turn the question into an executive commitment.
+    if not any(len(q.replace(" ", "")) >= 12 for q in official_quotes):
+        return "official_evidence_ambiguous"
+    return None
 
 
 @dataclass(frozen=True, slots=True)
@@ -93,6 +151,8 @@ def verify_extraction(
     confidence: float,
     min_score: float = 88.0,
     default_unit: int = 1,
+    council_document: str | None = None,
+    char_start: int = 0,
 ) -> GroundingReport:
     checks = [locate_quote(source, q, min_score=min_score) for q in evidence_quotes]
     report = GroundingReport(
@@ -111,6 +171,11 @@ def verify_extraction(
     elif report.evidence_ratio < 1.0:
         report.issues.append("partial_evidence")
 
+    if council_document is not None:
+        issue = official_evidence_issue(council_document, checks, char_start=char_start)
+        if issue:
+            report.issues.append(issue)
+
     if budget_krw is not None:
         candidates: list[int] = []
         table = default_unit != 1  # budget-book context: bare "352,000" cells are amounts
@@ -118,10 +183,17 @@ def verify_extraction(
             candidates += [
                 a.value for a in find_amounts(span, default_unit=default_unit, bare_numbers=table)
             ]
-        if budget_text and locate_quote(source, budget_text, min_score=min_score).found:
+        budget_match = (
+            locate_quote(source, budget_text, min_score=min_score) if budget_text else None
+        )
+        if budget_match and budget_match.found:
             candidates += [
                 a.value
-                for a in find_amounts(budget_text, default_unit=default_unit, bare_numbers=table)
+                for a in find_amounts(
+                    source[budget_match.start : budget_match.end],
+                    default_unit=default_unit,
+                    bare_numbers=table,
+                )
             ]
         report.budget_parsed = max(candidates) if candidates else None
         report.budget_grounded = any(amounts_agree(budget_krw, c) for c in candidates)
@@ -129,7 +201,14 @@ def verify_extraction(
             report.issues.append("budget_mismatch" if candidates else "budget_unsupported")
 
     if expected_year is not None:
-        timing_sources = [timing_text] if timing_text else []
+        timing_match = (
+            locate_quote(source, timing_text, min_score=min_score) if timing_text else None
+        )
+        timing_sources = (
+            [source[timing_match.start : timing_match.end]]
+            if timing_match and timing_match.found
+            else []
+        )
         timing_sources += found_spans
         for phrase in timing_sources:
             if phrase and (t := resolve_timing(phrase, reference_date)) is not None:

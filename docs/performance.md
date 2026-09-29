@@ -90,3 +90,18 @@
 - 후: `Limit → Sort → Index Scan (ix_documents_pending)`
 
 마이그레이션 0002 적용 시간(데이터가 있는 상태): 4.3초
+
+## 2026-09-29: 백테스트 공개일 조회 검증 추가
+
+[PR #49](https://github.com/sokldjs554/procurement-forecast/pull/49)에서 `make bench`에
+`backtest_public_dates` 비교를 추가했습니다. 위 표의 기존 측정과 구분합니다.
+
+- 전: 기회·신호의 전체 ORM 행을 읽고 신호 관측일로 정렬.
+- 후: 문서를 조인해 공개일을 읽고, 승인 신호·확정 연결만 선택. 기회 ID와 신호 ID·단계·관측일·발언 강도·참조번호·문서 공개일·공개일 출처만 조회.
+- 문서의 원문과 기회/신호의 임베딩은 전송하지 않습니다. 같은 긴 회의록을 신호 수만큼 반복 전송하지 않기 위해 필요한 열만 명시했습니다.
+- `EXPLAIN (ANALYZE, BUFFERS)` 비교는 기존 기본 규모(문서 15만, 신호 40만, 기회 10만, 청크 60만, 추천 30만)를 유지합니다. 필터와 결과 열이 바뀌었으므로 단순 인덱스 추가에 따른 속도 향상으로 해석하지 않습니다.
+
+재현: `make bench`. [Integrity audit 워크플로](https://github.com/sokldjs554/procurement-forecast/actions/workflows/integrity-audit.yml)의
+`integrity-audit` 아티팩트에 실행 머신, 행 수, 전후 시간과 실행 계획을 담은 `performance.md`를 보관합니다.
+최초 CI 시도는 HNSW 인덱스를 만드는 동안 Docker 기본 공유 메모리 한도를 초과했습니다.
+검증 컨테이너에 `--shm-size=2g`를 지정했으며, 데이터 규모나 테스트 기준은 줄이지 않았습니다.

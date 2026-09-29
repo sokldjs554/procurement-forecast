@@ -141,6 +141,19 @@ def queries(vec: str, inst: str, ref_hit: str, ref_miss: str) -> list[Query]:
     open_ = "status IN ('open', 'bid_open')"
     return [
         Query(
+            "backtest_public_dates",
+            "백테스트: 승인된 확정 연결의 공개일·첫 신호 조회",
+            "SELECT o.*, s.* FROM opportunities o "
+            "JOIN opportunity_signals os ON os.opportunity_id=o.id "
+            "JOIN signals s ON s.id=os.signal_id ORDER BY o.id, s.observed_at",
+            "SELECT o.id, s.id, s.stage, s.observed_at, s.commitment, s.external_refs, "
+            "d.published_at, d.structured FROM opportunities o "
+            "JOIN opportunity_signals os ON os.opportunity_id=o.id "
+            "JOIN signals s ON s.id=os.signal_id JOIN documents d ON d.id=s.document_id "
+            "WHERE s.verdict='accepted' AND os.tentative=false "
+            "ORDER BY o.id, d.published_at, s.id",
+        ),
+        Query(
             "recommend_semantic",
             "추천 후보: 회사 소개와 가까운 진행 중 공고 300건 (벡터)",
             f"SELECT id FROM opportunities WHERE {open_} "

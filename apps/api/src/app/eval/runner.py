@@ -351,7 +351,8 @@ def render_report(r: dict[str, Any]) -> str:
         f"추출기 `{c.get('extractor_mode')}`",
         "",
         "## 추출 (합성 정답 대비)",
-        f"- 정밀도 {_pct(e['precision'])} · 재현율 {_pct(e['recall'])} (정답 {e['gold']}건, 예측 {e['predicted']}건)",
+        f"- 정밀도 {_pct(e['precision'])} · 재현율 {_pct(e['recall'])} (정답 {e['gold']}건, 예측 {e['predicted']}건; 검토 대기 포함)",
+        f"- 자동 승인 {e['verdicts']['accepted']}건 · 검토 대기 {e['verdicts']['needs_review']}건. 저장 재현율은 자동 승인 재현율이 아닙니다.",
         "- 필드 정확도: " + ", ".join(f"{k} {_pct(v)}" for k, v in e["field_accuracy"].items()),
         f"- 트리아지: 청크 {e['triage']['chunks']}개 중 {_pct(e['triage']['skipped_rate'])}를 LLM 호출 없이 건너뜀, "
         f"그 상태에서 정답 신호 재현율 {_pct(e['triage']['gold_recall_after_triage'])}",
@@ -377,7 +378,10 @@ def render_report(r: dict[str, Any]) -> str:
         cov = bt.get("tender_early_coverage", {})
         lead = bt.get("lead_time_days", {})
         lines += [
-            "## 백테스트",
+            "## 백테스트 (현재 연결의 회고적 진단)",
+            f"- 방법: `{bt.get('method_version', 'legacy')}` · 기준일 {bt.get('as_of')} · 관측기간 {bt.get('horizon_days')}일",
+            f"- 관측기간 미충족 기회 {bt.get('censored_opportunities', 0)}건 · 공개일 불확실 제외 신호 {bt.get('excluded_uncertain_dates', 0)}건",
+            "- 합성 데이터 실행 수치는 실제 예측 성능이 아닙니다. 현재 연결을 사용하므로 과거 시점 예측 재현도 아닙니다.",
             f"- 입찰공고 {cov.get('tenders')}건 중 {_pct(cov.get('rate'))}가 공고 이전에 공개 신호를 가짐",
             f"- 선행 기간 중앙값 {lead.get('median')}일 (p25 {lead.get('p25')}, p75 {lead.get('p75')})",
             "- 첫 신호 유형별 입찰 전환율:",
