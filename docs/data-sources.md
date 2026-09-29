@@ -7,7 +7,7 @@
 | `g2b_order_plan` | 조달청 발주계획현황서비스 | 발주계획 | 매시 7분 | `sources/g2b.py` |
 | `g2b_prespec` | 조달청 사전규격정보서비스 | 사전규격 | 매시 7분 | `sources/g2b.py` |
 | `g2b_bid` | 조달청 입찰공고정보서비스 | 입찰공고 | 매시 7분 | `sources/g2b.py` |
-| `budget_boards` (기본 꺼짐) | 지자체 누리집 예산서 게시판·페이지 (게시판마다 `sources.config`에 설정) | 예산서 첨부(PDF·HWP/HWPX) | 수집원 설정 | `sources/crawler.py` |
+| `budget_boards` (기본 꺼짐) | 지자체 누리집 예산서 게시판·페이지 (게시판마다 `sources.config`에 설정) | 예산서 첨부(PDF·HWP/HWPX) | 매주 일 02:40 (`lofin_budget`과 함께). 게시일이 없는 한 페이지 목록은 그해·다음 해 예산서를 매번 다시 받고, 내용이 같으면 다시 처리하지 않음 | `sources/crawler.py` |
 | `minutes_boards` (기본 꺼짐) | 지방의회 누리집 회의록 게시판 (게시판마다 `sources.config`에 설정) | 지방의회 회의록(HWP) | 매일 03:10 (`clik_minutes`와 함께) | `sources/crawler.py` |
 | `fixture_*` | 합성 세계 (`demo/synth.py`) — 예산서는 합성 누리집을 **크롤링**해서 수집 | 위 여섯 가지 | 수동/데모 | `sources/registry.py`, `demo/sites.py` |
 
