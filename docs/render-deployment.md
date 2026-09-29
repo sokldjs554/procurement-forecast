@@ -1,8 +1,8 @@
 # Render production deployment
 
 This is a deployable configuration, **not evidence of a live deployment**. No resource for
-this project was found in the confirmed Render workspace on 2026-09-29. The existing unrelated
-`careflow` database must not be reused or changed. No project resources were created while
+this project was found in the confirmed Render workspace on 2026-09-29. Existing resources for
+other projects must not be reused or changed. No project resources were created while
 preparing this configuration.
 
 ## Resources and cost

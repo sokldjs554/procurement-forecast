@@ -24,6 +24,7 @@ from collections import Counter
 from dataclasses import dataclass
 from datetime import date, timedelta
 from difflib import SequenceMatcher
+from functools import lru_cache
 from typing import Any
 
 from sqlalchemy import or_, select
@@ -46,7 +47,7 @@ from app.domain.stages import (
     withdrawn_bids,
 )
 from app.domain.synonyms import canonical_terms, canonicalize
-from app.domain.text import char_ngrams, jaccard
+from app.domain.text import char_ngrams
 from app.log import get_logger
 from app.pipeline.process import canonical_title
 from app.runtime import Runtime
@@ -79,14 +80,51 @@ class LinkDecision:
     reasons: dict[str, Any]
 
 
+@dataclass(frozen=True, slots=True)
+class _TitleFingerprint:
+    budget_name: str
+    bigrams: frozenset[str]
+    trigrams: frozenset[str]
+    terms: frozenset[str]
+
+
+def _make_title_fingerprint(title: str) -> _TitleFingerprint:
+    canonical = canonicalize(canonical_title(title))
+    return _TitleFingerprint(
+        budget_name=_NAME_NOISE_RE.sub("", canonical),
+        bigrams=frozenset(char_ngrams(canonical, 2)),
+        trigrams=frozenset(char_ngrams(canonical, 3)),
+        # Terms intentionally use the original title: stripping e.g. [CCTV] first would
+        # change the existing evidence, even though n-grams use the cleaned title.
+        terms=frozenset(canonical_terms(title)),
+    )
+
+
+@lru_cache(maxsize=2048)
+def _cached_title_fingerprint(title: str) -> _TitleFingerprint:
+    return _make_title_fingerprint(title)
+
+
+def _title_fingerprint(title: str) -> _TitleFingerprint:
+    # Bound both the number and input length of retained entries. Full document fragments
+    # accidentally supplied as titles still score normally, without occupying the cache.
+    if len(title) > 256:
+        return _make_title_fingerprint(title)
+    return _cached_title_fingerprint(title)
+
+
+def _ngram_overlap(a: frozenset[str], b: frozenset[str]) -> float:
+    return len(a & b) / len(a | b) if a and b else 0.0
+
+
 def title_similarity(a: str, b: str) -> float:
     """Character n-gram overlap after synonym canonicalisation, or shared domain terms."""
-    ca, cb = canonicalize(canonical_title(a)), canonicalize(canonical_title(b))
+    fa, fb = _title_fingerprint(a), _title_fingerprint(b)
     ngram = max(
-        jaccard(set(char_ngrams(ca, 2)), set(char_ngrams(cb, 2))),
-        jaccard(set(char_ngrams(ca, 3)), set(char_ngrams(cb, 3))),
+        _ngram_overlap(fa.bigrams, fb.bigrams),
+        _ngram_overlap(fa.trigrams, fb.trigrams),
     )
-    ta, tb = canonical_terms(a), canonical_terms(b)
+    ta, tb = fa.terms, fb.terms
     shared = len(ta & tb) / max(min(len(ta), len(tb)), 1) if ta and tb else 0.0
     return max(ngram, 0.8 * shared)
 
@@ -127,7 +165,7 @@ def budget_names_agree(a: str, b: str) -> bool:
     "수정청소년수련관", 1 for 2 — or words dropped on one side and others added on the other —
     "CCTV 관제센터 구축 및 운영" and "수정구 생활안전 CCTV 구축" — make another project, however
     much of the rest is shared."""
-    x, y = (_NAME_NOISE_RE.sub("", canonicalize(canonical_title(t))) for t in (a, b))
+    x, y = _title_fingerprint(a).budget_name, _title_fingerprint(b).budget_name
     if x == y:
         return True
     if title_similarity(a, b) < BUDGET_NAME_FLOOR:
@@ -138,7 +176,7 @@ def budget_names_agree(a: str, b: str) -> bool:
 
 def terms_conflict(a: str, b: str) -> bool:
     """Both titles name specific, *different* things ("스마트쉘터" vs "스마트폴")."""
-    ta, tb = canonical_terms(a), canonical_terms(b)
+    ta, tb = _title_fingerprint(a).terms, _title_fingerprint(b).terms
     return bool(ta) and bool(tb) and not (ta & tb)
 
 

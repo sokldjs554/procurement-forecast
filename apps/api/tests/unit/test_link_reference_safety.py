@@ -1,14 +1,21 @@
 """Reference identity and retained history must survive conservative relinking."""
 
+import re
+from dataclasses import FrozenInstanceError
 from datetime import date
+from difflib import SequenceMatcher
+from itertools import product
 from types import SimpleNamespace
 from unittest.mock import AsyncMock
 
 import pytest
 
 from app.db.models import Opportunity, Signal
+from app.domain.synonyms import canonical_terms, canonicalize
+from app.domain.text import char_ngrams, jaccard
 from app.pipeline import link
 from app.pipeline.link import _without_conflicting_numbers, decide, refresh_opportunity
+from app.pipeline.process import canonical_title
 
 TODAY = date(2026, 9, 29)
 
@@ -150,3 +157,63 @@ async def test_surviving_candidate_uses_its_stored_vector_after_structural_filte
     runtime = SimpleNamespace(settings=SimpleNamespace(link_threshold=0.6, link_review_band=0.08))
     result = await decide(session, runtime, signal)
     assert result is not None and result.opportunity_id == opp.id
+
+
+def _uncached_title_results(a, b):
+    """Pre-cache scoring equations, kept independent of the new fingerprint helper."""
+    ca, cb = canonicalize(canonical_title(a)), canonicalize(canonical_title(b))
+    ngrams = max(
+        jaccard(set(char_ngrams(ca, 2)), set(char_ngrams(cb, 2))),
+        jaccard(set(char_ngrams(ca, 3)), set(char_ngrams(cb, 3))),
+    )
+    ta, tb = canonical_terms(a), canonical_terms(b)
+    shared = len(ta & tb) / max(min(len(ta), len(tb)), 1) if ta and tb else 0.0
+    similarity = max(ngrams, 0.8 * shared)
+    x, y = (re.sub(r"[\s()\[\]{}·ㆍ,.\-_/]", "", t) for t in (ca, cb))
+    agree = x == y
+    if not agree and similarity >= 0.5:
+        edits = {tag for tag, *_ in SequenceMatcher(None, x, y, autojunk=False).get_opcodes()}
+        agree = edits in ({"equal", "insert"}, {"equal", "delete"})
+    return similarity, agree, bool(ta) and bool(tb) and not (ta & tb)
+
+
+def test_cached_title_results_preserve_uncached_equations_for_cold_and_warm_inputs():
+    titles = (
+        "",
+        "스마트 쉘터",
+        "[긴급] 2026년 스마트 버스정류장 조성 (재공고)",
+        "수정청소년수련관 시설개선",
+        "중원청소년수련관 시설 개선",
+        "판교도서관 냉난방기 교체",
+        "성남시판교도서관 냉난방기 교체",
+        "AI 청사 안내",
+        "[CCTV] 2026년 공원 정비",
+        "공원 정비",
+        "ＡＩ\u3000누리집\u200b 정비",
+        "스마트쉘터" * 60,
+    )
+    pairs = list(product(titles, repeat=2))
+    expected = [_uncached_title_results(a, b) for a, b in pairs]
+    link._cached_title_fingerprint.cache_clear()
+    for _ in range(2):
+        actual = [
+            (link.title_similarity(a, b), link.budget_names_agree(a, b), link.terms_conflict(a, b))
+            for a, b in pairs
+        ]
+        assert actual == expected
+
+
+def test_reused_title_fingerprint_cannot_be_mutated():
+    first = link._title_fingerprint("[CCTV] 공원 정비")
+    assert first is link._title_fingerprint("[CCTV] 공원 정비")
+    with pytest.raises(FrozenInstanceError):
+        first.budget_name = "다른 사업"
+    with pytest.raises(AttributeError):
+        first.terms.add("스마트폴")
+
+
+def test_extreme_titles_are_computed_without_cache_retention():
+    title = "스마트쉘터" * 60
+    first = link._title_fingerprint(title)
+    second = link._title_fingerprint(title)
+    assert first == second and first is not second
