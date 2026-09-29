@@ -37,11 +37,13 @@ demo_app = typer.Typer(help="Synthetic demo world")
 eval_app = typer.Typer(help="Evaluations")
 sources_app = typer.Typer(help="External data sources")
 pipeline_app = typer.Typer(help="Pipeline stages outside the worker")
+llm_cache_app = typer.Typer(help="Paid LLM answers, kept across databases")
 app.add_typer(db_app, name="db")
 app.add_typer(demo_app, name="demo")
 app.add_typer(eval_app, name="eval")
 app.add_typer(sources_app, name="sources")
 app.add_typer(pipeline_app, name="pipeline")
+app.add_typer(llm_cache_app, name="llm-cache")
 
 T = TypeVar("T")
 
@@ -353,6 +355,33 @@ def pipeline_run(
     typer.echo(json.dumps(result, ensure_ascii=False, indent=2))
     if result["stopped"]:  # the LLM account needs a person; the rest is still pending
         raise typer.Exit(1)
+
+
+@llm_cache_app.command("export")
+def llm_cache_export(path: Path = typer.Argument(..., help="Where to write (.jsonl.gz)")) -> None:
+    """Write every cached extraction answer (key + response) so a new database need not pay
+    for them again."""
+
+    async def go(session: Any, runtime: Any) -> int:
+        from app.llm.cache_io import export_cache
+
+        return await export_cache(session, path)
+
+    typer.echo(f"exported {_run(lambda: _with_session(go))} answers to {path}")
+
+
+@llm_cache_app.command("import")
+def llm_cache_import(
+    path: Path = typer.Argument(..., help="A file from `llm-cache export`"),
+) -> None:
+    """Load cached extraction answers; keys already here are kept as they are."""
+
+    async def go(session: Any, runtime: Any) -> int:
+        from app.llm.cache_io import import_cache
+
+        return await import_cache(session, path, model=runtime.settings.llm_extract_model)
+
+    typer.echo(f"imported {_run(lambda: _with_session(go))} new answers from {path}")
 
 
 @pipeline_app.command("reresolve")

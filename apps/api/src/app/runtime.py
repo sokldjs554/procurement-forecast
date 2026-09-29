@@ -69,7 +69,11 @@ def build_llm(settings: Settings, guard: SpendGuard) -> LLMService:
             prompt_cache=settings.llm_prompt_cache,
             server_side_fallback=settings.llm_server_side_fallback,
         )
-    return LLMService(primary=primary, fallback=HeuristicProvider(), guard=guard)
+    from app.db.session import get_sessionmaker
+
+    return LLMService(
+        primary=primary, fallback=HeuristicProvider(), guard=guard, durable=get_sessionmaker
+    )
 
 
 def build_runtime(settings: Settings, redis: Redis | None = None) -> Runtime:
