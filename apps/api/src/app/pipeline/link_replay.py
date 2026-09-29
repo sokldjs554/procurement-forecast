@@ -64,8 +64,23 @@ async def export_signals(
     """Every signal of these document types (from these sources, when given), in creation
     order, with its document, its chunk's labels and the opportunity it joined (``null`` when
     it joined none)."""
+    # Named columns only: a Document row carries its whole text (4.7 GB over one live run's
+    # signals when joined per signal), and a Signal its embedding, neither of which is needed.
     stmt = (
-        select(Signal, Document, DocumentChunk.labels, OpportunitySignal.opportunity_id)
+        select(
+            Signal.dedupe_key.label("key"),
+            Signal.observed_at,
+            *(getattr(Signal, name) for name in _SIGNAL_FIELDS),
+            Document.external_id,
+            Document.doc_type,
+            Document.title.label("doc_title"),
+            Document.publisher_raw,
+            Document.institution_code.label("doc_institution_code"),
+            Document.published_at,
+            Document.structured,
+            DocumentChunk.labels,
+            OpportunitySignal.opportunity_id,
+        )
         .join(Document, Document.id == Signal.document_id)
         .outerjoin(DocumentChunk, DocumentChunk.id == Signal.chunk_id)
         .outerjoin(OpportunitySignal, OpportunitySignal.signal_id == Signal.id)
@@ -74,24 +89,26 @@ async def export_signals(
     )
     if source_keys:
         stmt = stmt.join(Source, Source.id == Document.source_id).where(Source.key.in_(source_keys))
-    rows = (await session.execute(stmt)).all()
+    rows = (await session.execute(stmt)).mappings().all()
     with gzip.open(path, "wt", encoding="utf-8") as f:
-        for signal, doc, labels, opportunity_id in rows:
+        for row in rows:
             record = {
-                "key": signal.dedupe_key,
+                "key": row["key"],
                 "document": {
-                    "external_id": doc.external_id,
-                    "doc_type": doc.doc_type,
-                    "title": doc.title,
-                    "publisher_raw": doc.publisher_raw,
-                    "institution_code": doc.institution_code,
-                    "published_at": doc.published_at.isoformat(),
-                    "structured": {k: doc.structured[k] for k in _DOC_KEYS if k in doc.structured},
+                    "external_id": row["external_id"],
+                    "doc_type": row["doc_type"],
+                    "title": row["doc_title"],
+                    "publisher_raw": row["publisher_raw"],
+                    "institution_code": row["doc_institution_code"],
+                    "published_at": row["published_at"].isoformat(),
+                    "structured": {
+                        k: row["structured"][k] for k in _DOC_KEYS if k in row["structured"]
+                    },
                 },
-                "labels": list(labels or []),
-                "observed_at": signal.observed_at.isoformat(),
-                "opportunity": opportunity_id,
-            } | {name: getattr(signal, name) for name in _SIGNAL_FIELDS}
+                "labels": list(row["labels"] or []),
+                "observed_at": row["observed_at"].isoformat(),
+                "opportunity": row["opportunity_id"],
+            } | {name: row[name] for name in _SIGNAL_FIELDS}
             f.write(json.dumps(record, ensure_ascii=False) + "\n")
     return len(rows)
 
