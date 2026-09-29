@@ -21,8 +21,11 @@
 
 **작업이 `LLMSetupError`로 실패 / `manage pipeline run`이 `stopped`로 끝남**
 1. 오류 문구로 원인을 봅니다. `auth`는 키(`APP_ANTHROPIC_API_KEY`)나 권한, `out of credit`은 Anthropic 계정 잔액, `not found`는 모델 이름(`APP_LLM_EXTRACT_MODEL`)입니다.
-2. 고치는 동안 문서는 `pending`으로 남고 규칙 기반으로 처리되지 않습니다. 새 신호가 늦어질 뿐, 품질이 낮은 신호가 쌓이지는 않습니다.
+2. 고치는 동안 문서는 `pending`으로 남고 규칙 기반으로 처리되지 않습니다. 새 신호가 늦어질 뿐, 품질이 낮은 신호가 쌓이지는 않습니다. 멈추기 전에 이미 비용을 낸 응답은 캐시(`llm_cache`)와 호출 기록(`llm_calls`)에 남아, 다시 돌릴 때 같은 청크에는 비용이 들지 않습니다.
 3. 고친 뒤 `manage pipeline run`을 돌리거나 *작업 로그*에서 재실행합니다. 워커는 실패한 작업 결과를 한 시간 보관한 뒤 `sweep_pending_documents`가 같은 문서를 다시 넣습니다. 규칙 기반으로라도 먼저 돌려야 하면 `APP_LLM_PROVIDER=heuristic`으로 돌립니다.
+
+**측정·임시 DB를 버리기 전**
+- `manage llm-cache export <파일>.jsonl.gz`로 비용을 낸 추출 응답을 파일로 빼 둡니다. 새 DB에서는 `manage llm-cache import <파일>`로 넣으면 같은 청크가 캐시로 처리됩니다. 파일에는 캐시 키와 응답만 들어가고, 키가 모델·effort·프롬프트·청크 글자를 묶고 있어 설정이 달라지면 쓰이지 않을 뿐 틀린 응답이 나가지는 않습니다.
 
 **검토 대기열이 쌓임**
 - 사유별로 봅니다. `institution_unresolved`가 대부분이면 기관 사전(`domain/data/institutions.csv`)에 별칭을 추가하거나, 행정구역이 바뀌었다면 `scripts/build_institutions.py`로 사전을 다시 만듭니다. 배포 뒤 `manage pipeline reresolve` → `manage pipeline run`으로 이미 쌓인 문서의 기관을 다시 풀고 처리합니다(다시 받지 않음). `year_unverified`가 대부분이면 시점 해석기(`domain/timing.py`)에 표현을 추가하고 수기 평가 세트에 사례를 넣습니다.

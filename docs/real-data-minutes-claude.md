@@ -374,7 +374,7 @@
 
 - 7건 합계에서 실제 비용은 글자 추정의 0.93배(계산)였습니다. 문서별로는 0.19배(제311회 예결특위, 1청크) ~ 1.14배(제309회 본회의 제1차)입니다. 예결특위 청크는 대체로 추정보다 쌌습니다.
 - **크레딧 소진 뒤의 동작.** #41의 새 동작대로 `LLMSetupError`가 배치를 멈췄고, `pipeline run`은 `"stopped"`를 남기고 코드 1로 끝났습니다. 제307회 예결특위 제2차는 `pending`으로 남았고, 규칙 기반으로 강등된 신호는 없습니다. `budget_skip`도 0행입니다. 그래서 두 추출기가 섞인 문서는 없습니다.
-- **고쳐야 할 점(코드는 바꾸지 않음).** `process_pending`은 문서마다 `begin_nested()`(savepoint)를 쓰고, `LLMSetupError`가 나면 그 savepoint를 되돌립니다. 그래서 그 문서에서 이미 **비용을 낸 호출의 `llm_calls` 행과 `llm_cache` 응답이 함께 사라집니다.** 이번에는 약 $1.04(계산)어치 응답을 잃었고, 비용 기록도 Redis 가드에만 남았습니다. `llm_calls`와 `llm_cache`를 문서 savepoint 밖(별도 세션이나 호출 직후 커밋)에서 쓰면, 멈춘 뒤 같은 문서를 다시 돌릴 때 끝난 청크는 캐시로 처리됩니다. 과금 기록이 빠지는 문제라 다음 일로 적습니다.
+- **고쳐야 할 점(코드는 바꾸지 않음).** `process_pending`은 문서마다 `begin_nested()`(savepoint)를 쓰고, `LLMSetupError`가 나면 그 savepoint를 되돌립니다. 그래서 그 문서에서 이미 **비용을 낸 호출의 `llm_calls` 행과 `llm_cache` 응답이 함께 사라집니다.** 이번에는 약 $1.04(계산)어치 응답을 잃었고, 비용 기록도 Redis 가드에만 남았습니다. `llm_calls`와 `llm_cache`를 문서 savepoint 밖(별도 세션이나 호출 직후 커밋)에서 쓰면, 멈춘 뒤 같은 문서를 다시 돌릴 때 끝난 청크는 캐시로 처리됩니다. 과금 기록이 빠지는 문제라 다음 일로 적습니다. (이후 고침: 호출 기록과 응답을 문서 savepoint 밖, 따로 연 세션에서 곧바로 커밋합니다. 같은 상황을 재현한 테스트는 `tests/integration/test_backfill.py`의 `test_what_was_paid_for_survives_a_stop_mid_document`입니다.)
 
 ### 10.5 같은 7건: 신호
 
@@ -540,7 +540,7 @@ Claude 신호는 규칙 기반의 6.0배(계산)입니다. 첫 실행(§6.3, 4.1
 
 - Claude 응답 449개(§10.2의 19 + §10.4의 430)를 한 줄에 하나씩 `{"key": …, "response": …}`로 내보냈습니다(gzip, 48,699바이트). 키·비밀값이 없는지, 모델 이름이 없는지 확인했습니다. 모델 이름은 저장소에 적지 않는 규칙이 있고, 캐시 키가 이미 모델·effort·프롬프트·사용자 메시지의 해시라 필요 없습니다.
 - 멈춘 문서(제307회 예결특위 제2차)의 응답은 되돌려져 들어 있지 않습니다(§10.4).
-- **다시 넣는 법** (`apps/api`에서, 대상 DB를 `APP_DATABASE_URL`로 지정):
+- **다시 넣는 법**: 이제는 `apps/api`에서 `uv run manage llm-cache import ../../docs/data/minutes-claude-cache.jsonl.gz`입니다(내보내기는 `manage llm-cache export`). 이 절을 쓸 때 쓴 원래 명령은 아래와 같습니다(`apps/api`에서, 대상 DB를 `APP_DATABASE_URL`로 지정):
 
 ```bash
 uv run python -c "import asyncio,gzip,json;from sqlalchemy.dialects.postgresql import insert;from app.db.models import LLMCacheEntry;from app.db.session import session_scope;from app.llm.prompts import EXTRACT_PROMPT_VERSION as V;from app.settings import get_settings as g

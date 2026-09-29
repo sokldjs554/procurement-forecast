@@ -49,3 +49,17 @@ async def test_cached_answers_round_trip(runtime, tmp_path: Path) -> None:  # ty
     assert [(k, r, v) for k, r, v in back] == [
         (key, response, EXTRACT_PROMPT_VERSION) for key, response in ANSWERS.items()
     ]
+
+
+async def test_the_kept_minutes_answers_load(runtime) -> None:  # type: ignore[no-untyped-def]
+    # The 449 answers the second live run paid for (docs/real-data-minutes-claude.md §10.10).
+    kept = Path(__file__).resolve().parents[4] / "docs" / "data" / "minutes-claude-cache.jsonl.gz"
+    with gzip.open(kept, "rt", encoding="utf-8") as f:
+        keys = [json.loads(line)["key"] for line in f]
+    try:
+        async with session_scope() as s:
+            added = await import_cache(s, kept, model="claude-opus-5")
+    finally:
+        async with session_scope() as s:
+            await s.execute(delete(LLMCacheEntry).where(LLMCacheEntry.key.in_(keys)))
+    assert added == len(keys) == 449
