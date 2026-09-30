@@ -24,7 +24,7 @@ const FEATURE_LABEL: Record<string, string> = {
   category: "관심 분야",
   region: "관심 지역",
   budget: "원하는 사업 규모",
-  conversion: "공고로 이어질 가능성",
+  conversion: "공고 전환 추정치",
   lead_time: "영업할 수 있는 시간",
 };
 

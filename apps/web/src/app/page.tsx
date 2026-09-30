@@ -63,19 +63,29 @@ export default function Home() {
       <section className="mx-auto max-w-6xl px-4 pt-12 pb-16 md:pt-20">
         <p className="text-sm font-semibold text-accent-text">공공조달 발주 예측 서비스</p>
         <h1 className="mt-3 max-w-3xl text-[34px] leading-[1.15] font-bold tracking-tight text-ink md:text-[52px]">
-          우리 회사에 맞는
+          입찰공고 전 단계의 공공사업을
           <br />
-          공공사업 찾기
+          우리 회사에 맞게 찾아 드려요
         </h1>
         <p className="mt-5 max-w-2xl text-[17px] leading-relaxed text-ink-2">
           회의록의 추진 계획과 예산서의 사업비를 모아, 우리 회사가 검토할 공공사업을 추천해요.
           흩어진 문서가 같은 사업으로 이어지는 과정과 추천 근거를 직접 확인해 보세요.
         </p>
-        <div className="mt-8 flex flex-wrap items-start gap-3">
-          {DEMO_STATIC ? <DemoShowcase /> : <DemoButton />}
-          <Link href={DEMO_STATIC ? "/app" : "/signup"} className={cn(buttonVariants({ variant: "secondary", size: "lg" }))}>
-            {DEMO_STATIC ? "추천 목록 둘러보기" : "무료로 시작하기"}
-          </Link>
+        <div className="mt-8">
+          {DEMO_STATIC ? (
+            <DemoShowcase>
+              <Link href="/app" className={cn(buttonVariants({ variant: "secondary", size: "lg" }))}>
+                추천 목록 둘러보기
+              </Link>
+            </DemoShowcase>
+          ) : (
+            <div className="flex flex-wrap gap-3">
+              <DemoButton />
+              <Link href="/signup" className={cn(buttonVariants({ variant: "secondary", size: "lg" }))}>
+                무료로 시작하기
+              </Link>
+            </div>
+          )}
         </div>
         {DEMO_STATIC ? <p className="mt-5 text-sm leading-relaxed text-ink-2">체험 순서: ① 연결된 문서 살펴보기 → ② 예시 원문과 근거 확인 → ③ 영업 브리핑 열기</p> : null}
       </section>

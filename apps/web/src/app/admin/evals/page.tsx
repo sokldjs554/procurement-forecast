@@ -57,7 +57,7 @@ function Backtest({ run }: { run: Run }) {
           data={data}
           format={(v) => formatPercent(v)}
           max={1}
-          caption="첫 신호 종류별로 실제 입찰까지 간 비율이에요. 랭킹의 '공고로 이어질 가능성'을 이 값으로 맞춰요"
+          caption="첫 신호 종류별로 실제 입찰까지 간 비율이에요. 랭킹의 '공고 전환 추정치'를 이 값으로 맞춰요"
         />
       </div>
     </Card>

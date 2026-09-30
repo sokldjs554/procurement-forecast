@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import type { Schemas } from "@/lib/api/client";
 
@@ -12,6 +12,7 @@ type ExampleDocument = { id: number; title: string; text: string | null; synthet
 /** Full parsed example text, loaded only when the visitor opens it. */
 export function DemoSource({ documentId, evidence }: { documentId: number; evidence: Schemas["EvidenceOut"][] }) {
   const [open, setOpen] = useState(false);
+  const box = useRef<HTMLDivElement>(null);
   const source = useQuery({
     queryKey: ["demo-document", documentId],
     enabled: open,
@@ -26,6 +27,13 @@ export function DemoSource({ documentId, evidence }: { documentId: number; evide
       return data;
     },
   });
+  // A minutes file opens on its agenda preamble; start the reader a few lines above the evidence.
+  useEffect(() => {
+    const el = box.current;
+    const mark = el?.querySelector("mark");
+    if (!el || !mark) return;
+    el.scrollTop = Math.max(0, el.scrollTop + mark.getBoundingClientRect().top - el.getBoundingClientRect().top - 48);
+  }, [source.data]);
   return (
     <details className="mt-3 rounded-lg border border-line p-3" onToggle={(event) => setOpen(event.currentTarget.open)}>
       <summary className="cursor-pointer text-[13px] font-medium text-accent-text">예시 원문 보기</summary>
@@ -35,7 +43,7 @@ export function DemoSource({ documentId, evidence }: { documentId: number; evide
         {source.error ? <p className="text-sm text-critical" role="alert">{source.error.message}</p> : null}
         {source.data ? <>
           <p className="text-sm font-semibold text-ink">{source.data.title}</p>
-          <div className="max-h-[32rem] overflow-y-auto break-words">
+          <div ref={box} className="max-h-[32rem] overflow-y-auto break-words">
             <EvidenceContext context={source.data.text} contextOffset={0} evidence={evidence} maxChars={Infinity} />
           </div>
         </> : null}
