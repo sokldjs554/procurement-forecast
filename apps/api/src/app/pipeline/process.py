@@ -253,6 +253,10 @@ def check_signal(
     document_text: str | None = None,
     char_start: int = 0,
 ) -> CheckedSignal:
+    if doc_type == "budget_book":
+        # A document can contain tables denominated in different units. Prefer
+        # the preserved chunk-local header over the document's first table unit.
+        table_unit = detect_table_unit(text) or table_unit
     expected_year = sig.expected_year
     if doc_type == "budget_book" and fiscal_year:
         expected_year = expected_year or fiscal_year

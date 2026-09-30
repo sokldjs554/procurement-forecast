@@ -248,7 +248,48 @@ def chunk_budget(text: str, *, standalone: bool = False) -> list[Chunk]:
             if "|" not in content:
                 project_table = False
     flush()
+    # Work plans and committee review tables are not 세출예산사업명세서 rows.
+    # Keep their structure and original offsets for the same production extractor;
+    # otherwise a text-only evaluation would succeed while ingestion dropped them.
+    narrative = _budget_narrative_chunks(text)
+    for candidate in narrative:
+        if not any(
+            c.char_start < candidate.char_end and candidate.char_start < c.char_end for c in chunks
+        ):
+            chunks.append(candidate)
+    chunks.sort(key=lambda c: c.char_start)
+    for seq, chunk in enumerate(chunks):
+        chunk.seq = seq
     return chunks
+
+
+def _budget_narrative_chunks(text: str) -> list[Chunk]:
+    candidates: list[Chunk] = []
+    headings = list(re.finditer(r"(?m)^\s*\d+\.\s+[^\n]+", text))
+    for index, heading in enumerate(headings):
+        start = heading.start()
+        end = headings[index + 1].start() if index + 1 < len(headings) else len(text)
+        block = text[start:end]
+        if re.search(r"[❏□■▣]\s*사업개요", block) and re.search(r"[❏□■▣][^\n]*소요예산", block):
+            candidates.append(Chunk(0, start, end, block, kind="budget_plan"))
+    tables = list(re.finditer(r"(?m)^\s*<[^\n>]*예산\s*증감내역[^\n>]*>", text))
+    starts: list[int] = []
+    for table in tables:
+        start = table.start()
+        unit = re.search(r"(?m)^\s*\(단위\s*:[^\n)]+\)[ \t]*\n\s*\Z", text[:start])
+        if unit:
+            start = unit.start()
+        starts.append(start)
+    for index, table in enumerate(tables):
+        start = starts[index]
+        end = starts[index + 1] if index + 1 < len(starts) else len(text)
+        following = re.search(r"(?m)^\s*<[^\n>]+>|^\s*[❏□■▣]", text[table.end() : end])
+        if following:
+            end = table.end() + following.start()
+        block = text[start:end]
+        if all(word in block for word in ("사업명", "예산액", "기정액")):
+            candidates.append(Chunk(0, start, end, block, kind="budget_review"))
+    return candidates
 
 
 def chunk_plain(text: str, size: int = 1500, overlap: int = 200) -> list[Chunk]:

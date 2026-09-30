@@ -26,11 +26,16 @@ from app.domain.taxonomy import (
 )
 from app.domain.timing import resolve_timing
 from app.llm.prompts import EXTRACT_PROMPT_VERSION, BriefFacts, ChunkContext
+from app.llm.providers.procurement_narratives import (
+    allocated_purchases,
+    review_table_signals,
+    work_plan_signals,
+)
 from app.llm.schemas import Commitment, ExtractedSignal, ExtractionOutput
 from app.llm.types import LLMResult
 from app.parsing.chunking import budget_project_row, chunk_budget, match_member
 
-HEURISTIC_VERSION = "heuristic-v5"
+HEURISTIC_VERSION = "heuristic-v6"
 
 _SENTENCE_RE = re.compile(r"[^.?!。]+[.?!。]?")
 _SPEAKER_PREFIX_RE = re.compile(r"^[○◯◎]\s*(?P<role>[가-힣A-Za-z·]+)\s+[가-힣]{2,4}(?:\s+|$)")
@@ -312,6 +317,10 @@ def _extract_exchange(ctx: ChunkContext) -> list[ExtractedSignal]:
     question, answer = _answer_text(ctx.text, ctx.labels)
     if not answer:
         return []
+    if allocated := allocated_purchases(ctx, answer):
+        for signal in allocated:
+            signal.title = _clean_title(signal.title)
+        return allocated
     # Renewing or reallocating maintenance budgets is not a new purchase. Keep
     # mixed discussions when a concrete purchase action is also stated.
     if _MAINTENANCE_RE.search(answer) and not _NEW_PURCHASE_RE.search(question + " " + answer):
@@ -426,7 +435,7 @@ class HeuristicProvider:
     async def extract(self, ctx: ChunkContext) -> LLMResult[ExtractionOutput]:
         if ctx.doc_type == "budget_book":
             unit = detect_table_unit(ctx.text) or self._unit
-            signals = []
+            signals = work_plan_signals(ctx) + review_table_signals(ctx, unit)
             for chunk in chunk_budget(ctx.text, standalone=True):
                 row_context = ChunkContext(
                     ctx.doc_type,
