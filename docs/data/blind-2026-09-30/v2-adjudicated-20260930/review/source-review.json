@@ -1,0 +1,205 @@
+{
+  "review_type": "Independent AI source/provenance pre-score review, not human expert validation",
+  "visibility": "SEALED: parent must not read case details until implementation freeze is confirmed",
+  "dataset_path": "/workspace/scratch/382fbb0992ab/new-blind-holdout-20260930",
+  "cases_sha256": "f08ad0e646aa465d4d00c783c54a5c59cca5d1980e446f959e0565cfb62069c7",
+  "manifest_sha256": "5bdc528a9d8c611f8dd561829e80c6b2984994809423cc39e4742cefb4e58849",
+  "inspected": "Frozen README, FREEZE, manifest, cases, sources, retrieval records, SHA256SUMS, verification, and four rendered PDF QA pages. No build scripts, model implementation, development gold, predictions, scores, or external research.",
+  "frozen_files_modified": false,
+  "integrity": {
+    "cases": 33,
+    "sources": 6,
+    "institutions": 3,
+    "unique_case_ids": 33,
+    "exact_excerpt_and_start_end_line_offsets": true,
+    "all_title_keywords_verbatim": true,
+    "all_manifest_original_and_text_hashes": true,
+    "original_byte_counts": true,
+    "all_SHA256SUMS_and_FREEZE_hashes": true,
+    "independent_HTML_root_text_sequence_reproduction": 5,
+    "independent_pdf_layout_text_byte_exact_reproduction": true,
+    "pdf_page_count": 545,
+    "source_header_meeting_and_report_dates_supported": true,
+    "publication_dates_honestly_null": true,
+    "four_positive_budget_tables_visually_checked": true
+  },
+  "validity": "One material negative-label ambiguity should be resolved before strict scoring; otherwise no definite material source/amount/year/commitment/completeness error identified under the declared annotation policy.",
+  "findings": [
+    {
+      "id": "R1",
+      "severity": "material_ambiguity",
+      "case_id": "new-blind-007",
+      "source_id": "seosan_admin_20251204",
+      "problem": "The empty expected list treats both household installation subsidies and senior-centre solar installations as transfers. The household paragraph explicitly gives a per-household support payment. The senior-centre programme describes full funding for physical installations without identifying its contracting or cash-transfer mechanism. The surrounding executive response says the city receives applications from facility owners and performs the facility work. Therefore the supplied evidence does not establish that the entire excerpt is a clean non-procurement negative. This is ambiguity, not proof that direct procurement certainly occurs.",
+      "excerpt_quote": "경로당 태양광 설치 사업은 전액 지원 사업으로, 도비·시비 합하여 543만 1,000원에 대해서 각 경로당에 태양광 발전 설비 설치를 지원해 주는 사업입니다.",
+      "surrounding_quote": "그리고 또 경로당은 저희가 그 시설 소유자로부터 신청을 받아서 이렇게 시설을 하고 있는 사업입니다.",
+      "recommendation": "Preserve frozen v1. Before any scoring, create a versioned replacement excerpt containing only the unambiguous household-subsidy sentence; keep expected empty. Alternatively remove this case from strict scoring. Do not convert to a positive with guessed budget/contracting mechanism.",
+      "proposed_replacement": {
+        "text_char_start": 50481,
+        "text_char_end": 50609,
+        "text_line_start": 1835,
+        "text_line_end": 1835,
+        "text": "신재생에너지 주택 지원 사업은 민간 주택에 대해서 신재생에너지인 태양광 발전시설 또는 지열 보일러 시설 설치비를 일부 지원하는 사업으로, 내년도 175가구에 대하여 지방비, 도비 포함하여 지방비 200만 원씩 지원하는 사업이고요.",
+        "expected": []
+      }
+    },
+    {
+      "id": "R2",
+      "severity": "taxonomy_convention_nonblocking",
+      "case_ids": [
+        "new-blind-004",
+        "new-blind-019"
+      ],
+      "problem": "The public_sw category for an informatization planning study and an encrypted-traffic visibility system depends on a taxonomy convention covering planning/security infrastructure, not on source-explicit software procurement. No detailed taxonomy definition was part of the frozen data.",
+      "recommendation": "If public_sw is defined broadly to cover public information planning/security systems, labels are defensible. Otherwise omit those category fields before scoring rather than force a category. This does not affect supported signal existence, titles, years or amounts."
+    },
+    {
+      "id": "R3",
+      "severity": "policy_sensitive_nonblocking",
+      "case_id": "new-blind-019",
+      "problem": "Three acquisitions are listed in a member question, but the executive explicitly confirms only the first. The single expected signal follows the declared executive-confirmation policy. This must not be described as exhaustive extraction of every named acquisition regardless of speaker support.",
+      "recommendation": "No mandatory correction under the frozen README policy. Keep this scope limitation in result interpretation."
+    }
+  ],
+  "additional_observations": [
+    "The cover/report date and PDF creation date differ; the manifest labels the former as report_date and does not claim publication date, which is honest.",
+    "The budget_book document is an official council review report rather than the original budget book, already disclosed explicitly.",
+    "Precise thousand-won table amounts were preserved instead of rounded prose. Combined-programme and annual scopes are disclosed.",
+    "Negative cases involving member suggestions follow the frozen executive-support policy; they do not test requested/reviewing/declined lifecycle extraction.",
+    "No exact publication-time discovery, population performance, human truth, or future accuracy claim is supported by this audit."
+  ],
+  "case_review": [
+    {
+      "id": "new-blind-001",
+      "status": "no_material_source_error_identified"
+    },
+    {
+      "id": "new-blind-002",
+      "status": "no_material_source_error_identified"
+    },
+    {
+      "id": "new-blind-003",
+      "status": "no_material_source_error_identified"
+    },
+    {
+      "id": "new-blind-004",
+      "status": "conditional_taxonomy_R2_R3"
+    },
+    {
+      "id": "new-blind-005",
+      "status": "no_material_source_error_identified"
+    },
+    {
+      "id": "new-blind-006",
+      "status": "no_material_source_error_identified"
+    },
+    {
+      "id": "new-blind-007",
+      "status": "material_ambiguity_R1"
+    },
+    {
+      "id": "new-blind-008",
+      "status": "no_material_source_error_identified"
+    },
+    {
+      "id": "new-blind-009",
+      "status": "no_material_source_error_identified"
+    },
+    {
+      "id": "new-blind-010",
+      "status": "no_material_source_error_identified"
+    },
+    {
+      "id": "new-blind-011",
+      "status": "no_material_source_error_identified"
+    },
+    {
+      "id": "new-blind-012",
+      "status": "no_material_source_error_identified"
+    },
+    {
+      "id": "new-blind-013",
+      "status": "no_material_source_error_identified"
+    },
+    {
+      "id": "new-blind-014",
+      "status": "no_material_source_error_identified"
+    },
+    {
+      "id": "new-blind-015",
+      "status": "no_material_source_error_identified"
+    },
+    {
+      "id": "new-blind-016",
+      "status": "no_material_source_error_identified"
+    },
+    {
+      "id": "new-blind-017",
+      "status": "no_material_source_error_identified"
+    },
+    {
+      "id": "new-blind-018",
+      "status": "no_material_source_error_identified"
+    },
+    {
+      "id": "new-blind-019",
+      "status": "conditional_taxonomy_R2_R3"
+    },
+    {
+      "id": "new-blind-020",
+      "status": "no_material_source_error_identified"
+    },
+    {
+      "id": "new-blind-021",
+      "status": "no_material_source_error_identified"
+    },
+    {
+      "id": "new-blind-022",
+      "status": "no_material_source_error_identified"
+    },
+    {
+      "id": "new-blind-023",
+      "status": "no_material_source_error_identified"
+    },
+    {
+      "id": "new-blind-024",
+      "status": "no_material_source_error_identified"
+    },
+    {
+      "id": "new-blind-025",
+      "status": "no_material_source_error_identified"
+    },
+    {
+      "id": "new-blind-026",
+      "status": "no_material_source_error_identified"
+    },
+    {
+      "id": "new-blind-027",
+      "status": "no_material_source_error_identified"
+    },
+    {
+      "id": "new-blind-028",
+      "status": "no_material_source_error_identified"
+    },
+    {
+      "id": "new-blind-029",
+      "status": "no_material_source_error_identified"
+    },
+    {
+      "id": "new-blind-030",
+      "status": "no_material_source_error_identified"
+    },
+    {
+      "id": "new-blind-031",
+      "status": "no_material_source_error_identified"
+    },
+    {
+      "id": "new-blind-032",
+      "status": "no_material_source_error_identified"
+    },
+    {
+      "id": "new-blind-033",
+      "status": "no_material_source_error_identified"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "checked_at": "2026-09-30T11:59:04.116855+00:00",
+  "extractor_executed": false,
+  "production_code_imported": false,
+  "checks": [
+    "manifest schema/version and frozen provenance",
+    "all archived original SHA-256 values",
+    "all parsed-source SHA-256 values",
+    "cases SHA-256",
+    "33 unique IDs and whitespace-normalized excerpts",
+    "exact source character slices",
+    "all title phrases grounded in case text",
+    "allowed category and commitment values",
+    "nonnegative integer or null amount/year values",
+    "four budget table units/amounts visually verified"
+  ],
+  "limits": "Did not import load_holdout because it reads development fixtures. Parent can run loader after code is committed/frozen."
+}

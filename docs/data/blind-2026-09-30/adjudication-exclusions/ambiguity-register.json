@@ -1,0 +1,64 @@
+{
+  "schema_version": "ambiguity-register-v1",
+  "created_at": "2026-09-30T12:08:59.806862+00:00",
+  "basis": "Source-only pre-score adjudication; no extractor implementation, development gold, predictions or scores inspected.",
+  "original_manifest_sha256": "5bdc528a9d8c611f8dd561829e80c6b2984994809423cc39e4742cefb4e58849",
+  "strict_manifest_sha256": "a6a1a5eb9e0492d3f9e0917feaca78c607df03471bf43d89d9a9344c5afcb6cc",
+  "counts": {
+    "original_frozen_cases_preserved": 33,
+    "strict_v2_cases": 33,
+    "original_case_excerpts_narrowed": 1,
+    "whole_case_rows_dropped_from_v2": 0,
+    "separate_ambiguous_diagnostic_samples_excluded_from_strict_scoring": 1,
+    "ambiguous_category_fields_omitted_from_strict_scoring": 2
+  },
+  "samples": [
+    {
+      "id": "ambiguous-installation-mechanism-001",
+      "origin_case_id": "new-blind-007",
+      "source_id": "seosan_admin_20251204",
+      "source_path": "../sources/seosan_admin_20251204.txt",
+      "source_sha256": "eeef6dd61d3f63748612bfc44b2c485e1ec76d7b5c0783bf1f5a2e7471a28006",
+      "strict_scoring_included": false,
+      "adjudicated_label": "ambiguous",
+      "reason": "The senior-centre solar programme is described as full support for facility installations, and surrounding executive speech says the city receives facility-owner applications and performs the facility work. The text does not establish whether this is a cash transfer or direct municipal procurement, so neither a clean procurement-positive nor a transfer-only negative is assigned. No inferred project budget or contracting mechanism.",
+      "original_case_record_historical_not_current_gold": {
+        "id": "new-blind-007",
+        "source_id": "seosan_admin_20251204",
+        "doc_type": "council_minutes",
+        "institution": "서산시",
+        "date": "2025-12-04",
+        "date_basis": "meeting_date_in_transcript_header; online_publication_date_unknown",
+        "fiscal_year": 2026,
+        "text": "가선숙 위원\n몇 가지만 여쭤볼게요, 예산안 508쪽을 보면.\n신재생에너지 주택 사업 지원하고 경로당 태양광 설치 사업, 이거에 대해서 설명 부탁드립니다.\n일자리경제과장 김선수\n일자리경제과장 김선수입니다.\n신재생에너지 주택 지원 사업은 민간 주택에 대해서 신재생에너지인 태양광 발전시설 또는 지열 보일러 시설 설치비를 일부 지원하는 사업으로, 내년도 175가구에 대하여 지방비, 도비 포함하여 지방비 200만 원씩 지원하는 사업이고요.\n경로당 태양광 설치 사업은 전액 지원 사업으로, 도비·시비 합하여 543만 1,000원에 대해서 각 경로당에 태양광 발전 설비 설치를 지원해 주는 사업입니다.\n가선숙 위원\n그러면 경로당 발전 사업이면 발전기가 따로 있는 건가요, 경로당에?\n일자리경제과장 김선수\n태양광 패널로 해서, 축전을 해서 그것을 전기로 쓰는 거죠.\n가선숙 위원\n예, 그리고 신재생에너지 주택 지원 사업은 말 그대로 태양광이라든가 지열 보일러, 기타 등등이라고 했잖아요?\n일자리경제과장 김선수\n예, 그런데 실상은 민간주택 신재생에너지에 지열도 있지만 거의 선호도가, 태양광 발전 시설이 거의 한 98, 99%가 선호하고 있습니다.\n그래서 거의 태양광 시설이라고 봐도 무방할 정도입니다.\n",
+        "expected": [],
+        "locator": {
+          "text_char_start": 50367,
+          "text_char_end": 50978,
+          "text_line_start": 1830,
+          "text_line_end": 1845,
+          "offset_unit": "Unicode code points in archived UTF-8 decoded text"
+        },
+        "annotation_type": "subsidy",
+        "annotation_notes": "Explicit installation-cost support for private homes and senior centres; no direct municipal procurement commitment stated."
+      },
+      "ambiguous_evidence_spans": [
+        {
+          "text_char_start": 50453,
+          "text_char_end": 50699,
+          "text_line_start": 1833,
+          "text_line_end": 1836,
+          "text": "일자리경제과장 김선수\n일자리경제과장 김선수입니다.\n신재생에너지 주택 지원 사업은 민간 주택에 대해서 신재생에너지인 태양광 발전시설 또는 지열 보일러 시설 설치비를 일부 지원하는 사업으로, 내년도 175가구에 대하여 지방비, 도비 포함하여 지방비 200만 원씩 지원하는 사업이고요.\n경로당 태양광 설치 사업은 전액 지원 사업으로, 도비·시비 합하여 543만 1,000원에 대해서 각 경로당에 태양광 발전 설비 설치를 지원해 주는 사업입니다.\n"
+        },
+        {
+          "text_char_start": 51024,
+          "text_char_end": 51527,
+          "text_line_start": 1849,
+          "text_line_end": 1858,
+          "text": "읍·면·동별로 할당은 되어 있지 않고요.\n이것은 한국에너지관리공단에서 직접 수용가로부터 신청을 받아서, 그렇게 해서 사업 대상자를 선정해서 거기에 따라서 우리가 지원해 주는 것이거든요?\n그리고 또 경로당은 저희가 그 시설 소유자로부터 신청을 받아서 이렇게 시설을 하고 있는 사업입니다.\n그런데 실상 지금 경로당 같은 데는 390여 개 중에서 48%인 186개 정도 설치를 완료했고요.\n나머지는 여러 가지 사유에 의해서, 예를 들면 지붕이 새서 기화형으로 지붕을 바꿨다든지, 그러면 또 설치가 불가하고.\n또, 대지 면적이 부족하다든지.\n또, 건물과 태양광 패널이 설치될 지역이 각도가 안 맞는다든지.\n또, 본인 소유, 마을 소유의 땅이 아니라든지.\n이런 여러 가지 사유에서 신청이 불가한 지역도 있다는 말씀드리고.\n또한, 노후 경로당 같은 경우에는 신설을… 아니, 다시 개축을 건의했거나 건의할 계획이 있기 때문에, 그것은 나중에 개축된 다음에 설치를 목적으로 신청을 안 하는 경로당들이 되겠습니다.\n"
+        }
+      ],
+      "strict_v2_disposition": "The original mixed excerpt is preserved here and in v1. v2 evaluates only original lines 1833–1835: executive header plus explicit household-support sentence. The ambiguous senior-centre content is excluded, not forced to a binary label."
+    }
+  ]
+}

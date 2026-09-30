@@ -1,0 +1,74 @@
+{
+  "version": "pre-score-source-adjudication-v2",
+  "adjudicated_at": "2026-09-30T12:07:45.689279+00:00",
+  "lineage": {
+    "original_manifest_path": "../manifest.json",
+    "original_manifest_sha256": "5bdc528a9d8c611f8dd561829e80c6b2984994809423cc39e4742cefb4e58849",
+    "original_cases_path": "../cases.jsonl",
+    "original_cases_sha256": "f08ad0e646aa465d4d00c783c54a5c59cca5d1980e446f959e0565cfb62069c7",
+    "original_freeze_sha256": "3a8b25b5fdcea546b832dbbdb92713d3cde62356a5fc4b150b1f1c9e78b43b5b",
+    "source_review_sha256": "35af0ebe768b0dc05eaa9b4769f1921f5987cfa165e25bff9439832900e3fdfd"
+  },
+  "basis": "Independent AI reviewer findings, followed by original annotator source-only adjudication; no implementation, development gold, predictions, or scores inspected. Not human expert review.",
+  "original_frozen_files_modified": false,
+  "scoring_occurred": false,
+  "changes": [
+    {
+      "finding_id": "R2",
+      "case_id": "new-blind-004",
+      "signal_index": 0,
+      "action": "omit_ambiguous_category",
+      "removed_field": "category",
+      "removed_value": "public_sw",
+      "decision": "Conservative pre-score masking: sources establish a planning/security-system procurement but no predeclared category convention resolves whether public_sw includes these scopes. Signal existence, source title, amount, commitment and year are unchanged."
+    },
+    {
+      "finding_id": "R1",
+      "case_id": "new-blind-007",
+      "action": "narrow_ambiguous_negative_excerpt",
+      "before": {
+        "locator": {
+          "text_char_start": 50367,
+          "text_char_end": 50978,
+          "text_line_start": 1830,
+          "text_line_end": 1845,
+          "offset_unit": "Unicode code points in archived UTF-8 decoded text"
+        },
+        "text_sha256": "3a4cc44e0d069a0baa8c46bd389aa65cacaa450d08cf978bb61805b69f244262",
+        "expected": []
+      },
+      "after": {
+        "locator": {
+          "text_char_start": 50453,
+          "text_char_end": 50610,
+          "text_line_start": 1833,
+          "text_line_end": 1835,
+          "offset_unit": "Unicode code points in archived UTF-8 decoded text"
+        },
+        "text_sha256": "0664d3aa2b30969c266228b9bdc5ba4885cbe3fd9c8afc680a849a4fcd57f93a",
+        "expected": []
+      },
+      "decision": "Accepted material ambiguity. Original senior-centre passage cannot be cleanly classified as transfer-only; preserve only explicit per-household support. Retained executive header adds two source lines to reviewer-suggested sentence without adding another programme.",
+      "source_reviewed": {
+        "source_id": "seosan_admin_20251204",
+        "line_start": 1829,
+        "line_end": 1890
+      }
+    },
+    {
+      "finding_id": "R2",
+      "case_id": "new-blind-019",
+      "signal_index": 0,
+      "action": "omit_ambiguous_category",
+      "removed_field": "category",
+      "removed_value": "public_sw",
+      "decision": "Conservative pre-score masking: sources establish a planning/security-system procurement but no predeclared category convention resolves whether public_sw includes these scopes. Signal existence, source title, amount, commitment and year are unchanged."
+    }
+  ],
+  "unchanged_findings": [
+    {
+      "finding_id": "R3",
+      "decision": "No change: exhaustive signal lists are conditioned on explicit executive/official-plan support under the predeclared policy, not every member-mentioned acquisition."
+    }
+  ]
+}

@@ -1,0 +1,55 @@
+name: Real-source forecast freeze
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - scripts/freeze-real-cohort.py
+      - .github/workflows/real-cohort.yml
+      - docs/data/blind-2026-09-30/**
+
+permissions:
+  contents: read
+
+jobs:
+  freeze:
+    name: Finite real-source cohort evidence
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: cohort
+          POSTGRES_PASSWORD: cohort-ci
+          POSTGRES_DB: cohort
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U cohort" --health-interval 3s --health-timeout 3s --health-retries 20
+    env:
+      APP_ENV: test
+      APP_DATABASE_URL: postgresql+asyncpg://cohort:cohort-ci@127.0.0.1:5432/cohort
+      APP_LLM_PROVIDER: heuristic
+      APP_EMBEDDING_PROVIDER: hashing
+      APP_LLM_DAILY_BUDGET_USD: "0"
+      APP_LOG_JSON: "false"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.8.17"
+          python-version: "3.11"
+      - run: uv sync --frozen --project apps/api
+      - run: uv run --project apps/api manage db upgrade
+      - name: Process full official texts and freeze current stored predictions
+        run: |
+          uv run --project apps/api python scripts/freeze-real-cohort.py \
+            --manifest docs/data/blind-2026-09-30/manifest.json \
+            --out "$RUNNER_TEMP/real-cohort" \
+            --code-revision "$(git rev-parse HEAD)" --min-fiscal-year 2026
+      - uses: actions/upload-artifact@v7
+        with:
+          name: real-cohort-${{ github.run_id }}
+          path: ${{ runner.temp }}/real-cohort
+          if-no-files-found: error
+          retention-days: 90
