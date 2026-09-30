@@ -8,7 +8,7 @@ from pathlib import Path
 
 from sqlalchemy import select
 
-from app.db.models import Document, Source
+from app.db.models import Document, LinkReconciliationState, Signal, Source
 from app.db.session import session_scope
 from app.media.ingest import SOURCE, ingest_transcript, transcript_record
 from app.media.job import MediaOptions, MemoryCheckpoints, transcribe_media
@@ -57,6 +57,10 @@ async def test_meeting_video_yields_a_signal_with_its_moment(  # type: ignore[no
     assert 12.0 <= signal["t0"] < signal["t1"] <= 22.0
 
     async with session_scope() as s:
+        stored_signal = await s.get(Signal, signal["signal_id"])
+        assert stored_signal is not None
+        state = await s.get(LinkReconciliationState, stored_signal.institution_code)
+        assert state is not None and state.generation == state.reconciled_generation
         doc = await s.get(Document, result.document_id)
         assert doc is not None and doc.doc_type == "council_minutes"
         assert doc.structured["published_from"] == "meeting_date"
