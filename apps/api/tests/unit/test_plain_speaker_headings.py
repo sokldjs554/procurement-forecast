@@ -135,3 +135,14 @@ async def test_audio_placeholder_keeps_review_candidate_without_executive_author
     )
     assert checked.report.verdict == "needs_review"
     assert "official_evidence_missing" in checked.report.issues
+
+
+async def test_audio_placeholder_cannot_borrow_authority_in_a_mixed_exchange() -> None:
+    text = (
+        "○위원 이민우 확인 부탁드립니다.\n"
+        "○정보화과장 김서준 해당 사업은 관계 부서와 함께 검토하겠습니다.\n"
+        "○발언자 미상 " + PROJECT
+    )
+    chunk = chunk_minutes(text)[0]
+    signals = await _extract(chunk.text, chunk.labels)
+    assert all(s.commitment != "committed" and s.budget_krw is None for s in signals)

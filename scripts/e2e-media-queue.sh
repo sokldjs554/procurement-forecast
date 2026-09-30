@@ -14,7 +14,16 @@ port=${ORCH_PORT:-8787}
 media_port=${MEDIA_PORT:-8899}
 pids=()
 cleanup() {
+  status=$?
+  if [ "$status" -ne 0 ]; then
+    # Preserve the process failure before terminating siblings; curl's exit code
+    # alone hides a worker/API crash and makes intermittent CI failures opaque.
+    for diagnostic in "$work/orchestrator.log" "$work/media.log"; do
+      if [ -f "$diagnostic" ]; then tail -n 120 "$diagnostic" >&2 || true; fi
+    done
+  fi
   for pid in "${pids[@]}"; do kill "$pid" 2>/dev/null || true; done
+  return "$status"
 }
 trap cleanup EXIT
 

@@ -114,7 +114,7 @@
 | Docker 기반 개발 환경 구성 경험 | `docker compose up`으로 DB·Redis·메일·API·워커·웹 |
 | 로깅·에러 트래킹 기반 장애 대응 경험 | structlog JSON(요청·작업 ID), Sentry, 워커 헬스체크, 런북 |
 | Git 브랜치 전략과 코드 리뷰 기반 협업 경험 | 짧은 브랜치 + 트렁크, squash merge, Conventional Commits, PR 템플릿, CODEOWNERS. PR 예: [#6](https://github.com/sokldjs554/procurement-forecast/pull/6) 의존성 PR 검토(액션 10개 호환성 대조), [#7](https://github.com/sokldjs554/procurement-forecast/pull/7) 기능 PR(코드 리뷰 15건 중 13건 반영, 2건은 이유 답변). 초기 구축은 main 직접 커밋 ([CONTRIBUTING](CONTRIBUTING.md)) |
-| 테스트 작성 및 정적 타입 검사를 습관으로 갖춘 분 | pytest 926개(실제 PostgreSQL·Redis), vitest 웹 69개(BFF 프록시 헤더, 과금 요청의 재시도·멱등 키 포함)·작업 API 30개(실제 PostgreSQL에서 여러 워커가 동시에 가져가도 한 번만 처리, 끊긴 다운로드 이어받기 포함), Playwright E2E 3개(README 둘러보기를 실제 브라우저로), mypy strict, [main `48746be` CI 통과](https://github.com/sokldjs554/procurement-forecast/actions/runs/36703422314) |
+| 테스트 작성 및 정적 타입 검사를 습관으로 갖춘 분 | pytest 965개(실제 PostgreSQL·Redis), vitest 웹 69개(BFF 프록시 헤더, 과금 요청의 재시도·멱등 키 포함)·작업 API 30개(실제 PostgreSQL에서 여러 워커가 동시에 가져가도 한 번만 처리, 끊긴 다운로드 이어받기 포함), Playwright E2E 3개(README 둘러보기를 실제 브라우저로), mypy strict, [후속 검증 PR #65](https://github.com/sokldjs554/procurement-forecast/pull/65) |
 | 명세가 불완전한 상태에서 구조를 세우고 문서로 남길 수 있는 능력 | 주요업무 9번 |
 
 </details>
@@ -290,6 +290,13 @@ docs/                 조사, ADR, 아키텍처, 평가, 데이터 소스, 런�
 **2026-09-30 새 기관 평가:** 3개 기관의 공식 문서 8개에서 32개 사례를 모델 실행 전에 고정하고 무료 규칙 추출기를 측정했습니다. 첫 결과는 정답 28개 중 일치 0개였습니다. [새 실문서 평가](docs/independent-evaluation.md)에 원문·정답 해시, 실패 내역과 수정 범위를 공개했습니다. 전문가 연결 정답과 장기 실관측 정확도는 아직 확보되지 않았으며, [후속 관측 평가 도구](docs/longitudinal-validation.md)는 관측 부족을 실패로 계산하지 않습니다.
 
 **후속 보완:** 사업 1:N 계약의 검토 관계 모델·API·화면, 예산의 제목/용도 중심 분류와 표 경계 보완, 관할 구 충돌 차단, CLIK 수정판 재수집, 기관별 수집·원문 보고, 사람 검토 평가자료와 현재 예측 상태 동결 기능을 추가했습니다. 사용법은 [데이터 품질 운영](docs/data-quality-operations.md), 분류/표 회귀 수치는 [측정 보고서](docs/budget-classification-regression.md)에 있습니다. 원문이 없는 과거 사례, 전국 실수집, 장기 성능이 이 변경만으로 검증된 것은 아닙니다.
+
+**2026-09-30 후속 검증:** 업무계획·예산표·기호 없는 발언자 줄을 보완했습니다.
+기존 표본 회귀는 제목 일치 9/28이지만 새 독립 표본 v6는 0/20이었고, 같은 표본 v7 회귀도
+제목 일치 1/20(해당 1건의 분류·금액 오류 포함)에 그쳤습니다. [실패 결과와 원본](docs/independent-evaluation.md)을 보존합니다.
+실문서 2개를 처리한 실제 출력 9기회를 [동결](docs/data/real-cohort-2026-09-30/README.md)하고
+주간 후속 공고 관측을 등록했습니다. 540일 관측 분모는 현재 0이며 장기 정확도는 미검증입니다.
+무료 전용 외부 서버·DB/queue 자원은 확보되지 않아 **상시 백엔드는 미배포**입니다.
 
 **2026-09-29 보완:** 의원 발언 근거만 있는 신호를 자동 승인하지 않도록 발언자를 검증하고, 모호한 연결은 독립 기회로 남기며, 백테스트의 미래 정보·관측기간·공개일 오류를 수정했습니다. 수정 범위, 검증 방법과 남은 과제는 [근거·연결·평가 보완](docs/evidence-integrity.md)에 정리했습니다. 아래 실문서 측정은 당시 코드의 기록이며 이번 변경 후 정확도를 뜻하지 않습니다.
 

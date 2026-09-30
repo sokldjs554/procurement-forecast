@@ -102,6 +102,21 @@ def _answer_text(chunk_text: str, labels: list[str] | None = None) -> tuple[str,
     question: list[str] = []
     answer: list[str] = []
     current = question
+    lines = chunk_text.splitlines()
+    headings = [
+        match_speaker(line.strip())
+        for line in lines
+        if match_speaker(line.strip()) or line.lstrip().startswith(("○", "◯", "◎"))
+    ]
+    # Only an entirely unattributed audio chunk may supply review candidates.
+    # In a mixed exchange, a known official's quote must never lend authority to
+    # the placeholder speaker's budget or commitment.
+    audio_only = bool(headings) and all(
+        heading is not None
+        and heading.group("role") == "발언자"
+        and heading.group("name") == "미상"
+        for heading in headings
+    )
     # Long speeches lose their heading after chunk_minutes splits them. Only an
     # unambiguous canonical speaker label can supply the missing role; explicit
     # headings always take precedence, and neither text nor evidence is rewritten.
@@ -110,13 +125,10 @@ def _answer_text(chunk_text: str, labels: list[str] | None = None) -> tuple[str,
         and len(labels) == 1
         and (speaker := _SPEAKER_LABEL_RE.fullmatch(labels[0]))
         and _is_official_role(speaker.group("role"))
-        and not any(
-            match_speaker(line.strip()) or line.lstrip().startswith(("○", "◯", "◎"))
-            for line in chunk_text.splitlines()
-        )
+        and not headings
     ):
         current = answer
-    for line in chunk_text.splitlines():
+    for line in lines:
         content = line
         if speaker := match_speaker(line.strip()):
             content = speaker.group("speech")
@@ -124,7 +136,8 @@ def _answer_text(chunk_text: str, labels: list[str] | None = None) -> tuple[str,
             # Keep their inline candidate for grounding's needs_review route;
             # this is not executive attribution and never changes source labels.
             audio_unknown = (
-                speaker.group("role") == "발언자"
+                audio_only
+                and speaker.group("role") == "발언자"
                 and speaker.group("name") == "미상"
                 and bool(content)
                 and line.lstrip().startswith(("○", "◯", "◎"))
