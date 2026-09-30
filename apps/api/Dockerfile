@@ -8,7 +8,7 @@ FROM ${PYTHON_IMAGE} AS base
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1
 RUN apt-get update \
- && apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-kor fonts-nanum \
+ && apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-kor fonts-nanum ffmpeg \
  && rm -rf /var/lib/apt/lists/*
 
 FROM base AS build
@@ -20,12 +20,12 @@ WORKDIR /app
 # Dependencies first so source edits don't bust the layer cache.
 COPY pyproject.toml uv.lock ./
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --no-dev --extra gcp --no-install-project
+    uv sync --frozen --no-dev --extra gcp --extra stt --no-install-project
 COPY README.md alembic.ini ./
 COPY migrations ./migrations
 COPY src ./src
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --no-dev --extra gcp
+    uv sync --frozen --no-dev --extra gcp --extra stt
 
 FROM base AS runtime
 RUN useradd --system --uid 10001 --home-dir /app app \
@@ -34,6 +34,7 @@ RUN useradd --system --uid 10001 --home-dir /app app \
 WORKDIR /app
 COPY --from=build --chown=root:root /app /app
 ENV PATH="/app/.venv/bin:$PATH" \
+    HF_HOME=/app/.data/huggingface \
     APP_STORAGE_URL=file:///app/.data/raw
 USER app
 EXPOSE 8000

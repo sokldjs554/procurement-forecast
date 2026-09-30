@@ -13,6 +13,7 @@ Providers return times in seconds from the start of the whole recording, not the
 from __future__ import annotations
 
 import asyncio
+import hashlib
 import json
 import math
 from dataclasses import dataclass
@@ -59,6 +60,11 @@ class STTProvider(Protocol):
     model: str
     usd_per_audio_minute: float
 
+    @property
+    def cache_key(self) -> str:
+        """Stable identity of all settings that can change a transcription."""
+        ...
+
     async def transcribe(self, audio: Path, window: Window, *, language: str) -> list[Segment]:
         """Segments of ``audio`` (the window's slice), timed from the start of the recording."""
         ...
@@ -85,6 +91,21 @@ class FasterWhisperSTT:
         self._beam_size = beam_size
         self._prompt = initial_prompt
         self._loaded: Any = None
+
+    @property
+    def cache_key(self) -> str:
+        return json.dumps(
+            [
+                self.name,
+                self.model,
+                self._model_dir,
+                self._compute_type,
+                self._beam_size,
+                self._prompt,
+                "vad-no-previous-text-v1",
+            ],
+            ensure_ascii=False,
+        )
 
     def _load(self) -> Any:
         try:
@@ -135,6 +156,11 @@ class FixtureSTT:
     def __init__(self, segments: list[Segment], *, usd_per_audio_minute: float = 0.0) -> None:
         self._segments = sorted(segments, key=lambda s: s.start)
         self.usd_per_audio_minute = usd_per_audio_minute
+
+    @property
+    def cache_key(self) -> str:
+        content = json.dumps([s.to_json() for s in self._segments], ensure_ascii=False)
+        return f"{self.name}:{self.model}:{hashlib.sha256(content.encode()).hexdigest()}"
 
     @classmethod
     def from_file(cls, path: Path) -> FixtureSTT:

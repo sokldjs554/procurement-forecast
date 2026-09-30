@@ -217,9 +217,17 @@ jobs:
         with:
           context: apps/${{ matrix.app }}
           push: false
+          load: ${{ matrix.app == 'api' }}
           tags: app-${{ matrix.app }}:ci
           cache-from: type=gha,scope=${{ matrix.app }}
           cache-to: type=gha,mode=max,scope=${{ matrix.app }}
+      - name: API image media runtime
+        if: matrix.app == 'api'
+        run: |
+          docker run --rm --entrypoint sh app-api:ci -c '
+            ffmpeg -version >/dev/null && ffprobe -version >/dev/null &&
+            python -c "import faster_whisper; from pathlib import Path; p=Path(\".data/media\"); p.mkdir(parents=True, exist_ok=True); (p/\"probe\").write_text(\"ok\")" &&
+            manage media --help >/dev/null'
       - name: Render production API and worker image
         if: matrix.app == 'api'
         uses: docker/build-push-action@v7
@@ -227,6 +235,14 @@ jobs:
           context: .
           file: scripts/render-api.Dockerfile
           push: false
+          load: true
           tags: procurement-render:ci
           cache-from: type=gha,scope=render-api
           cache-to: type=gha,mode=max,scope=render-api
+      - name: Render image media runtime
+        if: matrix.app == 'api'
+        run: |
+          docker run --rm --entrypoint sh procurement-render:ci -c '
+            ffmpeg -version >/dev/null && ffprobe -version >/dev/null &&
+            python -c "import faster_whisper; from pathlib import Path; p=Path(\".data/media\"); p.mkdir(parents=True, exist_ok=True); (p/\"probe\").write_text(\"ok\")" &&
+            manage media --help >/dev/null'

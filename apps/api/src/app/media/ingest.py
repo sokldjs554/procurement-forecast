@@ -19,6 +19,7 @@ from app.db.models import Document, OpportunitySignal, Signal, Source
 from app.media.job import MediaTranscript
 from app.pipeline.ingest import upsert_record
 from app.pipeline.link import link_signals
+from app.pipeline.link_reconcile import reconcile_pending
 from app.pipeline.process import process_document
 from app.runtime import Runtime
 from app.sources.base import RawRecord
@@ -80,7 +81,7 @@ class MediaIngest:
 async def ingest_transcript(
     session: AsyncSession, runtime: Runtime, record: RawRecord, *, process: bool = True
 ) -> MediaIngest:
-    """Store, then the worker's own chain — ``process_document`` → ``link_signals`` — so an
+    """Store, then process, provisionally link and complete canonical reconciliation so an
     accepted signal from a video joins an opportunity exactly as one from text minutes does.
     ``process=False`` only stores (the queue runs the rest as separate jobs)."""
     source = await media_source(session)
@@ -90,6 +91,9 @@ async def ingest_transcript(
         result = await process_document(session, runtime, doc.id)
         await link_signals(session, runtime, result.signal_ids)
     if process:
+        # This CLI path has no subsequent queue job to wait for. Finish before returning
+        # IDs, including a retry whose document was already stored on the previous attempt.
+        await reconcile_pending(session, runtime)
         signals = await signals_with_times(session, doc)
     return MediaIngest(doc.id, action, signals)
 

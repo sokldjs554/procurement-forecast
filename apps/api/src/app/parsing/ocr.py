@@ -9,6 +9,7 @@ light denoise, then Otsu binarisation.
 from __future__ import annotations
 
 import asyncio
+import json
 import shutil
 import subprocess
 import tempfile
@@ -77,6 +78,10 @@ class TesseractOCR:
         self._config = ["--oem", "1", "--psm", str(psm), "-c", "preserve_interword_spaces=1"]
         self._binary = shutil.which(binary) or binary
         self._timeout = timeout
+
+    @property
+    def cache_key(self) -> str:
+        return json.dumps([self.name, self._languages, self._config, self._binary])
 
     def _run(self, image: Image.Image) -> OCRResult:
         prepared = preprocess(image)

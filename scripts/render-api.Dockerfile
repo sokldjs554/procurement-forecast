@@ -4,7 +4,7 @@ ARG PYTHON_IMAGE=python:3.11-slim-bookworm
 FROM ${PYTHON_IMAGE} AS base
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1
 RUN apt-get update \
- && apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-kor fonts-nanum \
+ && apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-kor fonts-nanum ffmpeg \
  && rm -rf /var/lib/apt/lists/*
 
 FROM base AS build
@@ -13,18 +13,20 @@ ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy UV_PYTHON_DOWNLOADS=never
 WORKDIR /app
 COPY apps/api/pyproject.toml apps/api/uv.lock ./
 RUN --mount=type=cache,target=/root/.cache/uv \
-    uv sync --frozen --no-dev --extra gcp --no-install-project
+    uv sync --frozen --no-dev --extra gcp --extra stt --no-install-project
 COPY apps/api/README.md apps/api/alembic.ini ./
 COPY apps/api/migrations ./migrations
 COPY apps/api/src ./src
-RUN --mount=type=cache,target=/root/.cache/uv uv sync --frozen --no-dev --extra gcp
+RUN --mount=type=cache,target=/root/.cache/uv uv sync --frozen --no-dev --extra gcp --extra stt
 
 FROM base AS runtime
-RUN useradd --system --uid 10001 --home-dir /app app
+RUN useradd --system --uid 10001 --home-dir /app app \
+ && mkdir -p /app/.data \
+ && chown app /app/.data
 WORKDIR /app
 COPY --from=build --chown=root:root /app /app
 COPY scripts/render-runtime.py /app/render-runtime.py
-ENV PATH="/app/.venv/bin:$PATH"
+ENV PATH="/app/.venv/bin:$PATH" HF_HOME=/app/.data/huggingface
 USER app
 EXPOSE 10000
 CMD ["python", "/app/render-runtime.py", "api"]

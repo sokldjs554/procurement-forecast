@@ -14,6 +14,8 @@ included (their checkpoints keep their seconds); a call lost mid-window is not c
 
 from __future__ import annotations
 
+import asyncio
+import hashlib
 import json
 import time
 from collections.abc import Awaitable, Callable
@@ -144,6 +146,12 @@ async def _noop(stage: str, done: int, total: int) -> None:
     return None
 
 
+def _source_digest(src: Path) -> str:
+    # Stream large media and keep disk I/O outside the event loop.
+    with src.open("rb") as stream:
+        return hashlib.file_digest(stream, "sha256").hexdigest()
+
+
 async def transcribe_media(
     src: Path,
     *,
@@ -156,24 +164,30 @@ async def transcribe_media(
 ) -> MediaTranscript:
     opts = options or MediaOptions()
     cost = MediaCost()
+    source_digest = await asyncio.to_thread(_source_digest, src)
+    # A workdir is a location, not proof that its previous source is unchanged.
+    # Versioning also prevents reuse of legacy checkpoints without a source identity.
+    namespace = f"media-v2:{source_digest}:"
+    workdir = workdir / source_digest
+    workdir.mkdir(parents=True, exist_ok=True)
     info = await probe(src)
     if not info.has_audio:
         raise ValueError(f"{src.name} has no audio track")
 
     audio = workdir / "audio.flac"
-    if await checkpoints.get("audio") is None or not audio.exists():
+    if await checkpoints.get(namespace + "audio") is None or not audio.exists():
         started = time.monotonic()
         await extract_audio(src, audio)
         cost.ffmpeg_seconds += time.monotonic() - started
-        await checkpoints.put("audio", {"bytes": audio.stat().st_size})
+        await checkpoints.put(namespace + "audio", {"bytes": audio.stat().st_size})
     await progress("audio", 1, 1)
 
-    silences = await checkpoints.get("silences")
+    silences = await checkpoints.get(namespace + "silences")
     if silences is None:
         started = time.monotonic()
         silences = [list(s) for s in await detect_silences(audio)]
         cost.ffmpeg_seconds += time.monotonic() - started
-        await checkpoints.put("silences", silences)
+        await checkpoints.put(namespace + "silences", silences)
     windows = plan_windows(
         info.duration,
         [(a, b) for a, b in silences],
@@ -186,7 +200,8 @@ async def transcribe_media(
     for window in windows:
         # The window's geometry is part of the key: a re-plan (another window length) must not
         # reuse segments cut for different boundaries.
-        key = f"stt:{stt.name}:{stt.model}:{window.start:.2f}-{window.end:.2f}"
+        parameters = json.dumps([stt.cache_key, opts.language, window.start, window.end])
+        key = namespace + "stt:" + hashlib.sha256(parameters.encode()).hexdigest()
         cached = await checkpoints.get(key)
         if cached is None:
             piece = workdir / "windows" / f"w{window.index:04d}.flac"
@@ -217,7 +232,15 @@ async def transcribe_media(
     else:
         # Like a window's key: other crop, sampling or engine → other readings.
         region = ",".join(f"{v:g}" for v in opts.caption_region)
-        key = f"captions:{ocr.name}:{region}:{opts.caption_every_seconds:g}:{opts.caption_scene:g}"
+        parameters = json.dumps(
+            [
+                getattr(ocr, "cache_key", ocr.name),
+                region,
+                opts.caption_every_seconds,
+                opts.caption_scene,
+            ]
+        )
+        key = namespace + "captions:" + hashlib.sha256(parameters.encode()).hexdigest()
         cached_captions = await checkpoints.get(key)
         if cached_captions is None:
             started = time.monotonic()
