@@ -28,13 +28,24 @@ Sorting one input batch cannot repair this.
 
 ## Work
 
-- [ ] Shared pure decision/summary rules and canonical partition planner; permutation tests.
-- [ ] Durable generation/outbox state, migration, protected-scope snapshot and atomic apply.
-- [ ] Worker/backfill/replay completion integration and unchanged-snapshot retries.
-- [ ] SQL tests for insertion/batch permutations, protection, IDs, audit and idempotency.
-- [ ] Full before/after evaluation, all retained arrival variants, operational query benchmark.
-- [ ] Review, CI and main integration; publish measured results and remaining external limits.
+- [x] Shared pure decision/summary rules and canonical partition planner; permutation tests.
+- [x] Durable generation/outbox state, migration, protected-scope snapshot and atomic apply.
+- [x] Worker/backfill/replay completion integration and unchanged-snapshot retries.
+- [x] SQL tests for insertion/batch permutations, protection, IDs, audit and idempotency.
+- [x] Full before/after evaluation, all retained arrival variants, operational query benchmark.
+- [x] Review, CI and main integration; publish measured results and remaining external limits.
 
 Production DB access, independent labeled real data, and elapsed observation time are
 separate prerequisites. This change cannot manufacture them or imply actual production
 migrations were executed.
+
+## Verification record
+
+Final code `9834b6a`: CI 36666923090 (782 API tests, 61 web tests, 3 browser tests;
+zero API skips) and audit 36666923259 passed. The latter includes the complete archive
+matrix and the independent default-scale benchmark. A 64–72 second history-scan plan
+found in the previous audit blocked integration; indexed matching counts and customer
+opportunity indexes reduced the same protected scopes to 439/533 ms. The benchmark
+now gates protection latency and true hit/miss row counts. No gold labels or existing
+quality thresholds were lowered. Main integration and measured documentation are
+tracked by PR #54 and its documentation follow-up.

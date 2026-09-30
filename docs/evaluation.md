@@ -1,7 +1,6 @@
 # 평가 결과 (자동 생성: `manage eval all --report`)
 
-2026-09-29 [검증 실행](https://github.com/sokldjs554/procurement-forecast/actions/runs/36567195391)의 변경본 수치입니다. 전후 표는 [PR #53](https://github.com/sokldjs554/procurement-forecast/pull/53)에 있습니다.
-원본 CI 보고서의 추출기 이름은 고정 문자열 때문에 v2로 잘못 표시됐습니다. 실제 실행기는 v3이며, 보고 함수가 실행 provider의 모델명을 읽도록 수정했습니다. 수기 54사례를 다시 실행해 이름 이외 모든 결과가 원본 JSON과 같음을 확인했습니다. 아래에서는 이름만 바로잡았습니다.
+2026-09-30 [PR #54 CI](https://github.com/sokldjs554/procurement-forecast/actions/runs/36666923090)의 변경본(`9834b6a`) 수치입니다. 기준 `a764922` 대비 합성 추출·연결, OCR, 수기 54사례 지표를 유지했습니다. 수집 순서별 소속 일치 검증은 [운영 반영 상태](production-status.md)와 [성능 보고서](performance.md)에 별도로 기록합니다.
 
 > 합성 세계(synthetic world) 결과는 파이프라인이 설계대로 동작하는지 보여줄 뿐, 실제 데이터에서의
 > 정확도를 주장하지 않습니다. 실제 문장에 가까운 수기 작성 세트(realistic)를 따로 둔 이유입니다.
