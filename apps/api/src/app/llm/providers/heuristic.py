@@ -13,6 +13,7 @@ from __future__ import annotations
 import re
 from typing import cast
 
+from app.domain.grounding import OFFICIAL_ENDINGS
 from app.domain.krw import detect_table_unit, find_amounts, parse_krw
 from app.domain.taxonomy import (
     CATEGORIES,
@@ -29,10 +30,15 @@ from app.llm.schemas import Commitment, ExtractedSignal, ExtractionOutput
 from app.llm.types import LLMResult
 from app.parsing.chunking import budget_project_row, chunk_budget, match_member
 
-HEURISTIC_VERSION = "heuristic-v3"
+HEURISTIC_VERSION = "heuristic-v5"
 
 _SENTENCE_RE = re.compile(r"[^.?!。]+[.?!。]?")
-_SPEAKER_PREFIX_RE = re.compile(r"^[○◯◎]\s*[가-힣A-Za-z·]+\s+[가-힣]{2,4}\s+")
+_SPEAKER_PREFIX_RE = re.compile(r"^[○◯◎]\s*(?P<role>[가-힣A-Za-z·]+)\s+[가-힣]{2,4}(?:\s+|$)")
+_SPEAKER_LABEL_RE = re.compile(r"(?P<role>[가-힣A-Za-z·]{1,20}) [가-힣]{2,4}")
+_MAINTENANCE_RE = re.compile(r"유지\s*(?:관리|보수)")
+_NEW_PURCHASE_RE = re.compile(
+    r"설치|구축|조성|도입|교체|보급|전환|확충|리모델링|고도화|구매|구입|임차|신축|증축|개축|개발|건립"
+)
 _PROJECT_SUFFIX = (
     "설치",
     "구축",
@@ -84,18 +90,40 @@ def _sentences(text: str) -> list[str]:
     return [s.strip() for s in _SENTENCE_RE.findall(text) if s.strip()]
 
 
-def _answer_text(chunk_text: str) -> tuple[str, str]:
+def _is_official_role(role: str) -> bool:
+    return role.endswith(OFFICIAL_ENDINGS) and not role.endswith(("위원", "의원", "위원장", "의장"))
+
+
+def _answer_text(chunk_text: str, labels: list[str] | None = None) -> tuple[str, str]:
     """Split an exchange into (question, answer) by speaker role."""
     question: list[str] = []
     answer: list[str] = []
     current = question
+    # Long speeches lose their heading after chunk_minutes splits them. Only an
+    # unambiguous canonical speaker label can supply the missing role; explicit
+    # headings always take precedence, and neither text nor evidence is rewritten.
+    if (
+        labels
+        and len(labels) == 1
+        and (speaker := _SPEAKER_LABEL_RE.fullmatch(labels[0]))
+        and _is_official_role(speaker.group("role"))
+        and not re.search(r"(?m)^[ \t]*[○◯◎]", chunk_text)
+    ):
+        current = answer
     for line in chunk_text.splitlines():
         content = line
         if glued := match_member(line.strip()):
             current, content = question, glued.group("speech")
-        elif m := re.match(r"^[○◯◎]\s*(?P<role>[가-힣A-Za-z·]+)\s+[가-힣]{2,4}\s+", line.strip()):
-            current = question if m.group("role") in _MEMBER_ROLES else answer
-            content = _SPEAKER_PREFIX_RE.sub("", line.strip())
+        elif m := _SPEAKER_PREFIX_RE.match(line.strip()):
+            role = m.group("role")
+            content = line.strip()[m.end() :]
+            # Newly supported standalone headings use the same conservative role
+            # check as continuations; preserve the existing inline-header behavior.
+            current = (
+                question
+                if role in _MEMBER_ROLES or (not content and not _is_official_role(role))
+                else answer
+            )
         current.append(content)
     return " ".join(question), " ".join(answer)
 
@@ -281,8 +309,12 @@ def _budget_list_signals(ctx: ChunkContext) -> list[ExtractedSignal]:
 def _extract_exchange(ctx: ChunkContext) -> list[ExtractedSignal]:
     if listed := _budget_list_signals(ctx):
         return listed
-    question, answer = _answer_text(ctx.text)
+    question, answer = _answer_text(ctx.text, ctx.labels)
     if not answer:
+        return []
+    # Renewing or reallocating maintenance budgets is not a new purchase. Keep
+    # mixed discussions when a concrete purchase action is also stated.
+    if _MAINTENANCE_RE.search(answer) and not _NEW_PURCHASE_RE.search(question + " " + answer):
         return []
     level = commitment_level(answer)
     if level is None:

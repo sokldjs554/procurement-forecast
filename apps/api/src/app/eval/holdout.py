@@ -18,10 +18,12 @@ from pathlib import Path
 from typing import Any
 
 from app.clock import now_utc
-from app.domain.krw import amounts_agree
-from app.eval.realistic import Prediction, load_realistic, verify
+from app.domain.krw import amounts_agree, detect_table_unit
+from app.eval.realistic import Prediction, load_realistic
 from app.llm.prompts import ChunkContext
 from app.llm.providers.heuristic import HeuristicProvider
+from app.parsing.chunking import split_turns
+from app.pipeline.process import check_signal
 
 FIELDS = ("category", "commitment", "budget_krw", "expected_year")
 
@@ -69,8 +71,25 @@ def load_holdout(path: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
         if not normalized or normalized in seen_text or normalized in development_text:
             raise ValueError("empty, duplicate or known development excerpt")
         seen_text.add(normalized)
-        if text not in sources.get(case["source_id"], ""):
+        source_text = sources.get(case["source_id"], "")
+        if text not in source_text:
             raise ValueError(f"excerpt absent from archived source: {case['id']}")
+        locator = case.get("locator", {})
+        offset = locator.get("text_char_start", source_text.find(text))
+        if (
+            type(offset) is not int
+            or offset < 0
+            or source_text[offset : offset + len(text)] != text
+        ):
+            raise ValueError("excerpt source offset mismatch")
+        # Reconstruct context only from verified source bytes, never annotation roles/labels.
+        case["_source_text"] = source_text
+        case["_char_start"] = offset
+        case["_source_labels"] = [
+            f"{turn.role} {turn.name}"
+            for turn in split_turns(source_text)
+            if turn.start < offset + len(text) and turn.end > offset
+        ]
         if case["doc_type"] not in {"budget_book", "council_minutes"}:
             raise ValueError("unsupported document type")
         if not case.get("date") or not case.get("date_basis"):
@@ -231,7 +250,7 @@ async def evaluate_holdout(path: Path, *, code_revision: str) -> dict[str, Any]:
             case["id"],
             case["institution"],
             date.fromisoformat(case["date"]),
-            case.get("labels", []),
+            case["_source_labels"],
             case["text"],
             case.get("fiscal_year"),
         )
@@ -240,7 +259,17 @@ async def evaluate_holdout(path: Path, *, code_revision: str) -> dict[str, Any]:
         kept = []
         details = []
         for sig in result.value.signals:
-            checked = verify(case, sig)
+            checked = check_signal(
+                sig,
+                text=case["text"],
+                doc_type=case["doc_type"],
+                reference_date=date.fromisoformat(case["date"]),
+                fiscal_year=case.get("fiscal_year"),
+                table_unit=detect_table_unit(case["text"]) or 1000,
+                min_score=88.0,
+                document_text=case["_source_text"],
+                char_start=case["_char_start"],
+            )
             details.append(
                 {
                     "prediction": asdict(Prediction.of(sig, checked)),
@@ -265,6 +294,7 @@ async def evaluate_holdout(path: Path, *, code_revision: str) -> dict[str, Any]:
         "independent_human_gold": False,
         "scope": "selected_parsed_excerpts_extraction_only_not_ocr_linking_or_forecasting",
         "matching": "maximum_one_to_one_title_phrase_whitespace_insensitive_budget_2pct",
+        "context_policy": "speaker_labels_and_grounding_offsets_from_verified_full_source_not_gold",
         "documents": len({case["source_id"] for case in cases}),
         "institutions": sorted({case["institution"] for case in cases}),
         "raw": score_cases(raw_rows),

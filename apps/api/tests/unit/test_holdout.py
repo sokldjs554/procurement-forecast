@@ -161,3 +161,27 @@ def test_ambiguous_identity_never_makes_field_scores_depend_on_prediction_order(
     assert scores[0]["fields"] == scores[1]["fields"]
     assert scores[0]["fields"]["budget_krw"]["ambiguous_identity_excluded"] == 2
     assert scores[0]["fields"]["budget_krw"]["accuracy_when_matched"] is None
+
+
+def test_speaker_context_comes_from_hashed_source_never_gold_role(tmp_path: Path) -> None:
+    manifest = write_manifest(tmp_path)
+    value = json.loads(manifest.read_text())
+    source = (
+        "○위원 김유진 홈페이지 도입은 어떻습니까?\n○정보과장 이민호 홈페이지 구축을 검토하겠습니다."
+    )
+    (tmp_path / "source.txt").write_text(source)
+    value["sources"][0]["sha256"] = hashlib.sha256(source.encode()).hexdigest()
+    case = json.loads((tmp_path / "cases.jsonl").read_text())
+    case.update(
+        doc_type="council_minutes",
+        text="홈페이지 구축을 검토하겠습니다.",
+        labels=["위원 김유진"],
+        speaker_role="member",
+    )
+    content = json.dumps(case).encode()
+    (tmp_path / "cases.jsonl").write_bytes(content)
+    value["cases_sha256"] = hashlib.sha256(content).hexdigest()
+    manifest.write_text(json.dumps(value))
+    _, cases = load_holdout(manifest)
+    assert cases[0]["_source_labels"] == ["정보과장 이민호"]
+    assert cases[0]["_source_text"][cases[0]["_char_start"] :] == case["text"]
