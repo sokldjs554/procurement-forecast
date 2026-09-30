@@ -177,7 +177,11 @@ export default function OpportunityPage() {
           <Card className="p-5">
             <p className="mb-3 text-[13px] font-medium text-ink">이 추천, 도움이 됐나요?</p>
             <FeedbackBar id={data.id} current={data.feedback} />
-            <p className="mt-2 text-[12px] text-muted">‘관련 없어요’나 ‘숨기기’를 누르면 피드와 알림에서 빠져요. 남겨 주신 의견은 추천 모델을 학습시킬 때도 써요.</p>
+            <p className="mt-2 text-[12px] text-muted">
+              {DEMO_STATIC
+                ? "‘관련 없어요’나 ‘숨기기’를 누르면 피드에서 빠져요. 데모에서 선택한 의견은 현재 탭에만 반영되고, 새로고침하면 초기화돼요."
+                : "‘관련 없어요’나 ‘숨기기’를 누르면 피드와 알림에서 빠져요. 선택한 의견은 해당 추천에 기록돼요."}
+            </p>
           </Card>
         </div>
       </div>

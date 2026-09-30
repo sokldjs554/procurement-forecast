@@ -35,8 +35,7 @@ function linkLabel(link: Signal["link"]): string | null {
   if (!link) return null;
   if (link.method === "seed") return "처음 잡힌 신호";
   if (link.method === "ref") return "공고 번호로 이어짐";
-  const pct = Math.round(link.score * 100);
-  return `사업명 유사도 ${pct}점으로 이어짐${link.tentative ? " (확인 중)" : ""}`;
+  return `사업명·분야·금액 등을 비교해 연결${link.tentative ? " (확인 중)" : ""}`;
 }
 
 export function SignalTimeline({ signals }: { signals: Signal[] }) {
