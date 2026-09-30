@@ -632,7 +632,8 @@ def additional_queries(
         )
     for label, ids in (
         ("hit", document_signal_ids),
-        ("miss", [-sid for sid in document_signal_ids]),
+        # -1 deliberately exists in the invalid-core fixture; it is not a miss probe.
+        ("miss", [-(sizes["signals"] + sid) for sid in document_signal_ids]),
     ):
         result.append(
             query(

@@ -95,8 +95,6 @@ PY
     fi
   )
 done
-# The benchmark uses its own disposable app_bench database at the default production-like scale.
-make bench
-cp docs/performance.md "$audit_dir/performance.md"
-cat docs/performance.md
+# Production-scale SQL is measured in the independent benchmark job, so a slow
+# protection query is reported promptly instead of waiting for every archive replay.
 cat "$audit_dir/baseline.md" "$audit_dir/changed.md" >> "$GITHUB_STEP_SUMMARY"

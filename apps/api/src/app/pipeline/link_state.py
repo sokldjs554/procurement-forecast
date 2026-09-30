@@ -97,8 +97,11 @@ def protected_opportunities_query(
         .correlate(Opportunity)
         .exists()
     )
+    # EXISTS may choose a sequential first-match scan for parameterized JSONB history,
+    # then scan the whole archive for each absent identity. Counting indexed matches
+    # costs all matching entries but avoids that optimistic first-row plan on misses.
     reviewed_history = (
-        select(ReviewItem.id)
+        select(func.count(ReviewItem.id))
         .where(
             or_(
                 ReviewItem.resolution.contains(previous),
@@ -108,22 +111,25 @@ def protected_opportunities_query(
             )
         )
         .correlate(Opportunity)
-        .exists()
+        .scalar_subquery()
+        > 0
     )
     relation_endpoint = (
-        select(OpportunityRelation.id)
+        select(func.count(OpportunityRelation.id))
         .where(or_(OpportunityRelation.project_id == oid, OpportunityRelation.contract_id == oid))
         .correlate(Opportunity)
-        .exists()
+        .scalar_subquery()
+        > 0
     )
     relation_history = (
-        select(OpportunityRelationEvent.id)
+        select(func.count(OpportunityRelationEvent.id))
         .where(OpportunityRelationEvent.evidence_snapshot.contains(func.jsonb_build_array(anchor)))
         .correlate(Opportunity)
-        .exists()
+        .scalar_subquery()
+        > 0
     )
     moved_relation_evidence = (
-        select(OpportunitySignal.signal_id)
+        select(func.count(OpportunitySignal.signal_id))
         .join(
             OpportunityRelationEvent,
             OpportunityRelationEvent.evidence_signal_ids.contains(
@@ -132,7 +138,8 @@ def protected_opportunities_query(
         )
         .where(OpportunitySignal.opportunity_id == oid)
         .correlate(Opportunity)
-        .exists()
+        .scalar_subquery()
+        > 0
     )
     eligible_core_count = (
         select(func.count(Signal.id))
@@ -178,7 +185,7 @@ def customer_history_predicate() -> ColumnElement[bool]:
     oid = Opportunity.id
     anchor = func.jsonb_build_object("opportunity_id", oid)
     customer_action = (
-        select(Recommendation.opportunity_id)
+        select(func.count(Recommendation.opportunity_id))
         .where(
             Recommendation.opportunity_id == oid,
             or_(
@@ -188,23 +195,26 @@ def customer_history_predicate() -> ColumnElement[bool]:
             ),
         )
         .correlate(Opportunity)
-        .exists()
+        .scalar_subquery()
+        > 0
     )
     brief = (
-        select(Brief.opportunity_id)
+        select(func.count(Brief.opportunity_id))
         .where(Brief.opportunity_id == oid)
         .correlate(Opportunity)
-        .exists()
+        .scalar_subquery()
+        > 0
     )
     notification = (
-        select(Notification.id)
+        select(func.count(Notification.id))
         .where(
             Notification.payload.contains(
                 func.jsonb_build_object("items", func.jsonb_build_array(anchor))
             )
         )
         .correlate(Opportunity)
-        .exists()
+        .scalar_subquery()
+        > 0
     )
     return or_(customer_action, brief, notification)
 

@@ -15,6 +15,8 @@ depends_on = None
 
 
 def upgrade() -> None:
+    op.create_index("ix_recommendations_opportunity", "recommendations", ["opportunity_id"])
+    op.create_index("ix_briefs_opportunity", "briefs", ["opportunity_id"])
     op.create_table(
         "opportunity_customer_anchors",
         sa.Column(

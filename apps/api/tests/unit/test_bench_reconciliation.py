@@ -125,4 +125,4 @@ def test_customer_anchor_reprocessing_uses_document_signal_ids_and_typed_overlap
     assert "opportunity_customer_anchors.opportunity_id" in hit
     assert "&& CAST(ARRAY[1, 150001, 300001] AS BIGINT[])" in hit
     assert "LIMIT 1" in hit and "LIMIT 1" in miss
-    assert "ARRAY[-1, -150001, -300001]" in miss
+    assert "ARRAY[-400001, -550001, -700001]" in miss

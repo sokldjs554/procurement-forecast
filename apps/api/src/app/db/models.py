@@ -488,6 +488,7 @@ class Recommendation(Base):
             "ck_recommendation_feedback",
         ),
         Index("ix_recommendations_org_score", "org_id", "score"),
+        Index("ix_recommendations_opportunity", "opportunity_id"),
     )
 
     org_id: Mapped[int] = mapped_column(
@@ -719,7 +720,10 @@ class CreditLedgerEntry(TimestampMixin, Base):
 
 class Brief(TimestampMixin, Base):
     __tablename__ = "briefs"
-    __table_args__ = (Index("ix_briefs_org_opportunity", "org_id", "opportunity_id"),)
+    __table_args__ = (
+        Index("ix_briefs_org_opportunity", "org_id", "opportunity_id"),
+        Index("ix_briefs_opportunity", "opportunity_id"),
+    )
 
     id: Mapped[int] = _pk()
     org_id: Mapped[int] = mapped_column(ForeignKey("organizations.id", ondelete="CASCADE"))
