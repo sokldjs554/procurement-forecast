@@ -1,0 +1,26 @@
+{
+  "cases": 32,
+  "documents": 8,
+  "institutions": [
+    "동두천시",
+    "원주시",
+    "충청북도"
+  ],
+  "positive_cases": 17,
+  "negative_cases": 15,
+  "expected_signals": 28,
+  "cases_by_document": {
+    "wonju-plan": 5,
+    "chungbuk-supp": 4,
+    "ddc-341": 4,
+    "ddc-342": 4,
+    "ddc-334": 5,
+    "wonju-261": 4,
+    "wonju-265": 3,
+    "wonju-268": 3
+  },
+  "all_excerpt_substrings_verified": true,
+  "raw_original_hashes_available": 0,
+  "independent_human_review": false,
+  "model_or_evaluator_accessed": false
+}

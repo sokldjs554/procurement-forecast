@@ -1,0 +1,35 @@
+{
+  "review_origin": "separate implementation-blind AI source review",
+  "reviewer": "/root/blind_label_review",
+  "human_expert_review": false,
+  "before_any_scoring": true,
+  "changes": [
+    {
+      "case": "fresh-004 / fresh-005",
+      "action": "Anchor actual section heading plus newline, excluding table-of-contents prefix that accidentally included positive projects."
+    },
+    {
+      "case": "fresh-002",
+      "action": "Use one source-defined modernization project; omit budget/year/commitment scoring for mixed annual table."
+    },
+    {
+      "case": "fresh-014",
+      "action": "Omit public_sw category for physical queue kiosk; retain unambiguous title/amount."
+    },
+    {
+      "case": "fresh-022",
+      "action": "Replace object-less conditional future-purchase slice with source-explicit recurring telecommunications utility line. Same source document; no model outputs consulted.",
+      "superseded_text": "차후에 더 필요하면 그때 가서 구매토록 하겠습니다.\n현재로는 계획은 없습니다.",
+      "replacement_text": "공공운영비로 정보통신요금 2억 7,600만 원을 계상하였습니다."
+    },
+    {
+      "case": "fresh-027",
+      "action": "Concrete memorial proposal + executive active review qualifies as reviewing; omit expected year."
+    },
+    {
+      "case": "fresh-030",
+      "action": "Named suspended/returned-funding hall retained as declined; omit budget/year scoring."
+    }
+  ],
+  "rubric": "Committed denotes explicit budget proposal/line allocation, not final legislative approval or a signed award. Reviewing and declined concrete proposals count as project extraction signals."
+}

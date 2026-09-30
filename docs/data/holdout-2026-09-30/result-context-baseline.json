@@ -1,0 +1,922 @@
+{
+  "schema_version": "source-holdout-result-v1",
+  "evaluated_at": "2026-09-30T07:17:31.087319+00:00",
+  "code_revision": "814f1baee9f710e8ad0f486ae818b5f9532cab7c+source-context",
+  "extractor": "heuristic-v3",
+  "api_cost_usd": 0,
+  "manifest_sha256": "035ac5b5b01f7ca04a8614e39ac26c72d769011c51ddefaa1e1f71d595d0e9e7",
+  "cases_sha256": "1dc745c6a3de2c597752c3d5960979917f806e1af4d2239ea3ec44d31aae6dec",
+  "label_origin": "source_grounded_ai_blind",
+  "independent_human_gold": false,
+  "scope": "selected_parsed_excerpts_extraction_only_not_ocr_linking_or_forecasting",
+  "matching": "maximum_one_to_one_title_phrase_whitespace_insensitive_budget_2pct",
+  "context_policy": "speaker_labels_and_grounding_offsets_from_verified_full_source_not_gold",
+  "documents": 8,
+  "institutions": [
+    "동두천시",
+    "원주시",
+    "충청북도"
+  ],
+  "raw": {
+    "cases": 32,
+    "expected": 28,
+    "predicted": 1,
+    "matched": 0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "negative_cases": 15,
+    "negative_cases_with_predictions": 1,
+    "negative_case_false_positive_rate": 0.0667,
+    "fields": {
+      "category": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 12,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": 0.0
+      },
+      "commitment": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 15,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": 0.0
+      },
+      "budget_krw": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 25,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": 0.0
+      },
+      "expected_year": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 25,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": 0.0
+      }
+    },
+    "failures": [
+      {
+        "case": "fresh-001",
+        "missing": [
+          "ChatGPT"
+        ]
+      },
+      {
+        "case": "fresh-002",
+        "missing": [
+          "노후 장비 고도화"
+        ]
+      },
+      {
+        "case": "fresh-003",
+        "missing": [
+          "디지털FUN경로당"
+        ]
+      },
+      {
+        "case": "fresh-006",
+        "missing": [
+          "탑승식청소차"
+        ]
+      },
+      {
+        "case": "fresh-006",
+        "missing": [
+          "내·외부 개선공사"
+        ]
+      },
+      {
+        "case": "fresh-010",
+        "missing": [
+          "바이러스 통합관리 프로그램"
+        ]
+      },
+      {
+        "case": "fresh-010",
+        "missing": [
+          "업무용 PC"
+        ]
+      },
+      {
+        "case": "fresh-010",
+        "missing": [
+          "서버"
+        ]
+      },
+      {
+        "case": "fresh-011",
+        "missing": [
+          "전화 교환"
+        ]
+      },
+      {
+        "case": "fresh-011",
+        "missing": [
+          "청내 방송시스템"
+        ]
+      },
+      {
+        "case": "fresh-011",
+        "missing": [
+          "인터넷 전화 방화벽"
+        ]
+      },
+      {
+        "case": "fresh-011",
+        "missing": [
+          "침입방지시스템"
+        ]
+      },
+      {
+        "case": "fresh-012",
+        "missing": [
+          "지능형 CCTV"
+        ]
+      },
+      {
+        "case": "fresh-013",
+        "missing": [
+          "민원봉사과 옥상"
+        ]
+      },
+      {
+        "case": "fresh-014",
+        "missing": [
+          "무인민원발급기",
+          "부품 교체"
+        ]
+      },
+      {
+        "case": "fresh-014",
+        "missing": [
+          "무인민원발급기"
+        ]
+      },
+      {
+        "case": "fresh-014",
+        "missing": [
+          "순번 대기 시스템"
+        ]
+      },
+      {
+        "case": "fresh-015",
+        "missing": [
+          "주민등록 전용 컴퓨터"
+        ]
+      },
+      {
+        "case": "fresh-015",
+        "missing": [
+          "신분증 확인 단말기"
+        ]
+      },
+      {
+        "case": "fresh-018",
+        "missing": [
+          "CCTV통합관제센터 방화벽"
+        ]
+      },
+      {
+        "case": "fresh-019",
+        "missing": [
+          "회의실 의자"
+        ]
+      },
+      {
+        "case": "fresh-020",
+        "missing": [
+          "태블릿PC"
+        ]
+      },
+      {
+        "case": "fresh-020",
+        "missing": [
+          "디지털저장매체 파기장치"
+        ]
+      },
+      {
+        "case": "fresh-020",
+        "missing": [
+          "통합백업시스템"
+        ]
+      },
+      {
+        "case": "fresh-023",
+        "missing": [
+          "AI 당직시스템"
+        ]
+      },
+      {
+        "case": "fresh-024",
+        "missing": [
+          "대형승용차"
+        ]
+      },
+      {
+        "case": "fresh-026",
+        "unexpected": "도서관을 운영하는데 도서관 관련 시스템"
+      },
+      {
+        "case": "fresh-027",
+        "missing": [
+          "추모할 수 있는 공간"
+        ]
+      },
+      {
+        "case": "fresh-030",
+        "missing": [
+          "친환경 스마트 농업연구관"
+        ]
+      }
+    ]
+  },
+  "after_verifier": {
+    "cases": 32,
+    "expected": 28,
+    "predicted": 1,
+    "matched": 0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "negative_cases": 15,
+    "negative_cases_with_predictions": 1,
+    "negative_case_false_positive_rate": 0.0667,
+    "fields": {
+      "category": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 12,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": 0.0
+      },
+      "commitment": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 15,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": 0.0
+      },
+      "budget_krw": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 25,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": 0.0
+      },
+      "expected_year": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 25,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": 0.0
+      }
+    },
+    "failures": [
+      {
+        "case": "fresh-001",
+        "missing": [
+          "ChatGPT"
+        ]
+      },
+      {
+        "case": "fresh-002",
+        "missing": [
+          "노후 장비 고도화"
+        ]
+      },
+      {
+        "case": "fresh-003",
+        "missing": [
+          "디지털FUN경로당"
+        ]
+      },
+      {
+        "case": "fresh-006",
+        "missing": [
+          "탑승식청소차"
+        ]
+      },
+      {
+        "case": "fresh-006",
+        "missing": [
+          "내·외부 개선공사"
+        ]
+      },
+      {
+        "case": "fresh-010",
+        "missing": [
+          "바이러스 통합관리 프로그램"
+        ]
+      },
+      {
+        "case": "fresh-010",
+        "missing": [
+          "업무용 PC"
+        ]
+      },
+      {
+        "case": "fresh-010",
+        "missing": [
+          "서버"
+        ]
+      },
+      {
+        "case": "fresh-011",
+        "missing": [
+          "전화 교환"
+        ]
+      },
+      {
+        "case": "fresh-011",
+        "missing": [
+          "청내 방송시스템"
+        ]
+      },
+      {
+        "case": "fresh-011",
+        "missing": [
+          "인터넷 전화 방화벽"
+        ]
+      },
+      {
+        "case": "fresh-011",
+        "missing": [
+          "침입방지시스템"
+        ]
+      },
+      {
+        "case": "fresh-012",
+        "missing": [
+          "지능형 CCTV"
+        ]
+      },
+      {
+        "case": "fresh-013",
+        "missing": [
+          "민원봉사과 옥상"
+        ]
+      },
+      {
+        "case": "fresh-014",
+        "missing": [
+          "무인민원발급기",
+          "부품 교체"
+        ]
+      },
+      {
+        "case": "fresh-014",
+        "missing": [
+          "무인민원발급기"
+        ]
+      },
+      {
+        "case": "fresh-014",
+        "missing": [
+          "순번 대기 시스템"
+        ]
+      },
+      {
+        "case": "fresh-015",
+        "missing": [
+          "주민등록 전용 컴퓨터"
+        ]
+      },
+      {
+        "case": "fresh-015",
+        "missing": [
+          "신분증 확인 단말기"
+        ]
+      },
+      {
+        "case": "fresh-018",
+        "missing": [
+          "CCTV통합관제센터 방화벽"
+        ]
+      },
+      {
+        "case": "fresh-019",
+        "missing": [
+          "회의실 의자"
+        ]
+      },
+      {
+        "case": "fresh-020",
+        "missing": [
+          "태블릿PC"
+        ]
+      },
+      {
+        "case": "fresh-020",
+        "missing": [
+          "디지털저장매체 파기장치"
+        ]
+      },
+      {
+        "case": "fresh-020",
+        "missing": [
+          "통합백업시스템"
+        ]
+      },
+      {
+        "case": "fresh-023",
+        "missing": [
+          "AI 당직시스템"
+        ]
+      },
+      {
+        "case": "fresh-024",
+        "missing": [
+          "대형승용차"
+        ]
+      },
+      {
+        "case": "fresh-026",
+        "unexpected": "도서관을 운영하는데 도서관 관련 시스템"
+      },
+      {
+        "case": "fresh-027",
+        "missing": [
+          "추모할 수 있는 공간"
+        ]
+      },
+      {
+        "case": "fresh-030",
+        "missing": [
+          "친환경 스마트 농업연구관"
+        ]
+      }
+    ]
+  },
+  "by_institution": {
+    "동두천시": {
+      "cases": 13,
+      "expected": 19,
+      "predicted": 0,
+      "matched": 0,
+      "precision": null,
+      "recall": 0.0,
+      "negative_cases": 4,
+      "negative_cases_with_predictions": 0,
+      "negative_case_false_positive_rate": 0.0,
+      "fields": {
+        "category": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 4,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "commitment": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 9,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "budget_krw": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 19,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "expected_year": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 19,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        }
+      },
+      "failures": [
+        {
+          "case": "fresh-010",
+          "missing": [
+            "바이러스 통합관리 프로그램"
+          ]
+        },
+        {
+          "case": "fresh-010",
+          "missing": [
+            "업무용 PC"
+          ]
+        },
+        {
+          "case": "fresh-010",
+          "missing": [
+            "서버"
+          ]
+        },
+        {
+          "case": "fresh-011",
+          "missing": [
+            "전화 교환"
+          ]
+        },
+        {
+          "case": "fresh-011",
+          "missing": [
+            "청내 방송시스템"
+          ]
+        },
+        {
+          "case": "fresh-011",
+          "missing": [
+            "인터넷 전화 방화벽"
+          ]
+        },
+        {
+          "case": "fresh-011",
+          "missing": [
+            "침입방지시스템"
+          ]
+        },
+        {
+          "case": "fresh-012",
+          "missing": [
+            "지능형 CCTV"
+          ]
+        },
+        {
+          "case": "fresh-013",
+          "missing": [
+            "민원봉사과 옥상"
+          ]
+        },
+        {
+          "case": "fresh-014",
+          "missing": [
+            "무인민원발급기",
+            "부품 교체"
+          ]
+        },
+        {
+          "case": "fresh-014",
+          "missing": [
+            "무인민원발급기"
+          ]
+        },
+        {
+          "case": "fresh-014",
+          "missing": [
+            "순번 대기 시스템"
+          ]
+        },
+        {
+          "case": "fresh-015",
+          "missing": [
+            "주민등록 전용 컴퓨터"
+          ]
+        },
+        {
+          "case": "fresh-015",
+          "missing": [
+            "신분증 확인 단말기"
+          ]
+        },
+        {
+          "case": "fresh-018",
+          "missing": [
+            "CCTV통합관제센터 방화벽"
+          ]
+        },
+        {
+          "case": "fresh-019",
+          "missing": [
+            "회의실 의자"
+          ]
+        },
+        {
+          "case": "fresh-020",
+          "missing": [
+            "태블릿PC"
+          ]
+        },
+        {
+          "case": "fresh-020",
+          "missing": [
+            "디지털저장매체 파기장치"
+          ]
+        },
+        {
+          "case": "fresh-020",
+          "missing": [
+            "통합백업시스템"
+          ]
+        }
+      ]
+    },
+    "원주시": {
+      "cases": 15,
+      "expected": 7,
+      "predicted": 1,
+      "matched": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "negative_cases": 8,
+      "negative_cases_with_predictions": 1,
+      "negative_case_false_positive_rate": 0.125,
+      "fields": {
+        "category": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 6,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "commitment": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 4,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "budget_krw": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 4,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "expected_year": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 4,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        }
+      },
+      "failures": [
+        {
+          "case": "fresh-001",
+          "missing": [
+            "ChatGPT"
+          ]
+        },
+        {
+          "case": "fresh-002",
+          "missing": [
+            "노후 장비 고도화"
+          ]
+        },
+        {
+          "case": "fresh-003",
+          "missing": [
+            "디지털FUN경로당"
+          ]
+        },
+        {
+          "case": "fresh-023",
+          "missing": [
+            "AI 당직시스템"
+          ]
+        },
+        {
+          "case": "fresh-024",
+          "missing": [
+            "대형승용차"
+          ]
+        },
+        {
+          "case": "fresh-026",
+          "unexpected": "도서관을 운영하는데 도서관 관련 시스템"
+        },
+        {
+          "case": "fresh-027",
+          "missing": [
+            "추모할 수 있는 공간"
+          ]
+        },
+        {
+          "case": "fresh-030",
+          "missing": [
+            "친환경 스마트 농업연구관"
+          ]
+        }
+      ]
+    },
+    "충청북도": {
+      "cases": 4,
+      "expected": 2,
+      "predicted": 0,
+      "matched": 0,
+      "precision": null,
+      "recall": 0.0,
+      "negative_cases": 3,
+      "negative_cases_with_predictions": 0,
+      "negative_case_false_positive_rate": 0.0,
+      "fields": {
+        "category": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 2,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "commitment": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 2,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "budget_krw": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 2,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "expected_year": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 2,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        }
+      },
+      "failures": [
+        {
+          "case": "fresh-006",
+          "missing": [
+            "탑승식청소차"
+          ]
+        },
+        {
+          "case": "fresh-006",
+          "missing": [
+            "내·외부 개선공사"
+          ]
+        }
+      ]
+    }
+  },
+  "predictions": [
+    {
+      "case": "fresh-001",
+      "predictions": []
+    },
+    {
+      "case": "fresh-002",
+      "predictions": []
+    },
+    {
+      "case": "fresh-003",
+      "predictions": []
+    },
+    {
+      "case": "fresh-004",
+      "predictions": []
+    },
+    {
+      "case": "fresh-005",
+      "predictions": []
+    },
+    {
+      "case": "fresh-006",
+      "predictions": []
+    },
+    {
+      "case": "fresh-007",
+      "predictions": []
+    },
+    {
+      "case": "fresh-008",
+      "predictions": []
+    },
+    {
+      "case": "fresh-009",
+      "predictions": []
+    },
+    {
+      "case": "fresh-010",
+      "predictions": []
+    },
+    {
+      "case": "fresh-011",
+      "predictions": []
+    },
+    {
+      "case": "fresh-012",
+      "predictions": []
+    },
+    {
+      "case": "fresh-013",
+      "predictions": []
+    },
+    {
+      "case": "fresh-014",
+      "predictions": []
+    },
+    {
+      "case": "fresh-015",
+      "predictions": []
+    },
+    {
+      "case": "fresh-016",
+      "predictions": []
+    },
+    {
+      "case": "fresh-017",
+      "predictions": []
+    },
+    {
+      "case": "fresh-018",
+      "predictions": []
+    },
+    {
+      "case": "fresh-019",
+      "predictions": []
+    },
+    {
+      "case": "fresh-020",
+      "predictions": []
+    },
+    {
+      "case": "fresh-021",
+      "predictions": []
+    },
+    {
+      "case": "fresh-022",
+      "predictions": []
+    },
+    {
+      "case": "fresh-023",
+      "predictions": []
+    },
+    {
+      "case": "fresh-024",
+      "predictions": []
+    },
+    {
+      "case": "fresh-025",
+      "predictions": []
+    },
+    {
+      "case": "fresh-026",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "도서관을 운영하는데 도서관 관련 시스템",
+            "keywords": [
+              "유지관리",
+              "도서관"
+            ],
+            "category": "education",
+            "commitment": "planned",
+            "budget_krw": null,
+            "expected_year": 2020
+          },
+          "verdict": "accepted",
+          "issues": []
+        }
+      ]
+    },
+    {
+      "case": "fresh-027",
+      "predictions": []
+    },
+    {
+      "case": "fresh-028",
+      "predictions": []
+    },
+    {
+      "case": "fresh-029",
+      "predictions": []
+    },
+    {
+      "case": "fresh-030",
+      "predictions": []
+    },
+    {
+      "case": "fresh-031",
+      "predictions": []
+    },
+    {
+      "case": "fresh-032",
+      "predictions": []
+    }
+  ]
+}
