@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/primitives";
 import type { Schemas } from "@/lib/api/client";
 import { formatDate, formatKRW, formatPercent, formatWindow, headStartLabel, leadLabel } from "@/lib/format";
 import { STATUS_LABEL } from "@/lib/utils";
+import { DEMO_STATIC } from "@/lib/demo/fetch";
 
 import { StageRail } from "./stage-rail";
 
@@ -28,7 +29,7 @@ export function OpportunityCard({ item }: { item: Card }) {
             {item.status === "bid_open" ? <Badge tone="warning">{STATUS_LABEL.bid_open}</Badge> : null}
             {lead ? <Badge tone="outline">입찰 {lead}</Badge> : null}
             {item.window_passed ? <Badge tone="outline">예상 시기 지남</Badge> : null}
-            {headStart ? <Badge tone="good">공고 {headStart} 전에 찾음</Badge> : null}
+            {headStart ? <Badge tone="good">{DEMO_STATIC ? "예시: " : ""}공고 {headStart} 전에 찾음</Badge> : null}
           </div>
           <h3 className="mt-2 text-[16px] leading-snug font-semibold text-ink group-hover:text-accent-text">
             {item.title}
@@ -78,7 +79,7 @@ export function OpportunityCard({ item }: { item: Card }) {
         {/* once the tender is out there is no probability left to show */}
         {item.tender_out ? null : (
           <span className="text-[12px] text-muted">
-            공고로 이어질 확률 <span className="font-semibold text-ink">{formatPercent(item.conversion_prob)}</span>
+            공고 전환 추정치{DEMO_STATIC ? " (데모)" : ""} <span className="font-semibold text-ink">{formatPercent(item.conversion_prob)}</span>
           </span>
         )}
       </div>

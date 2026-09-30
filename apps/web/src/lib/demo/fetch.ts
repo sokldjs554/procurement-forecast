@@ -159,8 +159,9 @@ export async function demoFetch(request: Request): Promise<Response> {
     const id = Number(opp[1]);
     const brief = await load<Brief>(`${user}/briefs/${id}.json`);
     if (!brief) return fail(403, READ_ONLY);
-    briefs.set(id, [brief, ...(briefs.get(id) ?? [])]);
-    return json(brief, 201);
+    const example = { ...brief, credits_spent: 0 };
+    briefs.set(id, [example]);
+    return json(example, 201);
   }
   if (method === "GET") {
     const data = await load(`${user}/${fileKey(path, url.searchParams)}.json`);

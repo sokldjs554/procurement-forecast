@@ -21,6 +21,12 @@ beforeEach(() => {
 });
 
 describe("DemoButton", () => {
+  it("opens the selected walkthrough after explicit demo sign-in", async () => {
+    mutate.mockImplementation((_body, opts: { onSuccess: () => void }) => opts.onSuccess());
+    render(<DemoButton href="/app/opportunities/991" label="대표 사례 체험하기" />);
+    await userEvent.click(screen.getByRole("button", { name: "대표 사례 체험하기" }));
+    expect(push).toHaveBeenCalledWith("/app/opportunities/991");
+  });
   it("does not sign anyone in just by rendering", () => {
     render(<DemoButton />);
     expect(screen.getByRole("button", { name: /데모로 둘러보기/ })).toBeInTheDocument();

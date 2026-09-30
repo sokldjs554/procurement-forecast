@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useDeferredValue, useMemo, useState } from "react";
 
 import { OpportunityCard } from "@/components/opportunity/opportunity-card";
+import { DemoShowcase } from "@/components/landing/demo-showcase";
+import { DEMO_STATIC } from "@/lib/demo/fetch";
 import { Button } from "@/components/ui/button";
 import { ChipGroup, Segmented } from "@/components/ui/controls";
 import { EmptyState, ErrorNote, Input, PageHeader, Select, Skeleton } from "@/components/ui/primitives";
@@ -58,6 +60,14 @@ export default function FeedPage() {
             : "우리 회사와 맞는 사업을 찾고 있어요…"
         }
       />
+
+      {DEMO_STATIC ? <section className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-accent/25 bg-accent-soft p-5" aria-label="추천 체험 순서">
+        <div>
+          <h2 className="font-semibold text-ink">처음이라면 이 사례부터 보세요</h2>
+          <p className="mt-1 text-sm text-ink-2">연결된 문서 → 예시 원문과 근거 → 영업 브리핑 순서로 확인해 보세요.</p>
+        </div>
+        <DemoShowcase />
+      </section> : null}
 
       <div className="flex flex-wrap items-center gap-3">
         <div className="relative w-full sm:w-64">

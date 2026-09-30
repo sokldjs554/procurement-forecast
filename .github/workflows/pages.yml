@@ -82,6 +82,24 @@ jobs:
           pnpm install --frozen-lockfile
           rm -rf src/app/api
           pnpm build
+      - name: Verify the exported demo on desktop and mobile
+        working-directory: apps/web
+        env:
+          E2E_BASE_URL: http://127.0.0.1:4173/${{ github.event.repository.name }}/
+        run: |
+          pnpm exec playwright install --with-deps chromium
+          mkdir -p "$RUNNER_TEMP/demo-site"
+          ln -s "$PWD/out" "$RUNNER_TEMP/demo-site/${{ github.event.repository.name }}"
+          python3 -m http.server 4173 --directory "$RUNNER_TEMP/demo-site" > "$RUNNER_TEMP/demo-site.log" 2>&1 &
+          for _ in $(seq 1 20); do curl -fsS "$E2E_BASE_URL" > /dev/null && break; sleep 1; done
+          pnpm exec playwright test --config playwright.static.config.ts
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: public-demo-browser-failure
+          path: |
+            apps/web/playwright-report
+            apps/web/test-results
       - uses: actions/upload-pages-artifact@v4
         with:
           path: apps/web/out

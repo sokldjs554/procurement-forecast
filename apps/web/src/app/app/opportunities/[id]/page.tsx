@@ -1,22 +1,21 @@
 "use client";
 
-import { ArrowLeft, Building2, EyeOff, FileSearch, ThumbsDown, ThumbsUp, Trophy } from "lucide-react";
+import { ArrowLeft, Building2, EyeOff, ThumbsDown, ThumbsUp, Trophy } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import ReactMarkdown from "react-markdown";
 
 import { BarList } from "@/components/charts/bar-list";
 import { BudgetLine, StatTile } from "@/components/charts/budget-line";
 import { OpportunityRelations } from "@/components/opportunity/relations";
+import { Briefs } from "@/components/opportunity/briefs";
+import { DEMO_STATIC } from "@/lib/demo/fetch";
 import { HeadStart } from "@/components/opportunity/head-start";
 import { SignalTimeline } from "@/components/opportunity/signal-timeline";
 import { StageRail } from "@/components/opportunity/stage-rail";
 import { Button } from "@/components/ui/button";
 import { Badge, Card, CardHeader, ErrorNote, Skeleton } from "@/components/ui/primitives";
-import { useToast } from "@/components/ui/toast";
-import { ApiError, newIdempotencyKey, type Schemas } from "@/lib/api/client";
-import { useCreateBrief, useFeedback, useMe, useOpportunity } from "@/lib/api/hooks";
-import { formatDate, formatDateTime, formatKRW, formatPercent, formatWindow, leadLabel } from "@/lib/format";
+import { useFeedback, useOpportunity } from "@/lib/api/hooks";
+import { formatDate, formatKRW, formatPercent, formatWindow, leadLabel } from "@/lib/format";
 import { STATUS_LABEL } from "@/lib/utils";
 
 const FEATURE_LABEL: Record<string, string> = {
@@ -53,62 +52,6 @@ function Why({ breakdown, tenderOut }: { breakdown: Record<string, unknown> | nu
   );
 }
 
-function Briefs({ detail }: { detail: Schemas["OpportunityDetail"] }) {
-  const me = useMe();
-  const toast = useToast();
-  const create = useCreateBrief(detail.id);
-  const balance = me.data?.org.credit_balance ?? 0;
-  const latest = detail.briefs[0];
-  return (
-    <Card>
-      <CardHeader
-        title="영업 브리핑"
-        description="지금까지 잡힌 신호와 원문, 이 기관의 발주 이력을 모아 한 장짜리 브리핑을 써 드려요. 한 번에 3크레딧이 들어요."
-        action={
-          <Button
-            size="sm"
-            loading={create.isPending}
-            disabled={balance < 3}
-            onClick={() =>
-              create.mutate(newIdempotencyKey("brief"), {
-                onSuccess: () => toast("good", "브리핑을 만들었어요. 크레딧 3개를 썼어요."),
-                onError: (e) =>
-                  toast(
-                    "critical",
-                    e instanceof ApiError && e.status === 402 ? e.message : "브리핑을 만들지 못했어요. 잠시 후 다시 해 주세요.",
-                  ),
-              })
-            }
-          >
-            <FileSearch className="size-4" aria-hidden />
-            {latest ? "다시 만들기" : "브리핑 만들기"}
-          </Button>
-        }
-      />
-      <div className="px-5 pt-3 pb-5">
-        {balance < 3 ? (
-          <p className="mb-3 text-[13px] text-muted">
-            크레딧이 모자라요.{" "}
-            <Link href="/app/billing" className="text-accent-text hover:underline">
-              충전하기
-            </Link>
-          </p>
-        ) : null}
-        {latest ? (
-          <article className="prose-brief">
-            <ReactMarkdown>{latest.content_md}</ReactMarkdown>
-            <p className="mt-4 text-[11px] text-muted">
-              {formatDateTime(latest.created_at)} ·{" "}
-              {latest.model.startsWith("heuristic") ? "LLM 없이 템플릿으로 작성" : latest.model}
-            </p>
-          </article>
-        ) : (
-          <p className="text-[13px] text-muted">아직 만든 브리핑이 없어요.</p>
-        )}
-      </div>
-    </Card>
-  );
-}
 
 function FeedbackBar({ id, current }: { id: number; current: string | null }) {
   const feedback = useFeedback(id);
@@ -156,6 +99,12 @@ export default function OpportunityPage() {
         <ArrowLeft className="size-4" aria-hidden /> 기회 피드
       </Link>
 
+      {DEMO_STATIC ? <nav aria-label="사례 체험 순서" className="flex flex-wrap gap-x-5 gap-y-2 rounded-lg border border-line bg-surface p-3 text-[13px] text-accent-text">
+        <a href="#evidence" className="hover:underline">① 연결된 문서·예시 원문</a>
+        <a href="#recommendation" className="hover:underline">② 추천 이유</a>
+        <a href="#briefing" className="hover:underline">③ 영업 브리핑</a>
+      </nav> : null}
+
       <header className="space-y-3">
         <div className="flex flex-wrap items-center gap-1.5">
           <Badge tone="accent">{data.stage_label}</Badge>
@@ -181,13 +130,13 @@ export default function OpportunityPage() {
           <StatTile
             label="입찰 예상 시기"
             value={formatWindow(data.bid_window_start, data.bid_window_end)}
-            sub={lead ? `입찰 ${lead}` : data.window_passed ? "예상 시기가 지났는데 아직 공고 전" : undefined}
+            sub={DEMO_STATIC ? "데모용 추정 일정" : lead ? `입찰 ${lead}` : data.window_passed ? "예상 시기가 지났는데 아직 공고 전" : undefined}
           />
         )}
         {data.tender_out ? (
           <StatTile label="공고 전에 잡힌 신호" value={`${earlySignals}건`} sub="입찰공고일보다 먼저 나온 문서" />
         ) : (
-          <StatTile label="공고로 이어질 확률" value={formatPercent(data.conversion_prob)} sub="지난 데이터로 보정" />
+          <StatTile label={DEMO_STATIC ? "공고 전환 추정치 (데모)" : "공고 전환 추정치"} value={formatPercent(data.conversion_prob)} sub="합성 데이터 기반 · 실제 정확도 미검증" />
         )}
         <StatTile label="우리 회사 적합도" value={data.score !== null ? `${Math.round(data.score * 100)}점` : "–"} sub={`신호 ${data.signal_count}건`} />
       </div>
@@ -199,7 +148,7 @@ export default function OpportunityPage() {
       <OpportunityRelations opportunityId={data.id} />
 
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
-        <Card>
+        <Card id="evidence" className="scroll-mt-20">
           <CardHeader
             title="신호 타임라인"
             description="문서마다 근거가 된 문장을 원문 그대로 형광펜으로 칠해 뒀어요. 원문에서 근거를 못 찾은 내용은 아예 보여주지 않아요."
@@ -210,7 +159,7 @@ export default function OpportunityPage() {
         </Card>
 
         <div className="space-y-6">
-          <Card>
+          <Card id="recommendation" className="scroll-mt-20">
             <CardHeader title="추천한 이유" />
             <div className="px-5 pt-3 pb-5">
               <Why breakdown={data.breakdown} tenderOut={data.tender_out ?? false} />

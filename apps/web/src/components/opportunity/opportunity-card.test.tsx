@@ -42,7 +42,7 @@ describe("OpportunityCard", () => {
     expect(screen.getByText("입찰 약 6개월 후")).toBeInTheDocument();
     expect(screen.getByText("입찰 예상 2027.03 ~ 2027.06")).toBeInTheDocument();
     expect(screen.getByText("3억 5,000만원")).toBeInTheDocument();
-    expect(screen.getByText(/공고로 이어질 확률/)).toBeInTheDocument();
+    expect(screen.getByText(/공고 전환 추정치/)).toBeInTheDocument();
     expect(screen.getByText("84")).toBeInTheDocument();
     expect(screen.queryByText(/전에 찾음/)).not.toBeInTheDocument();
   });

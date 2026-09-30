@@ -2,6 +2,7 @@ import { Radar } from "lucide-react";
 
 import type { Schemas } from "@/lib/api/client";
 import { formatDate, formatMonth, headStartLabel } from "@/lib/format";
+import { DEMO_STATIC } from "@/lib/demo/fetch";
 
 const SOURCE: Record<string, string> = {
   council_minutes: "회의록",
@@ -31,10 +32,12 @@ export function HeadStart({ detail }: { detail: Schemas["OpportunityDetail"] }) 
       <div className="min-w-0">
         <p className="flex items-center gap-1.5 text-[15px] font-semibold text-ink">
           <Radar className="size-4 shrink-0 text-accent-text" aria-hidden />
+          {DEMO_STATIC ? "예시 일정: " : ""}
           {published
             ? `입찰공고가 나오기 ${label} 전에 먼저 찾아낸 사업이에요`
             : `입찰이 예상되는 때보다 ${label}쯤 앞서 찾아낸 사업이에요`}
         </p>
+        {DEMO_STATIC ? <p className="mt-1 text-[12px] text-muted">가상 문서의 날짜로 계산한 예시예요. 실제 선행기간을 검증한 성과가 아니에요.</p> : null}
         <p className="mt-1 text-[13px] leading-relaxed text-ink-2">
           {first ? `처음 잡힌 건 ${formatDate(first.observed_at)}${source ? `, ${source}` : ""}에서였어요. ` : null}
           {published

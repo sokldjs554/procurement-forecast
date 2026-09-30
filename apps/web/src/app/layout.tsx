@@ -11,7 +11,7 @@ import { Providers } from "./providers";
 export const metadata: Metadata = {
   title: { default: "발주 예측 — 입찰공고 이전의 공공 수요", template: "%s · 발주 예측" },
   description:
-    "지방의회 회의록과 예산서에서 입찰공고 6~18개월 전의 공공사업 신호를 찾아 B2G 기업에 알려 드려요.",
+    "지방의회 회의록·예산서·발주계획에서 공공사업의 단서를 찾고, 연결된 근거와 영업 준비 정보를 B2G 기업에 알려 드려요.",
 };
 
 export const viewport: Viewport = {
