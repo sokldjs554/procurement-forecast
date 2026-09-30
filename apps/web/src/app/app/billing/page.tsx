@@ -9,6 +9,7 @@ import { ApiError, newIdempotencyKey, type Schemas } from "@/lib/api/client";
 import { useBilling, useBuyCredits, useChangePlan, useRegisterCard } from "@/lib/api/hooks";
 import { formatDate, formatDateTime } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { DEMO_STATIC } from "@/lib/demo/fetch";
 
 type Billing = Schemas["BillingOut"];
 
@@ -97,7 +98,7 @@ function CardSection({ billing }: { billing: Billing }) {
           <CreditCard className="size-4 text-muted" aria-hidden />
           {sub.card_summary ?? "등록된 카드가 없어요"}
         </div>
-        <Button variant="secondary" size="sm" loading={register.isPending} onClick={() => void startRegistration()}>
+        <Button variant="secondary" size="sm" disabled={DEMO_STATIC} loading={register.isPending} onClick={() => void startRegistration()}>
           {sub.card_summary ? "카드 변경" : "카드 등록"}
         </Button>
       </div>
@@ -133,7 +134,7 @@ function Plans({ billing }: { billing: Billing }) {
             <Button
               className="mt-5"
               variant={isCurrent || !plan.monthly_price_krw ? "secondary" : "primary"}
-              disabled={isCurrent || change.isPending}
+              disabled={DEMO_STATIC || isCurrent || change.isPending}
               loading={change.isPending && change.variables?.plan === plan.key}
               onClick={() =>
                 change.mutate(
@@ -161,8 +162,10 @@ function Credits({ billing }: { billing: Billing }) {
   return (
     <Card>
       <CardHeader
-        title={`크레딧 ${billing.credit_balance}개`}
-        description={`영업 브리핑 한 건에 ${billing.brief_cost}크레딧이 들어요. 플랜으로 받은 크레딧은 결제 주기가 끝나면 사라지고, 따로 산 크레딧은 계속 남아요.`}
+        title={`${DEMO_STATIC ? "예시 " : ""}크레딧 ${billing.credit_balance}개`}
+        description={DEMO_STATIC
+          ? "아래 잔액과 사용 내역은 예시예요. 공개 데모에서 브리핑을 열어도 크레딧은 차감되지 않아요."
+          : `영업 브리핑 한 건에 ${billing.brief_cost}크레딧이 들어요. 플랜으로 받은 크레딧은 결제 주기가 끝나면 사라지고, 따로 산 크레딧은 계속 남아요.`}
         action={
           <div className="flex gap-2">
             {billing.credit_packs.map((p) => (
@@ -170,6 +173,7 @@ function Credits({ billing }: { billing: Billing }) {
                 key={p.key}
                 size="sm"
                 variant="secondary"
+                disabled={DEMO_STATIC}
                 loading={buy.isPending && buy.variables?.pack === p.key}
                 onClick={() =>
                   buy.mutate({ pack: p.key, idempotencyKey: newIdempotencyKey("pack") }, {
@@ -184,6 +188,7 @@ function Credits({ billing }: { billing: Billing }) {
           </div>
         }
       />
+      {DEMO_STATIC ? <p className="rounded-lg border border-line bg-surface p-4 text-sm text-ink-2">요금과 결제 내역을 살펴보는 예시 화면이에요. 실제 구독·결제·크레딧 차감은 없으며, 카드 변경과 충전은 실행하지 않아요.</p> : null}
       <div className="overflow-x-auto p-5">
         <table className="w-full min-w-[480px] text-[13px]">
           <thead>

@@ -2,10 +2,12 @@ import { FileCheck2, GitMerge, Timer } from "lucide-react";
 import Link from "next/link";
 
 import { DemoButton } from "@/components/landing/demo-button";
+import { DemoShowcase } from "@/components/landing/demo-showcase";
 import { Logo } from "@/components/layout/shell";
 import { buttonVariants } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/ui/controls";
 import { cn } from "@/lib/utils";
+import { DEMO_STATIC } from "@/lib/demo/fetch";
 
 const JOURNEY = [
   {
@@ -35,7 +37,7 @@ const FEATURES = [
   {
     icon: Timer,
     title: "지금 움직일 만한 순서대로",
-    body: "우리 회사와 잘 맞는지만 보지 않아요. 실제 공고까지 갈 가능성과 영업할 시간이 얼마나 남았는지도 같이 따져서 순서를 매겨요. 가능성은 지난 데이터로 백테스트해서 맞춰 뒀어요.",
+    body: "회사와의 적합도, 사업 단계, 예상 일정으로 검토 순서를 정해요. 공고 전환 수치는 합성 데이터 기반 추정치이며, 실제 발주 확률과 얼마나 일찍 찾는지는 추가 검증이 필요해요.",
   },
 ];
 
@@ -52,8 +54,8 @@ export default function Home() {
           <Link href="/login" className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}>
             로그인
           </Link>
-          <Link href="/signup" className={cn(buttonVariants({ size: "sm" }))}>
-            무료로 시작
+          <Link href={DEMO_STATIC ? "/app" : "/signup"} className={cn(buttonVariants({ size: "sm" }))}>
+            {DEMO_STATIC ? "데모 둘러보기" : "무료로 시작"}
           </Link>
         </nav>
       </header>
@@ -61,20 +63,21 @@ export default function Home() {
       <section className="mx-auto max-w-6xl px-4 pt-12 pb-16 md:pt-20">
         <p className="text-sm font-semibold text-accent-text">공공조달 발주 예측 서비스</p>
         <h1 className="mt-3 max-w-3xl text-[34px] leading-[1.15] font-bold tracking-tight text-ink md:text-[52px]">
-          입찰공고보다 반년 먼저,
+          입찰공고가 나오기 전,
           <br />
-          공공사업을 찾아 드려요.
+          사업의 단서를 찾아 드려요.
         </h1>
         <p className="mt-5 max-w-2xl text-[17px] leading-relaxed text-ink-2">
-          지자체 사업은 입찰공고가 나오기 6~18개월 전부터 의회 회의록과 예산서에 먼저 등장해요. 그 문서들을 매일 대신 읽고, 우리 회사가 지금
-          영업을 시작할 만한 사업을 원문 문장과 함께 골라 드려요.
+          회의록의 추진 계획과 예산서의 사업비를 모아, 우리 회사가 검토할 공공사업을 추천해요.
+          흩어진 문서가 같은 사업으로 이어지는 과정과 추천 근거를 직접 확인해 보세요.
         </p>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <DemoButton />
-          <Link href="/signup" className={cn(buttonVariants({ variant: "secondary", size: "lg" }))}>
-            무료로 시작하기
+        <div className="mt-8 flex flex-wrap items-start gap-3">
+          {DEMO_STATIC ? <DemoShowcase /> : <DemoButton />}
+          <Link href={DEMO_STATIC ? "/app" : "/signup"} className={cn(buttonVariants({ variant: "secondary", size: "lg" }))}>
+            {DEMO_STATIC ? "추천 목록 둘러보기" : "무료로 시작하기"}
           </Link>
         </div>
+        {DEMO_STATIC ? <p className="mt-5 text-sm leading-relaxed text-ink-2">체험 순서: ① 연결된 문서 살펴보기 → ② 예시 원문과 근거 확인 → ③ 영업 브리핑 열기</p> : null}
       </section>
 
       <section id="how" className="border-y border-line bg-surface">
@@ -105,7 +108,7 @@ export default function Home() {
             ))}
           </ol>
           <p className="mt-6 text-sm text-ink-2">
-            그 사이 7개월이면 담당 부서를 만나고, 우리 제품 사양이 사업 계획에 들어가도록 제안까지 해 볼 수 있어요.
+            이 가상 사례에서는 첫 발언과 입찰공고 사이가 7개월이에요. 실제 사업을 얼마나 일찍 찾는지는 장기 관측으로 검증해야 해요.
           </p>
         </div>
       </section>

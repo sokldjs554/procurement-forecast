@@ -55,6 +55,20 @@ describe("filterFeed", () => {
 });
 
 describe("demoFetch", () => {
+  it("opens an example brief without claiming a charge or duplicating it on repeat visits", async () => {
+    vi.stubGlobal("fetch", vi.fn(async (url: string) => {
+      if (url.endsWith("briefs/999.json")) return Response.json({
+        id: 27, content_md: "예시 브리핑", model: "heuristic-v1", credits_spent: 3, created_at: "2026-09-30T00:00:00Z",
+      });
+      if (url.endsWith("opportunities/999.json")) return Response.json({ id: 999, briefs: [], feedback: null });
+      return new Response("", { status: 404 });
+    }));
+    const open = () => demoFetch(new Request("http://localhost/api/opportunities/999/briefs", { method: "POST" }));
+    expect((await (await open()).json()).credits_spent).toBe(0);
+    await open();
+    const detail = await demoFetch(new Request("http://localhost/api/opportunities/999"));
+    expect((await detail.json()).briefs).toHaveLength(1);
+  });
   afterEach(() => {
     vi.unstubAllGlobals();
     localStorage.clear();

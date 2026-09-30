@@ -3,9 +3,11 @@ import { ExternalLink, FileText, Link2, ScanLine } from "lucide-react";
 import { Badge } from "@/components/ui/primitives";
 import type { Schemas } from "@/lib/api/client";
 import { formatDate, formatKRW } from "@/lib/format";
+import { DEMO_STATIC } from "@/lib/demo/fetch";
 import { COMMITMENT_LABEL, stageIndex } from "@/lib/utils";
 
 import { EvidenceContext } from "./evidence";
+import { DemoSource } from "./demo-source";
 
 type Signal = Schemas["SignalOut"];
 
@@ -86,7 +88,7 @@ export function SignalTimeline({ signals }: { signals: Signal[] }) {
                 </span>
               ) : null}
               <span>추출: {s.extractor.split(":").slice(0, 2).join(" ")}</span>
-              {s.document.url ? (
+              {!DEMO_STATIC && s.document.url ? (
                 <a
                   href={s.document.url}
                   target="_blank"
@@ -97,6 +99,7 @@ export function SignalTimeline({ signals }: { signals: Signal[] }) {
                 </a>
               ) : null}
             </div>
+            {DEMO_STATIC ? <DemoSource documentId={s.document.id} evidence={s.evidence} /> : null}
           </li>
         );
       })}

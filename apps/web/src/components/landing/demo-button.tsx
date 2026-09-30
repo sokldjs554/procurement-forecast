@@ -15,14 +15,14 @@ const DEMO = { email: "demo@example.com", password: "demo-pass-1234" };
  * cannot swap someone's session for the shared demo account, and a signed-in user just goes to
  * their own feed.
  */
-export function DemoButton() {
+export function DemoButton({ href = "/app", label }: { href?: string; label?: string }) {
   const me = useMe();
   const login = useLogin();
   const router = useRouter();
   if (me.data) {
     return (
-      <Link href="/app" className={cn(buttonVariants({ size: "lg" }))}>
-        내 피드로 가기 <ArrowRight className="size-4" aria-hidden />
+      <Link href={href} className={cn(buttonVariants({ size: "lg" }))}>
+        {label ?? "내 피드로 가기"} <ArrowRight className="size-4" aria-hidden />
       </Link>
     );
   }
@@ -30,9 +30,9 @@ export function DemoButton() {
     <Button
       size="lg"
       loading={login.isPending}
-      onClick={() => login.mutate(DEMO, { onSuccess: () => router.push("/app"), onError: () => router.push("/login") })}
+      onClick={() => login.mutate(DEMO, { onSuccess: () => router.push(href), onError: () => router.push("/login") })}
     >
-      데모로 둘러보기 <ArrowRight className="size-4" aria-hidden />
+      {label ?? "데모로 둘러보기"} <ArrowRight className="size-4" aria-hidden />
     </Button>
   );
 }

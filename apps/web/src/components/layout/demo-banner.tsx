@@ -5,8 +5,7 @@ export function DemoBanner() {
   if (!DEMO_STATIC) return null;
   return (
     <div className="border-b border-line bg-surface-2 px-4 py-2 text-center text-[12px] text-ink-2">
-      공개 데모예요. 합성 데모 세계를 실제 파이프라인과 API로 돌려 녹화한 화면이라, 바꾼 내용은 저장되지
-      않아요.{" "}
+      예시 데이터로 체험하는 데모예요. 실제 수집·AI 호출·결제는 실행하지 않아요. 브리핑과 피드백은 새로고침하면 초기화돼요.{" "}
       <a
         className="underline underline-offset-2"
         href="https://github.com/sokldjs554/procurement-forecast"

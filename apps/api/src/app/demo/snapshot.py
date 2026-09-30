@@ -23,8 +23,9 @@ import httpx
 from sqlalchemy import select
 
 from app.billing.ledger import apply_credits
-from app.db.models import User
+from app.db.models import Document, Source, User
 from app.db.session import session_scope
+from app.sources.registry import FIXTURE_CATALOG
 
 USERS = {
     "demo": ("demo@example.com", "demo-pass-1234"),
@@ -69,6 +70,47 @@ def _write(out: Path, rel: str, data: Any) -> None:
     target.write_text(json.dumps(data, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 
 
+def write_example_document(out: Path, doc: Document) -> None:
+    """Publish only display fields, never raw storage URLs or evaluator metadata."""
+    _write(
+        out,
+        f"documents/{doc.id}.json",
+        {
+            "id": doc.id,
+            "title": doc.title,
+            "text": doc.text,
+            "synthetic": True,
+        },
+    )
+
+
+def choose_showcase(details: list[dict[str, Any]]) -> dict[str, Any] | None:
+    """Choose a walkthrough from the current seed, without pinning unstable database IDs."""
+    required = {"council_mention", "budget_line", "order_plan"}
+    candidates = [
+        d
+        for d in details
+        if d["status"] == "open"
+        and not d["tender_out"]
+        and required <= {s["stage"] for s in d["signals"]}
+    ]
+    if not candidates:
+        return None
+    chosen = max(
+        candidates,
+        key=lambda d: (
+            "디지털트윈" in d["title"],
+            len({s["stage"] for s in d["signals"]}),
+            -d["id"],
+        ),
+    )
+    return {
+        "id": chosen["id"],
+        "title": chosen["title"],
+        "document_count": len({s["document"]["id"] for s in chosen["signals"]}),
+    }
+
+
 async def _get(client: httpx.AsyncClient, path: str, query: dict[str, Any] | list[Any]) -> Any:
     resp = await client.get(path, params=query)
     resp.raise_for_status()
@@ -110,6 +152,8 @@ async def _grant(email: str, credits: int) -> None:
 async def record_snapshot(base_url: str, out: Path) -> dict[str, int]:
     counts: dict[str, int] = {}
     ids_by_user: dict[str, list[int]] = {}
+    document_ids: set[int] = set()
+    demo_details: list[dict[str, Any]] = []
     for user, (email, password) in USERS.items():
         async with httpx.AsyncClient(base_url=base_url, timeout=60) as client:
             login = await client.post(
@@ -126,23 +170,48 @@ async def record_snapshot(base_url: str, out: Path) -> dict[str, int]:
             for opp_id in ids:
                 detail = await _get(client, f"/api/opportunities/{opp_id}", {})
                 _write(out, f"{user}/opportunities/{opp_id}.json", detail)
+                document_ids.update(signal["document"]["id"] for signal in detail["signals"])
+                if user == "demo":
+                    demo_details.append(detail)
             ids_by_user[user] = ids
             counts[f"{user}_opportunities"] = len(ids)
 
-    # Last, so the balance and brief lists recorded above are the ones the seed left.
-    email, password = USERS["demo"]
-    ids = ids_by_user["demo"]
-    await _grant(email, 3 * len(ids) + 30)
-    async with httpx.AsyncClient(base_url=base_url, timeout=120) as client:
-        login = await client.post("/api/auth/login", json={"email": email, "password": password})
-        login.raise_for_status()
-        for opp_id in ids:
-            resp = await client.post(
-                f"/api/opportunities/{opp_id}/briefs",
-                headers={"Idempotency-Key": f"demo-snapshot-{opp_id}"},
+    # Only fixture sources may be labelled and published as example documents.
+    async with session_scope() as session:
+        documents = list(
+            await session.scalars(
+                select(Document)
+                .join(Source, Source.id == Document.source_id)
+                .where(
+                    Document.id.in_(document_ids),
+                    Source.key.in_([s["key"] for s in FIXTURE_CATALOG]),
+                )
             )
-            resp.raise_for_status()
-            _write(out, f"demo/briefs/{opp_id}.json", resp.json())
-    counts["briefs"] = len(ids)
+        )
+        if {doc.id for doc in documents} != document_ids:
+            raise ValueError("public demo snapshot requires fixture-only source documents")
+        for doc in documents:
+            write_example_document(out, doc)
+    counts["documents"] = len(document_ids)
+    _write(out, "showcase.json", choose_showcase(demo_details))
+
+    # Last, so the balance and brief lists recorded above are the ones the seed left.
+    counts["briefs"] = 0
+    for user, (email, password) in USERS.items():
+        ids = ids_by_user[user]
+        await _grant(email, 3 * len(ids) + 30)
+        async with httpx.AsyncClient(base_url=base_url, timeout=120) as client:
+            login = await client.post(
+                "/api/auth/login", json={"email": email, "password": password}
+            )
+            login.raise_for_status()
+            for opp_id in ids:
+                resp = await client.post(
+                    f"/api/opportunities/{opp_id}/briefs",
+                    headers={"Idempotency-Key": f"demo-snapshot-{user}-{opp_id}"},
+                )
+                resp.raise_for_status()
+                _write(out, f"{user}/briefs/{opp_id}.json", resp.json())
+        counts["briefs"] += len(ids)
     _write(out, "ids.json", sorted({i for ids in ids_by_user.values() for i in ids}))
     return counts
