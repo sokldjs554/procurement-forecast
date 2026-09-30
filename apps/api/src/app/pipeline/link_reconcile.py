@@ -24,6 +24,7 @@ from app.db.models import (
     LinkReconciliationEvent,
     LinkReconciliationState,
     Opportunity,
+    OpportunityCustomerAnchor,
     OpportunitySignal,
     Signal,
     Source,
@@ -74,6 +75,8 @@ class _Scope:
     opportunities: dict[int, Opportunity]
     keys: dict[int, str]
     protected: set[int]
+    anchors: dict[int, list[Signal]]
+    pending_anchors: set[int]
     digest: str
 
 
@@ -189,7 +192,44 @@ async def _load_scope(session: AsyncSession, institution_code: str, generation: 
     }
     from app.pipeline.link_state import protected_opportunity_ids
 
-    protected = await protected_opportunity_ids(session, {institution_code})
+    all_protected = await protected_opportunity_ids(session, {institution_code})
+    protected = await protected_opportunity_ids(session, {institution_code}, include_customer=False)
+    stored_anchors = {
+        a.opportunity_id: a
+        for a in await session.scalars(
+            select(OpportunityCustomerAnchor)
+            .where(
+                OpportunityCustomerAnchor.opportunity_id.in_(
+                    reconciliation_scope_ids(institution_code)
+                )
+            )
+            .execution_options(populate_existing=True)
+        )
+    }
+    by_id = {s.id: s for s in signals}
+    anchors: dict[int, list[Signal]] = {}
+    pending_anchors: set[int] = set()
+    for oid in (all_protected | set(stored_anchors)) - protected:
+        stored = stored_anchors.get(oid)
+        core_ids = (
+            stored.signal_ids
+            if stored
+            else [s.id for s in signals if links[s.id].opportunity_id == oid]
+        )
+        if not core_ids or any(
+            sid not in by_id
+            or links[sid].opportunity_id != oid
+            or by_id[sid].verdict != "accepted"
+            or links[sid].tentative
+            for sid in core_ids
+        ):
+            # An explicitly removed/rejected or missing anchor requires review. Never
+            # replace it with later evidence just to make an old customer URL look live.
+            protected.add(oid)
+            continue
+        anchors[oid] = [by_id[sid] for sid in core_ids]
+        if stored is None:
+            pending_anchors.add(oid)
     fingerprint = {
         "version": VERSION,
         "institution": institution_code,
@@ -198,9 +238,20 @@ async def _load_scope(session: AsyncSession, institution_code: str, generation: 
         "links": [_snapshot(links[s.id]) for s in signals],
         "keys": sorted(keys.items()),
         "protected": sorted(protected),
+        "anchors": [_snapshot(stored_anchors[oid]) for oid in sorted(stored_anchors)],
+        "pending_anchors": sorted(pending_anchors),
         "opportunities": [_snapshot(opportunities[oid]) for oid in sorted(opportunities)],
     }
-    return _Scope(signals, links, opportunities, keys, protected, _digest(fingerprint))
+    return _Scope(
+        signals,
+        links,
+        opportunities,
+        keys,
+        protected,
+        anchors,
+        pending_anchors,
+        _digest(fingerprint),
+    )
 
 
 def _membership(link: OpportunitySignal) -> dict[str, Any]:
@@ -222,7 +273,7 @@ async def reconcile_institution(
     calibration: dict[str, float] | None = None,
 ) -> ReconciliationResult:
     from app.pipeline.link import summarize_opportunity
-    from app.pipeline.link_partition import plan_partition
+    from app.pipeline.link_partition import PartitionAnchor, plan_partition
 
     business_date = today or today_kst()
     await session.flush()
@@ -231,7 +282,12 @@ async def reconcile_institution(
         return ReconciliationResult([], 0, 0, state.generation if state else 0, False)
     generation = state.generation
     scope = await _load_scope(session, institution_code, generation)
-    eligible = [s for s in scope.signals if scope.links[s.id].opportunity_id not in scope.protected]
+    core_ids = {s.id for members in scope.anchors.values() for s in members}
+    eligible = [
+        s
+        for s in scope.signals
+        if scope.links[s.id].opportunity_id not in scope.protected and s.id not in core_ids
+    ]
     # Pure CPU planning must not block worker health checks/queue heartbeats. All Signal
     # attributes are eagerly loaded; the planner never reads SQL or mutates these inputs.
     groups = await asyncio.to_thread(
@@ -242,21 +298,40 @@ async def reconcile_institution(
         review_band=runtime.settings.link_review_band,
         today=business_date,
         calibration=calibration,
+        anchors=[PartitionAnchor(oid, members) for oid, members in scope.anchors.items()],
     )
     old_members: dict[int, set[int]] = defaultdict(set)
     for s in eligible:
-        old_members[scope.links[s.id].opportunity_id].add(s.id)
-    assigned = assign_existing_ids([{s.id for s in g.members} for g in groups], old_members)
+        oid = scope.links[s.id].opportunity_id
+        if oid not in scope.anchors:
+            old_members[oid].add(s.id)
+    automatic_groups = [g for g in groups if g.anchored_opportunity_id is None]
+    reused = iter(
+        assign_existing_ids([{s.id for s in g.members} for g in automatic_groups], old_members)
+    )
+    assigned = [
+        g.anchored_opportunity_id if g.anchored_opportunity_id is not None else next(reused)
+        for g in groups
+    ]
     async with session.begin_nested():
         # Expensive planning occurs before these short locks. Re-read every input under the
         # lock: generation alone cannot detect a simultaneous human decision or source edit.
         await session.execute(text("SET LOCAL lock_timeout = '5s'"))
+        # User actions lock their opportunity before reading/publishing an anchor. Do not
+        # take table locks while waiting for an in-flight brief/review to finish writing.
+        # NOWAIT lets the durable worker retry without blocking that publisher's commit.
+        await session.execute(
+            select(Opportunity.id)
+            .where(Opportunity.id.in_(sorted(scope.opportunities)))
+            .order_by(Opportunity.id)
+            .with_for_update(nowait=True)
+        )
         await session.execute(
             text(
                 "LOCK TABLE sources, documents, document_chunks, signals, review_items, "
                 "opportunity_signals, opportunities, recommendations, company_profiles, "
                 "institutions, opportunity_relations, opportunity_relation_events, briefs, "
-                "notifications, link_reconciliation_states IN SHARE ROW EXCLUSIVE MODE"
+                "notifications, opportunity_customer_anchors, link_reconciliation_states IN SHARE ROW EXCLUSIVE MODE"
             )
         )
         state = await session.get(LinkReconciliationState, institution_code, populate_existing=True)
@@ -271,7 +346,15 @@ async def reconcile_institution(
             raise LinkSnapshotChangedError(
                 "Link evidence or protected decisions changed during planning"
             )
-        touched: set[int] = set(old_members)
+        # Legacy published identities receive their first immutable core under the same
+        # guard, before any automatic addition is moved or attached.
+        for oid in current.pending_anchors:
+            session.add(
+                OpportunityCustomerAnchor(
+                    opportunity_id=oid, signal_ids=sorted(s.id for s in current.anchors[oid])
+                )
+            )
+        touched: set[int] = set(old_members) | set(scope.anchors)
         changed = 0
         for group, assigned_id in zip(groups, assigned, strict=True):
             if assigned_id is None:
@@ -288,6 +371,8 @@ async def reconcile_institution(
                 oid = assigned_id
             touched.add(oid)
             for signal in group.members:
+                if signal.id in group.anchor_signal_ids:
+                    continue
                 link = current.links[signal.id]
                 decision = group.decisions[signal.id]
                 before = _membership(link)
@@ -327,7 +412,7 @@ async def reconcile_institution(
         await session.flush()
     return ReconciliationResult(
         sorted(touched),
-        len(scope.protected),
+        len(scope.protected | set(scope.anchors)),
         changed,
         generation,
         True,
@@ -340,8 +425,12 @@ async def reconcile_pending(
     runtime: Runtime,
     *,
     today: date | None = None,
+    commit_each: bool = False,
 ) -> list[ReconciliationResult]:
-    """Synchronous pipeline completion; caller commits each unit or the whole run."""
+    """Synchronous completion; operational backfills release locks between owners.
+
+    The default preserves caller transaction ownership for rollback-only replay/tests.
+    """
     codes = list(
         await session.scalars(
             select(LinkReconciliationState.institution_code)
@@ -351,4 +440,9 @@ async def reconcile_pending(
             .order_by(LinkReconciliationState.institution_code)
         )
     )
-    return [await reconcile_institution(session, runtime, code, today=today) for code in codes]
+    results = []
+    for code in codes:
+        results.append(await reconcile_institution(session, runtime, code, today=today))
+        if commit_each:
+            await session.commit()
+    return results

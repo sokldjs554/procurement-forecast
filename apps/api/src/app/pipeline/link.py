@@ -790,14 +790,54 @@ async def link_signals(
     )
     touched: set[int] = set()
     blocked: set[int] = set()
+    checked_targets: set[int] = set()
     if signals:
         from app.pipeline.link_state import protected_opportunity_ids
 
         blocked = await protected_opportunity_ids(
-            session, {s.institution_code for s in signals if s.institution_code}
+            session,
+            {s.institution_code for s in signals if s.institution_code},
+            include_customer=False,
         )
     for signal in signals:
         decision = await decide(session, runtime, signal, blocked_opportunity_ids=blocked)
+        target: Opportunity | None = None
+        if decision is not None:
+            target = await session.get(
+                Opportunity,
+                decision.opportunity_id,
+                with_for_update=True,
+                populate_existing=True,
+            )
+            if target is not None and target.id not in checked_targets:
+                from app.pipeline.link_state import (
+                    ensure_customer_anchor,
+                    protected_opportunities_query,
+                )
+
+                # Action writers take this same row lock before publishing history. A
+                # decision may have become protected since the batch's initial scan or
+                # while we waited for the lock: check again before adding any membership.
+                codes = {
+                    code for code in (signal.institution_code, target.institution_code) if code
+                }
+                protected = await session.scalar(
+                    protected_opportunities_query(
+                        codes, opportunity_ids={target.id}, include_customer=False
+                    ).limit(1)
+                )
+                if protected is not None:
+                    blocked.add(target.id)
+                    target = None
+                else:
+                    # Customer history fixes its original members, not all future lifecycle
+                    # evidence. Capture legacy originals before this first automatic append.
+                    await ensure_customer_anchor(session, target.id)
+                    # The transaction retains the row lock, so another action cannot
+                    # protect this identity between subsequent attachments in this batch.
+                    checked_targets.add(target.id)
+            if target is None:
+                decision = None  # Deletion/protection means seed, never another automatic target.
         if decision is None:
             opp = Opportunity(
                 institution_code=signal.institution_code,
@@ -825,9 +865,8 @@ async def link_signals(
                 )
             )
         else:
-            opp_or_none = await session.get(Opportunity, decision.opportunity_id)
-            assert opp_or_none is not None
-            opp = opp_or_none
+            assert target is not None
+            opp = target
             session.add(
                 OpportunitySignal(
                     opportunity_id=opp.id,

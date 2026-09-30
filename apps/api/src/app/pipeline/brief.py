@@ -294,13 +294,22 @@ async def generate_brief(
     existing = await session.scalar(select(Brief).where(Brief.idempotency_key == idempotency_key))
     if existing is not None:
         return existing
-    opp = await session.get(Opportunity, opportunity_id)
+    # Anchor the facts before generation. Automatic link writers use this same row lock;
+    # a paid report must never finish against an identity regrouped while the model ran.
+    opp = await session.get(
+        Opportunity, opportunity_id, with_for_update=True, populate_existing=True
+    )
     if opp is None:
         raise OpportunityNotFoundError(opportunity_id)
     if org.credit_balance < BRIEF_CREDIT_COST:
         raise InsufficientCreditsError(org.credit_balance, BRIEF_CREDIT_COST)
     facts = await build_facts(session, opp, org.id)
     markdown, model = await runtime.llm.brief(session, facts)
+    from app.pipeline.link_state import capture_customer_anchor
+
+    # The identity lock kept this core stable during generation. Persist only now so a
+    # model wait does not hold an anchor-table write lock against other institutions.
+    await capture_customer_anchor(session, opp.id)
     brief = Brief(
         org_id=org.id,
         opportunity_id=opp.id,

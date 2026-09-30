@@ -1,9 +1,9 @@
 """Canonical automatic partition planning, with no SQL or mutations of persisted inputs.
 
 The caller supplies the complete eligible, already-linked universe for an institution and
-excludes protected opportunities. This is a reconciliation plan, not a greedy new-arrival
-decision: old automatic memberships are deliberately not read. Applying it and preserving
-opportunity/customer identities belongs to the transaction layer.
+excludes strict human/unsafe protections. Customer history anchors its original members;
+later automatic attachments are replayed like every other automatic member. Old automatic
+memberships are deliberately not read. Applying the plan belongs to the transaction layer.
 """
 
 from __future__ import annotations
@@ -97,6 +97,34 @@ class PartitionGroup:
     # Opportunity IDs in these decisions are plan-local group indices, never persistent IDs.
     decisions: dict[int, LinkDecision] = field(default_factory=dict)
     ambiguous_keys: tuple[str, ...] = ()
+    anchored_opportunity_id: int | None = None
+    anchor_signal_ids: frozenset[int] = frozenset()
+
+
+@dataclass(frozen=True, slots=True)
+class PartitionAnchor:
+    """Original customer-facing evidence whose opportunity identity cannot be reassigned."""
+
+    opportunity_id: int
+    members: Sequence[Signal]
+
+
+def _new_group(index: int, first: Signal, key: str) -> PartitionGroup:
+    return PartitionGroup(
+        index=index,
+        key=key,
+        summary=Opportunity(
+            id=index,
+            institution_code=first.institution_code,
+            department=first.department,
+            title=canonical_title(first.title),
+            category=first.category,
+            stage=first.stage,
+            status="open",
+            first_seen_at=first.observed_at,
+            last_signal_at=first.observed_at,
+        ),
+    )
 
 
 def _reference_decision(signal: Signal, groups: Sequence[PartitionGroup]) -> LinkDecision | None:
@@ -185,24 +213,48 @@ def plan_partition(
     review_band: float,
     today: date,
     calibration: dict[str, float] | None = None,
+    anchors: Sequence[PartitionAnchor] = (),
 ) -> list[PartitionGroup]:
     """Reconcile the same observed universe to the same partition in one in-memory pass.
 
-    Only automatic, accepted, non-tentative members may be supplied. The caller must exclude
-    whole protected opportunities before planning. This function neither discovers pending
-    signals nor includes unseen future batches. Duplicate stable keys are reported because
-    identical observations cannot have a meaningful order among themselves.
+    The caller excludes strict protected opportunities and supplies accepted non-tentative
+    members. Customer anchors are original immutable cores, not their prior automatic
+    additions. Core decisions are absent from ``decisions`` and must not be rewritten when
+    applying the plan. This function neither discovers pending signals nor sees future
+    batches. Identical observations are reported instead of ranked by their database IDs.
     """
-    if len({signal.id for signal in signals}) != len(signals):
+    universe = [*signals, *(member for anchor in anchors for member in anchor.members)]
+    if len({signal.id for signal in universe}) != len(universe):
         raise ValueError("duplicate signal ID in planning universe")
-    if any(signal.verdict != "accepted" for signal in signals):
+    if len({anchor.opportunity_id for anchor in anchors}) != len(anchors):
+        raise ValueError("duplicate anchored opportunity")
+    if any(not anchor.members or anchor.opportunity_id <= 0 for anchor in anchors):
+        raise ValueError("anchor requires an existing opportunity and original members")
+    if any(len({s.institution_code for s in anchor.members}) != 1 for anchor in anchors):
+        raise ValueError("anchor members must belong to one institution")
+    if any(signal.verdict != "accepted" for signal in universe):
         raise ValueError("only accepted signals may be planned")
-    if any(not stable_keys.get(signal.id) for signal in signals):
+    if any(not stable_keys.get(signal.id) for signal in universe):
         raise ValueError("missing stable key for planning signal")
-    counts = Counter(stable_keys[signal.id] for signal in signals)
+    counts = Counter(stable_keys[signal.id] for signal in universe)
     duplicate_keys = {key for key, count in counts.items() if count > 1}
-    ordered = sorted(signals, key=lambda signal: (signal.observed_at, stable_keys[signal.id]))
+
+    def order_key(signal: Signal) -> tuple[date, str]:
+        return signal.observed_at, stable_keys[signal.id]
+
+    ordered = sorted(signals, key=order_key)
     groups: list[PartitionGroup] = []
+    for anchor in sorted(
+        anchors, key=lambda anchor: tuple(sorted(order_key(member) for member in anchor.members))
+    ):
+        core = sorted(anchor.members, key=order_key)
+        group = _new_group(len(groups), core[0], stable_keys[core[0].id])
+        group.anchored_opportunity_id = anchor.opportunity_id
+        group.anchor_signal_ids = frozenset(member.id for member in core)
+        group.members.extend(core)
+        group.ambiguous_keys = tuple(sorted({stable_keys[row.id] for row in core} & duplicate_keys))
+        summarize_opportunity(group.summary, group.members, today=today, calibration=calibration)
+        groups.append(group)
     for signal in ordered:
         try:
             decision = _reference_decision(signal, groups)
@@ -215,18 +267,7 @@ def plan_partition(
                 )
         if decision is None:
             index = len(groups)
-            summary = Opportunity(
-                id=index,
-                institution_code=signal.institution_code,
-                department=signal.department,
-                title=canonical_title(signal.title),
-                category=signal.category,
-                stage=signal.stage,
-                status="open",
-                first_seen_at=signal.observed_at,
-                last_signal_at=signal.observed_at,
-            )
-            group = PartitionGroup(index=index, key=stable_keys[signal.id], summary=summary)
+            group = _new_group(index, signal, stable_keys[signal.id])
             groups.append(group)
             decision = LinkDecision(index, 1.0, "seed", False, {})
         else:
@@ -235,6 +276,9 @@ def plan_partition(
             "canonical_order": {"signal_key": stable_keys[signal.id], "group_key": group.key}
         }
         group.members.append(signal)
+        # An automatic signal may precede an immutable core member by date or tie key.
+        # Use the same complete member order as later database lifecycle refreshes.
+        group.members.sort(key=order_key)
         group.decisions[signal.id] = decision
         group.ambiguous_keys = tuple(
             sorted({stable_keys[row.id] for row in group.members} & duplicate_keys)

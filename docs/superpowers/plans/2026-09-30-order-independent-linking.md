@@ -14,10 +14,12 @@ Sorting one input batch cannot repair this.
   A reconciliation job and periodic sweep converge it, then dispatch recommendations
   through a durable generation marker. Backfill and replay use the same completion step.
 - The replay must not inspect accepted signals from batches that have not linked yet.
-- Human-reviewed/manual groups, relation endpoints/evidence, and groups with customer
-  feedback, notifications or briefs are protected as whole identities. The guarantee
-  is for automatic evidence with the same protected decisions, not a replacement for
-  human decisions or an assertion of linking accuracy.
+- Human-reviewed/manual groups and relation endpoints/evidence remain fixed. Customer
+  feedback/notifications/briefs capture the original member core and identity; later
+  automatic evidence can extend that lifecycle and is replayed on every reconciliation.
+  The guarantee conditions on the same original cores and human decisions. It does not
+  replace human decisions or assert linking accuracy. A blanket post-alert append ban
+  was rejected during review because it would silently stop the primary product flow.
 - Plan in memory using shared production link rules; validate the input snapshot under
   short maintenance locks before applying membership deltas. A changed snapshot fails
   without partial writes and is retryable. No network/LLM calls.

@@ -16,6 +16,25 @@ depends_on = None
 
 def upgrade() -> None:
     op.create_table(
+        "opportunity_customer_anchors",
+        sa.Column(
+            "opportunity_id",
+            sa.BigInteger(),
+            sa.ForeignKey("opportunities.id", ondelete="RESTRICT"),
+            primary_key=True,
+        ),
+        sa.Column("signal_ids", postgresql.ARRAY(sa.BigInteger()), nullable=False),
+        sa.Column(
+            "created_at", sa.DateTime(timezone=True), server_default=sa.func.now(), nullable=False
+        ),
+    )
+    op.create_index(
+        "ix_customer_anchor_signals",
+        "opportunity_customer_anchors",
+        ["signal_ids"],
+        postgresql_using="gin",
+    )
+    op.create_table(
         "link_reconciliation_states",
         sa.Column(
             "institution_code", sa.String(32), sa.ForeignKey("institutions.code"), primary_key=True

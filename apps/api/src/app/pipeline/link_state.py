@@ -2,8 +2,8 @@
 
 from typing import Any
 
-from sqlalchemy import BigInteger, Select, cast, func, literal, or_, select
-from sqlalchemy.dialects.postgresql import JSONB, array
+from sqlalchemy import BigInteger, Select, any_, cast, func, literal, or_, select
+from sqlalchemy.dialects.postgresql import JSONB, array, insert
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql.elements import ColumnElement
 
@@ -12,6 +12,7 @@ from app.db.models import (
     LinkReconciliationState,
     Notification,
     Opportunity,
+    OpportunityCustomerAnchor,
     OpportunityRelation,
     OpportunityRelationEvent,
     OpportunitySignal,
@@ -32,22 +33,32 @@ def link_settled() -> ColumnElement[bool]:
     )
 
 
-def protected_opportunities_query(codes: set[str]) -> Select[Any]:
-    """IDs that automatic linking must neither mutate nor accept new members into.
+def protected_opportunities_query(
+    codes: set[str],
+    *,
+    opportunity_ids: set[int] | None = None,
+    include_customer: bool = True,
+) -> Select[Any]:
+    """Strict reviewed identities, optionally including customer-history identities.
 
     Start with the institutions' identities, including foreign-owner groups containing
     their signals. JSON history is compared to trusted numeric IDs using containment;
     malformed legacy fields never undergo bigint casts or array expansion. No evidence
     text, embedding, full review resolution or notification payload leaves PostgreSQL.
+    Reconciliation callers use ``include_customer=False`` and separately preserve each
+    customer's immutable signal core; customer history alone must not freeze new arrivals.
     """
+    direct = select(Opportunity.id).where(Opportunity.institution_code.in_(sorted(codes)))
+    members = (
+        select(OpportunitySignal.opportunity_id)
+        .join(Signal, Signal.id == OpportunitySignal.signal_id)
+        .where(Signal.institution_code.in_(sorted(codes)))
+    )
+    if opportunity_ids is not None:
+        direct = direct.where(Opportunity.id.in_(sorted(opportunity_ids)))
+        members = members.where(OpportunitySignal.opportunity_id.in_(sorted(opportunity_ids)))
     scope = (
-        select(Opportunity.id)
-        .where(Opportunity.institution_code.in_(sorted(codes)))
-        .union(
-            select(OpportunitySignal.opportunity_id)
-            .join(Signal, Signal.id == OpportunitySignal.signal_id)
-            .where(Signal.institution_code.in_(sorted(codes)))
-        )
+        direct.union(members)
         .cte("link_protection_scope")
         .prefix_with("MATERIALIZED", dialect="postgresql")
     )
@@ -123,6 +134,49 @@ def protected_opportunities_query(codes: set[str]) -> Select[Any]:
         .correlate(Opportunity)
         .exists()
     )
+    eligible_core_count = (
+        select(func.count(Signal.id))
+        .join(OpportunitySignal, OpportunitySignal.signal_id == Signal.id)
+        .where(
+            OpportunitySignal.opportunity_id == oid,
+            OpportunitySignal.tentative.is_(False),
+            Signal.verdict == "accepted",
+            Signal.institution_code == Opportunity.institution_code,
+            Signal.id == any_(OpportunityCustomerAnchor.signal_ids),
+        )
+        .correlate(Opportunity, OpportunityCustomerAnchor)
+        .scalar_subquery()
+    )
+    invalid_customer_core = (
+        select(OpportunityCustomerAnchor.opportunity_id)
+        .where(
+            OpportunityCustomerAnchor.opportunity_id == oid,
+            or_(
+                func.coalesce(func.cardinality(OpportunityCustomerAnchor.signal_ids), 0) == 0,
+                eligible_core_count != func.cardinality(OpportunityCustomerAnchor.signal_ids),
+            ),
+        )
+        .correlate(Opportunity)
+        .exists()
+    )
+    conditions: list[ColumnElement[bool]] = [
+        unsafe_member,
+        reviewed_member,
+        reviewed_history,
+        relation_endpoint,
+        relation_history,
+        moved_relation_evidence,
+        invalid_customer_core,
+    ]
+    if include_customer:
+        conditions.append(customer_history_predicate())
+    return select(oid).join(scope, scope.c.id == oid).where(or_(*conditions)).order_by(oid)
+
+
+def customer_history_predicate() -> ColumnElement[bool]:
+    """Durable customer history for the surrounding Opportunity row, without loading it."""
+    oid = Opportunity.id
+    anchor = func.jsonb_build_object("opportunity_id", oid)
     customer_action = (
         select(Recommendation.opportunity_id)
         .where(
@@ -152,27 +206,78 @@ def protected_opportunities_query(codes: set[str]) -> Select[Any]:
         .correlate(Opportunity)
         .exists()
     )
-    return (
-        select(oid)
-        .join(scope, scope.c.id == oid)
-        .where(
-            or_(
-                unsafe_member,
-                reviewed_member,
-                reviewed_history,
-                relation_endpoint,
-                relation_history,
-                moved_relation_evidence,
-                customer_action,
-                brief,
-                notification,
+    return or_(customer_action, brief, notification)
+
+
+async def protected_opportunity_ids(
+    session: AsyncSession,
+    institution_codes: set[str],
+    *,
+    opportunity_ids: set[int] | None = None,
+    include_customer: bool = True,
+) -> set[int]:
+    if not institution_codes:
+        return set()
+    return set(
+        (
+            await session.scalars(
+                protected_opportunities_query(
+                    institution_codes,
+                    opportunity_ids=opportunity_ids,
+                    include_customer=include_customer,
+                )
             )
-        )
-        .order_by(oid)
+        ).all()
     )
 
 
-async def protected_opportunity_ids(session: AsyncSession, institution_codes: set[str]) -> set[int]:
-    if not institution_codes:
-        return set()
-    return set((await session.scalars(protected_opportunities_query(institution_codes))).all())
+async def capture_customer_anchor(
+    session: AsyncSession, opportunity_id: int
+) -> OpportunityCustomerAnchor:
+    """Capture the first customer evidence core; caller must hold Opportunity FOR UPDATE.
+
+    Actor writers call before first publication/feedback. Existing cores never grow with
+    automatic arrivals. Empty cores are retained as empty so reconciliation can treat that
+    invalid identity conservatively instead of silently adopting later evidence.
+    """
+    existing = await session.get(OpportunityCustomerAnchor, opportunity_id)
+    if existing is not None:
+        return existing
+    signal_ids = list(
+        (
+            await session.scalars(
+                select(Signal.id)
+                .join(OpportunitySignal, OpportunitySignal.signal_id == Signal.id)
+                .where(
+                    OpportunitySignal.opportunity_id == opportunity_id,
+                    OpportunitySignal.tentative.is_(False),
+                    Signal.verdict == "accepted",
+                )
+                .order_by(Signal.id)
+            )
+        ).all()
+    )
+    await session.execute(
+        insert(OpportunityCustomerAnchor)
+        .values(opportunity_id=opportunity_id, signal_ids=signal_ids)
+        .on_conflict_do_nothing(index_elements=[OpportunityCustomerAnchor.opportunity_id])
+    )
+    stored = await session.get(OpportunityCustomerAnchor, opportunity_id, populate_existing=True)
+    if stored is None:
+        raise RuntimeError("Customer anchor was not persisted")
+    return stored
+
+
+async def ensure_customer_anchor(
+    session: AsyncSession, opportunity_id: int
+) -> OpportunityCustomerAnchor | None:
+    """Capture legacy customer history before append; caller holds Opportunity FOR UPDATE."""
+    existing = await session.get(OpportunityCustomerAnchor, opportunity_id)
+    if existing is not None:
+        return existing
+    customer_id = await session.scalar(
+        select(Opportunity.id).where(Opportunity.id == opportunity_id, customer_history_predicate())
+    )
+    if customer_id is None:
+        return None
+    return await capture_customer_anchor(session, opportunity_id)

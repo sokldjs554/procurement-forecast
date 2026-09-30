@@ -350,6 +350,19 @@ class OpportunitySignal(TimestampMixin, Base):
     signal: Mapped[Signal] = relationship(back_populates="link")
 
 
+class OpportunityCustomerAnchor(Base):
+    """The original evidence behind a customer identity; later automatic evidence can evolve."""
+
+    __tablename__ = "opportunity_customer_anchors"
+    __table_args__ = (Index("ix_customer_anchor_signals", "signal_ids", postgresql_using="gin"),)
+
+    opportunity_id: Mapped[int] = mapped_column(
+        ForeignKey("opportunities.id", ondelete="RESTRICT"), primary_key=True
+    )
+    signal_ids: Mapped[list[int]] = mapped_column(ARRAY(BigInteger))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
 class LinkReconciliationState(Base):
     """Durable convergence and recommendation-dispatch generations, per demand owner."""
 

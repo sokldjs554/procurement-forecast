@@ -17,18 +17,16 @@ def test_reconciliation_scope_keeps_vectors_and_source_locations_without_truncat
     assert "documents.text" not in scope.after and "document_chunks.text" not in scope.after
 
 
-def test_relation_event_protection_measures_full_institution_overlap_hit_and_miss() -> None:
+def test_relation_event_protection_measures_current_member_containment_hit_and_miss() -> None:
     queries = {q.key: q for q in additional_queries()}
-    for key in ("reconciliation_evidence_overlap_hit", "reconciliation_evidence_overlap_miss"):
+    for key in ("reconciliation_evidence_contains_hit", "reconciliation_evidence_contains_miss"):
         query = queries[key]
         assert query.before is None
-        assert "SELECT opportunity_relation_events.evidence_signal_ids" in query.after
-        assert "&& CAST(ARRAY[" in query.after and "AS BIGINT[])" in query.after
-        assert "LIMIT" not in query.after
-    hit = queries["reconciliation_evidence_overlap_hit"].after
-    assert "250, 500, 750" in hit and "400000" in hit
-    miss = queries["reconciliation_evidence_overlap_miss"].after
-    assert "-250, -500, -750" in miss and "-400000" in miss
+        assert "SELECT opportunity_relation_events.id" in query.after
+        assert "@> CAST(ARRAY[" in query.after and "AS BIGINT[])" in query.after
+        assert "LIMIT 1" in query.after
+    assert "ARRAY[1]" in queries["reconciliation_evidence_contains_hit"].after
+    assert "ARRAY[0]" in queries["reconciliation_evidence_contains_miss"].after
 
 
 def test_reconciliation_generation_queries_cover_dirty_and_recommendation_outbox() -> None:
@@ -54,7 +52,6 @@ def test_summary_tie_metadata_is_a_four_member_projection_without_vectors_or_tex
 def test_small_bench_uses_its_actual_scope_size_and_member_ids() -> None:
     sizes = {**SIZES, "institutions": 2, "signals": 8, "opportunities": 4}
     queries = {q.key: q for q in additional_queries(sizes)}
-    assert "ARRAY[2, 4, 6, 8]" in queries["reconciliation_evidence_overlap_hit"].after
     assert "signals.id IN (1, 5)" in queries["link_summary_tie_metadata"].after
 
 
@@ -98,3 +95,34 @@ def test_history_protection_uses_shared_scope_and_nonempty_json_index_probes() -
             assert query.before is None
             assert "@>" in query.after
             assert "LIMIT 1" in query.after
+
+
+def test_customer_anchor_scope_load_and_strict_queries_follow_current_core_validation() -> None:
+    queries = {q.key: q for q in additional_queries()}
+    anchors = queries["reconciliation_customer_anchor_scope"].after
+    assert "opportunity_customer_anchors.signal_ids" in anchors
+    assert "opportunity_customer_anchors.created_at" in anchors
+    assert "UNION" in anchors and "LIMIT" not in anchors
+    strict = queries["reconciliation_strict_opportunities"].after
+    assert "cardinality(opportunity_customer_anchors.signal_ids)" in strict
+    assert "count(signals.id)" in strict
+    assert "ANY (opportunity_customer_anchors.signal_ids)" in strict
+    assert "notifications" not in strict and "recommendations" not in strict
+    for key, target in (
+        ("reconciliation_strict_target_customer", 3000),
+        ("reconciliation_strict_target_invalid_core", 5000),
+    ):
+        sql = queries[key].after
+        assert f"opportunities.id IN ({target})" in sql
+        assert f"opportunity_signals.opportunity_id IN ({target})" in sql
+        assert "LIMIT 1" in sql
+
+
+def test_customer_anchor_reprocessing_uses_document_signal_ids_and_typed_overlap() -> None:
+    queries = {q.key: q for q in additional_queries()}
+    hit = queries["customer_anchor_document_protection_hit"].after
+    miss = queries["customer_anchor_document_protection_miss"].after
+    assert "opportunity_customer_anchors.opportunity_id" in hit
+    assert "&& CAST(ARRAY[1, 150001, 300001] AS BIGINT[])" in hit
+    assert "LIMIT 1" in hit and "LIMIT 1" in miss
+    assert "ARRAY[-1, -150001, -300001]" in miss

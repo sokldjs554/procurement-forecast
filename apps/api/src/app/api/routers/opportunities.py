@@ -186,9 +186,17 @@ async def detail(
 async def feedback(
     opportunity_id: int, body: FeedbackIn, principal: PrincipalDep, session: SessionDep
 ) -> None:
-    rec = await session.get(Recommendation, (principal.org.id, opportunity_id))
+    # Publish customer anchors only while holding the automatic link writer's identity lock.
+    await session.get(Opportunity, opportunity_id, with_for_update=True, populate_existing=True)
+    rec = await session.get(
+        Recommendation, (principal.org.id, opportunity_id), populate_existing=True
+    )
     if rec is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "이 사업은 아직 추천 목록에 없어요")
+    if body.feedback is not None:
+        from app.pipeline.link_state import capture_customer_anchor
+
+        await capture_customer_anchor(session, opportunity_id)
     rec.feedback = body.feedback
     rec.feedback_at = datetime.now(UTC) if body.feedback else None
 

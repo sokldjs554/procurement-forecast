@@ -204,7 +204,7 @@ async def process_pending(
         await session.commit()
     from app.pipeline.link_reconcile import reconcile_pending
 
-    for reconciliation in await reconcile_pending(session, runtime):
+    for reconciliation in await reconcile_pending(session, runtime, commit_each=True):
         touched.update(reconciliation.touched_ids)
     await session.commit()
     return {

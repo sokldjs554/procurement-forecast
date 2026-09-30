@@ -44,6 +44,7 @@ from app.db.models import (
     LinkReconciliationState,
     Notification,
     Opportunity,
+    OpportunityCustomerAnchor,
     OpportunityRelation,
     OpportunityRelationEvent,
     OpportunitySignal,
@@ -53,7 +54,7 @@ from app.db.models import (
     Source,
 )
 from app.eval.review_dataset import RESOLVED_STATUSES
-from app.pipeline.link_reconcile import reconciliation_signals_query
+from app.pipeline.link_reconcile import reconciliation_scope_ids, reconciliation_signals_query
 from app.pipeline.link_state import link_settled, protected_opportunities_query
 from app.pipeline.recommend import CANDIDATES_PER_SOURCE, OPEN_ONLY
 from app.pipeline.relations import CONTRACT_STAGES, PROJECT_STAGES
@@ -469,12 +470,11 @@ def additional_queries(
         return Query(key, title, None, sql)
 
     sizes = sizes or SIZES
-    # B-0001 owns every institutions-th signal in _load. Group 1 has one member
-    # per opportunities-sized block. Keep probes faithful to scaled benchmark runs.
-    scope_signal_ids = list(
-        range(sizes["institutions"], sizes["signals"] + 1, sizes["institutions"])
-    )
+    # Group 1 has one member per opportunities-sized block. Keep the source-location
+    # probe faithful to scaled benchmark runs; institution queries remain unbounded.
     summary_ids = list(range(1, sizes["signals"] + 1, sizes["opportunities"]))
+    document_signal_ids = list(range(1, sizes["signals"] + 1, sizes["documents"]))
+    unprotected_stride = 4 * sizes["institutions"]
     state = LinkReconciliationState
     recommendation_base = select(Opportunity).where(OPEN_ONLY, link_settled())
     vector = json.loads(vec) if vec is not None else [1.0, *([0.0] * (DIM - 1))]
@@ -543,6 +543,18 @@ def additional_queries(
             protected_opportunities_query({"B-0001"}),
         ),
         query(
+            "reconciliation_strict_opportunities",
+            "자동 연결 재정합: 엄격 보호 전체 조회 (고객 원본 근거 유효성 포함)",
+            protected_opportunities_query({"B-0001"}, include_customer=False),
+        ),
+        query(
+            "reconciliation_customer_anchor_scope",
+            "자동 연결 재정합: 기관 전체 고객 원본 근거 ID·생성 시각",
+            select(OpportunityCustomerAnchor).where(
+                OpportunityCustomerAnchor.opportunity_id.in_(reconciliation_scope_ids("B-0001"))
+            ),
+        ),
+        query(
             "reconciliation_dirty_sweep",
             "자동 연결 재정합: 미정합 세대가 있는 기관 전체 조회",
             select(state.institution_code)
@@ -601,16 +613,44 @@ def additional_queries(
             .limit(51),
         ),
     ]
-    for label, ids in (("hit", scope_signal_ids), ("miss", [-sid for sid in scope_signal_ids])):
+    for label, target in (
+        ("customer", 3 * unprotected_stride),
+        ("invalid_core", 5 * unprotected_stride),
+    ):
         result.append(
             query(
-                f"reconciliation_evidence_overlap_{label}",
-                f"자동 연결 재정합: 관계 이력의 기관 전체 근거 ID 겹침 ({label})",
-                select(OpportunityRelationEvent.evidence_signal_ids).where(
-                    OpportunityRelationEvent.evidence_signal_ids.overlap(
-                        cast(ids, ARRAY(BigInteger))
+                f"reconciliation_strict_target_{label}",
+                f"자동 연결: 잠근 단일 후보의 최신 엄격 보호 확인 ({label})",
+                protected_opportunities_query(
+                    {"B-0001"}, opportunity_ids={target}, include_customer=False
+                ).limit(1),
+            )
+        )
+    for label, ids in (
+        ("hit", document_signal_ids),
+        ("miss", [-sid for sid in document_signal_ids]),
+    ):
+        result.append(
+            query(
+                f"customer_anchor_document_protection_{label}",
+                f"문서 재처리 보호: 문서 신호 ID와 고객 원본 근거 겹침 ({label})",
+                select(OpportunityCustomerAnchor.opportunity_id)
+                .where(OpportunityCustomerAnchor.signal_ids.overlap(cast(ids, ARRAY(BigInteger))))
+                .limit(1),
+            )
+        )
+    for label, signal_id in (("hit", 1), ("miss", 0)):
+        result.append(
+            query(
+                f"reconciliation_evidence_contains_{label}",
+                f"자동 연결 보호: 구성 신호 ID를 보존한 관계 이력 ({label})",
+                select(OpportunityRelationEvent.id)
+                .where(
+                    OpportunityRelationEvent.evidence_signal_ids.contains(
+                        cast([signal_id], ARRAY(BigInteger))
                     )
-                ),
+                )
+                .limit(1),
             )
         )
     for label, document_id in (("hit", 2), ("miss", 0)):
@@ -873,6 +913,10 @@ async def _load_additional(
     ingest_runs = sizes["opportunities"] // 10
     notifications = sizes["opportunities"] // 2
     project_width = max(1, min(relations, 200))
+    # Reserve every fourth B-0001 identity without bulk-generated anchors. Four of
+    # these receive individual protection types below; the rest must remain unprotected.
+    # This affects only head fixtures, never the initial before/after measurements.
+    unprotected_stride = 4 * sizes["institutions"]
     counts: dict[str, int] = {}
     steps = [
         (
@@ -882,12 +926,14 @@ async def _load_additional(
                  evidence_snapshot, note)
             SELECT 1 + (i - 1) % {project_width}, {relations} + i, 'project_contract',
                    {_arr(("proposed", "confirmed", "rejected"))}[1 + i % 3], 2,
-                   ARRAY[1 + (i - 1) % {sizes["signals"]}]::bigint[],
+                   ARRAY[CASE WHEN i % {unprotected_stride} = 0 THEN i + 1 ELSE i END]::bigint[],
                    jsonb_build_array(jsonb_build_object(
                        'document_id', 1 + (1 + (i - 1) % {sizes["signals"]}) % {sizes["documents"]},
                        'synthetic_benchmark', true)),
                    'Query-volume fixture; not a validated project/contract relationship'
-            FROM generate_series(1, {relations}) i""",
+            FROM generate_series(1, {relations}) i
+            WHERE ({relations} + i) % {unprotected_stride} <> 0
+              AND (1 + (i - 1) % {project_width}) % {unprotected_stride} <> 0""",
         ),
         (
             "opportunity_relation_events",
@@ -910,9 +956,11 @@ async def _load_additional(
                    jsonb_build_object('benchmark_only', true,
                        'previous_link', jsonb_build_object('opportunity_id', i),
                        'history', jsonb_build_array(jsonb_build_object('previous_link',
-                           jsonb_build_object('opportunity_id', 1 + i % {sizes["opportunities"]})))),
+                           jsonb_build_object('opportunity_id',
+                               CASE WHEN (1 + i % {sizes["opportunities"]}) % {unprotected_stride} = 0
+                               THEN i % {sizes["opportunities"]} ELSE 1 + i % {sizes["opportunities"]} END)))),
                    now()
-            FROM generate_series(1, {reviews}) i""",
+            FROM generate_series(1, {reviews}) i WHERE i % {unprotected_stride} <> 0""",
         ),
         (
             "alert_channels",
@@ -928,7 +976,7 @@ async def _load_additional(
                    jsonb_build_object('benchmark_only', true,
                        'items', jsonb_build_array(jsonb_build_object('opportunity_id', i))),
                    'sent', 1
-            FROM generate_series(1, {notifications}) i""",
+            FROM generate_series(1, {notifications}) i WHERE i % {unprotected_stride} <> 0""",
         ),
         (
             "ingest_runs",
@@ -993,7 +1041,7 @@ async def _load_additional(
     counts["reconciliation_payload_signals"] = int(
         await conn.fetchval(
             f"""WITH changed AS (
-            UPDATE signals s SET embedding = o.embedding, chunk_id = c.id
+            UPDATE signals s SET embedding = o.embedding, chunk_id = c.id, verdict = 'accepted'
             FROM opportunity_signals os
             JOIN opportunities o ON o.id = os.opportunity_id,
                  document_chunks c
@@ -1029,6 +1077,110 @@ async def _load_additional(
             "OR reconciled_generation > recommendations_generation"
         )
     )
+    # Separate manual, review-history-only, notification-only and relation-history-only
+    # anchors make the protected query exercise later EXISTS branches, not just unsafe
+    # members/live endpoints. Do not reduce or LIMIT the 400-identity query scope.
+    await conn.execute(
+        "UPDATE opportunity_signals SET method = 'manual' WHERE opportunity_id = $1",
+        unprotected_stride,
+    )
+    if sizes["opportunities"] >= 2 * unprotected_stride:
+        await conn.execute(
+            """INSERT INTO review_items (signal_id, reasons, status, resolution, resolved_at)
+            VALUES ($1, ARRAY['synthetic_query_volume'], 'edited',
+                    jsonb_build_object('benchmark_only', true, 'history', jsonb_build_array(
+                        jsonb_build_object('previous_link', jsonb_build_object('opportunity_id', $2::bigint)))), now())""",
+            sizes["signals"] - 1,
+            2 * unprotected_stride,
+        )
+    if sizes["opportunities"] >= 3 * unprotected_stride:
+        await conn.execute(
+            """INSERT INTO notifications
+                (org_id, channel_id, kind, dedupe_key, payload, status, attempts)
+            SELECT 1, id, 'digest', 'benchmark:notification:history-only',
+                   jsonb_build_object('benchmark_only', true, 'items', jsonb_build_array(
+                       jsonb_build_object('opportunity_id', $1::bigint))), 'sent', 1
+            FROM alert_channels WHERE label = 'Synthetic benchmark only'""",
+            3 * unprotected_stride,
+        )
+    if sizes["opportunities"] >= 4 * unprotected_stride:
+        await conn.execute(
+            """UPDATE opportunity_relation_events SET evidence_snapshot = evidence_snapshot ||
+                jsonb_build_array(jsonb_build_object('opportunity_id', $1::bigint))
+            WHERE id = (SELECT min(id) FROM opportunity_relation_events)""",
+            4 * unprotected_stride,
+        )
+    # Populate a real-size core table without turning every unprotected probe identity
+    # into a customer identity. The first two of each group's original members are the
+    # immutable core; later members still appear in the complete reconciliation scope.
+    await conn.execute(
+        f"""INSERT INTO opportunity_customer_anchors (opportunity_id, signal_ids)
+        SELECT os.opportunity_id, (array_agg(os.signal_id ORDER BY os.signal_id))[1:2]
+        FROM opportunity_signals os
+        WHERE os.opportunity_id % 5 = 1
+           OR (os.opportunity_id % {unprotected_stride} = 0
+               AND (os.opportunity_id / {unprotected_stride}) % 3 = 0)
+        GROUP BY os.opportunity_id"""
+    )
+    if sizes["opportunities"] >= 5 * unprotected_stride:
+        # A retained but missing core member must exercise strict protection's correlated
+        # eligible-member count. Array IDs are snapshots, deliberately not cascading FKs.
+        await conn.execute(
+            "INSERT INTO opportunity_customer_anchors (opportunity_id, signal_ids) "
+            "VALUES ($1, ARRAY[$1::bigint, -1::bigint])",
+            5 * unprotected_stride,
+        )
+    await conn.execute(
+        """INSERT INTO notifications
+            (org_id, channel_id, kind, dedupe_key, payload, status, attempts)
+        SELECT 1, c.id, 'digest', 'benchmark:customer-core:' || a.opportunity_id,
+               jsonb_build_object('benchmark_only', true, 'items', jsonb_build_array(
+                   jsonb_build_object('opportunity_id', a.opportunity_id))), 'sent', 1
+        FROM opportunity_customer_anchors a JOIN opportunities o ON o.id = a.opportunity_id
+        CROSS JOIN alert_channels c
+        WHERE o.institution_code = 'B-0001' AND a.opportunity_id <> $1
+          AND c.label = 'Synthetic benchmark only'""",
+        3 * unprotected_stride,
+    )
+    counts["opportunity_customer_anchors"] = int(
+        await conn.fetchval("SELECT count(*) FROM opportunity_customer_anchors")
+    )
+    for name in ("review_items", "notifications"):
+        counts[name] = int(await conn.fetchval(f"SELECT count(*) FROM {name}"))
+    await conn.execute("ANALYZE")
+    head_queries = {q.key: q.after for q in additional_queries(sizes)}
+    protected_sql = head_queries["reconciliation_protected_opportunities"]
+    strict_sql = head_queries["reconciliation_strict_opportunities"]
+    anchor_sql = head_queries["reconciliation_customer_anchor_scope"]
+    counts["reconciliation_scope_opportunities"] = int(
+        await conn.fetchval("SELECT count(*) FROM opportunities WHERE institution_code = 'B-0001'")
+    )
+    counts["reconciliation_protected_opportunities"] = int(
+        await conn.fetchval(f"SELECT count(*) FROM ({protected_sql}) protected")
+    )
+    counts["reconciliation_strict_opportunities"] = int(
+        await conn.fetchval(f"SELECT count(*) FROM ({strict_sql}) strict")
+    )
+    counts["reconciliation_customer_only_opportunities"] = (
+        counts["reconciliation_protected_opportunities"]
+        - counts["reconciliation_strict_opportunities"]
+    )
+    counts["reconciliation_scope_customer_anchors"] = int(
+        await conn.fetchval(f"SELECT count(*) FROM ({anchor_sql}) anchors")
+    )
+    counts["reconciliation_unprotected_opportunities"] = (
+        counts["reconciliation_scope_opportunities"]
+        - counts["reconciliation_protected_opportunities"]
+    )
+    if (
+        not 0
+        < counts["reconciliation_strict_opportunities"]
+        < counts["reconciliation_protected_opportunities"]
+        < counts["reconciliation_scope_opportunities"]
+    ):
+        raise RuntimeError(
+            "Reconciliation benchmark fixture must contain strict, customer-only and unprotected identities"
+        )
     await conn.execute("VACUUM ANALYZE")
     return counts
 
@@ -1177,6 +1329,21 @@ def render(r: dict[str, Any]) -> str:
                 f"{extra['reconciliation_summary_tie_signals']:,}신호의 원문 위치를 읽습니다. "
                 "기관 밖 나머지 신호의 벡터·청크 FK는 기존 합성 fixture처럼 비어 있습니다. "
                 "완료 세대 필터를 사용하는 추천·알림도 head 전용 쿼리로 별도 측정합니다.",
+                "기존 기관/검토 주기의 우연한 일치를 피하도록 B-0001 신호는 head에서만 전부 "
+                "승인 상태로 바꿉니다. 이 기관의 매 네 번째 기회에는 일괄 생성하는 보호 근거를 "
+                "붙이지 않고, 그중 네 기회에 수동 연결·검토 이력·알림 이력·관계 이력을 각각 "
+                f"추가했습니다. 전체 {extra['reconciliation_scope_opportunities']:,}개 기회 중 "
+                f"보호 {extra['reconciliation_protected_opportunities']:,}개·비보호 "
+                f"{extra['reconciliation_unprotected_opportunities']:,}개는 실제 공용 보호 SQL로 "
+                "센 값입니다. 조회 범위·보호 조건을 줄이지 않았습니다.",
+                f"고객 원본 근거는 전체 {extra['opportunity_customer_anchors']:,}행이며 이 기관에 "
+                f"{extra['reconciliation_scope_customer_anchors']:,}행이 있습니다. 기회별 첫 두 신호만 "
+                "보존하고 이후 신호는 전체 조회에 남깁니다. 이 기관에는 고객 이력만 있는 기회와 "
+                "원본 근거 하나가 누락된 기회를 따로 넣었습니다. 공용 SQL로 엄격 보호 "
+                f"{extra['reconciliation_strict_opportunities']:,}개·고객 이력만 있는 "
+                f"{extra['reconciliation_customer_only_opportunities']:,}개·비보호 "
+                f"{extra['reconciliation_unprotected_opportunities']:,}개를 확인하며, 세 집단이 "
+                "모두 존재하지 않으면 벤치를 실패시킵니다.",
                 f"과거 알림 보호용 합성 payload {extra['notifications']:,}건은 비활성 채널에만 "
                 "저장합니다. 검토 resolution에도 이전 기회 ID를 채웁니다. 실제 알림을 보내지 "
                 "않으며, 보호 전체 조회의 OR 가지가 다른 근거로 단축될 수 있어 검토·알림 "

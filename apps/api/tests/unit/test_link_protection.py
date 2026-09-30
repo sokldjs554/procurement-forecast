@@ -1,6 +1,9 @@
+import sqlite3
+from types import SimpleNamespace
 from typing import Any
 
 from sqlalchemy.dialects.postgresql.base import PGDialect
+from sqlalchemy.dialects.sqlite import dialect as sqlite_dialect
 
 
 async def test_empty_institution_scope_never_reads_global_protection_history() -> None:
@@ -46,3 +49,105 @@ def test_legacy_json_anchors_are_compared_without_casting_or_expanding_untrusted
     assert "CAST(notifications.payload" not in sql
     assert "jsonb_array_elements" not in sql
     assert "jsonb_to_record" not in sql
+
+
+def test_strict_protection_does_not_freeze_customer_lifecycle() -> None:
+    from app.pipeline.link_state import protected_opportunities_query
+
+    sql = str(protected_opportunities_query({"LG-1"}, include_customer=False))
+    assert "review_items" in sql and "opportunity_relation_events" in sql
+    assert "notifications" not in sql and "recommendations" not in sql and "briefs" not in sql
+
+
+def test_strict_protection_rejects_incomplete_or_empty_persisted_customer_cores() -> None:
+    from app.pipeline.link_state import protected_opportunities_query
+
+    sql = str(
+        protected_opportunities_query({"LG-1"}, include_customer=False).compile(dialect=PGDialect())
+    )
+    assert "opportunity_customer_anchors" in sql
+    assert "cardinality(opportunity_customer_anchors.signal_ids)" in sql
+    assert "ANY (opportunity_customer_anchors.signal_ids)" in sql
+    assert "signals.institution_code = opportunities.institution_code" in sql
+
+
+class AnchorSession:
+    def __init__(self, connection: sqlite3.Connection, *, history: bool = False) -> None:
+        self.connection = connection
+        self.history = history
+        self.anchor: Any = None
+        self.membership_reads = 0
+
+    async def get(self, model: Any, opportunity_id: int, **kwargs: Any) -> Any:
+        assert opportunity_id == 7
+        return self.anchor
+
+    async def scalar(self, query: Any) -> int | None:
+        sql = str(query)
+        assert "notifications" in sql and "recommendations" in sql and "briefs" in sql
+        return 7 if self.history else None
+
+    async def scalars(self, query: Any) -> Any:
+        self.membership_reads += 1
+        sql = str(query.compile(dialect=sqlite_dialect(), compile_kwargs={"literal_binds": True}))
+        ids = [row[0] for row in self.connection.execute(sql).fetchall()]
+        return SimpleNamespace(all=lambda: ids)
+
+    async def execute(self, query: Any) -> None:
+        compiled = query.compile(dialect=PGDialect())
+        assert "ON CONFLICT (opportunity_id) DO NOTHING" in str(compiled)
+        if self.anchor is None:
+            self.anchor = SimpleNamespace(
+                opportunity_id=compiled.params["opportunity_id"],
+                signal_ids=compiled.params["signal_ids"],
+            )
+
+
+def _members(connection: sqlite3.Connection) -> None:
+    connection.execute("CREATE TABLE signals (id INTEGER, verdict TEXT)")
+    connection.execute(
+        "CREATE TABLE opportunity_signals (opportunity_id INTEGER, signal_id INTEGER, tentative BOOL)"
+    )
+    connection.executemany(
+        "INSERT INTO signals VALUES (?, ?)",
+        [(i, "accepted") for i in range(1, 1006)] + [(1006, "rejected")],
+    )
+    connection.executemany(
+        "INSERT INTO opportunity_signals VALUES (?, ?, ?)",
+        [(7, i, False) for i in range(1, 1003)]
+        + [(7, 1003, True), (8, 1004, False), (7, 1006, False)],
+    )
+
+
+async def test_first_customer_action_captures_all_eligible_members_and_keeps_original_core() -> (
+    None
+):
+    from app.pipeline.link_state import capture_customer_anchor
+
+    with sqlite3.connect(":memory:") as connection:
+        _members(connection)
+        session = AnchorSession(connection)
+        anchor = await capture_customer_anchor(session, 7)
+        assert anchor.signal_ids == list(range(1, 1003))
+        # A new accepted arrival must not silently become part of the original customer core.
+        connection.execute("INSERT INTO opportunity_signals VALUES (7, 1005, false)")
+        again = await capture_customer_anchor(session, 7)
+        assert again is anchor
+        assert 1005 not in again.signal_ids
+        assert session.membership_reads == 1
+
+
+async def test_legacy_customer_anchor_is_created_only_when_history_exists() -> None:
+    from app.pipeline.link_state import ensure_customer_anchor
+
+    with sqlite3.connect(":memory:") as connection:
+        _members(connection)
+        session = AnchorSession(connection)
+        assert await ensure_customer_anchor(session, 7) is None
+        assert session.membership_reads == 0
+        session.history = True
+        anchor = await ensure_customer_anchor(session, 7)
+        assert anchor is not None and anchor.signal_ids == list(range(1, 1003))
+        session.history = False  # Immutable core survives even if a recommendation is removed.
+        assert await ensure_customer_anchor(session, 7) is anchor
+        assert session.membership_reads == 1

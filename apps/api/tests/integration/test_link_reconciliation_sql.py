@@ -6,7 +6,7 @@ from itertools import permutations
 from typing import Any
 
 import pytest
-from sqlalchemy import func, select, update
+from sqlalchemy import delete, func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.models import (
@@ -19,6 +19,7 @@ from app.db.models import (
     LinkReconciliationState,
     Notification,
     Opportunity,
+    OpportunityCustomerAnchor,
     OpportunityRelation,
     OpportunityRelationEvent,
     OpportunitySignal,
@@ -217,6 +218,21 @@ async def memberships(session: AsyncSession, rows: dict[str, Signal]) -> dict[in
             )
         ).all()
     )
+
+
+async def link_metadata(session: AsyncSession, signal_ids: list[int]) -> dict[int, dict[str, Any]]:
+    links = await session.scalars(
+        select(OpportunitySignal)
+        .where(OpportunitySignal.signal_id.in_(signal_ids))
+        .execution_options(populate_existing=True)
+    )
+    return {
+        link.signal_id: {
+            column.key: plain(getattr(link, column.key))
+            for column in OpportunitySignal.__table__.columns
+        }
+        for link in links
+    }
 
 
 async def event_count(session: AsyncSession) -> int:
@@ -464,7 +480,7 @@ async def install_history_protection(
         "relation_event_old_opportunity",
     ],
 )
-async def test_human_and_published_identities_are_protected_as_whole_opportunities(
+async def test_human_decisions_and_customer_original_evidence_preserve_identity(
     runtime, protection: str
 ):  # type: ignore[no-untyped-def]
     async with get_sessionmaker()() as session:
@@ -555,6 +571,7 @@ async def test_human_and_published_identities_are_protected_as_whole_opportuniti
                 )
             session.add(protected_row)
         await session.flush()
+        original_links = await link_metadata(session, list(before))
         protected_snapshot = (
             {
                 column.key: plain(getattr(protected_row, column.key))
@@ -568,9 +585,13 @@ async def test_human_and_published_identities_are_protected_as_whole_opportuniti
         assert result.processed and result.protected_opportunities >= 1
         assert result.changed_signals == 0
         assert await memberships(session, rows) == before
+        assert await link_metadata(session, list(before)) == original_links
         assert await signature(session, rows) == before_summary
         assert await session.get(Opportunity, target_id) is not None
         assert await event_count(session) == 0
+        if protection in {"feedback", "notified", "brief", "notification_history"}:
+            anchor = await session.get(OpportunityCustomerAnchor, target_id, populate_existing=True)
+            assert anchor is not None and anchor.signal_ids == sorted(before)
         if protected_row is not None:
             await session.refresh(protected_row)
             assert {
@@ -632,7 +653,7 @@ async def test_snapshot_conflict_does_not_partially_apply_memberships_or_events(
 
 @pytest.mark.parametrize("mode", ["similarity", "ref"])
 @pytest.mark.parametrize("protection", ["manual", "notification_history", "review_history"])
-async def test_provisional_arrivals_cannot_attach_to_protected_identities(
+async def test_provisional_arrivals_respect_strict_decisions_and_customer_cores(
     runtime, mode: str, protection: str
 ):  # type: ignore[no-untyped-def]
     async with get_sessionmaker()() as session:
@@ -651,15 +672,189 @@ async def test_provisional_arrivals_cannot_attach_to_protected_identities(
             await install_history_protection(session, target, rows["a_x"].document_id, protection)
         await session.flush()
         before = await signature(session, {"a_x": rows["a_x"]})
+        original_links = await link_metadata(session, [rows["a_x"].id])
         await link_signals(session, runtime, [rows["b_x"].id], today=TODAY)
         after = await memberships(session, rows)
         assert after[rows["a_x"].id] == target_id
-        assert after[rows["b_x"].id] != target_id
-        assert await signature(session, {"a_x": rows["a_x"]}) == before
+        assert await link_metadata(session, [rows["a_x"].id]) == original_links
+        if protection == "notification_history":
+            assert after[rows["b_x"].id] == target_id
+            anchor = await session.get(OpportunityCustomerAnchor, target_id, populate_existing=True)
+            assert anchor is not None and anchor.signal_ids == [rows["a_x"].id]
+            await session.refresh(target)
+            assert target.signal_count == 2
+        else:
+            assert after[rows["b_x"].id] != target_id
+            assert await signature(session, {"a_x": rows["a_x"]}) == before
         assert (
             await session.scalar(
                 select(OpportunitySignal).where(OpportunitySignal.signal_id == rows["b_y"].id)
             )
             is None
         )
+        await session.rollback()
+
+
+async def later_customer_evidence(session: AsyncSession, source: Source) -> dict[str, Signal]:
+    rows = {}
+    for index, (label, stage, observed) in enumerate(
+        (
+            ("plan", "order_plan", date(2026, 9, 20)),
+            ("bid", "bid_notice", date(2026, 9, 25)),
+            ("revised_bid", "bid_notice", date(2026, 9, 26)),
+        )
+    ):
+        # The plan bridges an unnumbered budget title to differently titled official
+        # notices. A refs-only policy cannot discover the original budget identity.
+        title = TITLE if label == "plan" else "2026 공공시설 설비 납품 계약"
+        refs = {"order_plan_no": "CUSTOMER-PLAN"}
+        if label != "plan":
+            refs |= {"bid_notice_no": "CUSTOMER-BID", "bid_notice_ord": f"00{index}"}
+        doc = Document(
+            source_id=source.id,
+            external_id=f"customer-{label}",
+            doc_type=stage,
+            title=title,
+            institution_code=CODE,
+            published_at=observed,
+            content_hash=str(index + 1) * 64,
+            mime="text/plain",
+            text=title,
+            parse_status="parsed",
+            structured={},
+        )
+        session.add(doc)
+        await session.flush()
+        signal = Signal(
+            document_id=doc.id,
+            institution_code=CODE,
+            department="건축과",
+            title=title,
+            summary="고객이 관찰한 사업의 후속 공고",
+            stage=stage,
+            category="facility",
+            observed_at=observed,
+            verdict="accepted",
+            budget_krw=100_000_000,
+            commitment="committed",
+            confidence=0.99,
+            keywords=["설비", label],
+            embedding=([1.0, 0.0] if label == "plan" else [0.0, 1.0]) + [0.0] * 510,
+            external_refs=refs,
+            evidence=[{"quote": title, "start": 0, "end": len(title), "found": True}],
+            grounding={"issues": []},
+            extractor="test-lifecycle-v1",
+            dedupe_key=f"sql-reconcile-customer-{label}",
+        )
+        session.add(signal)
+        await session.flush()
+        rows[label] = signal
+    return rows
+
+
+async def test_customer_anchor_replays_all_later_arrival_orders_without_freezing_lifecycle(runtime):  # type: ignore[no-untyped-def]
+    expected = None
+    async with get_sessionmaker()() as session:
+        source = await base(session)
+        for arrival_order in permutations(("plan", "bid", "revised_bid")):
+            case = await session.begin_nested()
+            core = (await triple(session, source))["a_x"]
+            core.observed_at = date(2026, 9, 1)
+            assert core.external_refs == {}
+            target = await opportunity(session)
+            target_id = target.id
+            await attach(session, target, [core])
+            original_links = await link_metadata(session, [core.id])
+            notification = await install_history_protection(
+                session, target, core.document_id, "notification_history"
+            )
+            original_payload = plain(notification.payload)
+            assert await session.get(OpportunityCustomerAnchor, target_id) is None
+            later = await later_customer_evidence(session, source)
+            arrived = {"core": core}
+            for label in arrival_order:
+                incoming = later[label]
+                await link_signals(session, runtime, [incoming.id], today=TODAY)
+                # Legacy customer history must capture its original core before any
+                # automatic append, not snapshot the enlarged group on reconciliation.
+                anchor = await session.get(
+                    OpportunityCustomerAnchor, target_id, populate_existing=True
+                )
+                provisional = await memberships(session, {label: incoming})
+                if provisional[incoming.id] == target_id:
+                    assert anchor is not None and anchor.signal_ids == [core.id]
+                result = await reconcile_institution(session, runtime, CODE, today=TODAY)
+                assert result.processed and result.protected_opportunities >= 1
+                arrived[label] = incoming
+                assert await link_metadata(session, [core.id]) == original_links
+                assert (await memberships(session, arrived))[core.id] == target_id
+                anchor = await session.get(
+                    OpportunityCustomerAnchor, target_id, populate_existing=True
+                )
+                assert anchor is not None and anchor.signal_ids == [core.id]
+                await session.refresh(notification)
+                assert notification.payload == original_payload
+                unseen = [row.id for name, row in later.items() if name not in arrived]
+                assert await link_metadata(session, unseen) == {}
+            actual = await signature(session, arrived)
+            assert set(actual) == {("bid", "core", "plan", "revised_bid")}
+            assert set((await memberships(session, arrived)).values()) == {target_id}
+            summary = next(iter(actual.values()))
+            assert summary["stage"] == "bid_notice"
+            assert summary["status"] == "bid_open"
+            assert summary["signal_count"] == 4
+            assert summary["first_seen_at"] == date(2026, 9, 1)
+            assert summary["last_signal_at"] == date(2026, 9, 26)
+            assert summary["bid_published_at"] == date(2026, 9, 25)
+            assert summary["conversion_prob"] == 1.0
+            final_links = await link_metadata(session, [row.id for row in later.values()])
+            assert final_links[later["plan"].id]["method"] == "similarity"
+            assert final_links[later["bid"].id]["method"] == "ref"
+            assert final_links[later["revised_bid"].id]["method"] == "ref"
+            if expected is None:
+                expected = actual
+            assert actual == expected, arrival_order
+            before = await memberships(session, arrived)
+            audit_count = await event_count(session)
+            await mark_link_dirty(session, {CODE})
+            repeat = await reconcile_institution(session, runtime, CODE, today=TODAY)
+            assert repeat.processed and repeat.changed_signals == 0
+            assert await memberships(session, arrived) == before
+            assert await signature(session, arrived) == actual
+            assert await event_count(session) == audit_count
+            await case.rollback()
+        await session.rollback()
+
+
+@pytest.mark.parametrize("invalid_core", ["deleted", "rejected"])
+async def test_invalid_customer_core_freezes_existing_identity_without_replacing_anchor(
+    runtime, invalid_core: str
+):  # type: ignore[no-untyped-def]
+    async with get_sessionmaker()() as session:
+        rows = await triple(session, await base(session))
+        target = await opportunity(session)
+        target_id = target.id
+        core_id = rows["a_x"].id
+        await attach(session, target, list(rows.values()))
+        session.add(OpportunityCustomerAnchor(opportunity_id=target_id, signal_ids=[core_id]))
+        await session.flush()
+        if invalid_core == "deleted":
+            await session.execute(delete(Signal).where(Signal.id == core_id))
+        else:
+            rows["a_x"].verdict = "rejected"
+            await session.flush()
+        # The two remaining accepted rows come from one book and would split if the
+        # invalid original customer core were silently replaced by these later members.
+        before = await memberships(session, rows)
+        original_links = await link_metadata(session, list(before))
+        await mark_link_dirty(session, {CODE})
+        result = await reconcile_institution(session, runtime, CODE, today=TODAY)
+        assert result.processed and result.protected_opportunities >= 1
+        assert result.changed_signals == 0
+        assert await memberships(session, rows) == before
+        assert await link_metadata(session, list(before)) == original_links
+        anchor = await session.get(OpportunityCustomerAnchor, target_id, populate_existing=True)
+        assert anchor is not None and anchor.signal_ids == [core_id]
+        assert await session.get(Opportunity, target_id) is not None
+        assert await event_count(session) == 0
         await session.rollback()
