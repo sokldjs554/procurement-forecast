@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import json
 import time
+from collections import Counter
 from collections.abc import Awaitable, Callable
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
@@ -35,6 +36,7 @@ from app.media.ffmpeg import (
 from app.media.stt import Segment, STTProvider
 from app.media.transcript import Transcript, assemble, merge_segments
 from app.parsing.ocr import OCREngine
+from app.settings import Settings
 
 
 class Checkpoints(Protocol):
@@ -84,6 +86,17 @@ class MediaOptions:
     caption_every_seconds: float = 2.0
     caption_scene: float = 0.12
 
+    @classmethod
+    def from_settings(cls, settings: Settings) -> MediaOptions:
+        return cls(
+            language=settings.stt_language,
+            window_seconds=settings.media_window_seconds,
+            window_search_seconds=settings.media_window_search_seconds,
+            caption_region=settings.media_caption_region,
+            caption_every_seconds=settings.media_caption_every_seconds,
+            caption_scene=settings.media_caption_scene,
+        )
+
 
 @dataclass(slots=True)
 class MediaCost:
@@ -111,6 +124,25 @@ class MediaTranscript:
     stt_model: str
     resumed_windows: int = 0
     notes: list[str] = field(default_factory=list)
+
+    def summary(self) -> dict[str, Any]:
+        """What a person (or a job result) wants to know about a run, timings included."""
+        speakers = Counter(f"{t['role']} {t['name']}" for t in self.transcript.turns)
+        return {
+            "duration_seconds": round(self.info.duration, 1),
+            "windows": len(self.windows),
+            "resumed_windows": self.resumed_windows,
+            "segments": len(self.segments),
+            "captions": len(self.captions),
+            "caption_frames": self.caption_stats.frames,
+            "caption_frames_ocr": self.caption_stats.ocr,
+            "caption_frames_read": self.caption_stats.read,
+            "turns": len(self.transcript.turns),
+            "speakers": dict(speakers.most_common()),
+            "stt": f"{self.stt_provider}:{self.stt_model}",
+            "cost": self.cost.to_json(),
+            "notes": self.notes,
+        }
 
     def media_json(self) -> dict[str, Any]:
         """What the document keeps about its video (``documents.structured['media']``). Only
