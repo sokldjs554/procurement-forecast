@@ -3,7 +3,7 @@
 from typing import Any
 
 from sqlalchemy import BigInteger, Select, any_, cast, func, literal, or_, select
-from sqlalchemy.dialects.postgresql import JSONB, array, insert
+from sqlalchemy.dialects.postgresql import ARRAY, JSONB, array, insert
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql.elements import ColumnElement
 
@@ -229,6 +229,30 @@ async def protected_opportunity_ids(
             )
         ).all()
     )
+
+
+def customer_reprocessing_query(signal_ids: list[int]) -> Any:
+    """Protect original published evidence, including history predating core snapshots.
+
+    For a stored core, only its members are immutable. Without a stored core, any
+    current member of a published identity could be an original member; never delete
+    those IDs before the first lazy capture. Call after locking affected identities.
+    """
+    stored = select(OpportunityCustomerAnchor.opportunity_id).where(
+        OpportunityCustomerAnchor.signal_ids.overlap(cast(signal_ids, ARRAY(BigInteger)))
+    )
+    legacy = select(Opportunity.id).where(
+        Opportunity.id.in_(
+            select(OpportunitySignal.opportunity_id).where(
+                OpportunitySignal.signal_id.in_(signal_ids)
+            )
+        ),
+        ~select(OpportunityCustomerAnchor.opportunity_id)
+        .where(OpportunityCustomerAnchor.opportunity_id == Opportunity.id)
+        .exists(),
+        customer_history_predicate(),
+    )
+    return stored.union_all(legacy).limit(1)
 
 
 async def capture_customer_anchor(

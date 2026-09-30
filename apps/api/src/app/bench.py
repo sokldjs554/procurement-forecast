@@ -55,7 +55,11 @@ from app.db.models import (
 )
 from app.eval.review_dataset import RESOLVED_STATUSES
 from app.pipeline.link_reconcile import reconciliation_scope_ids, reconciliation_signals_query
-from app.pipeline.link_state import link_settled, protected_opportunities_query
+from app.pipeline.link_state import (
+    customer_reprocessing_query,
+    link_settled,
+    protected_opportunities_query,
+)
 from app.pipeline.recommend import CANDIDATES_PER_SOURCE, OPEN_ONLY
 from app.pipeline.relations import CONTRACT_STAGES, PROJECT_STAGES
 from app.settings import get_settings
@@ -634,9 +638,7 @@ def additional_queries(
             query(
                 f"customer_anchor_document_protection_{label}",
                 f"문서 재처리 보호: 문서 신호 ID와 고객 원본 근거 겹침 ({label})",
-                select(OpportunityCustomerAnchor.opportunity_id)
-                .where(OpportunityCustomerAnchor.signal_ids.overlap(cast(ids, ARRAY(BigInteger))))
-                .limit(1),
+                customer_reprocessing_query(ids),
             )
         )
     for label, signal_id in (("hit", 1), ("miss", 0)):

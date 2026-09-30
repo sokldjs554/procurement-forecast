@@ -71,6 +71,21 @@ def test_strict_protection_rejects_incomplete_or_empty_persisted_customer_cores(
     assert "signals.institution_code = opportunities.institution_code" in sql
 
 
+def test_reprocessing_checks_legacy_customer_history_before_first_core_capture() -> None:
+    from app.pipeline.link_state import customer_reprocessing_query
+
+    sql = str(
+        customer_reprocessing_query([41, 42]).compile(
+            dialect=PGDialect(), compile_kwargs={"literal_binds": True}
+        )
+    )
+    assert "opportunity_customer_anchors.signal_ids &&" in sql
+    assert "opportunity_signals.signal_id IN (41, 42)" in sql
+    assert "notifications" in sql and "recommendations" in sql and "briefs" in sql
+    assert "NOT (EXISTS" in sql  # Later additions to an already captured core remain replaceable.
+    assert "LIMIT 1" in sql
+
+
 class AnchorSession:
     def __init__(self, connection: sqlite3.Connection, *, history: bool = False) -> None:
         self.connection = connection

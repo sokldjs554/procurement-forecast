@@ -5,14 +5,16 @@ from types import SimpleNamespace
 from uuid import uuid4
 
 import pytest
-from sqlalchemy import func, select
+from sqlalchemy import delete, func, select
 from sqlalchemy.exc import DBAPIError
 
 from app.db.models import (
     Brief,
     Document,
     InstitutionRow,
+    LinkReconciliationState,
     Opportunity,
+    OpportunityCustomerAnchor,
     OpportunitySignal,
     Organization,
     ReviewItem,
@@ -94,11 +96,45 @@ async def world(session):
     return opp.id, signals[1].id, org.id, signals[0].id
 
 
-async def test_new_customer_history_keeps_original_anchor_and_accepts_lifecycle_append(
-    migrated_db, monkeypatch
-):
+@pytest.fixture
+async def provisional_world(migrated_db):
     async with get_sessionmaker()() as setup:
-        target_id, incoming_id, org_id, original_id = await world(setup)
+        ids = await world(setup)
+        target = await setup.get(Opportunity, ids[0])
+        code = target.institution_code
+        source_id = await setup.scalar(
+            select(Document.source_id)
+            .join(Signal, Signal.document_id == Document.id)
+            .where(Signal.id == ids[1])
+        )
+    try:
+        yield ids
+    finally:
+        # These race tests need committed setup visible to a second connection. Remove
+        # it afterwards so intentionally unlinked arrivals cannot contaminate demo tests.
+        async with get_sessionmaker()() as cleanup:
+            await cleanup.execute(delete(Organization).where(Organization.id == ids[2]))
+            await cleanup.execute(
+                delete(OpportunityCustomerAnchor).where(
+                    OpportunityCustomerAnchor.opportunity_id == ids[0]
+                )
+            )
+            await cleanup.execute(delete(Document).where(Document.source_id == source_id))
+            await cleanup.execute(delete(Source).where(Source.id == source_id))
+            await cleanup.execute(delete(Opportunity).where(Opportunity.institution_code == code))
+            await cleanup.execute(
+                delete(LinkReconciliationState).where(
+                    LinkReconciliationState.institution_code == code
+                )
+            )
+            await cleanup.execute(delete(InstitutionRow).where(InstitutionRow.code == code))
+            await cleanup.commit()
+
+
+async def test_new_customer_history_keeps_original_anchor_and_accepts_lifecycle_append(
+    provisional_world, monkeypatch
+):
+    target_id, incoming_id, org_id, original_id = provisional_world
 
     async def decide_after_customer_action(*args, **kwargs):
         async with get_sessionmaker()() as actor:
@@ -142,10 +178,9 @@ async def test_new_customer_history_keeps_original_anchor_and_accepts_lifecycle_
 
 
 async def test_new_human_review_between_selection_and_lock_still_prevents_attachment(
-    migrated_db, monkeypatch
+    provisional_world, monkeypatch
 ):
-    async with get_sessionmaker()() as setup:
-        target_id, incoming_id, _, original_id = await world(setup)
+    target_id, incoming_id, _, original_id = provisional_world
 
     async def decide_after_human_review(*args, **kwargs):
         async with get_sessionmaker()() as reviewer:
@@ -177,9 +212,8 @@ async def test_new_human_review_between_selection_and_lock_still_prevents_attach
         await session.rollback()
 
 
-async def test_chosen_target_stays_locked_until_linking_transaction_commits(migrated_db):
-    async with get_sessionmaker()() as setup:
-        target_id, incoming_id, _, _ = await world(setup)
+async def test_chosen_target_stays_locked_until_linking_transaction_commits(provisional_world):
+    target_id, incoming_id, _, _ = provisional_world
     async with get_sessionmaker()() as linker, get_sessionmaker()() as actor:
         assert await link.link_signals(linker, RUNTIME, [incoming_id], today=TODAY) == [target_id]
         with pytest.raises(DBAPIError) as blocked:

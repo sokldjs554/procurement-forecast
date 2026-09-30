@@ -316,6 +316,8 @@ async def test_notification_rechecks_dirty_generation_after_candidate_identity_l
 @pytest.mark.parametrize("actor", ["feedback", "brief", "notification"])
 async def test_first_customer_action_captures_core_without_replacing_it(action_world, actor):
     from app.db.models import OpportunityCustomerAnchor
+    from app.pipeline.link_state import capture_customer_anchor
+    from app.pipeline.process import ReprocessingProtectedError, protect_human_decisions
 
     org_id, user_id, opportunity_id = action_world
     async with get_sessionmaker()() as session:
@@ -355,6 +357,19 @@ async def test_first_customer_action_captures_core_without_replacing_it(action_w
             OpportunityCustomerAnchor, opportunity_id, populate_existing=True
         )
         assert anchor is not None and anchor.signal_ids == original_ids
+        original = await session.get(Signal, original_ids[0])
+        with pytest.raises(ReprocessingProtectedError, match="published customer evidence"):
+            await protect_human_decisions(session, original.document_id)
+        # Simulate upgraded history whose immutable core has not yet been captured.
+        await session.execute(
+            delete(OpportunityCustomerAnchor).where(
+                OpportunityCustomerAnchor.opportunity_id == opportunity_id
+            )
+        )
+        with pytest.raises(ReprocessingProtectedError, match="published customer evidence"):
+            await protect_human_decisions(session, original.document_id)
+        anchor = await capture_customer_anchor(session, opportunity_id)
+        assert anchor.signal_ids == original_ids
         later, _ = await add_signal(session, opp, stage="bid_notice")
         session.add(
             OpportunitySignal(
@@ -374,6 +389,9 @@ async def test_first_customer_action_captures_core_without_replacing_it(action_w
         await session.refresh(anchor)
         assert anchor.signal_ids == original_ids
         assert later.id not in anchor.signal_ids
+        # Only the first core is immutable; re-extraction of a later automatic document
+        # must remain possible even after subsequent customer actions publish it.
+        await protect_human_decisions(session, later.document_id)
         await session.rollback()
 
 

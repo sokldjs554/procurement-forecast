@@ -81,7 +81,7 @@ class ReprocessingProtectedError(RuntimeError):
 
 async def protect_human_decisions(session: AsyncSession, document_id: int) -> None:
     """Refuse destructive source/derivation changes; caller holds the Document row lock."""
-    from app.db.models import OpportunityCustomerAnchor
+    from app.pipeline.link_state import customer_reprocessing_query
     from app.pipeline.relations import has_relation_review_for_document
 
     # A customer publisher locks the opportunity before capturing its original evidence.
@@ -135,11 +135,7 @@ async def protect_human_decisions(session: AsyncSession, document_id: int) -> No
     )
     anchored = None
     if protected is None:
-        anchored = await session.scalar(
-            select(OpportunityCustomerAnchor.opportunity_id)
-            .where(OpportunityCustomerAnchor.signal_ids.overlap(signal_ids))
-            .limit(1)
-        )
+        anchored = await session.scalar(customer_reprocessing_query(signal_ids))
     if (
         protected is not None
         or anchored is not None

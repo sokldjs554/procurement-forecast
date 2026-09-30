@@ -594,10 +594,22 @@ async def test_human_decisions_and_customer_original_evidence_preserve_identity(
             assert anchor is not None and anchor.signal_ids == sorted(before)
         if protected_row is not None:
             await session.refresh(protected_row)
-            assert {
+            refreshed_snapshot = {
                 column.key: plain(getattr(protected_row, column.key))
                 for column in protected_row.__table__.columns
-            } == protected_snapshot
+            }
+            if isinstance(protected_row, Recommendation):
+                # Scores are current projections, not immutable customer history. This
+                # fixture has no company profile, so refresh must retract its old score
+                # while keeping the original feedback and notification stage intact.
+                assert protected_row.score == 0
+                assert protected_row.breakdown["human"] is True
+                assert protected_row.breakdown["revalidation"]["digest"]
+                assert protected_row.ranker_version == "ranker-v1"
+                for field in ("score", "breakdown", "ranker_version", "computed_at"):
+                    refreshed_snapshot.pop(field)
+                    protected_snapshot.pop(field)
+            assert refreshed_snapshot == protected_snapshot
         if protection == "manual":
             assert (
                 await session.scalar(
