@@ -76,6 +76,15 @@ def build_llm(settings: Settings, guard: SpendGuard) -> LLMService:
     )
 
 
+def build_ocr(settings: Settings) -> OCREngine | None:
+    if settings.ocr_provider != "tesseract":
+        return None
+    if shutil.which("tesseract") is None:
+        log.warning("ocr.unavailable", reason="tesseract binary not found")
+        return None
+    return TesseractOCR(settings.ocr_languages)
+
+
 def build_runtime(settings: Settings, redis: Redis | None = None) -> Runtime:
     registry = load_registry_csv()
     embedder: Embedder
@@ -92,12 +101,7 @@ def build_runtime(settings: Settings, redis: Redis | None = None) -> Runtime:
         if redis is not None
         else MemorySpendGuard(settings.llm_daily_budget_usd)
     )
-    ocr: OCREngine | None = None
-    if settings.ocr_provider == "tesseract":
-        if shutil.which("tesseract"):
-            ocr = TesseractOCR(settings.ocr_languages)
-        else:
-            log.warning("ocr.unavailable", reason="tesseract binary not found")
+    ocr = build_ocr(settings)
     lexicon = default_lexicon(
         [inst.name.split()[-1] for inst in registry.all()]
         + [alias for inst in registry.all() for alias in inst.aliases]

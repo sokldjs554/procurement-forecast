@@ -35,7 +35,7 @@ from app.parsing.chunking import split_turns
 Verdict = Literal["accepted", "needs_review", "rejected"]
 
 # Unknown roles stay reviewable; an unrecognised speaker is never an executive by default.
-_OFFICIAL_ENDINGS = (
+OFFICIAL_ENDINGS = (
     "시장",
     "군수",
     "구청장",
@@ -148,7 +148,7 @@ def official_evidence_issue(
             and not turn.is_member
             and not turn.is_chair
             and not turn.role.endswith(("위원", "의원", "위원장", "의장"))
-            and turn.role.endswith(_OFFICIAL_ENDINGS)
+            and turn.role.endswith(OFFICIAL_ENDINGS)
             # An unknown speaker heading must not inherit the preceding official's role.
             and not re.search(r"(?m)^[ \t]*[○◯◎]", document_text[turn.start + 1 : end])
         ):

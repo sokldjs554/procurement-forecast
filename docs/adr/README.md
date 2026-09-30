@@ -15,3 +15,4 @@
 | [0009](0009-polite-board-crawler.md) | 지자체 누리집 게시판은 예의 바른 크롤러로 수집한다 | 채택 |
 | [0010](0010-measure-at-volume.md) | 쿼리는 운영 규모 데이터에서 측정하고 고친다 | 채택 |
 | [0011](0011-provider-codes-for-institutions.md) | 조달청 문서의 기관은 조달청 코드로 식별한다 | 채택 |
+| [0012](0012-meeting-video-as-minutes.md) | 회의 영상은 회의록 모양의 전사로 바꿔 같은 파이프라인에 넣는다 | 채택 |

@@ -10,6 +10,8 @@ manage sources check              # first real call to each 조달청 operation 
 manage sources check -s clik_minutes   # CLIK minutes list + one detail (needs the CLIK key)
 manage sources ingest -s g2b --days 30 --max-calls 250   # backfill a window, counting calls
 manage pipeline run               # process pending documents and link their signals
+manage media transcribe VIDEO     # council meeting video → transcript (checkpointed, resumable)
+manage media ingest VIDEO --title … --meeting-date …   # … → document → signals with video times
 manage worker                     # arq worker + cron (+ /healthz on $PORT for Cloud Run)
 manage openapi > openapi.json     # schema for the web app's generated types
 """
@@ -40,6 +42,7 @@ sources_app = typer.Typer(help="External data sources")
 pipeline_app = typer.Typer(help="Pipeline stages outside the worker")
 llm_cache_app = typer.Typer(help="Paid LLM answers, kept across databases")
 link_app = typer.Typer(help="Linking real signals again, without fetching or extracting")
+media_app = typer.Typer(help="Council meeting video → transcript → signals")
 app.add_typer(db_app, name="db")
 app.add_typer(demo_app, name="demo")
 app.add_typer(eval_app, name="eval")
@@ -47,6 +50,7 @@ app.add_typer(sources_app, name="sources")
 app.add_typer(pipeline_app, name="pipeline")
 app.add_typer(llm_cache_app, name="llm-cache")
 app.add_typer(link_app, name="link")
+app.add_typer(media_app, name="media")
 
 T = TypeVar("T")
 
@@ -681,6 +685,143 @@ def pipeline_revalidate(
     if out is not None:
         out.write_text(rendered + "\n", encoding="utf-8")
     typer.echo(rendered)
+
+
+def _stt(spec: str) -> Any:
+    """'faster-whisper' (model from settings), 'faster-whisper:medium', or 'fixture:PATH'."""
+    from app.media.stt import FasterWhisperSTT, FixtureSTT
+
+    settings = get_settings()
+    kind, _, arg = spec.partition(":")
+    if kind == "fixture":
+        if not arg:
+            raise typer.BadParameter("fixture:PATH to a recorded transcript", param_hint="--stt")
+        return FixtureSTT.from_file(Path(arg))
+    if kind == "faster-whisper":
+        return FasterWhisperSTT(
+            arg or settings.stt_model,
+            model_dir=settings.stt_model_dir,
+            compute_type=settings.stt_compute_type,
+        )
+    raise typer.BadParameter(f"unknown STT {spec!r}", param_hint="--stt")
+
+
+def _media_workdir(video: Path, workdir: Path | None) -> Path:
+    """One directory per video (name + size), so re-running a command finds its checkpoints."""
+    return workdir or Path(get_settings().media_workdir) / f"{video.stem}-{video.stat().st_size}"
+
+
+async def _transcribe(video: Path, work: Path, stt: str, ocr: Any) -> Any:
+    from app.media.job import DirCheckpoints, MediaOptions, transcribe_media
+
+    settings = get_settings()
+
+    async def progress(stage: str, done: int, total: int) -> None:
+        typer.echo(f"{stage} {done}/{total}", err=True)
+
+    return await transcribe_media(
+        video,
+        workdir=work,
+        stt=_stt(stt),
+        ocr=ocr,
+        checkpoints=DirCheckpoints(work / "checkpoints"),
+        options=MediaOptions(
+            language=settings.stt_language,
+            window_seconds=settings.media_window_seconds,
+            window_search_seconds=settings.media_window_search_seconds,
+            caption_region=settings.media_caption_region,
+            caption_every_seconds=settings.media_caption_every_seconds,
+            caption_scene=settings.media_caption_scene,
+        ),
+        progress=progress,
+    )
+
+
+def _media_summary(media: Any) -> dict[str, Any]:
+    from collections import Counter
+
+    speakers = Counter(f"{t['role']} {t['name']}" for t in media.transcript.turns)
+    return {
+        "duration_seconds": round(media.info.duration, 1),
+        "windows": len(media.windows),
+        "resumed_windows": media.resumed_windows,
+        "segments": len(media.segments),
+        "captions": len(media.captions),
+        "caption_frames": media.caption_stats.frames,
+        "caption_frames_ocr": media.caption_stats.ocr,
+        "caption_frames_read": media.caption_stats.read,
+        "turns": len(media.transcript.turns),
+        "speakers": dict(speakers.most_common()),
+        "stt": f"{media.stt_provider}:{media.stt_model}",
+        "cost": media.cost.to_json(),
+        "notes": media.notes,
+    }
+
+
+@media_app.command("transcribe")
+def media_transcribe(
+    video: Path = typer.Argument(..., exists=True, dir_okay=False),
+    stt: str = typer.Option("faster-whisper", help="faster-whisper[:MODEL] or fixture:PATH"),
+    workdir: Path = typer.Option(
+        None, help="Checkpoints and scratch (default under media_workdir)"
+    ),
+    out: Path = typer.Option(None, help="Also write the transcript text here"),
+) -> None:
+    """Transcribe one meeting video. Every window is checkpointed: run the same command again
+    after a crash and it resumes where it stopped."""
+    from app.runtime import build_ocr
+
+    configure_logging(json=False, level="WARNING", stream=sys.stderr)
+    work = _media_workdir(video, workdir)
+    media = _run(lambda: _transcribe(video, work, stt, build_ocr(get_settings())))
+    if out is not None:
+        out.write_text(media.transcript.text, encoding="utf-8")
+    typer.echo(json.dumps(_media_summary(media), ensure_ascii=False, indent=2))
+
+
+@media_app.command("ingest")
+def media_ingest(
+    video: Path = typer.Argument(..., exists=True, dir_okay=False),
+    title: str = typer.Option(..., help="제311회 본회의 제2차 …"),
+    meeting_date: str = typer.Option(..., help="YYYY-MM-DD"),
+    publisher: str = typer.Option("경기도 성남시의회", help="Council name as printed"),
+    institution: str = typer.Option(None, help="Institution code hint (CN-41130)"),
+    url: str = typer.Option(None, help="Where the video is published"),
+    published_at: str = typer.Option(
+        None, help="YYYY-MM-DD the video went public (else the meeting date, marked uncertain)"
+    ),
+    external_id: str = typer.Option(None, help="Stable id (default: video name + date)"),
+    stt: str = typer.Option("faster-whisper", help="faster-whisper[:MODEL] or fixture:PATH"),
+    workdir: Path = typer.Option(None),
+) -> None:
+    """Transcribe, store as a council minutes document, process it, and print its signals with
+    the seconds of video their evidence covers."""
+    from app.media.ingest import ingest_transcript, transcript_record
+
+    configure_logging(json=False, level="WARNING", stream=sys.stderr)
+    work = _media_workdir(video, workdir)
+
+    async def go(session: Any, runtime: Any) -> dict[str, Any]:
+        media = await _transcribe(video, work, stt, runtime.ocr)
+        record = transcript_record(
+            media,
+            external_id=external_id or f"{video.stem}:{meeting_date}",
+            title=title,
+            meeting_date=date.fromisoformat(meeting_date),
+            publisher_raw=publisher,
+            institution_code_hint=institution,
+            url=url,
+            published_at=date.fromisoformat(published_at) if published_at else None,
+        )
+        result = await ingest_transcript(session, runtime, record)
+        return {
+            "document_id": result.document_id,
+            "action": result.action,
+            "media": _media_summary(media),
+            "signals": result.signals,
+        }
+
+    typer.echo(json.dumps(_run(lambda: _with_session(go)), ensure_ascii=False, indent=2))
 
 
 @app.command()
