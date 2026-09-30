@@ -60,6 +60,26 @@
 마이그레이션 `0004`와 worker sweep이 기존 자료도 완료 단계로 가져옵니다.
 이 문서의 CI 검증은 외부 운영 DB 마이그레이션을 실행했다는 뜻이 아닙니다.
 
+## 실제 운영 대상 조회 (2026-09-30)
+
+사용자가 확인한 Render `My workspace`에서 서비스를 직접 조회했다. 조회된 서비스
+18개 중 `sokldjs554/procurement-forecast` 저장소에 연결된 서비스는 **0개**였다.
+등록된 PostgreSQL 1개와 Key Value 1개도 다른 프로젝트용이었다. 이름이 비슷한
+`procure-delta-demo`는 `sokldjs554/procure-delta`의 정적 데모 빌드이며 이 프로젝트의
+운영 API·worker가 아니다. 해당 자원은 변경하지 않았다.
+
+GitHub에서 조회 가능한 Actions 실행 233건에도 `Deploy (Cloud Run)` 실행은 없었다.
+이 조회만으로 수동 생성한 외부 GCP 환경까지 없다고 단정하지는 않는다. 현재 연결로는
+이 프로젝트의 실제 운영 DB나 배포 대상이 확인되지 않았으며, 마이그레이션 `0004`를
+외부 운영 DB에 적용한 사실도 없다.
+
+[PR #54](https://github.com/sokldjs554/procurement-forecast/pull/54)와 검증 문서는 main에
+반영됐다. 반영 후 [CI](https://github.com/sokldjs554/procurement-forecast/actions/runs/36668672260)도
+통과했다. 저장소의 [Render 구성](render-deployment.md)은 새 유료 자원을 만드는
+설정이며, 기존 서버를 갱신한 결과가 아니다. 실제 적용에는 올바른 운영 대상 또는
+신규 인프라 생성 범위·비용 승인과 필요한 운영 설정이 필요하다. 공개 데모는 사용자가
+맡는 기존 범위를 유지한다.
+
 ## 이번 수정
 
 | 확인된 결함 | 보완 | 완료 판정 근거 |

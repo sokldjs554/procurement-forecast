@@ -1,7 +1,8 @@
 # Render production deployment
 
 This is a deployable configuration, **not evidence of a live deployment**. No resource for
-this project was found in the confirmed Render workspace on 2026-09-29. Existing resources for
+this project was found in the confirmed Render workspace on 2026-09-30. The inventory contained 18 unrelated services, one unrelated Postgres
+instance, and one unrelated Key Value instance. Existing resources for
 other projects must not be reused or changed. No project resources were created while
 preparing this configuration.
 
