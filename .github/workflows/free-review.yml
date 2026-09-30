@@ -41,7 +41,40 @@ jobs:
           REPOSITORY_PRIVATE: ${{ github.event.repository.private }}
         run: test "$REPOSITORY_PRIVATE" = false
       - name: Build and prepare the complete isolated stack
-        run: python3 scripts/free-review.py start
+        run: |
+          # Reproduce an interrupted first preparation: raw records committed, nothing processed.
+          docker compose -p procurement-forecast-review -f docker-compose.review.yml build api web
+          docker compose -p procurement-forecast-review -f docker-compose.review.yml up -d --wait db redis mailpit
+          docker compose -p procurement-forecast-review -f docker-compose.review.yml run --rm -T api manage db upgrade
+          docker compose -p procurement-forecast-review -f docker-compose.review.yml run --rm -T api manage seed --scale 1.5
+          docker compose -p procurement-forecast-review -f docker-compose.review.yml run --rm -T api python - <<'PY'
+          import asyncio
+          from datetime import timedelta
+          from sqlalchemy import func, select
+          from app.clock import today_kst
+          from app.db.models import Document, Opportunity, Source
+          from app.db.session import dispose_engine, session_scope
+          from app.pipeline.ingest import run_ingest
+          from app.runtime import build_runtime
+          from app.settings import get_settings
+          from app.sources.base import FetchWindow
+          from app.sources.registry import build_adapter
+          async def prepare_interrupted():
+              runtime = build_runtime(get_settings())
+              async with session_scope() as session:
+                  sources = (await session.scalars(select(Source).where(Source.key.like("fixture_%")))).all()
+                  for source in sources:
+                      adapter = build_adapter(source, runtime)
+                      try:
+                          await run_ingest(session, source, adapter, runtime, FetchWindow(today_kst() - timedelta(days=1460), today_kst()))
+                      finally:
+                          await adapter.aclose()
+                  assert await session.scalar(select(func.count()).select_from(Document).where(Document.parse_status == "pending")) > 0
+                  assert await session.scalar(select(func.count()).select_from(Opportunity)) == 0
+              await dispose_engine()
+          asyncio.run(prepare_interrupted())
+          PY
+          python3 scripts/free-review.py start
       - name: Host ports really serve the API, web app and local mail
         run: |
           curl --retry 10 --retry-connrefused --retry-delay 1 -fsS http://localhost:13000/login > /dev/null

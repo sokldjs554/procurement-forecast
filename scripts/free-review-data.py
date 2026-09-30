@@ -64,6 +64,31 @@ def guard():
         )
 
 
+async def document_fingerprint(doc):
+    raw_digest = None
+    if doc.raw_uri:
+        raw_digest = hashlib.sha256(await load_raw(doc.raw_uri)).hexdigest()
+    elif (
+        doc.mime.split(";", 1)[0].strip().lower() != "application/json"
+        or not doc.structured
+    ):
+        raise RuntimeError(f"Document {doc.id} has no raw evidence")
+    # Procurement JSON lives in PostgreSQL; PDF/HWP/text bytes live in the shared volume.
+    # Include both forms instead of skipping structured originals or relying on row counts.
+    return json.dumps(
+        {
+            "id": doc.id,
+            "title": doc.title,
+            "mime": doc.mime,
+            "content_hash": doc.content_hash,
+            "structured": doc.structured,
+            "raw_sha256": raw_digest,
+        },
+        sort_keys=True,
+        ensure_ascii=False,
+    ).encode()
+
+
 async def database_snapshot():
     async with session_scope() as session:
         external = await session.scalar(
@@ -89,10 +114,7 @@ async def database_snapshot():
         for doc in (
             await session.scalars(select(Document).order_by(Document.id))
         ).all():
-            if not doc.raw_uri:
-                raise RuntimeError(f"Document {doc.id} has no raw evidence")
-            raw = await load_raw(doc.raw_uri)
-            digest.update(str(doc.id).encode() + hashlib.sha256(raw).digest())
+            digest.update(await document_fingerprint(doc))
         # Include actual user-visible saved output, not only row counts.
         for model, columns in (
             (
@@ -129,9 +151,10 @@ async def prepare():
         )
         anchor = source.config["anchor"] if source else today_kst().isoformat()
     subprocess.run(["manage", "seed", "--anchor", anchor, "--scale", "1.5"], check=True)
-    subprocess.run(["manage", "demo", "run", "--anchor", anchor], check=True)
     # Complete pending documents left by an interrupted first preparation.
     subprocess.run(["manage", "pipeline", "run"], check=True)
+    # Recommendations and the local digest must include those recovered documents too.
+    subprocess.run(["manage", "demo", "run", "--anchor", anchor], check=True)
     result = await database_snapshot()
     MARKER.write_text(
         json.dumps({"anchor": anchor, "synthetic": True}, ensure_ascii=False)
