@@ -39,6 +39,7 @@ from app.domain.stages import STAGE_LABEL, STAGE_ORDER, Stage
 from app.domain.timing import month_span, remaining_window
 from app.log import get_logger
 from app.notify.channels import Channel, PermanentDeliveryError, TransientDeliveryError
+from app.pipeline.link_state import link_settled
 
 log = get_logger(__name__)
 MAX_ATTEMPTS = 5
@@ -156,17 +157,35 @@ async def enqueue_alerts(
     channels = [c for c in channels if c.kind in plan.channels]
     if not channels:
         return 0
+    candidates = (
+        select(Recommendation, Opportunity)
+        .join(Opportunity, Opportunity.id == Recommendation.opportunity_id)
+        .where(
+            Recommendation.org_id == org_id,
+            Recommendation.score >= rule.min_score,
+            Recommendation.feedback.is_(None) | (Recommendation.feedback == "relevant"),
+            Opportunity.status.in_(("open", "bid_open")),
+        )
+        .where(link_settled())
+        .order_by(Recommendation.score.desc())
+    )
+    rows = (await session.execute(candidates)).all()
+    candidate_ids = sorted({opp.id for _, opp in rows})
+    if not candidate_ids:
+        return 0
+    # Identity locks precede notification writes. A candidate may have become dirty while
+    # waiting for a linker, so read its eligibility and payload fields again after locking.
+    await session.execute(
+        select(Opportunity.id)
+        .where(Opportunity.id.in_(candidate_ids))
+        .order_by(Opportunity.id)
+        .with_for_update()
+    )
     rows = (
         await session.execute(
-            select(Recommendation, Opportunity)
-            .join(Opportunity, Opportunity.id == Recommendation.opportunity_id)
-            .where(
-                Recommendation.org_id == org_id,
-                Recommendation.score >= rule.min_score,
-                Recommendation.feedback.is_(None) | (Recommendation.feedback == "relevant"),
-                Opportunity.status.in_(("open", "bid_open")),
+            candidates.where(Opportunity.id.in_(candidate_ids)).execution_options(
+                populate_existing=True
             )
-            .order_by(Recommendation.score.desc())
         )
     ).all()
     fresh = [
@@ -176,6 +195,11 @@ async def enqueue_alerts(
     ]
     if not fresh:
         return 0
+    from app.pipeline.link_state import capture_customer_anchor
+
+    published = fresh if rule.mode != "instant" else fresh[:20]
+    for _, opp in published:
+        await capture_customer_anchor(session, opp.id)
     created = 0
     # A digest shows the top 15 and counts the rest; everything fresh is marked as told, so the
     # remainder does not trickle out as tomorrow's "new" items.
@@ -215,7 +239,7 @@ async def enqueue_alerts(
                 .on_conflict_do_nothing(index_elements=["dedupe_key"])
             )
             created += int(result.rowcount or 0)  # type: ignore[attr-defined]
-    for rec, opp in fresh if rule.mode != "instant" else fresh[:20]:
+    for rec, opp in published:
         rec.notified_stage = opp.stage
     await session.flush()
     return created

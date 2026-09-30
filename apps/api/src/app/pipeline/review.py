@@ -95,4 +95,14 @@ async def reconcile_reviewed_signal(
             new_link.reasons = new_link.reasons | {"review_signal_fingerprint": fingerprint}
     await session.flush()
     await refresh_affected_recommendations(session, sorted(touched), today=today)
+    from app.pipeline.link_reconcile import mark_link_dirty
+
+    owners = set(
+        await session.scalars(
+            select(Opportunity.institution_code).where(Opportunity.id.in_(touched))
+        )
+    )
+    if signal.institution_code:
+        owners.add(signal.institution_code)
+    await mark_link_dirty(session, {owner for owner in owners if owner is not None})
     return sorted(touched)

@@ -350,6 +350,60 @@ class OpportunitySignal(TimestampMixin, Base):
     signal: Mapped[Signal] = relationship(back_populates="link")
 
 
+class OpportunityCustomerAnchor(Base):
+    """The original evidence behind a customer identity; later automatic evidence can evolve."""
+
+    __tablename__ = "opportunity_customer_anchors"
+    __table_args__ = (Index("ix_customer_anchor_signals", "signal_ids", postgresql_using="gin"),)
+
+    opportunity_id: Mapped[int] = mapped_column(
+        ForeignKey("opportunities.id", ondelete="RESTRICT"), primary_key=True
+    )
+    signal_ids: Mapped[list[int]] = mapped_column(ARRAY(BigInteger))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class LinkReconciliationState(Base):
+    """Durable convergence and recommendation-dispatch generations, per demand owner."""
+
+    __tablename__ = "link_reconciliation_states"
+    __table_args__ = (
+        CheckConstraint(
+            "generation >= reconciled_generation AND reconciled_generation >= "
+            "recommendations_generation AND recommendations_generation >= 0",
+            name="ck_link_reconciliation_generations",
+        ),
+    )
+
+    institution_code: Mapped[str] = mapped_column(ForeignKey("institutions.code"), primary_key=True)
+    generation: Mapped[int] = mapped_column(BigInteger, server_default="1")
+    reconciled_generation: Mapped[int] = mapped_column(BigInteger, server_default="0")
+    recommendations_generation: Mapped[int] = mapped_column(BigInteger, server_default="0")
+
+
+class LinkReconciliationEvent(Base):
+    """Prior and replacement automatic memberships; survives source re-extraction."""
+
+    __tablename__ = "link_reconciliation_events"
+    __table_args__ = (
+        UniqueConstraint(
+            "institution_code", "generation", "signal_id", name="uq_link_reconcile_event"
+        ),
+        Index("ix_link_reconcile_events_signal", "signal_id"),
+    )
+
+    id: Mapped[int] = _pk()
+    institution_code: Mapped[str] = mapped_column(ForeignKey("institutions.code"))
+    generation: Mapped[int] = mapped_column(BigInteger)
+    # Snapshot identity, deliberately not a cascading signal FK.
+    signal_id: Mapped[int] = mapped_column(BigInteger)
+    stable_key: Mapped[str] = mapped_column(Text)
+    before: Mapped[dict[str, Any]] = mapped_column()
+    after: Mapped[dict[str, Any]] = mapped_column()
+    input_digest: Mapped[str] = mapped_column(String(64))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
 class OpportunityRelation(TimestampMixin, Base):
     """A reviewed edge; never changes primary signal ownership or monetary aggregates."""
 
@@ -407,6 +461,7 @@ class OpportunityRelationEvent(TimestampMixin, Base):
             postgresql_using="gin",
             postgresql_ops={"evidence_snapshot": "jsonb_path_ops"},
         ),
+        Index("ix_relation_events_signal_ids", "evidence_signal_ids", postgresql_using="gin"),
     )
 
     id: Mapped[int] = _pk()
@@ -433,6 +488,7 @@ class Recommendation(Base):
             "ck_recommendation_feedback",
         ),
         Index("ix_recommendations_org_score", "org_id", "score"),
+        Index("ix_recommendations_opportunity", "opportunity_id"),
     )
 
     org_id: Mapped[int] = mapped_column(
@@ -458,6 +514,12 @@ class ReviewItem(TimestampMixin, Base):
     __tablename__ = "review_items"
     __table_args__ = (
         _check_in("status", ("open", "approved", "edited", "rejected"), "ck_review_status"),
+        Index(
+            "ix_review_resolution",
+            "resolution",
+            postgresql_using="gin",
+            postgresql_ops={"resolution": "jsonb_path_ops"},
+        ),
     )
 
     id: Mapped[int] = _pk()
@@ -554,6 +616,12 @@ class Notification(TimestampMixin, Base):
     __table_args__ = (
         _check_in("status", ("pending", "sent", "failed", "skipped"), "ck_notification_status"),
         Index("ix_notifications_pending", "status", "scheduled_at"),
+        Index(
+            "ix_notification_payload",
+            "payload",
+            postgresql_using="gin",
+            postgresql_ops={"payload": "jsonb_path_ops"},
+        ),
     )
 
     id: Mapped[int] = _pk()
@@ -652,7 +720,10 @@ class CreditLedgerEntry(TimestampMixin, Base):
 
 class Brief(TimestampMixin, Base):
     __tablename__ = "briefs"
-    __table_args__ = (Index("ix_briefs_org_opportunity", "org_id", "opportunity_id"),)
+    __table_args__ = (
+        Index("ix_briefs_org_opportunity", "org_id", "opportunity_id"),
+        Index("ix_briefs_opportunity", "opportunity_id"),
+    )
 
     id: Mapped[int] = _pk()
     org_id: Mapped[int] = mapped_column(ForeignKey("organizations.id", ondelete="CASCADE"))

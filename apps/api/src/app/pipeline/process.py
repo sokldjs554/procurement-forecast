@@ -81,7 +81,24 @@ class ReprocessingProtectedError(RuntimeError):
 
 async def protect_human_decisions(session: AsyncSession, document_id: int) -> None:
     """Refuse destructive source/derivation changes; caller holds the Document row lock."""
+    from app.pipeline.link_state import customer_reprocessing_query
     from app.pipeline.relations import has_relation_review_for_document
+
+    # A customer publisher locks the opportunity before capturing its original evidence.
+    # Acquire the same identity locks before inspecting/deleting document signals, so a
+    # concurrent brief cannot publish IDs that this transaction is about to replace.
+    await session.execute(
+        select(Opportunity.id)
+        .where(
+            Opportunity.id.in_(
+                select(OpportunitySignal.opportunity_id)
+                .join(Signal, Signal.id == OpportunitySignal.signal_id)
+                .where(Signal.document_id == document_id)
+            )
+        )
+        .order_by(Opportunity.id)
+        .with_for_update(nowait=True)
+    )
 
     # Review writers use the same Signal-first lock order. A separate query after acquiring
     # the locks observes any review committed while we waited (READ COMMITTED isolation).
@@ -116,10 +133,17 @@ async def protect_human_decisions(session: AsyncSession, document_id: int) -> No
         )
         .limit(1)
     )
-    if protected is not None or await has_relation_review_for_document(session, document_id):
+    anchored = None
+    if protected is None:
+        anchored = await session.scalar(customer_reprocessing_query(signal_ids))
+    if (
+        protected is not None
+        or anchored is not None
+        or await has_relation_review_for_document(session, document_id)
+    ):
         raise ReprocessingProtectedError(
-            f"document {document_id} has human decisions; re-extraction requires an explicit "
-            "review/manual-link/relation migration"
+            f"document {document_id} has human decisions or published customer evidence; "
+            "re-extraction requires an explicit review/anchor migration"
         )
 
 
@@ -474,10 +498,16 @@ async def process_document(
             .order_by(Opportunity.id)
             .with_for_update()
         )
+        old_owners: set[str] = set()
         for opportunity in old_opportunities:
             await refresh_opportunity(session, opportunity, today=business_date)
+            if opportunity.institution_code:
+                old_owners.add(opportunity.institution_code)
         await session.flush()
         await refresh_affected_recommendations(session, old_opportunity_ids, today=business_date)
+        from app.pipeline.link_reconcile import mark_link_dirty
+
+        await mark_link_dirty(session, old_owners)
     log.info(
         "document.processed",
         document_id=doc.id,

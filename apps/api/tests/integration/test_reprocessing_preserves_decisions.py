@@ -204,7 +204,7 @@ async def test_machine_reprocessing_retracts_old_summary_without_database() -> N
     assert recommendation.notified_stage == "order_plan"
 
 
-async def test_machine_reprocessing_refreshes_old_opportunity_and_keeps_customer_history(
+async def test_legacy_customer_history_blocks_reprocessing_before_first_core_capture(
     demo_world: Any, runtime: Runtime
 ) -> None:
     async with get_sessionmaker()() as session:
@@ -250,15 +250,19 @@ async def test_machine_reprocessing_refreshes_old_opportunity_and_keeps_customer
             recommendation.notified_stage,
         )
 
-        result = await process_document(session, runtime, doc.id)
+        # This history predates the core table. It must protect original evidence even
+        # when reprocessing happens before the first reconciliation/automatic append.
+        with pytest.raises(ReprocessingProtectedError, match="published customer evidence"):
+            await process_document(session, runtime, doc.id)
 
-        assert result.signal_ids
-        assert opportunity.status == "dormant"
-        assert opportunity.signal_count == 0
-        assert opportunity.est_budget_krw is None
-        assert opportunity.best_commitment is None
-        assert opportunity.conversion_prob == 0
-        assert recommendation.score == 0
+        assert await session.get(Signal, old_signal.id) is old_signal
+        assert link.opportunity_id == opportunity.id
+        assert opportunity.status == "open"
+        assert opportunity.signal_count == 1
+        assert opportunity.est_budget_krw == 300_000_000
+        assert opportunity.best_commitment == "committed"
+        assert opportunity.conversion_prob == 0.8
+        assert recommendation.score == 0.9
         assert (
             recommendation.feedback,
             recommendation.feedback_at,

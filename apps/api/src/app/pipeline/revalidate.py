@@ -511,6 +511,11 @@ async def _run(
     await refresh_affected_recommendations(
         session, opportunity_ids, today=business_date, audit_digest=digest
     )
+    from app.pipeline.link_reconcile import mark_link_dirty
+
+    await mark_link_dirty(
+        session, {o.institution_code for o in opportunities if o.institution_code}
+    )
     return result
 
 

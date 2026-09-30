@@ -15,7 +15,8 @@ concurrency:
 jobs:
   audit:
     runs-on: ubuntu-24.04
-    timeout-minutes: 30
+    # Includes two before/after runs and both arrival variants with canonical completion.
+    timeout-minutes: 45
     services:
       postgres:
         image: pgvector/pgvector:pg16
@@ -47,10 +48,47 @@ jobs:
           python-version: '3.11'
           enable-cache: true
           cache-dependency-glob: apps/api/uv.lock
-      - name: Baseline and changed pipeline, real replay twice, query benchmark
+      - name: Baseline and changed pipeline, real replay twice and arrival variants
         run: bash scripts/integrity-audit.sh
       - uses: actions/upload-artifact@v7
         if: always()
         with:
           name: integrity-audit
           path: ${{ runner.temp }}/integrity-audit
+  benchmark:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: app
+          POSTGRES_PASSWORD: app
+          POSTGRES_DB: app
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U app" --health-interval 3s --health-timeout 3s --health-retries 20 --shm-size=2g
+    env:
+      APP_LOG_JSON: 'false'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: '0.8.17'
+          python-version: '3.11'
+          enable-cache: true
+          cache-dependency-glob: apps/api/uv.lock
+      - run: cd apps/api && uv sync --frozen
+      - name: Production-scale query plans and protection latency gate
+        run: |
+          make bench > "$RUNNER_TEMP/bench.log"
+          python scripts/check-link-protection-bench.py "$RUNNER_TEMP/bench.log" "$RUNNER_TEMP/bench.json"
+          cat docs/performance.md
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: integrity-benchmark
+          path: |
+            docs/performance.md
+            ${{ runner.temp }}/bench.log
+            ${{ runner.temp }}/bench.json

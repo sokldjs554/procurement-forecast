@@ -342,6 +342,14 @@ async def decide_relation(
         )
         assert relation is not None
         return relation  # Retries never undo a newer decision; reads return the current version.
+    # Keep endpoint membership stable from validation through the durable decision. Use a
+    # common order before Signal locks so automatic regrouping cannot invalidate our reads.
+    await session.execute(
+        select(Opportunity.id)
+        .where(Opportunity.id.in_(sorted({project_id, contract_id})))
+        .order_by(Opportunity.id)
+        .with_for_update()
+    )
     relation = await session.scalar(
         select(OpportunityRelation)
         .where(
