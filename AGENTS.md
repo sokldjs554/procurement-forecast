@@ -3,6 +3,7 @@
 ## 구조
 - `apps/api` — Python 3.11, FastAPI, SQLAlchemy 2 async, arq, Alembic. 패키지 `app`, 관리 명령 `manage`.
 - `apps/web` — Next.js 16 App Router, React 19, TypeScript, Tailwind v4, TanStack Query. 이 디렉터리의 `AGENTS.md`(Next.js 제공)를 먼저 읽을 것: 버전별 API가 학습 데이터와 다릅니다.
+- `apps/orchestrator` — Node 22, TypeScript, Hono. 작업 API(API 키·스코프·사용량)와 다운로드 워커. 큐는 PostgreSQL이고, 스키마와 큐 함수(`jobq_*`)는 `apps/api`의 Alembic 마이그레이션이 소유합니다(ADR 0013).
 - `infra/terraform` — GCP. `docs/` — ADR, 아키텍처, 평가, 런북.
 
 ## 자주 쓰는 명령
@@ -12,6 +13,7 @@ cd apps/api && uv sync && uv run pytest          # 통합 테스트는 위 인�
 uv run ruff check . && uv run ruff format --check . && uv run mypy
 uv run manage seed && uv run manage demo run && uv run manage eval all
 cd apps/web && pnpm install && pnpm typecheck && pnpm lint && pnpm test && pnpm build
+cd apps/orchestrator && pnpm install && pnpm typecheck && pnpm lint && DATABASE_URL=… pnpm test
 make gen-api                    # FastAPI 스키마가 바뀌면 반드시 실행하고 결과를 커밋
 ```
 

@@ -799,6 +799,26 @@ def media_ingest(
     typer.echo(json.dumps(_run(lambda: _with_session(go)), ensure_ascii=False, indent=2))
 
 
+@media_app.command("synthetic")
+def media_synthetic(out: Path = typer.Argument(..., file_okay=False)) -> None:
+    """Write the synthetic 36-second meeting (meeting.mp4, meeting.m4a, segments.json) used by
+    the tests and the queue E2E. Needs ffmpeg and a Korean font."""
+    from app.media.synthetic import build_meeting
+
+    meeting = build_meeting(out)
+    typer.echo(
+        json.dumps(
+            {
+                "video": str(meeting.video),
+                "audio_only": str(meeting.audio_only),
+                "segments": str(meeting.segments_file),
+                "duration": meeting.duration,
+            },
+            indent=2,
+        )
+    )
+
+
 @queue_app.command("worker")
 def queue_worker(
     worker_id: str = typer.Option(None, help="Default: host name + pid"),
