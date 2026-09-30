@@ -111,6 +111,65 @@ jobs:
       - run: pnpm test
       - run: pnpm build
 
+  orchestrator:
+    name: Orchestrator · types, lint, tests, cross-language queue E2E
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: app
+          POSTGRES_PASSWORD: app
+          POSTGRES_DB: app
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U app" --health-interval 3s --health-timeout 3s --health-retries 20
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping" --health-interval 3s --health-timeout 3s --health-retries 20
+    env:
+      APP_LOG_JSON: "false"
+      PGPASSWORD: app
+    steps:
+      - uses: actions/checkout@v7
+      - name: ffmpeg, OCR engine and Korean fonts (the E2E transcribes a synthetic meeting video)
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends ffmpeg tesseract-ocr tesseract-ocr-kor fonts-nanum
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.8.17"
+          python-version: "3.11"
+          enable-cache: true
+          cache-dependency-glob: apps/api/uv.lock
+      - uses: pnpm/action-setup@v6
+        with:
+          package_json_file: apps/orchestrator/package.json
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: apps/orchestrator/pnpm-lock.yaml
+      - name: Install
+        run: |
+          (cd apps/api && uv sync --frozen)
+          (cd apps/orchestrator && pnpm install --frozen-lockfile)
+      - name: Types and lint
+        working-directory: apps/orchestrator
+        run: pnpm typecheck && pnpm lint
+      - name: Tests against PostgreSQL (schema from the API's migrations)
+        run: |
+          psql -h localhost -U app -d app -c "CREATE DATABASE orchestrator_test"
+          (cd apps/api && APP_DATABASE_URL=postgresql+asyncpg://app:app@localhost:5432/orchestrator_test uv run manage db upgrade)
+          (cd apps/orchestrator && DATABASE_URL=postgres://app:app@localhost:5432/orchestrator_test pnpm test)
+      - name: One video through both languages (API → download → transcription → signals)
+        env:
+          APP_DATABASE_URL: postgresql+asyncpg://app:app@localhost:5432/app
+        run: |
+          (cd apps/orchestrator && pnpm build)
+          (cd apps/api && uv run manage db upgrade && uv run manage seed --anchor 2026-09-25)
+          bash scripts/e2e-media-queue.sh
+
   e2e:
     name: E2E · README walkthrough in a browser
     runs-on: ubuntu-24.04
@@ -205,11 +264,11 @@ jobs:
 
   images:
     name: Docker images
-    needs: [api, web]
+    needs: [api, web, orchestrator]
     runs-on: ubuntu-24.04
     strategy:
       matrix:
-        app: [api, web]
+        app: [api, web, orchestrator]
     steps:
       - uses: actions/checkout@v7
       - uses: docker/setup-buildx-action@v4

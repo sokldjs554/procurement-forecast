@@ -18,6 +18,14 @@ updates:
     ignore:
       - dependency-name: "*"
         update-types: [version-update:semver-major]
+  - package-ecosystem: npm
+    directory: /apps/orchestrator
+    schedule: {interval: weekly}
+    groups:
+      orchestrator: {patterns: ["*"], update-types: [minor, patch]}
+    ignore:
+      - dependency-name: "*"
+        update-types: [version-update:semver-major]
   - package-ecosystem: github-actions
     directory: /
     schedule: {interval: monthly}

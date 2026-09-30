@@ -75,6 +75,8 @@ class Organization(TimestampMixin, Base):
     name: Mapped[str] = mapped_column(String(200))
     plan: Mapped[str] = mapped_column(String(20), default="free", server_default="free")
     credit_balance: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    # Monthly ceiling on metered usage (usage_events.usd); None = no ceiling.
+    usage_cap_usd: Mapped[Decimal | None] = mapped_column(Numeric(12, 4))
 
     users: Mapped[list[User]] = relationship(back_populates="organization")
     profile: Mapped[CompanyProfile | None] = relationship(back_populates="organization")
@@ -770,3 +772,63 @@ class EvalRun(TimestampMixin, Base):
     metrics: Mapped[dict[str, Any]] = mapped_column()
     params: Mapped[dict[str, Any]] = mapped_column(default=dict, server_default="{}")
     git_sha: Mapped[str | None] = mapped_column(String(40))
+
+
+# ------------------------------------------------------------------------------------------------
+# Job queue and metering (migration 0005). The queue's behaviour is in the jobq_* SQL functions;
+# these mappings are for reading and for tests.
+# ------------------------------------------------------------------------------------------------
+class ApiKey(Base):
+    __tablename__ = "api_keys"
+
+    id: Mapped[int] = _pk()
+    org_id: Mapped[int] = mapped_column(ForeignKey("organizations.id", ondelete="CASCADE"))
+    name: Mapped[str] = mapped_column(String(100))
+    prefix: Mapped[str] = mapped_column(String(24), unique=True)
+    secret_sha256: Mapped[str] = mapped_column(String(64))
+    scopes: Mapped[list[str]] = mapped_column(ARRAY(Text))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    last_used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+
+
+class Job(Base):
+    __tablename__ = "jobs"
+
+    id: Mapped[int] = _pk()
+    org_id: Mapped[int] = mapped_column(ForeignKey("organizations.id", ondelete="CASCADE"))
+    kind: Mapped[str] = mapped_column(String(64))
+    status: Mapped[str] = mapped_column(String(16), server_default="queued")
+    priority: Mapped[int] = mapped_column(Integer, server_default="0")
+    payload: Mapped[dict[str, Any]] = mapped_column(server_default="{}")
+    dedupe_key: Mapped[str | None] = mapped_column(String(200))
+    parent_id: Mapped[int | None] = mapped_column(ForeignKey("jobs.id", ondelete="CASCADE"))
+    attempts: Mapped[int] = mapped_column(Integer, server_default="0")
+    max_attempts: Mapped[int] = mapped_column(Integer, server_default="5")
+    run_after: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    locked_by: Mapped[str | None] = mapped_column(String(128))
+    lease_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    heartbeat_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    cancel_requested: Mapped[bool] = mapped_column(Boolean, server_default="false")
+    progress: Mapped[dict[str, Any]] = mapped_column(server_default="{}")
+    result: Mapped[dict[str, Any] | None] = mapped_column()
+    error: Mapped[str | None] = mapped_column(Text)
+    cost: Mapped[dict[str, Any]] = mapped_column(server_default="{}")
+    budget_usd: Mapped[Decimal | None] = mapped_column(Numeric(12, 4))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    started_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+
+
+class UsageEvent(Base):
+    __tablename__ = "usage_events"
+
+    id: Mapped[int] = _pk()
+    org_id: Mapped[int] = mapped_column(ForeignKey("organizations.id", ondelete="CASCADE"))
+    job_id: Mapped[int | None] = mapped_column(ForeignKey("jobs.id", ondelete="SET NULL"))
+    meter: Mapped[str] = mapped_column(String(32))
+    quantity: Mapped[Decimal] = mapped_column(Numeric(18, 6))
+    usd: Mapped[Decimal] = mapped_column(Numeric(12, 6), server_default="0")
+    idempotency_key: Mapped[str] = mapped_column(String(200), unique=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

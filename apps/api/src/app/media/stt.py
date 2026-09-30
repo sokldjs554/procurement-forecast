@@ -144,3 +144,17 @@ class FixtureSTT:
 
     async def transcribe(self, audio: Path, window: Window, *, language: str) -> list[Segment]:
         return [s for s in self._segments if s.end > window.start and s.start < window.end]
+
+
+def stt_from_spec(
+    spec: str, *, model: str, model_dir: str | None, compute_type: str
+) -> STTProvider:
+    """'faster-whisper' (the configured model), 'faster-whisper:medium', or 'fixture:PATH'."""
+    kind, _, arg = spec.partition(":")
+    if kind == "fixture":
+        if not arg:
+            raise ValueError("fixture:PATH to a recorded transcript")
+        return FixtureSTT.from_file(Path(arg))
+    if kind == "faster-whisper":
+        return FasterWhisperSTT(arg or model, model_dir=model_dir, compute_type=compute_type)
+    raise ValueError(f"unknown STT {spec!r}")

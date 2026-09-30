@@ -12,6 +12,9 @@ manage sources ingest -s g2b --days 30 --max-calls 250   # backfill a window, co
 manage pipeline run               # process pending documents and link their signals
 manage media transcribe VIDEO     # council meeting video → transcript (checkpointed, resumable)
 manage media ingest VIDEO --title … --meeting-date …   # … → document → signals with video times
+manage queue enqueue-media VIDEO --org 1 --title … --meeting-date …   # the same, as a queued job
+manage queue worker               # Postgres-queue stage worker (media.transcribe)
+manage apikey create --org 1 --name ci --scope jobs:write   # printed once
 manage worker                     # arq worker + cron (+ /healthz on $PORT for Cloud Run)
 manage openapi > openapi.json     # schema for the web app's generated types
 """
@@ -43,6 +46,8 @@ pipeline_app = typer.Typer(help="Pipeline stages outside the worker")
 llm_cache_app = typer.Typer(help="Paid LLM answers, kept across databases")
 link_app = typer.Typer(help="Linking real signals again, without fetching or extracting")
 media_app = typer.Typer(help="Council meeting video → transcript → signals")
+queue_app = typer.Typer(help="Postgres job queue (long, costed, tenant-owned jobs)")
+apikey_app = typer.Typer(help="API keys for the job API")
 app.add_typer(db_app, name="db")
 app.add_typer(demo_app, name="demo")
 app.add_typer(eval_app, name="eval")
@@ -51,6 +56,8 @@ app.add_typer(pipeline_app, name="pipeline")
 app.add_typer(llm_cache_app, name="llm-cache")
 app.add_typer(link_app, name="link")
 app.add_typer(media_app, name="media")
+app.add_typer(queue_app, name="queue")
+app.add_typer(apikey_app, name="apikey")
 
 T = TypeVar("T")
 
@@ -745,22 +752,18 @@ def pipeline_revalidate(
 
 
 def _stt(spec: str) -> Any:
-    """'faster-whisper' (model from settings), 'faster-whisper:medium', or 'fixture:PATH'."""
-    from app.media.stt import FasterWhisperSTT, FixtureSTT
+    from app.media.stt import stt_from_spec
 
     settings = get_settings()
-    kind, _, arg = spec.partition(":")
-    if kind == "fixture":
-        if not arg:
-            raise typer.BadParameter("fixture:PATH to a recorded transcript", param_hint="--stt")
-        return FixtureSTT.from_file(Path(arg))
-    if kind == "faster-whisper":
-        return FasterWhisperSTT(
-            arg or settings.stt_model,
+    try:
+        return stt_from_spec(
+            spec,
+            model=settings.stt_model,
             model_dir=settings.stt_model_dir,
             compute_type=settings.stt_compute_type,
         )
-    raise typer.BadParameter(f"unknown STT {spec!r}", param_hint="--stt")
+    except ValueError as exc:
+        raise typer.BadParameter(str(exc), param_hint="--stt") from exc
 
 
 def _media_workdir(video: Path, workdir: Path | None) -> Path:
@@ -782,37 +785,9 @@ async def _transcribe(video: Path, work: Path, stt: str, ocr: Any) -> Any:
         stt=_stt(stt),
         ocr=ocr,
         checkpoints=DirCheckpoints(work / "checkpoints"),
-        options=MediaOptions(
-            language=settings.stt_language,
-            window_seconds=settings.media_window_seconds,
-            window_search_seconds=settings.media_window_search_seconds,
-            caption_region=settings.media_caption_region,
-            caption_every_seconds=settings.media_caption_every_seconds,
-            caption_scene=settings.media_caption_scene,
-        ),
+        options=MediaOptions.from_settings(settings),
         progress=progress,
     )
-
-
-def _media_summary(media: Any) -> dict[str, Any]:
-    from collections import Counter
-
-    speakers = Counter(f"{t['role']} {t['name']}" for t in media.transcript.turns)
-    return {
-        "duration_seconds": round(media.info.duration, 1),
-        "windows": len(media.windows),
-        "resumed_windows": media.resumed_windows,
-        "segments": len(media.segments),
-        "captions": len(media.captions),
-        "caption_frames": media.caption_stats.frames,
-        "caption_frames_ocr": media.caption_stats.ocr,
-        "caption_frames_read": media.caption_stats.read,
-        "turns": len(media.transcript.turns),
-        "speakers": dict(speakers.most_common()),
-        "stt": f"{media.stt_provider}:{media.stt_model}",
-        "cost": media.cost.to_json(),
-        "notes": media.notes,
-    }
 
 
 @media_app.command("transcribe")
@@ -833,7 +808,7 @@ def media_transcribe(
     media = _run(lambda: _transcribe(video, work, stt, build_ocr(get_settings())))
     if out is not None:
         out.write_text(media.transcript.text, encoding="utf-8")
-    typer.echo(json.dumps(_media_summary(media), ensure_ascii=False, indent=2))
+    typer.echo(json.dumps(media.summary(), ensure_ascii=False, indent=2))
 
 
 @media_app.command("ingest")
@@ -874,11 +849,161 @@ def media_ingest(
         return {
             "document_id": result.document_id,
             "action": result.action,
-            "media": _media_summary(media),
+            "media": media.summary(),
             "signals": result.signals,
         }
 
     typer.echo(json.dumps(_run(lambda: _with_session(go)), ensure_ascii=False, indent=2))
+
+
+@media_app.command("synthetic")
+def media_synthetic(out: Path = typer.Argument(..., file_okay=False)) -> None:
+    """Write the synthetic 36-second meeting (meeting.mp4, meeting.m4a, segments.json) used by
+    the tests and the queue E2E. Needs ffmpeg and a Korean font."""
+    from app.media.synthetic import build_meeting
+
+    meeting = build_meeting(out)
+    typer.echo(
+        json.dumps(
+            {
+                "video": str(meeting.video),
+                "audio_only": str(meeting.audio_only),
+                "segments": str(meeting.segments_file),
+                "duration": meeting.duration,
+            },
+            indent=2,
+        )
+    )
+
+
+@queue_app.command("worker")
+def queue_worker(
+    worker_id: str = typer.Option(None, help="Default: host name + pid"),
+    once: bool = typer.Option(False, help="Run at most one job, then exit (tests, cron)"),
+    lease_seconds: int = typer.Option(60, min=10),
+    heartbeat_seconds: float = typer.Option(15.0, min=0.1),
+) -> None:
+    """Claim and run media.transcribe jobs until SIGTERM/SIGINT. A job in progress on shutdown
+    goes straight back to the queue; one whose worker died is reaped when its lease expires."""
+    import os
+    import signal
+    import socket
+
+    from app.media.worker import KIND, transcribe_job
+    from app.queue.pg import Job
+    from app.queue.worker import Handler, JobContext, WorkerConfig, run_worker, work_one
+
+    configure_logging(json=get_settings().log_json, level="INFO", stream=sys.stderr)
+    config = WorkerConfig(
+        worker_id=worker_id or f"{socket.gethostname()}:{os.getpid()}",
+        lease_seconds=lease_seconds,
+        heartbeat_seconds=heartbeat_seconds,
+    )
+
+    async def go(session: Any, runtime: Any) -> str | None:
+        async def media(job: Job, ctx: JobContext) -> dict[str, Any]:
+            return await transcribe_job(job, ctx, runtime=runtime)
+
+        handlers: dict[str, Handler] = {KIND: media}
+        if once:
+            return await work_one(handlers, config)
+        stop = asyncio.Event()
+        loop = asyncio.get_running_loop()
+        for sig in (signal.SIGTERM, signal.SIGINT):
+            loop.add_signal_handler(sig, stop.set)
+        await run_worker(handlers, config, stop)
+        return None
+
+    outcome = _run(lambda: _with_session(go))
+    if once:
+        typer.echo(outcome or "idle")
+
+
+@queue_app.command("enqueue-media")
+def queue_enqueue_media(
+    video: Path = typer.Argument(..., exists=True, dir_okay=False),
+    org: int = typer.Option(..., help="Organisation that owns (and pays for) the job"),
+    title: str = typer.Option(...),
+    meeting_date: str = typer.Option(..., help="YYYY-MM-DD"),
+    publisher: str = typer.Option("경기도 성남시의회"),
+    url: str = typer.Option(None),
+    published_at: str = typer.Option(None, help="YYYY-MM-DD the video went public"),
+    stt: str = typer.Option("faster-whisper", help="faster-whisper[:MODEL] or fixture:PATH"),
+    budget_usd: float = typer.Option(
+        None, help="Fail before transcribing if the estimate is higher"
+    ),
+) -> None:
+    """Queue one video. The same file (by content hash) for the same organisation returns the
+    job that already has it."""
+    from app.media.worker import KIND, sha256_file
+    from app.queue.pg import enqueue
+
+    digest = sha256_file(video)
+    location = f"file://{video.resolve()}"
+
+    async def go(session: Any, runtime: Any) -> dict[str, Any]:
+        job_id, created = await enqueue(
+            session,
+            org_id=org,
+            kind=KIND,
+            payload={
+                "video": location,
+                "sha256": digest,
+                "title": title,
+                "meeting_date": meeting_date,
+                "publisher": publisher,
+                "url": url,
+                "published_at": published_at,
+                "stt": stt,
+            },
+            dedupe_key=f"sha256:{digest}",
+            budget_usd=budget_usd,
+        )
+        return {"job_id": job_id, "created": created}
+
+    typer.echo(json.dumps(_run(lambda: _with_session(go)), ensure_ascii=False))
+
+
+@queue_app.command("reap")
+def queue_reap() -> None:
+    """Return jobs whose worker stopped heartbeating to the queue (workers also do this)."""
+
+    async def go(session: Any, runtime: Any) -> int:
+        from app.queue.pg import reap
+
+        return await reap(session)
+
+    typer.echo(f"reaped {_run(lambda: _with_session(go))} jobs")
+
+
+@apikey_app.command("create")
+def apikey_create(
+    org: int = typer.Option(...),
+    name: str = typer.Option(..., help="What the key is for (shown in the console)"),
+    scope: list[str] = typer.Option(..., "--scope", help="jobs:read, jobs:write, usage:read"),
+) -> None:
+    """Create a key and print it once. Only its hash is stored."""
+    from app.queue.keys import create_api_key
+
+    async def go(session: Any, runtime: Any) -> str:
+        return await create_api_key(session, org_id=org, name=name, scopes=scope)
+
+    try:
+        typer.echo(_run(lambda: _with_session(go)))
+    except ValueError as exc:
+        raise typer.BadParameter(str(exc), param_hint="--scope") from exc
+
+
+@apikey_app.command("revoke")
+def apikey_revoke(prefix: str = typer.Argument(..., help="pfk_xxxxxxxx")) -> None:
+    from app.queue.keys import revoke_api_key
+
+    async def go(session: Any, runtime: Any) -> bool:
+        return await revoke_api_key(session, prefix)
+
+    if not _run(lambda: _with_session(go)):
+        raise typer.Exit(1)
+    typer.echo(f"revoked {prefix}")
 
 
 @app.command()
