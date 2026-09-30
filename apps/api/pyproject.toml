@@ -37,6 +37,9 @@ dependencies = [
 
 [project.optional-dependencies]
 gcp = ["google-cloud-storage>=2.18"]
+# Local Whisper for council video (app/media/stt.py). Optional: it brings CTranslate2 and a model
+# download, and CI runs the media pipeline on recorded transcripts.
+stt = ["faster-whisper>=1.1"]
 
 [project.scripts]
 manage = "app.cli:app"
@@ -91,7 +94,7 @@ packages = ["app"]
 warn_unreachable = true
 
 [[tool.mypy.overrides]]
-module = ["arq.*", "pgvector.*", "olefile.*", "pypdfium2.*", "reportlab.*", "asyncpg", "asyncpg.*"]
+module = ["arq.*", "pgvector.*", "olefile.*", "pypdfium2.*", "reportlab.*", "asyncpg", "asyncpg.*", "faster_whisper", "faster_whisper.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]

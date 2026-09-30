@@ -38,8 +38,8 @@ jobs:
       APP_LOG_JSON: "false"
     steps:
       - uses: actions/checkout@v7
-      - name: OCR engine and Korean fonts
-        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-kor fonts-nanum
+      - name: OCR engine, Korean fonts, ffmpeg (the media stage cuts and reads a synthetic meeting video)
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-kor fonts-nanum ffmpeg
       - uses: astral-sh/setup-uv@v7
         with:
           version: "0.8.17"

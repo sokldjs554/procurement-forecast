@@ -133,6 +133,9 @@ def build_adapter(source: Source, runtime: Runtime) -> SourceAdapter:
             institutions=source.config.get("institutions"),
             overrides=source.config.get("overrides"),
         )
+    if source.adapter == "media":
+        # Transcripts arrive from media jobs (app/media), one video at a time; nothing to poll.
+        raise FatalSourceError(f"{source.key} is fed by media jobs, not fetched")
     raise FatalSourceError(f"unknown adapter {source.adapter!r}")
 
 

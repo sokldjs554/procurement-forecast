@@ -73,6 +73,19 @@ class Settings(BaseSettings):
     ocr_languages: str = "kor+eng"
     ocr_min_text_chars_per_page: int = 40
 
+    # --- council video (app/media) ------------------------------------------------------------
+    stt_model: str = "small"
+    stt_model_dir: str | None = None  # a local copy, for workers without access to the model hub
+    stt_compute_type: str = "int8"
+    stt_language: str = "ko"
+    media_workdir: str = "./.data/media"
+    media_window_seconds: float = 600.0
+    media_window_search_seconds: float = 30.0
+    # Where broadcasts print the speaker: x, y, width, height as fractions of the frame.
+    media_caption_region: tuple[float, float, float, float] = (0.0, 0.70, 1.0, 0.30)
+    media_caption_every_seconds: float = 2.0
+    media_caption_scene: float = 0.12
+
     # --- public data sources -------------------------------------------------------------------
     clik_api_key: SecretStr | None = None
     clik_daily_quota: int = 1000
