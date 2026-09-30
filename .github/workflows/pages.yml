@@ -82,7 +82,7 @@ jobs:
           pnpm install --frozen-lockfile
           rm -rf src/app/api
           pnpm build
-      - uses: actions/upload-pages-artifact@v4
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: apps/web/out
 
@@ -99,4 +99,4 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
