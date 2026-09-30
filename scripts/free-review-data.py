@@ -3,20 +3,19 @@
 import asyncio
 import hashlib
 import json
-from pathlib import Path
 import subprocess
 import sys
+from pathlib import Path
 from uuid import uuid4
 
 import httpx
-from sqlalchemy import func, select
-
 from app.clock import today_kst
 from app.db.models import (
     Brief,
     Document,
     JobRun,
     Opportunity,
+    OpportunitySignal,
     Recommendation,
     Signal,
     Source,
@@ -26,6 +25,7 @@ from app.settings import get_settings
 from app.sources.registry import FIXTURE_CATALOG
 from app.storage import load_raw
 from app.worker.queue import create_queue
+from sqlalchemy import func, select
 
 MARKER = Path("/app/.data/review-ready.json")
 
@@ -95,7 +95,10 @@ async def database_snapshot():
             digest.update(str(doc.id).encode() + hashlib.sha256(raw).digest())
         # Include actual user-visible saved output, not only row counts.
         for model, columns in (
-            (Signal, (Signal.id, Signal.opportunity_id)),
+            (
+                OpportunitySignal,
+                (OpportunitySignal.signal_id, OpportunitySignal.opportunity_id),
+            ),
             (
                 Recommendation,
                 (
