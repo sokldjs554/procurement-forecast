@@ -28,30 +28,12 @@ from typing import Any, Literal
 from rapidfuzz import fuzz
 
 from app.domain.krw import amounts_agree, find_amounts
+from app.domain.speakers import OFFICIAL_ENDINGS
 from app.domain.text import collapse_ws, normalize_with_map
 from app.domain.timing import resolve_timing
 from app.parsing.chunking import split_turns
 
 Verdict = Literal["accepted", "needs_review", "rejected"]
-
-# Unknown roles stay reviewable; an unrecognised speaker is never an executive by default.
-OFFICIAL_ENDINGS = (
-    "시장",
-    "군수",
-    "구청장",
-    "국장",
-    "과장",
-    "실장",
-    "팀장",
-    "담당관",
-    "소장",
-    "본부장",
-    "원장",
-    "센터장",
-    "관장",
-    "사장",
-    "대표이사",
-)
 
 # Narrow constructions, not individual negative words: "문제없습니다" and "차질 없이"
 # describe a feasible plan. Historical denials ("없었습니다") are not current denials.
@@ -152,12 +134,10 @@ def official_evidence_issue(
             # An unknown speaker heading must not inherit the preceding official's role.
             and not re.search(r"(?m)^[ \t]*[○◯◎]", document_text[turn.start + 1 : end])
         ):
-            quote = collapse_ws(document_text[start:end])
-            # Quotes including a speaker header must not gain length from the role/name.
-            if quote.startswith(("○", "◯", "◎")):
-                quote = quote.split(turn.name, 1)[-1].strip()
-            official_quotes.append(quote)
             speech_start = document_text.index(turn.name, turn.start, turn.end) + len(turn.name)
+            # Heading bytes (marked or plain) never count as substantive evidence.
+            quote = collapse_ws(document_text[max(start, speech_start) : end])
+            official_quotes.append(quote)
             statements.extend(
                 _direct_evidence_statements(
                     document_text[speech_start : turn.end],

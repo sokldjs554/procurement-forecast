@@ -13,8 +13,8 @@ from __future__ import annotations
 import re
 from typing import cast
 
-from app.domain.grounding import OFFICIAL_ENDINGS
 from app.domain.krw import detect_table_unit, find_amounts, parse_krw
+from app.domain.speakers import OFFICIAL_ENDINGS
 from app.domain.taxonomy import (
     CATEGORIES,
     COMMITMENT_LADDER,
@@ -33,12 +33,11 @@ from app.llm.providers.procurement_narratives import (
 )
 from app.llm.schemas import Commitment, ExtractedSignal, ExtractionOutput
 from app.llm.types import LLMResult
-from app.parsing.chunking import budget_project_row, chunk_budget, match_member
+from app.parsing.chunking import budget_project_row, chunk_budget, match_speaker
 
-HEURISTIC_VERSION = "heuristic-v6"
+HEURISTIC_VERSION = "heuristic-v7"
 
 _SENTENCE_RE = re.compile(r"[^.?!。]+[.?!。]?")
-_SPEAKER_PREFIX_RE = re.compile(r"^[○◯◎]\s*(?P<role>[가-힣A-Za-z·]+)\s+[가-힣]{2,4}(?:\s+|$)")
 _SPEAKER_LABEL_RE = re.compile(r"(?P<role>[가-힣A-Za-z·]{1,20}) [가-힣]{2,4}")
 _MAINTENANCE_RE = re.compile(r"유지\s*(?:관리|보수)")
 _NEW_PURCHASE_RE = re.compile(
@@ -77,7 +76,6 @@ _OPERATING_WORDS = (
     "기본경비",  # every 부서's 행정운영경비 row in real books
 )
 _WAGE_ROW_RE = re.compile(r"(?:근로자|직원|공무원|인력)\s*(?:등\s*)?보수(?:\s|$)")
-_MEMBER_ROLES = ("위원", "의원", "위원장", "의장")
 _GENERIC_TITLE_HEADS = (
     "예산",
     "사업비",
@@ -112,23 +110,19 @@ def _answer_text(chunk_text: str, labels: list[str] | None = None) -> tuple[str,
         and len(labels) == 1
         and (speaker := _SPEAKER_LABEL_RE.fullmatch(labels[0]))
         and _is_official_role(speaker.group("role"))
-        and not re.search(r"(?m)^[ \t]*[○◯◎]", chunk_text)
+        and not any(
+            match_speaker(line.strip()) or line.lstrip().startswith(("○", "◯", "◎"))
+            for line in chunk_text.splitlines()
+        )
     ):
         current = answer
     for line in chunk_text.splitlines():
         content = line
-        if glued := match_member(line.strip()):
-            current, content = question, glued.group("speech")
-        elif m := _SPEAKER_PREFIX_RE.match(line.strip()):
-            role = m.group("role")
-            content = line.strip()[m.end() :]
-            # Newly supported standalone headings use the same conservative role
-            # check as continuations; preserve the existing inline-header behavior.
-            current = (
-                question
-                if role in _MEMBER_ROLES or (not content and not _is_official_role(role))
-                else answer
-            )
+        if speaker := match_speaker(line.strip()):
+            current = answer if _is_official_role(speaker.group("role")) else question
+            content = speaker.group("speech")
+        elif line.lstrip().startswith(("○", "◯", "◎")):
+            current = question
         current.append(content)
     return " ".join(question), " ".join(answer)
 
@@ -252,17 +246,24 @@ _BUDGET_BILL_YEAR_RE = re.compile(
 def _budget_list_signals(ctx: ChunkContext) -> list[ExtractedSignal]:
     """One signal per item of a "주요사업비 예산 반영 내역" list spoken by the executive."""
     lines = ctx.text.splitlines()
-    member = False
+    official = bool(
+        len(ctx.labels) == 1
+        and (label := _SPEAKER_LABEL_RE.fullmatch(ctx.labels[0]))
+        and _is_official_role(label.group("role"))
+        and not any(
+            match_speaker(line.strip()) or line.lstrip().startswith(("○", "◯", "◎"))
+            for line in lines
+        )
+    )
     signals: list[ExtractedSignal] = []
     for i, raw in enumerate(lines):
         line = raw.strip()
-        if glued := match_member(line):
-            member = True
-            line = glued.group("speech")
-        elif m := re.match(r"^[○◯◎]\s*(?P<role>[가-힣A-Za-z·]+)\s+[가-힣]{2,4}\s+", line):
-            member = m.group("role") in _MEMBER_ROLES
-            line = line[m.end() :]
-        if member:
+        if speaker := match_speaker(line):
+            official = _is_official_role(speaker.group("role"))
+            line = speaker.group("speech")
+        elif line.startswith(("○", "◯", "◎")):
+            official = False
+        if not official:
             continue
         head = _BUDGET_LIST_HEAD_RE.search(line)
         if head is None and not (i > 0 and _BUDGET_LIST_HEAD_RE.search(lines[i - 1])):

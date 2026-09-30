@@ -18,7 +18,7 @@ from typing import Any
 
 from PIL import Image, ImageChops, ImageOps
 
-from app.domain.grounding import OFFICIAL_ENDINGS
+from app.domain.speakers import OFFICIAL_ENDINGS
 from app.media.ffmpeg import Frame
 from app.parsing.ocr import OCREngine
 

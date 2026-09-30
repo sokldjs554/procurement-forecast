@@ -19,6 +19,8 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 
+from app.domain.speakers import OFFICIAL_ENDINGS
+
 MAX_CHUNK_CHARS = 2400
 
 _SPEAKER_RE = re.compile(
@@ -42,6 +44,38 @@ SPACED_MEMBER_RE = re.compile(
 def match_member(line: str) -> re.Match[str] | None:
     """A council member's speaker line, in either spelling; groups ``name``, ``role``, ``speech``."""
     return GLUED_MEMBER_RE.match(line) or SPACED_MEMBER_RE.match(line)
+
+
+# Some official HTML minutes use a whole line without ○, e.g. "회계과장 김서준".
+# Only role/name headings, not arbitrary inline prose, qualify. Nonexecutive
+# headings are also boundaries so their speech cannot inherit an official role.
+_PLAIN_ROLES = "|".join(
+    (*OFFICIAL_ENDINGS, "위원", "의원", "위원장", "의장", "참고인", "증인", "진술인")
+)
+_PLAIN_SPEAKER_RE = re.compile(
+    rf"^(?P<role>[가-힣A-Za-z·]{{0,16}}(?:{_PLAIN_ROLES}))\s+"
+    r"(?P<name>[가-힣]{2,4})(?P<speech>)$"
+)
+_PLAIN_MEMBER_RE = re.compile(
+    r"^(?!(?:출석|전문)\s)(?P<name>[가-힣]{2,4})\s+(?P<role>위원|의원|위원장|의장|부의장)(?P<speech>)$"
+)
+# An unfamiliar standalone role/name is a boundary, never implicit executive
+# permission. Ambiguous two-word lines may reduce recall; borrowing the previous
+# official's authority would be a worse error and must go through review instead.
+_UNKNOWN_PLAIN_RE = re.compile(
+    r"^(?P<role>[가-힣A-Za-z·]{1,20})\s+(?P<name>[가-힣]{2,4})(?P<speech>)$"
+)
+
+
+def match_speaker(line: str) -> re.Match[str] | None:
+    """Canonical role, name and speech for marked or standalone plain headings."""
+    return (
+        match_member(line)
+        or _SPEAKER_RE.match(line)
+        or _PLAIN_MEMBER_RE.fullmatch(line)
+        or _PLAIN_SPEAKER_RE.fullmatch(line)
+        or _UNKNOWN_PLAIN_RE.fullmatch(line)
+    )
 
 
 _MEMBER_ROLES = ("위원", "의원")
@@ -79,7 +113,7 @@ def split_turns(text: str) -> list[Turn]:
     offset = 0
     for line in text.splitlines(keepends=True):
         stripped = line.strip()
-        m = match_member(stripped) or _SPEAKER_RE.match(stripped)
+        m = match_speaker(stripped)
         line_end = offset + len(line.rstrip("\r\n"))
         if m:
             turns.append(
