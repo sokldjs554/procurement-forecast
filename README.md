@@ -219,6 +219,12 @@ flowchart LR
 
 ## 실행하기
 
+**별도 클라우드 비용 없이 전체 기능을 확인하려면:** Docker·Python 3가 설치된 PC에서
+`python3 scripts/free-review.py start`를 실행하고 <http://localhost:13000>을 여세요.
+Node.js 설치나 API 키 없이 실제 DB·API·worker·웹을 함께 실행하며, 종료 후 데이터도 유지합니다.
+합성 자료·규칙 기반 추출·모의 결제를 쓰는 [무료 실행 및 면접 전 점검 방법](docs/free-review.md)입니다.
+공개 데모 배포와 외부 운영 환경은 별도입니다.
+
 ### Docker로 전체 스택
 
 ```bash
