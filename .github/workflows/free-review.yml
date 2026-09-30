@@ -1,0 +1,95 @@
+name: Free review stack
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - docker-compose.review.yml
+      - scripts/free-review*
+      - scripts/review*
+      - .github/workflows/free-review.yml
+      - apps/api/**
+      - apps/web/**
+  push:
+    branches: [main]
+    paths:
+      - docker-compose.review.yml
+      - scripts/free-review*
+      - scripts/review*
+      - .github/workflows/free-review.yml
+      - apps/api/**
+      - apps/web/**
+
+permissions:
+  contents: read
+
+concurrency:
+  group: free-review-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  review:
+    name: Offline Docker · real UI/API/worker · restart persistence
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v7
+      - name: Require a public repository and standard free runner
+        env:
+          REPOSITORY_PRIVATE: ${{ github.event.repository.private }}
+        run: test "$REPOSITORY_PRIVATE" = false
+      - name: Build and prepare the complete isolated stack
+        run: python3 scripts/free-review.py start
+      - name: Host ports really serve the API, web app and local mail
+        run: |
+          curl --retry 10 --retry-connrefused --retry-delay 1 -fsS http://localhost:13000/login > /dev/null
+          curl -fsS http://localhost:18000/readyz
+          curl -fsS http://localhost:18025/api/v1/messages | jq -e '.total > 0'
+      - name: Prove the API and worker cannot connect to an external paid provider
+        run: |
+          for service in api worker; do
+            docker compose -p procurement-forecast-review -f docker-compose.review.yml exec -T "$service" python - <<'PY'
+          import socket
+          try:
+              socket.create_connection(("1.1.1.1", 443), timeout=2)
+          except OSError:
+              print("External network connection rejected")
+          else:
+              raise SystemExit("Review runtime unexpectedly has external connectivity")
+          PY
+          done
+      - uses: pnpm/action-setup@v6
+        with:
+          package_json_file: apps/web/package.json
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: apps/web/pnpm-lock.yaml
+      - name: Existing browser walkthrough against the Docker web/API
+        working-directory: apps/web
+        env:
+          E2E_BASE_URL: http://localhost:13000
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm exec playwright install --with-deps chromium
+          pnpm exec playwright test
+      - name: Recreate containers twice; preserve original bytes, links, feedback and saved briefs
+        run: |
+          python3 scripts/free-review.py fingerprint > "$RUNNER_TEMP/review-before.json"
+          for attempt in 1 2; do
+            python3 scripts/free-review.py stop
+            python3 scripts/free-review.py start
+            python3 scripts/free-review.py fingerprint > "$RUNNER_TEMP/review-after.json"
+            diff -u "$RUNNER_TEMP/review-before.json" "$RUNNER_TEMP/review-after.json"
+            curl --retry 10 --retry-connrefused --retry-delay 1 -fsS http://localhost:13000/login > /dev/null
+          done
+          cat "$RUNNER_TEMP/review-after.json" >> "$GITHUB_STEP_SUMMARY"
+      - name: Container logs
+        if: failure()
+        run: docker compose -p procurement-forecast-review -f docker-compose.review.yml logs --no-color --tail=100
+      - name: Stop only this review project
+        if: always()
+        run: python3 scripts/free-review.py stop

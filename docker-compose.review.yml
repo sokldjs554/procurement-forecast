@@ -1,0 +1,94 @@
+# Local, offline review stack. Never deploy this file as a public production service.
+# No .env is loaded, no paid provider is enabled, and the runtime network has no Internet route.
+name: procurement-forecast-review
+
+x-api: &api
+  image: procurement-forecast-review-api:local
+  build: ./apps/api
+  environment: &settings
+    APP_ENV: local
+    APP_DATABASE_URL: postgresql+asyncpg://review:review-local@db:5432/review
+    APP_REDIS_URL: redis://redis:6379/0
+    APP_STORAGE_URL: file:///app/.data/raw
+    APP_PUBLIC_WEB_URL: http://localhost:13000
+    APP_CORS_ORIGINS: '["http://localhost:13000"]'
+    APP_LLM_PROVIDER: heuristic
+    APP_EMBEDDING_PROVIDER: hashing
+    APP_PAYMENT_PROVIDER: fake
+    APP_LLM_DAILY_BUDGET_USD: "0"
+    APP_SMTP_HOST: mailpit
+    APP_SMTP_PORT: "1025"
+    APP_WORKER_MAX_JOBS: "2"
+    APP_LOG_JSON: "false"
+  volumes:
+    - rawdata:/app/.data
+    - ./scripts/free-review-data.py:/review/data.py:ro
+
+services:
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: review
+      POSTGRES_PASSWORD: review-local
+      POSTGRES_DB: review
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: [CMD-SHELL, "pg_isready -U review -d review"]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+  redis:
+    image: redis:7-alpine
+    command: [redis-server, --appendonly, "yes"]
+    volumes: [redisdata:/data]
+    healthcheck:
+      test: [CMD, redis-cli, ping]
+      interval: 3s
+      timeout: 3s
+      retries: 30
+  mailpit:
+    image: axllent/mailpit:latest
+    environment:
+      MP_DATABASE: /data/mailpit.db
+    volumes: [maildata:/data]
+  api:
+    <<: *api
+    healthcheck:
+      test: [CMD, python, -c, "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/readyz', timeout=3)"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  worker:
+    <<: *api
+    command: [manage, worker]
+    environment:
+      <<: *settings
+      PORT: "8001"
+  web:
+    build: ./apps/web
+    environment:
+      API_ORIGIN: http://api:8000
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://127.0.0.1:3000/login').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+  gateway:
+    image: nginx:1.28-alpine
+    ports:
+      - "127.0.0.1:13000:3000"
+      - "127.0.0.1:18000:8000"
+      - "127.0.0.1:18025:8025"
+    volumes: ["./scripts/review-nginx.conf:/etc/nginx/conf.d/default.conf:ro"]
+    networks: [default, entrance]
+
+networks:
+  default:
+    internal: true
+  entrance:
+
+volumes:
+  pgdata:
+  redisdata:
+  rawdata:
+  maildata:
