@@ -537,6 +537,63 @@ def sources_coverage(
     typer.echo(payload)
 
 
+@eval_app.command("holdout")
+def eval_holdout(
+    manifest: Path = typer.Argument(..., exists=True, dir_okay=False),
+    code_revision: str = typer.Option(..., help="Evaluated code revision"),
+    out: Path = typer.Option(None, help="Write full predictions and metrics as JSON"),
+) -> None:
+    """Free, no-network extraction audit on hash-verified real-document excerpts."""
+    from app.eval.holdout import evaluate_holdout
+
+    try:
+        result = _run(lambda: evaluate_holdout(manifest, code_revision=code_revision))
+    except ValueError as exc:
+        raise typer.BadParameter(str(exc)) from exc
+    payload = json.dumps(result, ensure_ascii=False, indent=2)
+    if out:
+        try:
+            with out.open("x", encoding="utf-8") as handle:
+                handle.write(payload + "\n")
+        except OSError as exc:
+            raise typer.BadParameter(
+                "--out must be a new writable file; evidence is never overwritten"
+            ) from exc
+    typer.echo(payload)
+
+
+@eval_app.command("longitudinal")
+def eval_longitudinal(
+    snapshot: Path = typer.Argument(..., exists=True, dir_okay=False),
+    observations: Path = typer.Option(None, exists=True, dir_okay=False),
+    horizon_days: int = typer.Option(540, min=1),
+    as_of: str = typer.Option(None, help="Observation cutoff YYYY-MM-DD; cannot be future"),
+    out: Path = typer.Option(None, help="Write cohort, censoring and lineage report"),
+) -> None:
+    """Follow up frozen forecasts; missing or immature outcomes never count as negatives."""
+    from app.eval.longitudinal import evaluate_longitudinal
+
+    try:
+        result = evaluate_longitudinal(
+            snapshot,
+            observations,
+            horizon_days=horizon_days,
+            as_of=date.fromisoformat(as_of) if as_of else None,
+        )
+    except ValueError as exc:
+        raise typer.BadParameter(str(exc)) from exc
+    payload = json.dumps(result, ensure_ascii=False, indent=2)
+    if out:
+        try:
+            with out.open("x", encoding="utf-8") as handle:
+                handle.write(payload + "\n")
+        except OSError as exc:
+            raise typer.BadParameter(
+                "--out must be a new writable file; evidence is never overwritten"
+            ) from exc
+    typer.echo(payload)
+
+
 @eval_app.command("freeze")
 def eval_freeze(
     out: Path = typer.Option(..., help="Atomically write the current observation snapshot"),
