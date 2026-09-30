@@ -1,10 +1,15 @@
 # Render production deployment
 
-This is a deployable configuration, **not evidence of a live deployment**. No resource for
-this project was found in the confirmed Render workspace on 2026-09-30. The inventory contained 18 unrelated services, one unrelated Postgres
-instance, and one unrelated Key Value instance. Existing resources for
-other projects must not be reused or changed. No project resources were created while
-preparing this configuration.
+This is a deployable configuration, **not evidence of a live deployment**. As of
+2026-09-30, the connected workspace has no service or dedicated free database/queue
+capacity available for this project. Other projects' resources were left untouched.
+No paid resource was created. The user's current constraint is **free only**, so the
+paid Blueprint below is a reference configuration and has not been applied.
+
+Free local Docker and finite GitHub Actions runs verify execution and restart
+persistence; they do not supply an externally accessible, continuously running backend.
+A dedicated existing always-on host (with access and capacity) would be needed to deploy
+this full stack without new service charges. No such host is currently connected.
 
 ## Resources and cost
 

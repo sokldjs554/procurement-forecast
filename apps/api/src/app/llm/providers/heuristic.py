@@ -119,8 +119,19 @@ def _answer_text(chunk_text: str, labels: list[str] | None = None) -> tuple[str,
     for line in chunk_text.splitlines():
         content = line
         if speaker := match_speaker(line.strip()):
-            current = answer if _is_official_role(speaker.group("role")) else question
             content = speaker.group("speech")
+            # Audio-only transcripts deliberately use this explicit placeholder.
+            # Keep their inline candidate for grounding's needs_review route;
+            # this is not executive attribution and never changes source labels.
+            audio_unknown = (
+                speaker.group("role") == "발언자"
+                and speaker.group("name") == "미상"
+                and bool(content)
+                and line.lstrip().startswith(("○", "◯", "◎"))
+            )
+            current = (
+                answer if _is_official_role(speaker.group("role")) or audio_unknown else question
+            )
         elif line.lstrip().startswith(("○", "◯", "◎")):
             current = question
         current.append(content)

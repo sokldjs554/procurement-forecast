@@ -1,0 +1,973 @@
+{
+  "schema_version": "source-holdout-result-v1",
+  "evaluated_at": "2026-09-30T14:14:17.528101+00:00",
+  "code_revision": "heuristic-v7-final-plain-boundaries-regression",
+  "extractor": "heuristic-v7",
+  "api_cost_usd": 0,
+  "manifest_sha256": "a6a1a5eb9e0492d3f9e0917feaca78c607df03471bf43d89d9a9344c5afcb6cc",
+  "cases_sha256": "ae30844ced512e861cae416f15215af9057e8def64a715a5e27ee9c6ec40d919",
+  "label_origin": "AI-authored independent source annotation by delegated new_blind_holdout agent; no production extractor, development gold or prior result files read; no model outputs seen; no paid APIs. Not human/expert-validated gold. Before any scoring, an independent AI source reviewer identified one material negative ambiguity; original annotator narrowed that excerpt and masked two ambiguous category fields in version 2. Original version remains unchanged.",
+  "independent_human_gold": false,
+  "scope": "selected_parsed_excerpts_extraction_only_not_ocr_linking_or_forecasting",
+  "matching": "maximum_one_to_one_title_phrase_whitespace_insensitive_budget_2pct",
+  "context_policy": "speaker_labels_and_grounding_offsets_from_verified_full_source_not_gold",
+  "documents": 6,
+  "institutions": [
+    "서산시",
+    "서울특별시 강남구",
+    "서울특별시 금천구"
+  ],
+  "raw": {
+    "cases": 33,
+    "expected": 20,
+    "predicted": 6,
+    "matched": 1,
+    "precision": 0.1667,
+    "recall": 0.05,
+    "negative_cases": 16,
+    "negative_cases_with_predictions": 2,
+    "negative_case_false_positive_rate": 0.125,
+    "fields": {
+      "category": {
+        "correct": 0,
+        "matched_eligible": 1,
+        "all_expected_eligible": 17,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": 0.0,
+        "end_to_end_recall": 0.0
+      },
+      "commitment": {
+        "correct": 1,
+        "matched_eligible": 1,
+        "all_expected_eligible": 20,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": 1.0,
+        "end_to_end_recall": 0.05
+      },
+      "budget_krw": {
+        "correct": 0,
+        "matched_eligible": 1,
+        "all_expected_eligible": 20,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": 0.0,
+        "end_to_end_recall": 0.0
+      },
+      "expected_year": {
+        "correct": 1,
+        "matched_eligible": 1,
+        "all_expected_eligible": 19,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": 1.0,
+        "end_to_end_recall": 0.0526
+      }
+    },
+    "failures": [
+      {
+        "case": "new-blind-001",
+        "missing": [
+          "사무실 집기 및 물품",
+          "노후 사무 장비와 집기"
+        ]
+      },
+      {
+        "case": "new-blind-001",
+        "missing": [
+          "노후 관용 차량 대체 취득",
+          "이카운티"
+        ]
+      },
+      {
+        "case": "new-blind-003",
+        "missing": [
+          "생성형 AI 도구 구입",
+          "AI 생성형 도구"
+        ]
+      },
+      {
+        "case": "new-blind-003",
+        "unexpected": "저희가 올해 데이터 통합 플랫폼"
+      },
+      {
+        "case": "new-blind-004",
+        "missing": [
+          "지능 정보화 종합 계획 수립"
+        ]
+      },
+      {
+        "case": "new-blind-004",
+        "missing": [
+          "인공지능 기본계획 수립"
+        ]
+      },
+      {
+        "case": "new-blind-005",
+        "title": "그 밑에 AI 민원 플랫폼",
+        "wrong": {
+          "category": {
+            "expected": "ai_data",
+            "got": "public_sw"
+          },
+          "budget_krw": {
+            "expected": 280000000,
+            "got": 1000000000
+          }
+        }
+      },
+      {
+        "case": "new-blind-006",
+        "missing": [
+          "AI IoT 센서 기반 주차 정보 공유 서비스",
+          "주차 정보 공유 서비스"
+        ]
+      },
+      {
+        "case": "new-blind-007",
+        "unexpected": "신재생에너지 주택 지원 사업"
+      },
+      {
+        "case": "new-blind-010",
+        "missing": [
+          "수도기 미터기 및 보호통 구입",
+          "보호통이랑 계량기"
+        ]
+      },
+      {
+        "case": "new-blind-011",
+        "missing": [
+          "공공디자인 진흥계획 용역",
+          "공공디자인 진흥 계획"
+        ]
+      },
+      {
+        "case": "new-blind-015",
+        "missing": [
+          "공중화장실 정비",
+          "호압사"
+        ]
+      },
+      {
+        "case": "new-blind-019",
+        "missing": [
+          "암호화 트래픽 가시화 시스템"
+        ]
+      },
+      {
+        "case": "new-blind-020",
+        "missing": [
+          "배수로 그레이팅 교체",
+          "썬큰광장"
+        ]
+      },
+      {
+        "case": "new-blind-021",
+        "missing": [
+          "얼음생수 나눔냉장고"
+        ]
+      },
+      {
+        "case": "new-blind-022",
+        "unexpected": "보면 청년 1인가구 주말급식 시범사업"
+      },
+      {
+        "case": "new-blind-024",
+        "missing": [
+          "제2별관 외벽 판넬 설치 공사"
+        ]
+      },
+      {
+        "case": "new-blind-024",
+        "unexpected": "총무과에서는 안전하고 쾌적한 청사 환경조성"
+      },
+      {
+        "case": "new-blind-025",
+        "missing": [
+          "2층, 4층 화장실",
+          "화장실 리모델링"
+        ]
+      },
+      {
+        "case": "new-blind-025",
+        "missing": [
+          "1층 라운지"
+        ]
+      },
+      {
+        "case": "new-blind-025",
+        "unexpected": "직원들의 쾌적한 환경을 위해서 리모델링"
+      },
+      {
+        "case": "new-blind-028",
+        "missing": [
+          "강남 기록 용역 및 전시회 개최"
+        ]
+      },
+      {
+        "case": "new-blind-029",
+        "missing": [
+          "동복합문화센터 리모델링 공사"
+        ]
+      },
+      {
+        "case": "new-blind-030",
+        "missing": [
+          "일원1동 스마트보안등 시스템 구축"
+        ]
+      },
+      {
+        "case": "new-blind-031",
+        "missing": [
+          "스마트 빗물펌프장 원격제어 고도화"
+        ]
+      }
+    ]
+  },
+  "after_verifier": {
+    "cases": 33,
+    "expected": 20,
+    "predicted": 6,
+    "matched": 1,
+    "precision": 0.1667,
+    "recall": 0.05,
+    "negative_cases": 16,
+    "negative_cases_with_predictions": 2,
+    "negative_case_false_positive_rate": 0.125,
+    "fields": {
+      "category": {
+        "correct": 0,
+        "matched_eligible": 1,
+        "all_expected_eligible": 17,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": 0.0,
+        "end_to_end_recall": 0.0
+      },
+      "commitment": {
+        "correct": 1,
+        "matched_eligible": 1,
+        "all_expected_eligible": 20,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": 1.0,
+        "end_to_end_recall": 0.05
+      },
+      "budget_krw": {
+        "correct": 0,
+        "matched_eligible": 1,
+        "all_expected_eligible": 20,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": 0.0,
+        "end_to_end_recall": 0.0
+      },
+      "expected_year": {
+        "correct": 1,
+        "matched_eligible": 1,
+        "all_expected_eligible": 19,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": 1.0,
+        "end_to_end_recall": 0.0526
+      }
+    },
+    "failures": [
+      {
+        "case": "new-blind-001",
+        "missing": [
+          "사무실 집기 및 물품",
+          "노후 사무 장비와 집기"
+        ]
+      },
+      {
+        "case": "new-blind-001",
+        "missing": [
+          "노후 관용 차량 대체 취득",
+          "이카운티"
+        ]
+      },
+      {
+        "case": "new-blind-003",
+        "missing": [
+          "생성형 AI 도구 구입",
+          "AI 생성형 도구"
+        ]
+      },
+      {
+        "case": "new-blind-003",
+        "unexpected": "저희가 올해 데이터 통합 플랫폼"
+      },
+      {
+        "case": "new-blind-004",
+        "missing": [
+          "지능 정보화 종합 계획 수립"
+        ]
+      },
+      {
+        "case": "new-blind-004",
+        "missing": [
+          "인공지능 기본계획 수립"
+        ]
+      },
+      {
+        "case": "new-blind-005",
+        "title": "그 밑에 AI 민원 플랫폼",
+        "wrong": {
+          "category": {
+            "expected": "ai_data",
+            "got": "public_sw"
+          },
+          "budget_krw": {
+            "expected": 280000000,
+            "got": 1000000000
+          }
+        }
+      },
+      {
+        "case": "new-blind-006",
+        "missing": [
+          "AI IoT 센서 기반 주차 정보 공유 서비스",
+          "주차 정보 공유 서비스"
+        ]
+      },
+      {
+        "case": "new-blind-007",
+        "unexpected": "신재생에너지 주택 지원 사업"
+      },
+      {
+        "case": "new-blind-010",
+        "missing": [
+          "수도기 미터기 및 보호통 구입",
+          "보호통이랑 계량기"
+        ]
+      },
+      {
+        "case": "new-blind-011",
+        "missing": [
+          "공공디자인 진흥계획 용역",
+          "공공디자인 진흥 계획"
+        ]
+      },
+      {
+        "case": "new-blind-015",
+        "missing": [
+          "공중화장실 정비",
+          "호압사"
+        ]
+      },
+      {
+        "case": "new-blind-019",
+        "missing": [
+          "암호화 트래픽 가시화 시스템"
+        ]
+      },
+      {
+        "case": "new-blind-020",
+        "missing": [
+          "배수로 그레이팅 교체",
+          "썬큰광장"
+        ]
+      },
+      {
+        "case": "new-blind-021",
+        "missing": [
+          "얼음생수 나눔냉장고"
+        ]
+      },
+      {
+        "case": "new-blind-022",
+        "unexpected": "보면 청년 1인가구 주말급식 시범사업"
+      },
+      {
+        "case": "new-blind-024",
+        "missing": [
+          "제2별관 외벽 판넬 설치 공사"
+        ]
+      },
+      {
+        "case": "new-blind-024",
+        "unexpected": "총무과에서는 안전하고 쾌적한 청사 환경조성"
+      },
+      {
+        "case": "new-blind-025",
+        "missing": [
+          "2층, 4층 화장실",
+          "화장실 리모델링"
+        ]
+      },
+      {
+        "case": "new-blind-025",
+        "missing": [
+          "1층 라운지"
+        ]
+      },
+      {
+        "case": "new-blind-025",
+        "unexpected": "직원들의 쾌적한 환경을 위해서 리모델링"
+      },
+      {
+        "case": "new-blind-028",
+        "missing": [
+          "강남 기록 용역 및 전시회 개최"
+        ]
+      },
+      {
+        "case": "new-blind-029",
+        "missing": [
+          "동복합문화센터 리모델링 공사"
+        ]
+      },
+      {
+        "case": "new-blind-030",
+        "missing": [
+          "일원1동 스마트보안등 시스템 구축"
+        ]
+      },
+      {
+        "case": "new-blind-031",
+        "missing": [
+          "스마트 빗물펌프장 원격제어 고도화"
+        ]
+      }
+    ]
+  },
+  "by_institution": {
+    "서산시": {
+      "cases": 14,
+      "expected": 9,
+      "predicted": 3,
+      "matched": 1,
+      "precision": 0.3333,
+      "recall": 0.1111,
+      "negative_cases": 7,
+      "negative_cases_with_predictions": 1,
+      "negative_case_false_positive_rate": 0.1429,
+      "fields": {
+        "category": {
+          "correct": 0,
+          "matched_eligible": 1,
+          "all_expected_eligible": 7,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": 0.0,
+          "end_to_end_recall": 0.0
+        },
+        "commitment": {
+          "correct": 1,
+          "matched_eligible": 1,
+          "all_expected_eligible": 9,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": 1.0,
+          "end_to_end_recall": 0.1111
+        },
+        "budget_krw": {
+          "correct": 0,
+          "matched_eligible": 1,
+          "all_expected_eligible": 9,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": 0.0,
+          "end_to_end_recall": 0.0
+        },
+        "expected_year": {
+          "correct": 1,
+          "matched_eligible": 1,
+          "all_expected_eligible": 9,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": 1.0,
+          "end_to_end_recall": 0.1111
+        }
+      },
+      "failures": [
+        {
+          "case": "new-blind-001",
+          "missing": [
+            "사무실 집기 및 물품",
+            "노후 사무 장비와 집기"
+          ]
+        },
+        {
+          "case": "new-blind-001",
+          "missing": [
+            "노후 관용 차량 대체 취득",
+            "이카운티"
+          ]
+        },
+        {
+          "case": "new-blind-003",
+          "missing": [
+            "생성형 AI 도구 구입",
+            "AI 생성형 도구"
+          ]
+        },
+        {
+          "case": "new-blind-003",
+          "unexpected": "저희가 올해 데이터 통합 플랫폼"
+        },
+        {
+          "case": "new-blind-004",
+          "missing": [
+            "지능 정보화 종합 계획 수립"
+          ]
+        },
+        {
+          "case": "new-blind-004",
+          "missing": [
+            "인공지능 기본계획 수립"
+          ]
+        },
+        {
+          "case": "new-blind-005",
+          "title": "그 밑에 AI 민원 플랫폼",
+          "wrong": {
+            "category": {
+              "expected": "ai_data",
+              "got": "public_sw"
+            },
+            "budget_krw": {
+              "expected": 280000000,
+              "got": 1000000000
+            }
+          }
+        },
+        {
+          "case": "new-blind-006",
+          "missing": [
+            "AI IoT 센서 기반 주차 정보 공유 서비스",
+            "주차 정보 공유 서비스"
+          ]
+        },
+        {
+          "case": "new-blind-007",
+          "unexpected": "신재생에너지 주택 지원 사업"
+        },
+        {
+          "case": "new-blind-010",
+          "missing": [
+            "수도기 미터기 및 보호통 구입",
+            "보호통이랑 계량기"
+          ]
+        },
+        {
+          "case": "new-blind-011",
+          "missing": [
+            "공공디자인 진흥계획 용역",
+            "공공디자인 진흥 계획"
+          ]
+        }
+      ]
+    },
+    "서울특별시 강남구": {
+      "cases": 10,
+      "expected": 7,
+      "predicted": 2,
+      "matched": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "negative_cases": 4,
+      "negative_cases_with_predictions": 0,
+      "negative_case_false_positive_rate": 0.0,
+      "fields": {
+        "category": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 7,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "commitment": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 7,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "budget_krw": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 7,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "expected_year": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 6,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        }
+      },
+      "failures": [
+        {
+          "case": "new-blind-024",
+          "missing": [
+            "제2별관 외벽 판넬 설치 공사"
+          ]
+        },
+        {
+          "case": "new-blind-024",
+          "unexpected": "총무과에서는 안전하고 쾌적한 청사 환경조성"
+        },
+        {
+          "case": "new-blind-025",
+          "missing": [
+            "2층, 4층 화장실",
+            "화장실 리모델링"
+          ]
+        },
+        {
+          "case": "new-blind-025",
+          "missing": [
+            "1층 라운지"
+          ]
+        },
+        {
+          "case": "new-blind-025",
+          "unexpected": "직원들의 쾌적한 환경을 위해서 리모델링"
+        },
+        {
+          "case": "new-blind-028",
+          "missing": [
+            "강남 기록 용역 및 전시회 개최"
+          ]
+        },
+        {
+          "case": "new-blind-029",
+          "missing": [
+            "동복합문화센터 리모델링 공사"
+          ]
+        },
+        {
+          "case": "new-blind-030",
+          "missing": [
+            "일원1동 스마트보안등 시스템 구축"
+          ]
+        },
+        {
+          "case": "new-blind-031",
+          "missing": [
+            "스마트 빗물펌프장 원격제어 고도화"
+          ]
+        }
+      ]
+    },
+    "서울특별시 금천구": {
+      "cases": 9,
+      "expected": 4,
+      "predicted": 1,
+      "matched": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "negative_cases": 5,
+      "negative_cases_with_predictions": 1,
+      "negative_case_false_positive_rate": 0.2,
+      "fields": {
+        "category": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 3,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "commitment": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 4,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "budget_krw": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 4,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "expected_year": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 4,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        }
+      },
+      "failures": [
+        {
+          "case": "new-blind-015",
+          "missing": [
+            "공중화장실 정비",
+            "호압사"
+          ]
+        },
+        {
+          "case": "new-blind-019",
+          "missing": [
+            "암호화 트래픽 가시화 시스템"
+          ]
+        },
+        {
+          "case": "new-blind-020",
+          "missing": [
+            "배수로 그레이팅 교체",
+            "썬큰광장"
+          ]
+        },
+        {
+          "case": "new-blind-021",
+          "missing": [
+            "얼음생수 나눔냉장고"
+          ]
+        },
+        {
+          "case": "new-blind-022",
+          "unexpected": "보면 청년 1인가구 주말급식 시범사업"
+        }
+      ]
+    }
+  },
+  "predictions": [
+    {
+      "case": "new-blind-001",
+      "predictions": []
+    },
+    {
+      "case": "new-blind-002",
+      "predictions": []
+    },
+    {
+      "case": "new-blind-003",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "저희가 올해 데이터 통합 플랫폼",
+            "keywords": [
+              "홈페이지",
+              "행정",
+              "AI",
+              "데이터",
+              "대시보드",
+              "보수"
+            ],
+            "category": "ai_data",
+            "commitment": "planned",
+            "budget_krw": null,
+            "expected_year": 2026
+          },
+          "verdict": "accepted",
+          "issues": []
+        }
+      ]
+    },
+    {
+      "case": "new-blind-004",
+      "predictions": []
+    },
+    {
+      "case": "new-blind-005",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "그 밑에 AI 민원 플랫폼",
+            "keywords": [
+              "시스템 구축",
+              "챗봇",
+              "민원",
+              "플랫폼 구축",
+              "AI",
+              "관광"
+            ],
+            "category": "public_sw",
+            "commitment": "planned",
+            "budget_krw": 1000000000,
+            "expected_year": 2026
+          },
+          "verdict": "accepted",
+          "issues": []
+        }
+      ]
+    },
+    {
+      "case": "new-blind-006",
+      "predictions": []
+    },
+    {
+      "case": "new-blind-007",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "신재생에너지 주택 지원 사업",
+            "keywords": [
+              "태양광",
+              "에너지",
+              "재생에너지",
+              "전시"
+            ],
+            "category": "energy_env",
+            "commitment": "planned",
+            "budget_krw": 2000000,
+            "expected_year": 2026
+          },
+          "verdict": "accepted",
+          "issues": []
+        }
+      ]
+    },
+    {
+      "case": "new-blind-008",
+      "predictions": []
+    },
+    {
+      "case": "new-blind-009",
+      "predictions": []
+    },
+    {
+      "case": "new-blind-010",
+      "predictions": []
+    },
+    {
+      "case": "new-blind-011",
+      "predictions": []
+    },
+    {
+      "case": "new-blind-012",
+      "predictions": []
+    },
+    {
+      "case": "new-blind-013",
+      "predictions": []
+    },
+    {
+      "case": "new-blind-014",
+      "predictions": []
+    },
+    {
+      "case": "new-blind-015",
+      "predictions": []
+    },
+    {
+      "case": "new-blind-016",
+      "predictions": []
+    },
+    {
+      "case": "new-blind-017",
+      "predictions": []
+    },
+    {
+      "case": "new-blind-018",
+      "predictions": []
+    },
+    {
+      "case": "new-blind-019",
+      "predictions": []
+    },
+    {
+      "case": "new-blind-020",
+      "predictions": []
+    },
+    {
+      "case": "new-blind-021",
+      "predictions": []
+    },
+    {
+      "case": "new-blind-022",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "보면 청년 1인가구 주말급식 시범사업",
+            "keywords": [
+              "행정"
+            ],
+            "category": "public_sw",
+            "commitment": "planned",
+            "budget_krw": null,
+            "expected_year": 2024
+          },
+          "verdict": "accepted",
+          "issues": []
+        }
+      ]
+    },
+    {
+      "case": "new-blind-023",
+      "predictions": []
+    },
+    {
+      "case": "new-blind-024",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "총무과에서는 안전하고 쾌적한 청사 환경조성",
+            "keywords": [
+              "안전",
+              "민원",
+              "행정",
+              "예측",
+              "환경",
+              "복지"
+            ],
+            "category": "safety_cctv",
+            "commitment": "planned",
+            "budget_krw": null,
+            "expected_year": 2024
+          },
+          "verdict": "accepted",
+          "issues": []
+        }
+      ]
+    },
+    {
+      "case": "new-blind-025",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "직원들의 쾌적한 환경을 위해서 리모델링",
+            "keywords": [
+              "안전",
+              "환경",
+              "리모델링",
+              "공사"
+            ],
+            "category": "facility",
+            "commitment": "planned",
+            "budget_krw": null,
+            "expected_year": 2024
+          },
+          "verdict": "accepted",
+          "issues": []
+        }
+      ]
+    },
+    {
+      "case": "new-blind-026",
+      "predictions": []
+    },
+    {
+      "case": "new-blind-027",
+      "predictions": []
+    },
+    {
+      "case": "new-blind-028",
+      "predictions": []
+    },
+    {
+      "case": "new-blind-029",
+      "predictions": []
+    },
+    {
+      "case": "new-blind-030",
+      "predictions": []
+    },
+    {
+      "case": "new-blind-031",
+      "predictions": []
+    },
+    {
+      "case": "new-blind-032",
+      "predictions": []
+    },
+    {
+      "case": "new-blind-033",
+      "predictions": []
+    }
+  ]
+}

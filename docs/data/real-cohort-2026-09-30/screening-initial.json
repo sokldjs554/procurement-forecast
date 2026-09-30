@@ -1,0 +1,50 @@
+{
+  "version": "cohort-source-screening-v1",
+  "recorded_at": "2026-09-30T14:19:36.609124+00:00",
+  "snapshot_sha256": "9084cb38e4b5652e0bbf3e4aced44500067d0eba59d7c802efa882ce20bf511d",
+  "coverage_complete": false,
+  "queries": [
+    "site.seosan.go.kr \"AI\" \"민원\" \"플랫폼\" \"입찰\"",
+    "site.seosan.go.kr \"데이터 통합 플랫폼\" \"입찰\"",
+    "site.seosan.go.kr \"교육발전특구\" \"입찰\"",
+    "서산시 \"AI 민원 플랫폼\" 입찰",
+    "서산시 \"데이터 통합 플랫폼\" 입찰",
+    "서산시 \"교육발전특구\" \"주차장\" \"입찰\""
+  ],
+  "findings": [
+    {
+      "opportunity_id": 5,
+      "status": "official_planning_or_consultation_only_not_tender_identity",
+      "urls": [
+        "https://www.seosan.go.kr/DATA/bbs/106/202512290910008444DL0LN.pdf",
+        "https://www.epeople.go.kr/api/thk/conversational/selectConversationalDevDetail.npaid?ideaRegNo=1AE-2604-0000194"
+      ],
+      "retrieval": {
+        "planning_pdf": "timed out; search snippet only, not tender evidence",
+        "consultation_page": "opened successfully; dated 2026-04-06; consultation, not tender"
+      }
+    },
+    {
+      "opportunity_id": 4,
+      "status": "secondary_reports_suggest_preexisting_completed_project_requires_official_tender_identity",
+      "url": "https://www.goodmorningcc.com/news/articleView.html?idxno=423487"
+    }
+  ],
+  "accepted_tender_matches": 0,
+  "not_screened_to_completion_opportunity_ids": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "limitations": [
+    "Search engine 1 returned irrelevant pages; engine 2 found planning and media records, not an exhaustive tender archive.",
+    "No complete-source coverage or independently reviewed outcome identity; no negative labels inferred.",
+    "Frozen titles and budgets remain unvalidated; no future prediction accuracy claim."
+  ]
+}

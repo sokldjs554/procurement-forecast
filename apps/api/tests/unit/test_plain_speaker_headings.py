@@ -118,3 +118,20 @@ def test_plain_header_does_not_pad_short_assent_evidence() -> None:
 async def test_unrecognized_marked_speaker_stops_official_continuation() -> None:
     text = "설명을 마칩니다.\n○미상\n" + PROJECT
     assert await _extract(text, ["정보화과장 김서준"]) == []
+
+
+async def test_audio_placeholder_keeps_review_candidate_without_executive_authority() -> None:
+    text = "○발언자 미상 " + PROJECT
+    signals = await _extract(text)
+    assert len(signals) == 1
+    checked = check_signal(
+        signals[0],
+        text=text,
+        doc_type="council_minutes",
+        reference_date=date(2026, 9, 1),
+        fiscal_year=None,
+        table_unit=1,
+        min_score=88.0,
+    )
+    assert checked.report.verdict == "needs_review"
+    assert "official_evidence_missing" in checked.report.issues

@@ -1,0 +1,9 @@
+{
+  "version": "longitudinal-observations-v1",
+  "snapshot_sha256": "9084cb38e4b5652e0bbf3e4aced44500067d0eba59d7c802efa882ce20bf511d",
+  "data_origin": "real",
+  "observed_through": "2026-09-30",
+  "coverage": [],
+  "outcomes": [],
+  "note": "Initial freeze only; prior-tender screening and follow-up coverage unverified."
+}
