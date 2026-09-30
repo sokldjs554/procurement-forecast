@@ -13,6 +13,14 @@ test("the public walkthrough opens its sources and briefing without a payment or
   await sources.first().locator("summary").click();
   await expect(sources.first()).toContainText("전체 추출 텍스트");
   await expect(sources.first().locator("mark").first()).toBeVisible();
+  // toBeVisible passes for a mark scrolled out of its box; the reader must land on the evidence
+  await expect.poll(() => sources.first().locator(".overflow-y-auto").evaluate((box) => {
+    const mark = box.querySelector("mark");
+    if (!mark) return false;
+    const b = box.getBoundingClientRect();
+    const m = mark.getBoundingClientRect();
+    return m.top >= b.top && m.top < b.bottom;
+  })).toBe(true);
   await expect(page.locator('#evidence a[target="_blank"]')).toHaveCount(0);
 
   await page.getByRole("link", { name: "③ 영업 브리핑", exact: true }).click();

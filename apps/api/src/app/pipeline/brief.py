@@ -240,8 +240,8 @@ def template_brief(facts: BriefFacts) -> str:
     ]
     if not facts.tender_out:  # once the tender is out there is nothing left to estimate
         money.append(
-            f"- 공고로 이어질 가능성: {facts.conversion_prob:.0%} 정도로 봐요. 지금 단계와 의회 답변 "
-            "수준, 같은 사업을 가리키는 문서 수로 매긴 추정치예요."
+            f"- 공고 전환 추정치: {facts.conversion_prob:.0%}. 지금 단계와 의회 답변 수준, 같은 "
+            "사업을 가리키는 문서 수로 매긴 값이며 실제 발주 여부로 검증한 확률은 아니에요."
         )
     if facts.department:
         meet = [f"- {who}. 문서에 담당으로 나온 부서라서 여기부터 연락해 보세요."]
