@@ -63,9 +63,9 @@ export default function Home() {
       <section className="mx-auto max-w-6xl px-4 pt-12 pb-16 md:pt-20">
         <p className="text-sm font-semibold text-accent-text">공공조달 발주 예측 서비스</p>
         <h1 className="mt-3 max-w-3xl text-[34px] leading-[1.15] font-bold tracking-tight text-ink md:text-[52px]">
-          입찰공고가 나오기 전,
+          우리 회사에 맞는
           <br />
-          사업의 단서를 찾아 드려요.
+          공공사업 찾기
         </h1>
         <p className="mt-5 max-w-2xl text-[17px] leading-relaxed text-ink-2">
           회의록의 추진 계획과 예산서의 사업비를 모아, 우리 회사가 검토할 공공사업을 추천해요.
