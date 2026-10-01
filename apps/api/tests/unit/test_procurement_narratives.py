@@ -19,6 +19,73 @@ async def extract(text: str, kind: str = "council_minutes") -> list[ExtractedSig
     return (await HeuristicProvider().extract(ctx)).value.signals
 
 
+async def test_exchange_budget_excludes_hypothetical_expansion_cost() -> None:
+    text = (
+        "○위원 이민우  민원 플랫폼 구축 예산은 얼마입니까?\n"
+        "○정보화과장 김서준  이 예산에서 3억 원을 세웠습니다. "
+        "모든 분야를 구축한다고 하면 12억 원이 필요합니다. "
+        "내년에는 일부만 구축할 계획입니다."
+    )
+    signals = await extract(text)
+    assert len(signals) == 1
+    assert signals[0].budget_krw == 300_000_000
+    assert any("3억 원" in q for q in signals[0].evidence)
+
+
+async def test_exchange_unattributed_multiple_amounts_stay_unknown() -> None:
+    signals = await extract(
+        "○정보화과장 김서준  민원 플랫폼 구축을 내년에 추진할 계획입니다. "
+        "견적은 3억 원입니다. 다른 견적은 5억 원입니다."
+    )
+    assert len(signals) == 1
+    assert signals[0].budget_krw is None
+
+
+async def test_numbered_review_sections_preserve_current_budget_and_boundaries() -> None:
+    text = (
+        "1) 주민센터 리모델링 공사(신규)(p.70)\n"
+        "- 사업내용: 노후 시설 리모델링\n- 소요재원\n(단위: 천원)\n"
+        "재원별 예산액 전년도당초예산액 비교증감\n"
+        "계 125,400 200,000 -74,600\n자체재원 125,400 200,000 -74,600\n"
+        "- 의견: 약 1억원 규모의 공사임.\n"
+        "2) 공무원 수당(신규)(p.71)\n- 소요재원\n(단위: 천원)\n"
+        "재원별 예산액 전년도당초예산액 비교증감\n계 900,000 0 900,000\n"
+    )
+    signals = await extract(text, "budget_book")
+    assert len(signals) == 1
+    assert signals[0].title == "주민센터 리모델링 공사"
+    assert signals[0].budget_krw == 125_400_000
+    assert signals[0].commitment == "planned"
+    assert all(locate_quote(text, q).method == "exact" for q in signals[0].evidence)
+
+
+async def test_numbered_review_does_not_guess_without_column_header() -> None:
+    text = "1) 주민센터 리모델링 공사(신규)(p.70)\n(단위: 천원)\n계 125,400 200,000\n"
+    assert await extract(text, "budget_book") == []
+
+
+async def test_numbered_review_survives_production_chunking_with_offsets() -> None:
+    text = (
+        "검토보고서\n1) 주민센터 리모델링 공사(신규)(p.70)\n"
+        "- 소요재원\n(단위: 천원)\n재원별 예산액 전년도당초예산액 비교증감\n"
+        "계 125,400 0 125,400\n"
+        "2) 행정망 서버 교체(신규)(p.71)\n"
+        "- 소요재원\n(단위: 천원)\n재원별 예산액 전년도당초예산액 비교증감\n"
+        "계 88,000 0 88,000\n"
+    )
+    chunks = chunk_budget(text)
+    assert len(chunks) == 2
+    signals = []
+    for chunk in chunks:
+        assert text[chunk.char_start : chunk.char_end] == chunk.text
+        assert triage_chunk(chunk.text, kind=chunk.kind, threshold=0.35).passed
+        signals.extend(await extract(chunk.text, "budget_book"))
+    assert [(s.title, s.budget_krw) for s in signals] == [
+        ("주민센터 리모델링 공사", 125_400_000),
+        ("행정망 서버 교체", 88_000_000),
+    ]
+
+
 async def test_itemized_allocations_keep_each_asset_and_own_amount() -> None:
     text = (
         "○정보화과장 김서준  태블릿PC 구입에 1,200만 원, "

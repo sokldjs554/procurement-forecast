@@ -28,6 +28,7 @@ from app.domain.timing import resolve_timing
 from app.llm.prompts import EXTRACT_PROMPT_VERSION, BriefFacts, ChunkContext
 from app.llm.providers.procurement_narratives import (
     allocated_purchases,
+    numbered_review_signals,
     review_table_signals,
     work_plan_signals,
 )
@@ -35,7 +36,7 @@ from app.llm.schemas import Commitment, ExtractedSignal, ExtractionOutput
 from app.llm.types import LLMResult
 from app.parsing.chunking import budget_project_row, chunk_budget, match_speaker
 
-HEURISTIC_VERSION = "heuristic-v7"
+HEURISTIC_VERSION = "heuristic-v8"
 
 _SENTENCE_RE = re.compile(r"[^.?!。]+[.?!。]?")
 _SPEAKER_LABEL_RE = re.compile(r"(?P<role>[가-힣A-Za-z·]{1,20}) [가-힣]{2,4}")
@@ -366,11 +367,19 @@ def _extract_exchange(ctx: ChunkContext) -> list[ExtractedSignal]:
     sentences = _sentences(answer)
     ladder = [p for phrases in COMMITMENT_LADDER.values() for p in phrases]
     evidence = [s for s in sentences if any(p in s for p in ladder)]
-    amounts = find_amounts(answer)
-    amount_sentence = next((s for s in sentences if find_amounts(s)), None)
+    # A full rollout estimate or a previous purchase is not the current budget.
+    # Distinct remaining amounts are ambiguous: do not pick the largest one.
+    budget_sentences = [
+        s
+        for s in sentences
+        if not re.search(r"(?:다고\s*)?하면|경우|가정|지난해|작년|기집행|이미|취소|반납", s)
+    ]
+    candidates = [(amount, s) for s in budget_sentences for amount in find_amounts(s)]
+    values = {amount.value for amount, _ in candidates}
+    budget = candidates[0][0] if len(values) == 1 else None
+    amount_sentence = candidates[0][1] if budget else None
     if amount_sentence and amount_sentence not in evidence:
         evidence.append(amount_sentence)
-    budget = max(amounts, key=lambda a: a.value) if amounts else None
     timing = (
         resolve_timing(answer, ctx.document_date) if level in ("committed", "planned") else None
     )
@@ -460,7 +469,11 @@ class HeuristicProvider:
     async def extract(self, ctx: ChunkContext) -> LLMResult[ExtractionOutput]:
         if ctx.doc_type == "budget_book":
             unit = detect_table_unit(ctx.text) or self._unit
-            signals = work_plan_signals(ctx) + review_table_signals(ctx, unit)
+            signals = (
+                work_plan_signals(ctx)
+                + review_table_signals(ctx, unit)
+                + numbered_review_signals(ctx)
+            )
             for chunk in chunk_budget(ctx.text, standalone=True):
                 row_context = ChunkContext(
                     ctx.doc_type,

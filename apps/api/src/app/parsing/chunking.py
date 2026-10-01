@@ -299,6 +299,13 @@ def chunk_budget(text: str, *, standalone: bool = False) -> list[Chunk]:
 
 def _budget_narrative_chunks(text: str) -> list[Chunk]:
     candidates: list[Chunk] = []
+    review_headings = list(re.finditer(r"(?m)^[ \t]*\d+\)[ \t]+[^\n]+", text))
+    for index, heading in enumerate(review_headings):
+        start = heading.start()
+        end = review_headings[index + 1].start() if index + 1 < len(review_headings) else len(text)
+        block = text[start:end]
+        if re.search(r"재원별\s+예산액\s+전년도당초예산액", block):
+            candidates.append(Chunk(0, start, end, block, kind="budget_review"))
     headings = list(re.finditer(r"(?m)^\s*\d+\.\s+[^\n]+", text))
     for index, heading in enumerate(headings):
         start = heading.start()

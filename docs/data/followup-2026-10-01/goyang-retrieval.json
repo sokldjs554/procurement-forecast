@@ -1,0 +1,9 @@
+{
+  "url": "https://www.goyangcouncil.go.kr/viewer/minutes.do?mem_sch=09050&schwrd=&uid=13924",
+  "retrieved_at": "2026-10-01T00:10:25.399047+00:00",
+  "http_status": 200,
+  "original_sha256": "5c8b656227fcf30b0e17c889548dd38f5ceb4cfac69d6fbd61b80716974b602f",
+  "text_sha256": "9c767ff79fc7f0511dacb4c78418e1030da6e6694a1b0062719c14919c15ec5c",
+  "robots": "https://www.goyangcouncil.go.kr/robots.txt allows /viewer/",
+  "representation": "HTMLParser minutes div with block boundaries; whitespace normalization only"
+}

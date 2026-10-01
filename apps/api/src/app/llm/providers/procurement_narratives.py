@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import re
 
-from app.domain.krw import find_amounts, parse_krw
+from app.domain.krw import detect_table_unit, find_amounts, parse_krw
 from app.domain.taxonomy import Category, classify_budget_category
 from app.domain.timing import resolve_timing
 from app.llm.prompts import ChunkContext
@@ -205,4 +205,49 @@ def review_table_signals(ctx: ChunkContext, unit: int) -> list[ExtractedSignal]:
                     budget_document=True,
                 )
             )
+    return signals
+
+
+_REVIEW_HEADING = re.compile(r"(?m)^[ \t]*\d+\)[ \t]+(?P<title>[^\n]+)")
+_REVIEW_TOTAL = re.compile(r"(?m)^[ \t]*계[ \t]+(?P<amount>\d[\d,]*)[ \t]+")
+
+
+def numbered_review_signals(ctx: ChunkContext) -> list[ExtractedSignal]:
+    """Read current-budget totals inside independently headed review sections.
+
+    Require the current/prior-year column order and an explicit local unit.
+    Rounded prose and component costs must not replace the table total.
+    """
+    headings = list(_REVIEW_HEADING.finditer(ctx.text))
+    signals: list[ExtractedSignal] = []
+    for index, heading in enumerate(headings):
+        end = headings[index + 1].start() if index + 1 < len(headings) else len(ctx.text)
+        block = ctx.text[heading.end() : end]
+        title = re.sub(r"\s*\((?:신규|계속|p\.\s*\d+)\)", "", heading.group("title")).strip()
+        if not _PURCHASE.search(title) or _NO_PURCHASE.search(title):
+            continue
+        if re.search(r"사업\s*(?:취소|철회|중단)|편성하지|전액\s*삭감", block):
+            continue
+        header = re.search(r"재원별\s+예산액\s+전년도당초예산액", block)
+        totals = list(_REVIEW_TOTAL.finditer(block))
+        unit = detect_table_unit(block)
+        if not header or len(totals) != 1 or unit is None:
+            continue
+        total = totals[0]
+        if total.start() < header.end():
+            continue
+        amount = parse_krw(total.group("amount"), default_unit=unit)
+        if not amount:
+            continue
+        signals.append(
+            _signal(
+                ctx,
+                title,
+                [heading.group(0).strip(), total.group(0).strip()],
+                "planned",
+                total.group("amount"),
+                amount,
+                budget_document=True,
+            )
+        )
     return signals
