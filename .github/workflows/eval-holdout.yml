@@ -99,6 +99,8 @@ jobs:
               status, out, got = call("https://api.anthropic.com/v1/messages", body)
               err = out.get("error") or {}
               print(f"  one-token message: HTTP {status} {err.get('type', 'ok')} {err.get('message', '')}")
+              # Anthropic support finds a failed call by this ID.
+              print(f"  request id: {got.get('request-id') or out.get('request_id') or 'not sent'}")
               if status != 200:
                   failed = True
           if not any(os.environ.get(n) for n in ("ANTHROPIC_API_KEY", "APP_ANTHROPIC_API_KEY")):
