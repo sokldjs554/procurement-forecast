@@ -101,6 +101,9 @@ jobs:
               print(f"  one-token message: HTTP {status} {err.get('type', 'ok')} {err.get('message', '')}")
               if status != 200:
                   failed = True
+          if not any(os.environ.get(n) for n in ("ANTHROPIC_API_KEY", "APP_ANTHROPIC_API_KEY")):
+              print("::error::Add the ANTHROPIC_API_KEY repository secret first")
+              failed = True
           raise SystemExit(1 if failed else 0)
           PY2
       - name: Run
