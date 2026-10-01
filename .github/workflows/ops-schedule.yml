@@ -97,7 +97,7 @@ jobs:
           uv run manage db upgrade
           uv run manage ops bootstrap
       - name: Bring the originals still waiting from the previous pass
-        uses: actions/cache/restore@v4
+        uses: actions/cache/restore@v6
         with:
           path: .ops-raw
           key: ops-raw-${{ github.run_id }}
@@ -131,7 +131,7 @@ jobs:
           ' "$RUNNER_TEMP/tick.json" >> "$GITHUB_STEP_SUMMARY"
       - name: Carry the originals still waiting to the next pass
         if: always()
-        uses: actions/cache/save@v4
+        uses: actions/cache/save@v6
         with:
           path: .ops-raw
           key: ops-raw-${{ github.run_id }}
