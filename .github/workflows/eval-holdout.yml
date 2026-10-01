@@ -56,7 +56,7 @@ jobs:
         # error type and message are printed.
         run: |
           python3 - <<'PY2'
-          import json, os, urllib.error, urllib.request
+          import json, os, re, urllib.error, urllib.request
           failed = False
           for name in ("ANTHROPIC_API_KEY", "APP_ANTHROPIC_API_KEY"):
               key = os.environ.get(name, "")
@@ -68,8 +68,13 @@ jobs:
                   ("sk-ant-api", "Console API key (sk-ant-api…)"),
                   ("sk-ant-oat", "Claude subscription OAuth token (sk-ant-oat…), not an API key"),
                   ("sk-ant-admin", "Admin API key (sk-ant-admin…)"),
-                  ("sk-ant-", "another sk-ant- key"),
-              ) if k.startswith(prefix)), "not an Anthropic key format")
+              ) if k.startswith(prefix)), None)
+              if kind is None:
+                  # The tag after "sk-ant-" names the credential type (api03, oat01, …); it is the
+                  # same for every credential of that type, so it is safe to print.
+                  tag = k.split("-")[2] if k.startswith("sk-ant-") and k.count("-") >= 3 else ""
+                  kind = (f"sk-ant-{tag}… credential" if re.fullmatch(r"[a-z]{2,8}\d{0,3}", tag)
+                          else "not an Anthropic key format")
               print(f", {len(key)} chars, {len(k)} without outer whitespace, kind: {kind}")
               headers = {"x-api-key": key.strip(), "anthropic-version": "2023-06-01",
                          "content-type": "application/json"}
