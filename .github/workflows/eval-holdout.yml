@@ -46,12 +46,76 @@ jobs:
           enable-cache: true
           cache-dependency-glob: apps/api/uv.lock
       - run: uv sync --frozen
+      - name: Check the API key (never printed)
+        if: inputs.extractor != 'heuristic'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          APP_ANTHROPIC_API_KEY: ${{ secrets.APP_ANTHROPIC_API_KEY }}
+        # Which secret is set, its shape, whether the key is accepted (model list, free), which
+        # organization and workspace it belongs to (last 6 characters of each ID, to compare with
+        # the Console) and what a one-token Haiku call answers. Only lengths, booleans, status
+        # codes, ID endings and the provider's error type and message are printed.
+        run: |
+          python3 - <<'PY2'
+          import json, os, re, urllib.error, urllib.request
+          failed = False
+          for name in ("ANTHROPIC_API_KEY", "APP_ANTHROPIC_API_KEY"):
+              key = os.environ.get(name, "")
+              print(f"{name}: {'set' if key else 'not set'}", end="")
+              if not key:
+                  print(); continue
+              k = key.strip()
+              kind = next((label for prefix, label in (
+                  ("sk-ant-api", "Console API key (sk-ant-api…)"),
+                  ("sk-ant-usr", "probably a Console personal key (sk-ant-usr…)"),
+                  ("sk-ant-oat", "Claude subscription OAuth token (sk-ant-oat…), not an API key"),
+                  ("sk-ant-admin", "Admin API key (sk-ant-admin…)"),
+              ) if k.startswith(prefix)), None)
+              if kind is None:
+                  # The tag after "sk-ant-" names the credential type (api03, oat01, …); it is the
+                  # same for every credential of that type, so it is safe to print.
+                  tag = k.split("-")[2] if k.startswith("sk-ant-") and k.count("-") >= 3 else ""
+                  kind = (f"sk-ant-{tag}… credential" if re.fullmatch(r"[a-z]{2,8}\d{0,3}", tag)
+                          else "not an Anthropic key format")
+              print(f", {len(key)} chars, {len(k)} without outer whitespace, kind: {kind}")
+              headers = {"x-api-key": key.strip(), "anthropic-version": "2023-06-01",
+                         "content-type": "application/json"}
+              def call(url, body=None):
+                  req = urllib.request.Request(url, data=body, headers=headers)
+                  try:
+                      with urllib.request.urlopen(req, timeout=60) as r:
+                          return r.status, json.loads(r.read() or b"{}"), r.headers
+                  except urllib.error.HTTPError as e:
+                      return e.code, json.loads(e.read() or b"{}"), e.headers
+              def tail(value):
+                  # The last 6 characters are enough to tell two IDs apart in the Console.
+                  return f"…{value[-6:]}" if value else "not sent"
+              status, _, got = call("https://api.anthropic.com/v1/models?limit=1")
+              print(f"  model list: HTTP {status}")
+              print(f"  organization the key belongs to: {tail(got.get('anthropic-organization-id'))}")
+              print(f"  workspace it resolved to: {tail(got.get('anthropic-workspace-id'))}")
+              body = json.dumps({"model": "claude-haiku-4-5", "max_tokens": 1,
+                                 "messages": [{"role": "user", "content": "hi"}]}).encode()
+              status, out, got = call("https://api.anthropic.com/v1/messages", body)
+              err = out.get("error") or {}
+              print(f"  one-token message: HTTP {status} {err.get('type', 'ok')} {err.get('message', '')}")
+              # Anthropic support finds a failed call by this ID.
+              print(f"  request id: {got.get('request-id') or out.get('request_id') or 'not sent'}")
+              if status != 200:
+                  failed = True
+          if not any(os.environ.get(n) for n in ("ANTHROPIC_API_KEY", "APP_ANTHROPIC_API_KEY")):
+              print("::error::Add the ANTHROPIC_API_KEY repository secret first")
+              failed = True
+          raise SystemExit(1 if failed else 0)
+          PY2
       - name: Run
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # The app's own name for the key wins when both secrets exist.
+          APP_ANTHROPIC_API_KEY: ${{ secrets.APP_ANTHROPIC_API_KEY }}
         run: |
           if [ "$EXTRACTOR" != "heuristic" ]; then
-            test -n "$ANTHROPIC_API_KEY" || { echo "::error::Add the ANTHROPIC_API_KEY repository secret first"; exit 1; }
+            test -n "$ANTHROPIC_API_KEY$APP_ANTHROPIC_API_KEY" || { echo "::error::Add the ANTHROPIC_API_KEY repository secret first"; exit 1; }
           fi
           dir="$(dirname "$GITHUB_WORKSPACE/$MANIFEST")"
           name="result-$(echo "$EXTRACTOR" | tr ':/' '--')-run${GITHUB_RUN_NUMBER}.json"

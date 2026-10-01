@@ -306,3 +306,21 @@ async def test_a_saved_run_is_scored_again_for_free(
     assert again["extractor"] == "replay of claude-opus-5 · low"
     assert again["after_verifier"] == first["after_verifier"]
     assert again["raw"] == first["raw"]
+
+
+def test_a_prediction_of_an_ambiguous_project_is_set_aside_not_scored() -> None:
+    case = {
+        "id": "a",
+        "expected": [{"title_keywords": ["카페골목"], "budget_krw": 420_000_000}],
+        "ambiguous": ["지중화"],
+    }
+    predictions = [pred("방배카페골목 보행환경 개선", 420_000_000), pred("동광로 지중화사업")]
+    result = score_cases([(case, predictions)])
+    assert result["matched"] == 1
+    assert result["predicted"] == 1 and result["precision"] == 1.0
+    assert result["ambiguous_predictions_set_aside"] == 1
+    assert not any("unexpected" in f for f in result["failures"])
+    # A missed ambiguous project is not a miss either.
+    assert (
+        score_cases([({"id": "b", "expected": [], "ambiguous": ["지중화"]}, [])])["recall"] is None
+    )

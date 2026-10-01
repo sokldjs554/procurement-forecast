@@ -1,0 +1,56 @@
+{
+ "schema_version": "source-holdout-v1",
+ "name": "fresh-minutes-2026-10-01-test",
+ "frozen_before_scoring": true,
+ "frozen_at": "2026-10-01T10:42:16+00:00",
+ "label_origin": "정답: 이 저장소 작업을 맡은 AI(Claude Code)가 2026-10-01 원문만 읽고 작성. 어떤 추출기 출력도 보기 전에 고정. 독립 전문가 정답 아님. 신호 정의는 제품 추출 기준(prompts.py SIGNALS)과 같고, 판단이 갈리는 사업은 ambiguous로 분리(채점에서 제외하고 따로 셈).",
+ "cases_path": "cases-test.jsonl",
+ "cases_sha256": "0ddd10d87aafd3f081023683af258c71f9468630325e0194981c67bc747a6ad4",
+ "sources": [
+  {
+   "id": "경기도-양평군의회-인사청문특별위원회-2026-09-16",
+   "path": "sources/경기도-양평군의회-인사청문특별위원회-2026-09-16.txt",
+   "sha256": "6f0f9c1cc20f99f3b5c135c3c70566b3decf0d246c070b0f784144344c502676",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC3000039220755198",
+   "institution": "경기도 양평군",
+   "title": "경기도 양평군의회 제318회 인사청문특별위원회 제2차 (2026-09-16)",
+   "meeting_date": "2026-09-16"
+  },
+  {
+   "id": "충청북도-영동군의회-행정위원회-2026-09-14",
+   "path": "sources/충청북도-영동군의회-행정위원회-2026-09-14.txt",
+   "sha256": "1562aa1d9d94b3b57d700bfdb2626344afd2dd47d2d5aa2a8f0975cb9c2727aa",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC3028089167654583",
+   "institution": "충청북도 영동군",
+   "title": "충청북도 영동군의회 제344회 행정위원회 제2차 (2026-09-14)",
+   "meeting_date": "2026-09-14"
+  },
+  {
+   "id": "경기도-안양시의회-의회운영위원회-2026-09-09",
+   "path": "sources/경기도-안양시의회-의회운영위원회-2026-09-09.txt",
+   "sha256": "dadc39a4aaed9f0d6acc1e508ce948a64c262f7ba5b5526dc65a33d290565d77",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC2919724403213830",
+   "institution": "경기도 안양시",
+   "title": "경기도 안양시의회 제314회 의회운영위원회 제1차 (2026-09-09)",
+   "meeting_date": "2026-09-09"
+  },
+  {
+   "id": "충청남도의회-예산결산특별위원회-2026-09-10",
+   "path": "sources/충청남도의회-예산결산특별위원회-2026-09-10.txt",
+   "sha256": "b8ff488487a82f2f493412fc451ea313ff3b17a33b432bc8989687e7aba025bc",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC2945741553675532",
+   "institution": "충청남도",
+   "title": "충청남도의회 제371회 예산결산특별위원회 제1차 (2026-09-10)",
+   "meeting_date": "2026-09-10"
+  },
+  {
+   "id": "전북특별자치도-정읍시의회-예산결산특별위원회-2026-09-11",
+   "path": "sources/전북특별자치도-정읍시의회-예산결산특별위원회-2026-09-11.txt",
+   "sha256": "3b900da1270f4e8bf03d36e79ed23f67b1c19f2d8672c1da8f87f4935cea53fd",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC2971584504802638",
+   "institution": "전북특별자치도 정읍시",
+   "title": "전북특별자치도 정읍시의회 제316회 예산결산특별위원회 제1차 (2026-09-11)",
+   "meeting_date": "2026-09-11"
+  }
+ ]
+}
