@@ -12,50 +12,35 @@ jobs:
   checkpoint:
     if: github.event.pull_request.number == 65 && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 8
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
-          persist-credentials: false
-      - uses: astral-sh/setup-uv@v7
-        with:
-          version: "0.8.17"
-          python-version: "3.11"
-      - name: Preserve locked offline verification runtime
-        shell: bash
-        run: |
-          set -euo pipefail
-          mkdir checkpoint
-          git rev-parse HEAD > checkpoint/code-sha.txt
-          uv sync --project apps/api --frozen
-          PYTHON_ROOT=$(dirname "$(dirname "$(readlink -f apps/api/.venv/bin/python)")")
-          tar -czf checkpoint/python311.tar.gz -C "$PYTHON_ROOT" .
-          tar -czf checkpoint/locked-site-packages.tar.gz -C apps/api/.venv/lib/python3.11/site-packages .
-          cp apps/api/uv.lock checkpoint/uv.lock
-          (cd checkpoint && sha256sum *.tar.gz uv.lock > SHA256SUMS)
-      - name: Archive new official sources before evaluation
+      - name: Archive a bounded set of public research sources without executing a model
         shell: python
         run: |
           import datetime, hashlib, json, pathlib, time, urllib.error, urllib.parse, urllib.request, urllib.robotparser
-          out = pathlib.Path('checkpoint/fresh-v5-sources')
-          out.mkdir()
+          out = pathlib.Path('checkpoint/fresh-v6-primary')
+          out.mkdir(parents=True)
           agent = 'ProcurementForecastResearch/1.0'
           targets = [
-              ('mungyeong-3433', 'https://council.gbmg.go.kr/viewer/minutes/3433.do'),
-              ('incheon-dong-2058', 'https://council.icdonggu.go.kr/viewer/minutes/2058.do'),
-              ('okcheon-15645', 'https://council.oc.go.kr/viewer/minutes/15645.do'),
-              ('yangyang-7348', 'https://council.yangyang.go.kr/viewer/minutes/7348.do'),
+              ('namyangju-3729', 'https://www.nyjc.go.kr/minutes/svc/web/cms/mnts/SvcMntsViewer.php?mode=spkr1&schSn=3729&spkrCd=MBR9010'),
+              ('cheongju-3754', 'https://councilrec.cheongju.go.kr/minutes/svc/web/cms/mnts/SvcMntsViewer.php?schSn=3754'),
+              ('cheongju-3707', 'https://councilrec.cheongju.go.kr/minutes/svc/web/cms/mnts/SvcMntsViewer.php?schSn=3707'),
+              ('gangnam-budget-list', 'https://www.gangnam.go.kr/board/B_000742/list.do?mid=ID05_050302&pgno=2'),
+              ('gangnam-public-viewer', 'https://viewer.gangnam.go.kr/SynapDocViewServer/viewer/main.do?filename=02a54cd5-102a-4082-b6dc-37aeb728b39c'),
+              ('exact-input-archive', 'https://archive.org/wayback/available?url=www.gncouncil.go.kr%2Fattach%2Fcouncil_text%2F323%2F323_3_20.pdf&timestamp=20250729'),
           ]
-          robots = {}
+          policies = {}
           for name, url in targets:
               record = {'id': name, 'url': url, 'retrieved_at': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'model_executed': False}
               try:
-                  host = urllib.parse.urlsplit(url).netloc
-                  if host not in robots:
+                  parts = urllib.parse.urlsplit(url)
+                  host = parts.netloc
+                  if parts.path.startswith('/file/'):
+                      raise RuntimeError('excluded attachment path')
+                  if host not in policies:
                       robots_url = 'https://' + host + '/robots.txt'
                       try:
-                          with urllib.request.urlopen(urllib.request.Request(robots_url, headers={'User-Agent': agent}), timeout=30) as r:
+                          with urllib.request.urlopen(urllib.request.Request(robots_url, headers={'User-Agent': agent}), timeout=15) as r:
                               raw = r.read()
                           (out / (host + '-robots.txt')).write_bytes(raw)
                           policy = urllib.robotparser.RobotFileParser()
@@ -65,24 +50,24 @@ jobs:
                               raise
                           policy = None
                           record['robots_status'] = 404
-                      robots[host] = policy
-                  policy = robots[host]
+                      policies[host] = policy
+                  policy = policies[host]
                   if policy is not None and not policy.can_fetch(agent, url):
-                      raise RuntimeError('robots.txt disallows this source')
+                      raise RuntimeError('robots.txt disallows source')
                   time.sleep(max(2, (policy.crawl_delay(agent) or 0) if policy else 0))
-                  with urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': agent}), timeout=40) as r:
-                      raw = r.read()
+                  with urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': agent}), timeout=30) as r:
+                      raw = r.read(16000000)
                       record.update(status=r.status, final_url=r.url, headers={k: r.headers.get(k) for k in ('Content-Type', 'Last-Modified', 'ETag')})
-                  (out / (name + '.html')).write_bytes(raw)
+                  (out / (name + '.raw')).write_bytes(raw)
                   record.update(sha256=hashlib.sha256(raw).hexdigest(), size=len(raw))
               except Exception as exc:
-                  record['error'] = str(exc)
+                  record['error'] = type(exc).__name__ + ': ' + str(exc)
               (out / (name + '.json')).write_text(json.dumps(record, ensure_ascii=False, indent=2), encoding='utf-8')
               print(json.dumps(record, ensure_ascii=False))
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         if: always()
         with:
-          name: research-checkpoint
+          name: fresh-v6-primary
           path: checkpoint/
           if-no-files-found: error
           retention-days: 7
