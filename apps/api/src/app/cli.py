@@ -5,6 +5,7 @@ manage seed [--anchor 2026-09-25] # institutions, sources, demo tenants
 manage demo run                   # full pipeline over the synthetic world, in-process
 manage eval all --record          # extraction / linking / OCR / realistic-set evals
 manage eval llm --dry-run         # Claude model × effort comparison on the hand-written set
+manage eval tenders DIR --since … --until … -i 성남시   # every official 입찰공고 of a period, kept by institution
 manage bench --report ../../docs/performance.md   # hot-query plans at volume
 manage sources check              # first real call to each 조달청 operation (needs the data.go.kr key)
 manage sources check -s clik_minutes   # CLIK minutes list + one detail (needs the CLIK key)
@@ -633,6 +634,67 @@ def eval_freeze(
         return report.to_json()
 
     typer.echo(json.dumps(_run(lambda: _with_session(go)), ensure_ascii=False, indent=2))
+
+
+@eval_app.command("tenders")
+def eval_tenders(
+    out_dir: Path = typer.Argument(
+        ..., file_okay=False, help="Census directory; resumed if present"
+    ),
+    since: str = typer.Option(..., help="First 공고 registration date, YYYY-MM-DD"),
+    until: str = typer.Option(..., help="Last 공고 registration date, YYYY-MM-DD"),
+    institution: list[str] = typer.Option(
+        ..., "--institution", "-i", help="Keep notices whose 공고기관·수요기관 name contains this"
+    ),
+    rows: int = typer.Option(999, min=1, max=999, help="Rows per call"),
+    max_minutes: float = typer.Option(None, min=1, help="Stop cleanly after this long"),
+) -> None:
+    """Census of official 나라장터 입찰공고 for the retrospective check; resumes where it stopped."""
+    from app.eval.tender_census import run_census
+    from app.sources import g2b
+    from app.sources.http import ResilientClient
+    from app.sources.resilience import MemoryBreaker, MemoryLimiter
+
+    configure_logging(json=False, level="WARNING", stream=sys.stderr)
+    settings = get_settings()
+    if not settings.data_go_kr_service_key:
+        raise typer.BadParameter("APP_DATA_GO_KR_SERVICE_KEY is not configured")
+    try:
+        date.fromisoformat(since), date.fromisoformat(until)
+    except ValueError as exc:
+        raise typer.BadParameter("--since and --until take YYYY-MM-DD") from exc
+    key = settings.data_go_kr_service_key.get_secret_value()
+
+    async def go() -> dict[str, Any]:
+        client = ResilientClient(
+            "g2b_bid",
+            base_url=g2b.BASE_URL,
+            limiter=MemoryLimiter(),
+            breaker=MemoryBreaker(),
+            timeout=max(settings.source_http_timeout_seconds, 60.0),  # 999-row pages are MBs
+            max_attempts=settings.source_max_attempts,
+        )
+        try:
+            census = await run_census(
+                client,
+                key,
+                out_dir,
+                since=since,
+                until=until,
+                institutions=institution,
+                rows=rows,
+                max_minutes=max_minutes,
+            )
+        finally:
+            await client.aclose()
+        return {"stopped": census.stopped, "calls": census.calls} | census.summary()
+
+    try:
+        report = _run(go)
+    except ValueError as exc:
+        raise typer.BadParameter(str(exc)) from exc
+    report["incomplete"] = report["incomplete"][:20]
+    typer.echo(json.dumps(report, ensure_ascii=False, indent=2))
 
 
 class LinkReplayOrder(StrEnum):
