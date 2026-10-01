@@ -1,0 +1,10 @@
+{
+  "url": "https://www.gncouncil.go.kr/viewer/pdf/loadFile.do",
+  "method": "POST",
+  "body": "group=appendix&uid=33982",
+  "retrieved_at": "2026-10-01T01:10:10.624463+00:00",
+  "request_note": "Public viewer client flow, cookie jar, Referer and X-Requested-With as jQuery normally sends.",
+  "status": 200,
+  "file": "water-report-public-viewer-lookup.json",
+  "sha256": "2a180eea924af7b2ec79a7c70328001da40f1214a925a157d3f54bee40b95a58"
+}

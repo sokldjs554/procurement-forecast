@@ -1,0 +1,59 @@
+{
+  "model": "Qwen3-4B-Q4_K_M",
+  "messages": [
+    {
+      "role": "system",
+      "content": "주어진 문서에 명시된 내용만 추출하세요. JSON 객체만 출력하세요. project_name은 공고명, deadline은 YYYY-MM-DD HH:MM 형식의 제출 마감일시, budget_krw는 원 단위 정수, deliverables는 납품물 문자열 배열입니다."
+    },
+    {
+      "role": "user",
+      "content": "공고명: 별빛도서관 안내책자 제작\n예산: 1,250만원 (부가가치세 포함)\n제안서 제출 마감: 2026년 11월 9일 15:00\n납품물: 인쇄 안내책자 300부와 편집 원본 파일"
+    }
+  ],
+  "response_format": {
+    "type": "json_schema",
+    "json_schema": {
+      "name": "extraction",
+      "strict": true,
+      "schema": {
+        "type": "object",
+        "properties": {
+          "project_name": {
+            "type": "string"
+          },
+          "deadline": {
+            "type": "string"
+          },
+          "budget_krw": {
+            "type": "integer"
+          },
+          "deliverables": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "project_name",
+          "deadline",
+          "budget_krw",
+          "deliverables"
+        ],
+        "additionalProperties": false
+      }
+    }
+  },
+  "chat_template_kwargs": {
+    "enable_thinking": false
+  },
+  "reasoning_effort": "none",
+  "temperature": 0.7,
+  "top_p": 0.8,
+  "top_k": 20,
+  "min_p": 0,
+  "presence_penalty": 1.5,
+  "seed": 42,
+  "max_tokens": 256,
+  "stream": false
+}

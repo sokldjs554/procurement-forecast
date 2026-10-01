@@ -1,0 +1,23 @@
+{
+  "url": "https://www.gangnam.go.kr/notice/list.do?mid=ID05_040201&keyfield=BNI_MAIN_TITLE&keyword=%EB%B3%B5%ED%95%A9%EB%AC%B8%ED%99%94%EC%84%BC%ED%84%B0",
+  "retrieved_at": "2026-10-01T01:15:21.856574+00:00",
+  "status": 200,
+  "resolved_url": "https://www.gangnam.go.kr/notice/list.do?mid=ID05_040201&keyfield=BNI_MAIN_TITLE&keyword=%EB%B3%B5%ED%95%A9%EB%AC%B8%ED%99%94%EC%84%BC%ED%84%B0",
+  "headers": {
+    "Date": "Thu, 01 Oct 2026 01:15:28 GMT",
+    "Server": ".",
+    "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+    "Cache-Control": "private",
+    "Access-Control-Allow-Origin": "*",
+    "Content-Language": "en",
+    "Content-Type": "text/html; charset=utf-8",
+    "Connection": "close",
+    "Transfer-Encoding": "chunked"
+  },
+  "file": "notice-remodel.html",
+  "sha256": "621b81e5385f3c8acabafbaaa2d65a2f3a94c5a7af4eb30d029f6f46c8cc263c",
+  "bytes": 453511,
+  "omitted_response_headers": [
+    "Set-Cookie"
+  ]
+}

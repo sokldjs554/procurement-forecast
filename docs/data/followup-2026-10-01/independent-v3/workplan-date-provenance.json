@@ -1,0 +1,11 @@
+{
+  "url": "https://www.sbc.go.kr/record/recordView.do?key=16fc3826ae86fdf1a239a0645fcd88ff78ed759329747f391e42cd42b3302596c134e803c722f96b&memberName=",
+  "path": "workplan-date-provenance.html",
+  "sha256": "eb4ba5b674dba2063d5e982d9aac404ac7a1fa56f9e1880974dc147a971e4dee",
+  "fetched_at": "2026-10-01T01:08:22.413234+00:00",
+  "purpose": "Date provenance and appendix attribution only. Not a source for case excerpt selection. Robots policy already checked for this host and absent (404).",
+  "meeting_date": "2024-02-21",
+  "appendix_url": "https://www.sbc.go.kr/record/appendixDownload.do?key=3cfd2fba3667030ce1d3f205bc3713a1d39bd86bfac3498c0e5b7905e5f20df540e81dbc410605a1",
+  "appendix_sha256": "b29ca0a95cbd76171fd0073fbaa18db11587634393ebbd3b268087ccca7a645e",
+  "same_as_archived_workplan": true
+}

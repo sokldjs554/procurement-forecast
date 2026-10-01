@@ -1,0 +1,912 @@
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	<meta charset="UTF-8" />
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge, chrome=1" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
+	<meta name='robots' content='index,follow' />
+	<meta id="csrf_header" name="_header" content="" />
+	<meta id="csrf" name="" content="" />
+	<meta name="author" content="강남구의회" />
+	<meta name="subject" content="서울특별시강남구의회 제9대 제323회 서울특별시강남구의회본회의 제3차 회의록" />
+	<meta name="copyright" content="강남구의회" />
+	<title>서울특별시강남구의회 제9대 제323회 서울특별시강남구의회본회의 제3차 회의록</title>
+	<link rel="icon" href="/images/common/favicon.ico" type="image/x-icon" />
+	<link href="/material/font/font-roboto.css" rel="stylesheet" type="text/css" />
+	<link href="/material/font/font-noto-sans-kr.css" rel="stylesheet" type="text/css" />
+	<link href="/material/font/font-nanum-gothic.css" rel="stylesheet" type="text/css" />
+	<link href="/material/font/font-nanum-myeongjo.css" rel="stylesheet" type="text/css" />
+	<link href="/material/font/font-material-icons.css" rel="stylesheet" type="text/css" />
+	<link href="/assets/icons/XEIcon/xeicon.min.css" rel="stylesheet" />
+	<link href="/assets/icons/fontawesome/css/fontawesome.min.css" rel="stylesheet" />
+
+	<link href="/material/plugins/bootstrap/css/bootstrap.css" rel="stylesheet" />
+	
+	<link href="/material/plugins/node-waves/waves.css" rel="stylesheet" />
+	
+	<link href="/material/plugins/animate-css/animate.css" rel="stylesheet" />
+	<link href="/material/plugins/morrisjs/morris.css" rel="stylesheet" />
+
+	<link href="/material/css/style.css" rel="stylesheet" />
+	<link href="/material/css/themes/all-themes.css" rel="stylesheet" />
+	<link href="/resources/viewer/minutes/common.css" rel="stylesheet" />
+	<link href="/css/profile.css?1790816862523" rel="stylesheet" type="text/css" />
+	<link href="/resources/viewer/minutes/viewer.css?1790816862523" rel="stylesheet" />
+	
+
+	
+	
+</head>
+<body class="theme-light-blue"> 
+ <div class="minutes_view">
+	
+	<!-- Page Loader -->
+	<div class="page-loader-wrapper">
+		<div class="loader">
+			<div class="preloader">
+				<div class="spinner-layer pl-light-blue">
+					<div class="circle-clipper left">
+						<div class="circle"></div>
+					</div>
+					<div class="circle-clipper right">
+						<div class="circle"></div>
+					</div>
+				</div>
+			</div>
+			<p>회의록을 불러오는 중입니다.</p>
+		</div>
+	</div>
+	<!-- #END# Page Loader -->
+	
+	<div class="overlay"></div>
+	<!-- #END# Search Bar -->
+	
+
+
+
+<!-- Top Bar -->
+        <div class="header">
+            <div class="logo_wrap">
+                <h1 class="logo">
+                    <a href="https://www.gncouncil.go.kr/kr/main.do" target="_blank" title="강남구의회 홈페이지 바로가기 (새창열림)">
+                        <img src="/images/common/ico_logo.png" alt="의회마크">
+                    </a>
+                    서울특별시강남구의회 회의록
+                </h1>
+                <a href="https://www.gncouncil.go.kr/kr/main.do" target="_blank" title="강남구의회 홈페이지 바로가기 (새창열림)" class="home">GANGNAM-GU COUNCIL</a>
+            </div>
+            <div class="util_wrap">
+                <button type="button" class="bt_util">메뉴 열기</button>
+                <div class="util">
+                    <div class="search">
+                        <button type="button" class="bt_search">검색 열기</button>
+                        <form action="" name="sidebar-form" method="post" id="sidebar-form">
+                            <input type="hidden" name="mode" value="process">
+                            <fieldset>
+                                <legend>검색</legend>
+                                <input type="text" name="keyword" id="topkeyword" value="" placeholder="검색어를 입력해 주세요." title="검색어를 입력해 주세요">
+                                <div class="btns">
+                                <button type="submit" class ="btns_search">검색</button>
+                                <button type="button" name="pre" id="pre-btn" class="btns_prev">이전 검색</button>
+	                            <button type="button" name="next" id="next-btn" class="btns_next">다음 검색</button>
+	                            </div>
+                            </fieldset>
+                            <!--<span style="color:red;"id ="search_result"></span> -->
+                        </form>
+                    </div>
+                    <ul>
+						
+                        <li><a href="javascript:void(0);" id="print-minutes" title="현재페이지를 인쇄합니다.(새창열림)" class="bt_print">프린터하기</a></li>
+                        <li>
+                            <button type="button" class="bt_font">가</button>
+                            <div class="list">
+                                <ul id="font-dropdown-menu">
+                                    <li><button type="button" class="change-font waves-effect waves-block" data-font="gulim">굴림체</button></li>
+                                    <li><button type="button" class="change-font waves-effect waves-block" data-font="dotum">돋움체</button></li>
+                                    <li><button type="button" class="change-font waves-effect waves-block" data-font="gungsuh">궁서체</button></li>
+                                    <li><button type="button" class="change-font waves-effect waves-block" data-font="nanum-gothic">나눔 고딕체</button></li>
+                                    <li><button type="button" class="change-font waves-effect waves-block" data-font="nanum-myeongjo">나눔 명조체</button></li>
+                                    <li><button type="button" class="change-font waves-effect waves-block" data-font="default">글자체 초기화</button></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li>
+                            <button type="button" class="bt_size">확대/축소</button>
+                            <div class="list">
+                                <ul id="font-size-dropdown-menu">
+                                
+                                    <li><button type="button" class="change-font-size waves-effect waves-block" data-font-size="10">10pt</button></li>
+                                    
+                                    <li><button type="button" class="change-font-size waves-effect waves-block" data-font-size="11">11pt</button></li>
+                                    
+                                    <li><button type="button" class="change-font-size waves-effect waves-block" data-font-size="12">12pt</button></li>
+                                    
+                                    <li><button type="button" class="change-font-size waves-effect waves-block" data-font-size="13">13pt</button></li>
+                                    
+                                    <li><button type="button" class="change-font-size waves-effect waves-block" data-font-size="14">14pt</button></li>
+                                    
+                                    <li><button type="button" class="change-font-size waves-effect waves-block" data-font-size="15">15pt</button></li>
+                                    
+                                    <li><button type="button" class="change-font-size waves-effect waves-block" data-font-size="16">16pt</button></li>
+                                    
+                                    <li><button type="button" class="change-font-size waves-effect waves-block" data-font-size="17">17pt</button></li>
+                                    
+                                    <li><button type="button" class="change-font-size waves-effect waves-block" data-font-size="18">18pt</button></li>
+                                    
+                                    <li><button type="button" class="change-font-size waves-effect waves-block" data-font-size="19">19pt</button></li>
+                                    
+                                    <li><button type="button" class="change-font-size waves-effect waves-block" data-font-size="20">20pt</button></li>
+                                    
+                                    <li><button type="button" class="change-font-size waves-effect waves-block" data-font-size="21">21pt</button></li>
+                                    
+                                    <li><button type="button" class="change-font-size waves-effect waves-block" data-font-size="22">22pt</button></li>
+                                    
+                                    <li><button type="button" class="change-font-size waves-effect waves-block" data-font-size="23">23pt</button></li>
+                                    
+                                    <li><button type="button" class="change-font-size waves-effect waves-block" data-font-size="24">24pt</button></li>
+                                    
+                                    <li><button type="button" class="change-font-size waves-effect waves-block" data-font-size="25">25pt</button></li>
+                                    
+                                    <li><button type="button" class="change-font-size waves-effect waves-block" data-font-size="26">26pt</button></li>
+                                    
+                                    <li><button type="button" class="change-font-size waves-effect waves-block" data-font-size="27">27pt</button></li>
+                                    
+                                    <li><button type="button" class="change-font-size waves-effect waves-block" data-font-size="28">28pt</button></li>
+                                    
+                                    <li><button type="button" class="change-font-size waves-effect waves-block" data-font-size="29">29pt</button></li>
+                                    
+                                    <li><button type="button" class="change-font-size waves-effect waves-block" data-font-size="30">30pt</button></li>
+                                    
+                                    <li><button type="button" class="change-font-size waves-effect waves-block" data-font-size="10">글자크기 초기화</button></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li>
+                            <button type="button" class="bt_between">간격</button>
+                            <div class="list">
+                                <ul id="line-height-dropdown-menu">
+                                	
+                                    <li><button type="button" class="change-line-height waves-effect waves-block" data-line-height="100">100%</button></li>
+                                    
+                                    <li><button type="button" class="change-line-height waves-effect waves-block" data-line-height="110">110%</button></li>
+                                    
+                                    <li><button type="button" class="change-line-height waves-effect waves-block" data-line-height="120">120%</button></li>
+                                    
+                                    <li><button type="button" class="change-line-height waves-effect waves-block" data-line-height="130">130%</button></li>
+                                    
+                                    <li><button type="button" class="change-line-height waves-effect waves-block" data-line-height="140">140%</button></li>
+                                    
+                                    <li><button type="button" class="change-line-height waves-effect waves-block" data-line-height="150">150%</button></li>
+                                    
+                                    <li><button type="button" class="change-line-height waves-effect waves-block" data-line-height="160">160%</button></li>
+                                    
+                                    <li><button type="button" class="change-line-height waves-effect waves-block" data-line-height="170">170%</button></li>
+                                    
+                                    <li><button type="button" class="change-line-height waves-effect waves-block" data-line-height="180">180%</button></li>
+                                    
+                                    <li><button type="button" class="change-line-height waves-effect waves-block" data-line-height="190">190%</button></li>
+                                    
+                                    <li><button type="button" class="change-line-height waves-effect waves-block" data-line-height="200">200%</button></li>
+                                    
+                                    <li><button type="button" class="change-line-height waves-effect waves-block" data-line-height="210">210%</button></li>
+                                    
+                                    <li><button type="button" class="change-line-height waves-effect waves-block" data-line-height="220">220%</button></li>
+                                    
+                                    <li><button type="button" class="change-line-height waves-effect waves-block" data-line-height="230">230%</button></li>
+                                    
+                                    <li><button type="button" class="change-line-height waves-effect waves-block" data-line-height="240">240%</button></li>
+                                    
+                                    <li><button type="button" class="change-line-height waves-effect waves-block" data-line-height="250">250%</button></li>
+                                    
+                                    <li><button type="button" class="change-line-height waves-effect waves-block" data-line-height="260">260%</button></li>
+                                    
+                                    <li><button type="button" class="change-line-height waves-effect waves-block" data-line-height="270">270%</button></li>
+                                    
+                                    <li><button type="button" class="change-line-height waves-effect waves-block" data-line-height="280">280%</button></li>
+                                    
+                                    <li><button type="button" class="change-line-height waves-effect waves-block" data-line-height="290">290%</button></li>
+                                    
+                                    <li><button type="button" class="change-line-height waves-effect waves-block" data-line-height="300">300%</button></li>
+                                    
+                                    <li><button type="button" class="change-line-height waves-effect waves-block" data-line-height="100">줄간격 초기화</button></li>
+                                </ul>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+<!-- #Top Bar -->
+	
+
+
+
+<!-- Left Sidebar -->
+        <div class="lnb_wrap">
+            <button type="button" class="bt_menu">
+                <span class="skip">전체 메뉴</span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
+            <div class="list_wrap on">
+                <div class="list list1">
+                    <button type="button" class="tit active">회의록</button>
+                    <div class="txt">
+                        <ul>
+                            <li>
+                                <button type="button" class="tit2">부의안건</button>
+                                <div class="con con1">
+                                    <ul>
+						                
+							                
+								              <li><a href="#item1" title="⊙  5분 자유발언(윤석민의원)" data-item="1"><span>⊙  5분 자유발언(윤석민의원)</span></a></li>
+							                
+								              <li><a href="#item2" title="1.  탄천물재생센터 주민협의회 위원 추천의 건(의장 제의)" data-item="2"><span>1.  탄천물재생센터 주민협의회 위원 추천의 건(의장 제의)</span></a></li>
+							                
+								              <li><a href="#item3" title="2.  2024년도 강남구의회 운영위원회 행정사무감사 결과보고서 승인의 건(운영위원장 제안)" data-item="3"><span>2.  2024년도 강남구의회 운영위원회 행정사무감사 결과보고서 승인의 건(운영위원장 제안)</span></a></li>
+							                
+								              <li><a href="#item4" title="3.  2024년도 강남구의회 행정안전위원회 행정사무감사 결과보고서 승인의 건(행정안전위원장 제안)" data-item="4"><span>3.  2024년도 강남구의회 행정안전위원회 행정사무감사 결과보고서 승인의 건(행정안전위원장 제안)</span></a></li>
+							                
+								              <li><a href="#item5" title="4.  2024년도 강남구의회 경제도시위원회 행정사무감사 결과보고서 승인의 건(경제도시위원장 제안)" data-item="5"><span>4.  2024년도 강남구의회 경제도시위원회 행정사무감사 결과보고서 승인의 건(경제도시위원장 제안)</span></a></li>
+							                
+								              <li><a href="#item6" title="5.  2024년도 강남구의회 복지문화위원회 행정사무감사 결과보고서 승인의 건(복지문화위원장 제안)" data-item="6"><span>5.  2024년도 강남구의회 복지문화위원회 행정사무감사 결과보고서 승인의 건(복지문화위원장 제안)</span></a></li>
+							                
+								              <li><a href="#item7" title="6.  서울특별시 강남구 구민의 상 조례 일부개정조례안(황영각의원 등 13인 발의)" data-item="7"><span>6.  서울특별시 강남구 구민의 상 조례 일부개정조례안(황영각의원 등 13인 발의)</span></a></li>
+							                
+								              <li><a href="#item8" title="7.  서울특별시 강남구 공유재산 및 물품 관리 조례 일부개정조례안(노애자의원 등 10인 발의)" data-item="8"><span>7.  서울특별시 강남구 공유재산 및 물품 관리 조례 일부개정조례안(노애자의원 등 10인 발의)</span></a></li>
+							                
+								              <li><a href="#item9" title="8.  서울특별시 강남구 전문가무료상담실 설치 및 운영 조례 일부개정조례안(이성수의원 등 11인 발의)" data-item="9"><span>8.  서울특별시 강남구 전문가무료상담실 설치 및 운영 조례 일부개정조례안(이성수의원 등 11인 발의)</span></a></li>
+							                
+								              <li><a href="#item10" title="9.  서울특별시 강남구 중대재해 예방 및 관리에 관한 조례안(구청장 제출)" data-item="10"><span>9.  서울특별시 강남구 중대재해 예방 및 관리에 관한 조례안(구청장 제출)</span></a></li>
+							                
+								              <li><a href="#item11" title="10. 서울특별시 강남구 재난현장 통합자원봉사지원단 구성 및 운영 등에 관한 조례안(구청장 제출)" data-item="11"><span>10. 서울특별시 강남구 재난현장 통합자원봉사지원단 구성 및 운영 등에 관한 조례안(구청장 제출)</span></a></li>
+							                
+								              <li><a href="#item12" title="11. 서울특별시 강남구 수수료 징수 조례 일부개정조례안(김영권의원 등 7인 발의)" data-item="12"><span>11. 서울특별시 강남구 수수료 징수 조례 일부개정조례안(김영권의원 등 7인 발의)</span></a></li>
+							                
+								              <li><a href="#item13" title="12. 대치우성1차ㆍ쌍용2차아파트 통합재건축정비계획 결정(변경)을 위한 의견청취(안)(구청장 제출)" data-item="13"><span>12. 대치우성1차ㆍ쌍용2차아파트 통합재건축정비계획 결정(변경)을 위한 의견청취(안)(구청장 제출)</span></a></li>
+							                
+								              <li><a href="#item14" title="13. 대치쌍용1차 아파트 재건축정비사업정비계획 결정(변경)을 위한 의견청취(안)(구청장 제출)" data-item="14"><span>13. 대치쌍용1차 아파트 재건축정비사업정비계획 결정(변경)을 위한 의견청취(안)(구청장 제출)</span></a></li>
+							                
+								              <li><a href="#item15" title="14. 압구정특별계획구역⑤ 도시관리계획(압구정 아파트지구 개발 기본계획 및 지구단위계획구역) 및 정비계획(변경) 결정을 위한 의견청취안(구청장 제출)" data-item="15"><span>14. 압구정특별계획구역⑤ 도시관리계획(압구정 아파트지구 개발 기본계획 및 지구단위계획구역) 및 정비계획(변경) 결정을 위한 의견청취안(구청장 제출)</span></a></li>
+							                
+								              <li><a href="#item16" title="15. 압구정특별계획구역③ 도시관리계획(압구정 아파트지구 개발 기본계획 및 지구단위계획구역) 및 정비계획(변경) 결정을 위한 의견청취안(구청장 제출)" data-item="16"><span>15. 압구정특별계획구역③ 도시관리계획(압구정 아파트지구 개발 기본계획 및 지구단위계획구역) 및 정비계획(변경) 결정을 위한 의견청취안(구청장 제출)</span></a></li>
+							                
+								              <li><a href="#item17" title="16. 서울특별시 강남구 개인정보 보호 사업 활성화 지원 조례안(이성수의원 등 11인 발의)" data-item="17"><span>16. 서울특별시 강남구 개인정보 보호 사업 활성화 지원 조례안(이성수의원 등 11인 발의)</span></a></li>
+							                
+								              <li><a href="#item18" title="17. 서울특별시 강남구 출자·출연기관 사이버보안 관리 조례안(구청장 제출)" data-item="18"><span>17. 서울특별시 강남구 출자·출연기관 사이버보안 관리 조례안(구청장 제출)</span></a></li>
+							                
+								              <li><a href="#item19" title="18. 서울특별시 강남구 독서문화 진흥에 관한 조례 전부개정조례안(우종혁의원 등 10인 발의)" data-item="19"><span>18. 서울특별시 강남구 독서문화 진흥에 관한 조례 전부개정조례안(우종혁의원 등 10인 발의)</span></a></li>
+							                
+								              <li><a href="#item20" title="19. 서울특별시 강남구 공중화장실 등의 설치 및 관리 조례 일부개정조례안(복지문화위원장 제안)" data-item="20"><span>19. 서울특별시 강남구 공중화장실 등의 설치 및 관리 조례 일부개정조례안(복지문화위원장 제안)</span></a></li>
+							                
+								              <li><a href="#item21" title="20. 2025년도 예산안(구청장 제출)" data-item="21"><span>20. 2025년도 예산안(구청장 제출)</span></a></li>
+							                
+								              <li><a href="#item22" title="21. 2025년도 기금운용계획안(구청장 제출)" data-item="22"><span>21. 2025년도 기금운용계획안(구청장 제출)</span></a></li>
+							                
+						                
+						                
+                                    </ul>
+                                </div>
+                            </li>
+                            <li>
+                                <button type="button" class="tit2">관련부록</button>
+                                <ul class="con con2">
+					               
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31938" target="_blank">보고사항</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=35145" target="_blank">탄천물재생센터 주민협의회 위원 추천 명단</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31940" target="_blank">2024년도 강남구의회 운영위원회 행정사무감사 결과보고서 승인의 건(운영위원회 소관</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31941" target="_blank">2024년도 강남구의회 행정안전위원회 행정사무감사 결과보고서 승인의 건(행정안전위원회 소관)</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31942" target="_blank">2024년도 강남구의회 경제도시위원회 행정사무감사 결과보고서 승인의 건(경제도시위원회 소관)</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31943" target="_blank">2024년도 강남구의회 복지문화위원회 행정사무감사 결과보고서 승인의 건(복지문화위원회 소관)</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31944" target="_blank">서울특별시 강남구 구민의 상 조례 일부개정조례안 심사보고서</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31945" target="_blank">서울특별시 강남구 구민의 상 조례 일부개정조례안 수정안</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31946" target="_blank">서울특별시 강남구 구민의 상 조례 일부개정조례안</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31947" target="_blank">서울특별시 강남구 공유재산 및 물품 관리 조례 일부개정조례안 심사보고서</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31948" target="_blank">서울특별시 강남구 공유재산 및 물품 관리 조례 일부개정조례안 수정안</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31949" target="_blank">서울특별시 강남구 공유재산 및 물품 관리 조례 일부개정조례안</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31950" target="_blank">서울특별시 강남구 전문가무료상담실 설치 및 운영 조례 일부개정조례안 심사보고서</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31951" target="_blank">서울특별시 강남구 전문가무료상담실 설치 및 운영 조례 일부개정조례안 수정안</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31952" target="_blank">서울특별시 강남구 전문가무료상담실 설치 및 운영 조례 일부개정조례안</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31953" target="_blank">서울특별시 강남구 중대재해 예방 및 관리에 관한 조례안 심사보고서</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31954" target="_blank">서울특별시 강남구 중대재해 예방 및 관리에 관한 조례안 수정안</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31955" target="_blank">서울특별시 강남구 중대재해 예방 및 관리에 관한 조례안</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31956" target="_blank">서울특별시 강남구 재난현장 통합자원봉사지원단 구성 및 운영 등에 관한 조례안 심사보고서</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31957" target="_blank">서울특별시 강남구 재난현장 통합자원봉사지원단 구성 및 운영 등에 관한 조례안</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31958" target="_blank">서울특별시 강남구 수수료 징수 조례 일부개정조례안 심사보고서</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31959" target="_blank">서울특별시 강남구 수수료 징수 조례 일부개정조례안 수정안</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31960" target="_blank">서울특별시 강남구 수수료 징수 조례 일부개정조례안</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31961" target="_blank">대치우성1차, 쌍용2차아파트 통합재건축정비계획 결정(변경)을 위한 의견청취안 심사보고서</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31962" target="_blank">대치우성1차, 쌍용2차아파트 통합재건축정비계획 결정(변경)을 위한 의견청취안</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31963" target="_blank">대치쌍용1차 아파트 재건축정비사업정비계획 결정(변경)을 위한 의견청취안 심사보고서</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31964" target="_blank">대치쌍용1차 아파트 재건축정비사업정비계획 결정(변경)을 위한 의견청취안</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31965" target="_blank">압구정특별계획구역5 도시관리계획(압구정 아파트지구 개발 기본계획 및 지구단위계획구역 및 정비계획(변경) 결정을 위한 의견청취안 심사보고서</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31966" target="_blank">압구정특별계획구역5 도시관리계획(압구정 아파트지구 개발 기본계획 및 지구단위계획구역 및 정비계획(변경) 결정을 위한 의견청취안</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31967" target="_blank">압구정특별계획구역3 도시관리계획(압구정 아파트지구 개발 기본계획 및 지구단위계획구역 및 정비계획(변경) 결정을 위한 의견청취안 심사보고서</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31968" target="_blank">압구정특별계획구역3 도시관리계획(압구정 아파트지구 개발 기본계획 및 지구단위계획구역 및 정비계획(변경) 결정을 위한 의견청취안</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31969" target="_blank">서울특별시 강남구 개인정보 보호 사업 활성화 지원 조례안 심사보고서</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31970" target="_blank">서울특별시 강남구 개인정보 보호 사업 활성화 지원 조례안 수정안</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31971" target="_blank">서울특별시 강남구 개인정보 보호 사업 활성화 지원 조례안</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31972" target="_blank">서울특별시 강남구 출자출연기관 사이버보안 관리 조례안 심사보고서</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31973" target="_blank">서울특별시 강남구 출자출연기관 사이버보안 관리 조례안 수정안</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31974" target="_blank">서울특별시 강남구 출자ㆍ출연기관 사이버보안 관리 조례안</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31975" target="_blank">서울특별시 강남구 독서문화 진흥에 관한 조례 전부개정조례안 심사보고서</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31976" target="_blank">서울특별시 강남구 독서문화 진흥에 관한 조례 전부개정조례안 수정안</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31977" target="_blank">서울특별시 강남구 독서문화 진흥에 관한 조례 전부개정조례안</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31978" target="_blank">서울특별시 강남구 공중화장실 등의 설치 및 관리 조례 일부개정조례안 심사보고서</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31979" target="_blank">서울특별시 강남구 공중화장실 등의 설치 및 관리 조례 일부개정조례안</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31980" target="_blank">2025년도 예산안 및 2025년도 기금운용계획안 심사보고서</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31981" target="_blank">2025년도 예산안 및 기금운용계획안 수정안</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31982" target="_blank">2025년도 예산안</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31983" target="_blank">2025년도 예산안</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31984" target="_blank">2025년도 기금운용계획안</a></li>
+								              
+								              
+							              
+						               
+							              
+								              
+							                    <li><a href="/viewer/pdf.do?group=appendix&uid=31985" target="_blank">2025년도 기금운용계획안</a></li>
+								              
+								              
+							              
+						               
+					               
+					               
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="list list2">
+                    <button type="button" class="tit">관련 회의록</button>
+                    <div class="txt">
+                        <ul>
+			                
+				                
+					                <li><a href="/viewer/minutes.do?uid=8868">
+						                 제323회 개회식 회의록
+					                </a></li>
+				                
+					                <li><a href="/viewer/minutes.do?uid=8527">
+						                 제323회 제1차 회의록
+					                </a></li>
+				                
+					                <li><a href="/viewer/minutes.do?uid=8530">
+						                 제323회 제2차 회의록
+					                </a></li>
+				                
+			                
+			                			                
+                        </ul>
+                    </div>
+                </div>                
+                <div class="list list3">
+                    <button type="button" class="tit">발언 의원</button>
+                    <div class="txt">
+                        <ul>
+			                
+				                
+					                
+					                	<li>
+					                	<div class="attend_member_checkbox">
+											<input type="checkbox" name="attend_member" id="attend_member_09001" value="09001" />
+											<label for="attend_member_09001" title="이호귀 의원 발언내용만 보기">&nbsp;&nbsp;&nbsp;이호귀</label>
+										</div>
+										</li>
+						                <!--<li><button type="button" name="attend_member"id="attend_member_09001" value="09001">이호귀</button></li>-->
+					                
+				                
+					                
+				                
+					                
+				                
+					                
+					                	<li>
+					                	<div class="attend_member_checkbox">
+											<input type="checkbox" name="attend_member" id="attend_member_09023" value="09023" />
+											<label for="attend_member_09023" title="오온누리 의원 발언내용만 보기">&nbsp;&nbsp;&nbsp;오온누리</label>
+										</div>
+										</li>
+						                <!--<li><button type="button" name="attend_member"id="attend_member_09023" value="09023">오온누리</button></li>-->
+					                
+				                
+					                
+					                	<li>
+					                	<div class="attend_member_checkbox">
+											<input type="checkbox" name="attend_member" id="attend_member_09018" value="09018" />
+											<label for="attend_member_09018" title="손민기 의원 발언내용만 보기">&nbsp;&nbsp;&nbsp;손민기</label>
+										</div>
+										</li>
+						                <!--<li><button type="button" name="attend_member"id="attend_member_09018" value="09018">손민기</button></li>-->
+					                
+				                
+					                
+					                	<li>
+					                	<div class="attend_member_checkbox">
+											<input type="checkbox" name="attend_member" id="attend_member_09017" value="09017" />
+											<label for="attend_member_09017" title="김진경 의원 발언내용만 보기">&nbsp;&nbsp;&nbsp;김진경</label>
+										</div>
+										</li>
+						                <!--<li><button type="button" name="attend_member"id="attend_member_09017" value="09017">김진경</button></li>-->
+					                
+				                
+					                
+				                
+					                
+				                
+					                
+				                
+					                
+				                
+					                
+				                
+					                
+					                	<li>
+					                	<div class="attend_member_checkbox">
+											<input type="checkbox" name="attend_member" id="attend_member_09009" value="09009" />
+											<label for="attend_member_09009" title="안지연 의원 발언내용만 보기">&nbsp;&nbsp;&nbsp;안지연</label>
+										</div>
+										</li>
+						                <!--<li><button type="button" name="attend_member"id="attend_member_09009" value="09009">안지연</button></li>-->
+					                
+				                
+					                
+					                	<li>
+					                	<div class="attend_member_checkbox">
+											<input type="checkbox" name="attend_member" id="attend_member_06015" value="06015" />
+											<label for="attend_member_06015" title="윤석민 의원 발언내용만 보기">&nbsp;&nbsp;&nbsp;윤석민</label>
+										</div>
+										</li>
+						                <!--<li><button type="button" name="attend_member"id="attend_member_06015" value="06015">윤석민</button></li>-->
+					                
+				                
+					                
+				                
+					                
+				                
+					                
+				                
+					                
+				                
+					                
+				                
+					                
+				                
+					                
+					                	<li>
+					                	<div class="attend_member_checkbox">
+											<input type="checkbox" name="attend_member" id="attend_member_09021" value="09021" />
+											<label for="attend_member_09021" title="이동호 의원 발언내용만 보기">&nbsp;&nbsp;&nbsp;이동호</label>
+										</div>
+										</li>
+						                <!--<li><button type="button" name="attend_member"id="attend_member_09021" value="09021">이동호</button></li>-->
+					                
+				                
+					                
+				                
+					                
+				                
+					                
+				                
+			                
+			                                        
+                        </ul>
+                    </div>
+                </div>
+                <div class="list list2">
+                    <button type="button" class="tit">관련 영상</button>
+                    <div class="txt">
+	                    <ul>
+	                    	
+								
+									
+										
+										
+										
+										<li>
+											<a href="/viewer/video/minutes/1802.do" onclick="window.open(this.href,'video','width=1930,height=950,scrollbars=no'); return false;" target="_blank" title=" 제323회 제1차 영상 회의록"> 제323회 제1차 영상 회의록</a>
+										</li>
+									
+										
+										
+										
+										<li>
+											<a href="/viewer/video/minutes/1822.do" onclick="window.open(this.href,'video','width=1930,height=950,scrollbars=no'); return false;" target="_blank" title=" 제323회 제2차 영상 회의록"> 제323회 제2차 영상 회의록</a>
+										</li>
+									
+										
+										
+										
+										<li>
+											<a href="/viewer/video/minutes/1833.do" onclick="window.open(this.href,'video','width=1930,height=950,scrollbars=no'); return false;" target="_blank" title=" 제323회 제3차 영상 회의록"> 제323회 제3차 영상 회의록</a>
+										</li>
+									
+								
+								
+							
+	                    </ul>
+                    </div>
+                </div>              
+             </div>
+        </div>                
+<!-- #END# Left Sidebar -->
+
+	
+
+
+<div class="container" id="minutes_print">
+	<div class="content" id="minutes_top">
+    <div class="content-wrapper" id="canvas"><div id='minutes'><div id='minutes-header'><p class='session-line'>제323회&nbsp;강남구의회(제2차정례회)</p><h1 class='align-center' id='minutes-title-line'>서울특별시강남구의회본회의회의록</h1><p class='align-right' id='order-line'>제3호</p><p class='align-right' id='office-line'>서울특별시강남구의회사무국</p><hr /><p id='date-line'>&nbsp;&nbsp;2024년12월19일(목)10시01분</p></div><hr /><ol id='agenda-block'><li class='agenda_line font-bold'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;의사일정(제3차본회의)</li><li class='agenda_line'>1.&nbsp;&nbsp;탄천물재생센터&nbsp;주민협의회&nbsp;위원&nbsp;추천의&nbsp;건</li><li class='agenda_line'>2.&nbsp;&nbsp;2024년도&nbsp;강남구의회&nbsp;운영위원회&nbsp;행정사무감사&nbsp;결과보고서&nbsp;승인의&nbsp;건</li><li class='agenda_line'>3.&nbsp;&nbsp;2024년도&nbsp;강남구의회&nbsp;행정안전위원회&nbsp;행정사무감사&nbsp;결과보고서&nbsp;승인의&nbsp;건</li><li class='agenda_line'>4.&nbsp;&nbsp;2024년도&nbsp;강남구의회&nbsp;경제도시위원회&nbsp;행정사무감사&nbsp;결과보고서&nbsp;승인의&nbsp;건</li><li class='agenda_line'>5.&nbsp;&nbsp;2024년도&nbsp;강남구의회&nbsp;복지문화위원회&nbsp;행정사무감사&nbsp;결과보고서&nbsp;승인의&nbsp;건</li><li class='agenda_line'>6.&nbsp;&nbsp;서울특별시&nbsp;강남구&nbsp;구민의&nbsp;상&nbsp;조례&nbsp;일부개정조례안</li><li class='agenda_line'>7.&nbsp;&nbsp;서울특별시&nbsp;강남구&nbsp;공유재산&nbsp;및&nbsp;물품&nbsp;관리&nbsp;조례&nbsp;일부개정조례안</li><li class='agenda_line'>8.&nbsp;&nbsp;서울특별시&nbsp;강남구&nbsp;전문가무료상담실&nbsp;설치&nbsp;및&nbsp;운영&nbsp;조례&nbsp;일부개정조례안</li><li class='agenda_line'>9.&nbsp;&nbsp;서울특별시&nbsp;강남구&nbsp;중대재해&nbsp;예방&nbsp;및&nbsp;관리에&nbsp;관한&nbsp;조례안</li><li class='agenda_line'>10.&nbsp;서울특별시&nbsp;강남구&nbsp;재난현장&nbsp;통합자원봉사지원단&nbsp;구성&nbsp;및&nbsp;운영&nbsp;등에&nbsp;관한&nbsp;조례안</li><li class='agenda_line'>11.&nbsp;서울특별시&nbsp;강남구&nbsp;수수료&nbsp;징수&nbsp;조례&nbsp;일부개정조례안</li><li class='agenda_line'>12.&nbsp;대치우성1차ㆍ쌍용2차아파트&nbsp;통합재건축정비계획&nbsp;결정(변경)을&nbsp;위한&nbsp;의견청취(안)</li><li class='agenda_line'>13.&nbsp;대치쌍용1차&nbsp;아파트&nbsp;재건축정비사업정비계획&nbsp;결정(변경)을&nbsp;위한&nbsp;의견청취(안)</li><li class='agenda_line'>14.&nbsp;압구정특별계획구역⑤&nbsp;도시관리계획(압구정&nbsp;아파트지구&nbsp;개발&nbsp;기본계획&nbsp;및&nbsp;지구단위계획구역)&nbsp;및&nbsp;정비계획(변경)&nbsp;결정을&nbsp;위한&nbsp;의견청취안</li><li class='agenda_line'>15.&nbsp;압구정특별계획구역③&nbsp;도시관리계획(압구정&nbsp;아파트지구&nbsp;개발&nbsp;기본계획&nbsp;및&nbsp;지구단위계획구역)&nbsp;및&nbsp;정비계획(변경)&nbsp;결정을&nbsp;위한&nbsp;의견청취안</li><li class='agenda_line'>16.&nbsp;서울특별시&nbsp;강남구&nbsp;개인정보&nbsp;보호&nbsp;사업&nbsp;활성화&nbsp;지원&nbsp;조례안</li><li class='agenda_line'>17.&nbsp;서울특별시&nbsp;강남구&nbsp;출자&middot;출연기관&nbsp;사이버보안&nbsp;관리&nbsp;조례안</li><li class='agenda_line'>18.&nbsp;서울특별시&nbsp;강남구&nbsp;독서문화&nbsp;진흥에&nbsp;관한&nbsp;조례&nbsp;전부개정조례안</li><li class='agenda_line'>19.&nbsp;서울특별시&nbsp;강남구&nbsp;공중화장실&nbsp;등의&nbsp;설치&nbsp;및&nbsp;관리&nbsp;조례&nbsp;일부개정조례안</li><li class='agenda_line'>20.&nbsp;2025년도&nbsp;예산안</li><li class='agenda_line'>21.&nbsp;2025년도&nbsp;기금운용계획안</li></ol><hr /><ol id='item-block'><li class='item_line font-bold'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;부의된안건</li><li class='item_line font-bold'><a href='#item1' title='⊙  5분 자유발언(윤석민의원)' data-item='1'>⊙&nbsp;&nbsp;5분&nbsp;자유발언(윤석민의원)</a></li><li class='item_line font-bold'><a href='#item2' title='1.  탄천물재생센터 주민협의회 위원 추천의 건(의장 제의)' data-item='2'>1.&nbsp;&nbsp;탄천물재생센터&nbsp;주민협의회&nbsp;위원&nbsp;추천의&nbsp;건(의장&nbsp;제의)</a></li><li class='item_line font-bold'><a href='#item3' title='2.  2024년도 강남구의회 운영위원회 행정사무감사 결과보고서 승인의 건(운영위원장 제안)' data-item='3'>2.&nbsp;&nbsp;2024년도&nbsp;강남구의회&nbsp;운영위원회&nbsp;행정사무감사&nbsp;결과보고서&nbsp;승인의&nbsp;건(운영위원장&nbsp;제안)</a></li><li class='item_line font-bold'><a href='#item4' title='3.  2024년도 강남구의회 행정안전위원회 행정사무감사 결과보고서 승인의 건(행정안전위원장 제안)' data-item='4'>3.&nbsp;&nbsp;2024년도&nbsp;강남구의회&nbsp;행정안전위원회&nbsp;행정사무감사&nbsp;결과보고서&nbsp;승인의&nbsp;건(행정안전위원장&nbsp;제안)</a></li><li class='item_line font-bold'><a href='#item5' title='4.  2024년도 강남구의회 경제도시위원회 행정사무감사 결과보고서 승인의 건(경제도시위원장 제안)' data-item='5'>4.&nbsp;&nbsp;2024년도&nbsp;강남구의회&nbsp;경제도시위원회&nbsp;행정사무감사&nbsp;결과보고서&nbsp;승인의&nbsp;건(경제도시위원장&nbsp;제안)</a></li><li class='item_line font-bold'><a href='#item6' title='5.  2024년도 강남구의회 복지문화위원회 행정사무감사 결과보고서 승인의 건(복지문화위원장 제안)' data-item='6'>5.&nbsp;&nbsp;2024년도&nbsp;강남구의회&nbsp;복지문화위원회&nbsp;행정사무감사&nbsp;결과보고서&nbsp;승인의&nbsp;건(복지문화위원장&nbsp;제안)</a></li><li class='item_line font-bold'><a href='#item7' title='6.  서울특별시 강남구 구민의 상 조례 일부개정조례안(황영각의원 등 13인 발의)' data-item='7'>6.&nbsp;&nbsp;서울특별시&nbsp;강남구&nbsp;구민의&nbsp;상&nbsp;조례&nbsp;일부개정조례안(황영각의원&nbsp;등&nbsp;13인&nbsp;발의)</a></li><li class='item_line font-bold'><a href='#item8' title='7.  서울특별시 강남구 공유재산 및 물품 관리 조례 일부개정조례안(노애자의원 등 10인 발의)' data-item='8'>7.&nbsp;&nbsp;서울특별시&nbsp;강남구&nbsp;공유재산&nbsp;및&nbsp;물품&nbsp;관리&nbsp;조례&nbsp;일부개정조례안(노애자의원&nbsp;등&nbsp;10인&nbsp;발의)</a></li><li class='item_line font-bold'><a href='#item9' title='8.  서울특별시 강남구 전문가무료상담실 설치 및 운영 조례 일부개정조례안(이성수의원 등 11인 발의)' data-item='9'>8.&nbsp;&nbsp;서울특별시&nbsp;강남구&nbsp;전문가무료상담실&nbsp;설치&nbsp;및&nbsp;운영&nbsp;조례&nbsp;일부개정조례안(이성수의원&nbsp;등&nbsp;11인&nbsp;발의)</a></li><li class='item_line font-bold'><a href='#item10' title='9.  서울특별시 강남구 중대재해 예방 및 관리에 관한 조례안(구청장 제출)' data-item='10'>9.&nbsp;&nbsp;서울특별시&nbsp;강남구&nbsp;중대재해&nbsp;예방&nbsp;및&nbsp;관리에&nbsp;관한&nbsp;조례안(구청장&nbsp;제출)</a></li><li class='item_line font-bold'><a href='#item11' title='10. 서울특별시 강남구 재난현장 통합자원봉사지원단 구성 및 운영 등에 관한 조례안(구청장 제출)' data-item='11'>10.&nbsp;서울특별시&nbsp;강남구&nbsp;재난현장&nbsp;통합자원봉사지원단&nbsp;구성&nbsp;및&nbsp;운영&nbsp;등에&nbsp;관한&nbsp;조례안(구청장&nbsp;제출)</a></li><li class='item_line font-bold'><a href='#item12' title='11. 서울특별시 강남구 수수료 징수 조례 일부개정조례안(김영권의원 등 7인 발의)' data-item='12'>11.&nbsp;서울특별시&nbsp;강남구&nbsp;수수료&nbsp;징수&nbsp;조례&nbsp;일부개정조례안(김영권의원&nbsp;등&nbsp;7인&nbsp;발의)</a></li><li class='item_line font-bold'><a href='#item13' title='12. 대치우성1차ㆍ쌍용2차아파트 통합재건축정비계획 결정(변경)을 위한 의견청취(안)(구청장 제출)' data-item='13'>12.&nbsp;대치우성1차ㆍ쌍용2차아파트&nbsp;통합재건축정비계획&nbsp;결정(변경)을&nbsp;위한&nbsp;의견청취(안)(구청장&nbsp;제출)</a></li><li class='item_line font-bold'><a href='#item14' title='13. 대치쌍용1차 아파트 재건축정비사업정비계획 결정(변경)을 위한 의견청취(안)(구청장 제출)' data-item='14'>13.&nbsp;대치쌍용1차&nbsp;아파트&nbsp;재건축정비사업정비계획&nbsp;결정(변경)을&nbsp;위한&nbsp;의견청취(안)(구청장&nbsp;제출)</a></li><li class='item_line font-bold'><a href='#item15' title='14. 압구정특별계획구역⑤ 도시관리계획(압구정 아파트지구 개발 기본계획 및 지구단위계획구역) 및 정비계획(변경) 결정을 위한 의견청취안(구청장 제출)' data-item='15'>14.&nbsp;압구정특별계획구역⑤&nbsp;도시관리계획(압구정&nbsp;아파트지구&nbsp;개발&nbsp;기본계획&nbsp;및&nbsp;지구단위계획구역)&nbsp;및&nbsp;정비계획(변경)&nbsp;결정을&nbsp;위한&nbsp;의견청취안(구청장&nbsp;제출)</a></li><li class='item_line font-bold'><a href='#item16' title='15. 압구정특별계획구역③ 도시관리계획(압구정 아파트지구 개발 기본계획 및 지구단위계획구역) 및 정비계획(변경) 결정을 위한 의견청취안(구청장 제출)' data-item='16'>15.&nbsp;압구정특별계획구역③&nbsp;도시관리계획(압구정&nbsp;아파트지구&nbsp;개발&nbsp;기본계획&nbsp;및&nbsp;지구단위계획구역)&nbsp;및&nbsp;정비계획(변경)&nbsp;결정을&nbsp;위한&nbsp;의견청취안(구청장&nbsp;제출)</a></li><li class='item_line font-bold'><a href='#item17' title='16. 서울특별시 강남구 개인정보 보호 사업 활성화 지원 조례안(이성수의원 등 11인 발의)' data-item='17'>16.&nbsp;서울특별시&nbsp;강남구&nbsp;개인정보&nbsp;보호&nbsp;사업&nbsp;활성화&nbsp;지원&nbsp;조례안(이성수의원&nbsp;등&nbsp;11인&nbsp;발의)</a></li><li class='item_line font-bold'><a href='#item18' title='17. 서울특별시 강남구 출자·출연기관 사이버보안 관리 조례안(구청장 제출)' data-item='18'>17.&nbsp;서울특별시&nbsp;강남구&nbsp;출자&middot;출연기관&nbsp;사이버보안&nbsp;관리&nbsp;조례안(구청장&nbsp;제출)</a></li><li class='item_line font-bold'><a href='#item19' title='18. 서울특별시 강남구 독서문화 진흥에 관한 조례 전부개정조례안(우종혁의원 등 10인 발의)' data-item='19'>18.&nbsp;서울특별시&nbsp;강남구&nbsp;독서문화&nbsp;진흥에&nbsp;관한&nbsp;조례&nbsp;전부개정조례안(우종혁의원&nbsp;등&nbsp;10인&nbsp;발의)</a></li><li class='item_line font-bold'><a href='#item20' title='19. 서울특별시 강남구 공중화장실 등의 설치 및 관리 조례 일부개정조례안(복지문화위원장 제안)' data-item='20'>19.&nbsp;서울특별시&nbsp;강남구&nbsp;공중화장실&nbsp;등의&nbsp;설치&nbsp;및&nbsp;관리&nbsp;조례&nbsp;일부개정조례안(복지문화위원장&nbsp;제안)</a></li><li class='item_line font-bold'><a href='#item21' title='20. 2025년도 예산안(구청장 제출)' data-item='21'>20.&nbsp;2025년도&nbsp;예산안(구청장&nbsp;제출)</a></li><li class='item_line font-bold'><a href='#item22' title='21. 2025년도 기금운용계획안(구청장 제출)' data-item='22'>21.&nbsp;2025년도&nbsp;기금운용계획안(구청장&nbsp;제출)</a></li></ol><hr /><div id='minutes-body'><div class='contents-block' data-con_idx='0'><p class='taged-line tag-R'>(10시01분 개의)</p></div><div class='contents-block speaker-block member-speech' data-con_idx='1' data-member_code='09001'><strong>○의장 <a class='member_profile btn_profile' id='btn_profile_222' href='#' data-uid='222' title='이호귀 의원 프로필 보기'>이호귀</a></strong>&nbsp;&nbsp;의석을&nbsp;정돈해&nbsp;주시기&nbsp;바랍니다.&nbsp;<br />&nbsp;&nbsp;성원이&nbsp;되었으므로&nbsp;제323회&nbsp;강남구의회&nbsp;제2차정례회&nbsp;제3차&nbsp;본회의를&nbsp;개의하겠습니다.&nbsp;<br />&nbsp;&nbsp;먼저&nbsp;사무국장으로부터&nbsp;보고가&nbsp;있겠습니다.&nbsp;<br />&nbsp;&nbsp;사무국장&nbsp;나오셔서&nbsp;보고해&nbsp;주시기&nbsp;바랍니다.&nbsp;<br /></div><div class='contents-block speaker-block' data-con_idx='2' data-member_code=''><strong>○사무국장 이희현</strong>&nbsp;&nbsp;안녕하십니까?&nbsp;사무국장&nbsp;이희현입니다.&nbsp;<br />&nbsp;&nbsp;보고사항을&nbsp;말씀드리겠습니다.&nbsp;<br />&nbsp;&nbsp;먼저&nbsp;의안&nbsp;제출&nbsp;현황입니다.&nbsp;<br />&nbsp;&nbsp;경제도시위원회&nbsp;소관&nbsp;사항입니다.&nbsp;<br />&nbsp;&nbsp;2024년&nbsp;12월&nbsp;13일&nbsp;강남구청장으로부터&nbsp;압구정특별계획구역⑤&nbsp;도시관리계획(압구정&nbsp;아파트지구&nbsp;개발&nbsp;기본계획&nbsp;및&nbsp;지구단위계획구역)&nbsp;및&nbsp;정비계획(변경)&nbsp;결정을&nbsp;위한&nbsp;의견청취안이&nbsp;접수되어&nbsp;경제도시위원회에&nbsp;회부하였습니다.&nbsp;<br />&nbsp;&nbsp;이어서&nbsp;철회된&nbsp;의안입니다.&nbsp;<br />&nbsp;&nbsp;김현정의원이&nbsp;2024년&nbsp;12월&nbsp;17일&nbsp;제출한&nbsp;구청장&nbsp;및&nbsp;관계공무원&nbsp;출석&nbsp;요구안이&nbsp;2024년&nbsp;12월&nbsp;18일자로&nbsp;철회되었습니다.&nbsp;<br />&nbsp;&nbsp;다음은&nbsp;의안&nbsp;심사&nbsp;현황입니다.&nbsp;<br />&nbsp;&nbsp;운영위원회&nbsp;소관&nbsp;사항입니다.&nbsp;<br />&nbsp;&nbsp;운영위원장으로부터&nbsp;2024년&nbsp;12월&nbsp;4일&nbsp;2024년도&nbsp;강남구의회&nbsp;운영위원회&nbsp;행정사무감사&nbsp;결과보고서&nbsp;채택의&nbsp;건이&nbsp;원안채택&nbsp;되었습니다.&nbsp;<br />&nbsp;&nbsp;행정안전위원회&nbsp;소관&nbsp;사항입니다.&nbsp;<br />&nbsp;&nbsp;행정안전위원장으로부터&nbsp;2024년&nbsp;12월&nbsp;2일&nbsp;2024년도&nbsp;강남구의회&nbsp;행정안전위원회&nbsp;행정사무감사&nbsp;결과보고서&nbsp;채택의&nbsp;건이&nbsp;원안채택&nbsp;되었습니다.&nbsp;<br />&nbsp;&nbsp;경제도시위원회&nbsp;소관&nbsp;사항입니다.&nbsp;<br />&nbsp;&nbsp;경제도시위원장으로부터&nbsp;2024년&nbsp;12월&nbsp;3일&nbsp;2024년도&nbsp;강남구의회&nbsp;경제도시위원회&nbsp;행정사무감사&nbsp;결과보고서&nbsp;채택의&nbsp;건이&nbsp;원안채택&nbsp;되었으며&nbsp;2024년&nbsp;12월&nbsp;16일&nbsp;압구정특별계획구역⑤&nbsp;도시관리계획(압구정&nbsp;아파트지구&nbsp;개발&nbsp;기본계획&nbsp;및&nbsp;지구단위계획구역)&nbsp;및&nbsp;정비계획(변경)&nbsp;결정을&nbsp;위한&nbsp;의견청취안이&nbsp;원안채택&nbsp;되었음이&nbsp;보고되었습니다.&nbsp;<br />&nbsp;&nbsp;복지문화위원회&nbsp;소관&nbsp;사항입니다.&nbsp;<br />&nbsp;&nbsp;복지문화위원장으로부터&nbsp;2024년&nbsp;12월&nbsp;2일&nbsp;2024년도&nbsp;강남구의회&nbsp;복지문화위원회&nbsp;행정사무감사&nbsp;결과보고서&nbsp;채택의&nbsp;건이&nbsp;원안채택&nbsp;되었습니다.&nbsp;<br />&nbsp;&nbsp;특별위원회&nbsp;소관&nbsp;사항입니다.&nbsp;<br />&nbsp;&nbsp;예산결산특별위원장으로부터&nbsp;2024년&nbsp;12월&nbsp;17일&nbsp;2025년도&nbsp;예산안이&nbsp;수정가결,&nbsp;2025년도&nbsp;기금운용계획안이&nbsp;원안가결&nbsp;되었음이&nbsp;보고되었습니다.&nbsp;<br />&nbsp;&nbsp;일반&nbsp;및&nbsp;특별회계&nbsp;세입세출예산&nbsp;간주처리&nbsp;현황에&nbsp;대해서&nbsp;말씀드리겠습니다.&nbsp;<br />&nbsp;&nbsp;돌봄&nbsp;SOS&nbsp;사업&nbsp;운영&nbsp;등&nbsp;총&nbsp;46건에&nbsp;37억9,386만8,000원이&nbsp;간주처리&nbsp;되었음이&nbsp;보고되었습니다.&nbsp;<br />&nbsp;&nbsp;기타&nbsp;세부사항은&nbsp;배부해드린&nbsp;유인물을&nbsp;참조하여&nbsp;주시기&nbsp;바라며&nbsp;이상&nbsp;보고를&nbsp;마치겠습니다.&nbsp;<br />&nbsp;&nbsp;감사합니다.&nbsp;<br /></div><div class='contents-block speaker-block member-speech' data-con_idx='3' data-member_code='09001'><strong>○의장 <a class='member_profile btn_profile' id='btn_profile_222' href='#' data-uid='222' title='이호귀 의원 프로필 보기'>이호귀</a></strong>&nbsp;&nbsp;사무국장&nbsp;수고하셨습니다.&nbsp;<br /><hr /></div><div class='contents-block' data-con_idx='4'><strong class='item-in-contents' id='item1' title='⊙  5분 자유발언(윤석민의원)'>⊙&nbsp;&nbsp;5분&nbsp;자유발언(윤석민의원)</strong>&nbsp;<a href='#' class='go-to-top' title='처음으로'><i class='fa fas fa-arrow-circle-up'></i></a><br /><hr /></div><div class='contents-block speaker-block member-speech' data-con_idx='5' data-member_code='09001'><strong>○의장 <a class='member_profile btn_profile' id='btn_profile_222' href='#' data-uid='222' title='이호귀 의원 프로필 보기'>이호귀</a></strong>&nbsp;&nbsp;다음은&nbsp;강남구의회&nbsp;회의규칙&nbsp;제32조2&nbsp;규정에&nbsp;따라&nbsp;자유발언&nbsp;신청이&nbsp;있었습니다.&nbsp;<br />&nbsp;&nbsp;발언&nbsp;신청하신&nbsp;윤석민의원님&nbsp;나오셔서&nbsp;발언해&nbsp;주시기&nbsp;바랍니다.&nbsp;<br /></div><div class='contents-block speaker-block member-speech' data-con_idx='6' data-member_code='06015'><strong>○<a class='member_profile btn_profile' id='btn_profile_245' href='#' data-uid='245' title='윤석민 의원 프로필 보기'>윤석민</a> 의원</strong>&nbsp;&nbsp;존경하는&nbsp;강남구민&nbsp;여러분,&nbsp;이호귀&nbsp;의장님과&nbsp;동료의원&nbsp;여러분,&nbsp;조성명&nbsp;청장님과&nbsp;관계공무원&nbsp;여러분,&nbsp;이&nbsp;자리에&nbsp;함께하신&nbsp;언론인&nbsp;여러분,&nbsp;안녕하십니까?&nbsp;개포동&nbsp;출신&nbsp;윤석민의원입니다.&nbsp;<br />&nbsp;&nbsp;본의원은&nbsp;최근&nbsp;어린&nbsp;자녀를&nbsp;둔&nbsp;주민&nbsp;등이&nbsp;주차장&nbsp;배정을&nbsp;받기&nbsp;위해&nbsp;장기간&nbsp;대기하는&nbsp;상황과&nbsp;관련된&nbsp;민원으로&nbsp;수차례&nbsp;상담하면서&nbsp;주차난이&nbsp;얼마나&nbsp;심각하고&nbsp;절실한&nbsp;문제인지&nbsp;다시&nbsp;한번&nbsp;느꼈습니다.&nbsp;이에&nbsp;강남구가&nbsp;주차장&nbsp;문제&nbsp;해결에&nbsp;있어&nbsp;선도적인&nbsp;자치구가&nbsp;되어야&nbsp;한다는&nbsp;제안을&nbsp;드리고자&nbsp;이&nbsp;자리에&nbsp;섰습니다.&nbsp;<br />&nbsp;&nbsp;2024년&nbsp;11월&nbsp;30일&nbsp;기준&nbsp;강남구에&nbsp;등록된&nbsp;차량은&nbsp;25만4,629대입니다.&nbsp;여기에&nbsp;출퇴근하는&nbsp;생활&nbsp;인구의&nbsp;차량&nbsp;통행까지&nbsp;포함하면&nbsp;주차&nbsp;수요는&nbsp;이미&nbsp;한계를&nbsp;넘어섰다고&nbsp;할&nbsp;수&nbsp;있습니다.&nbsp;자료를&nbsp;살펴보면&nbsp;2017년&nbsp;기준&nbsp;하루에&nbsp;강남구를&nbsp;통과하는&nbsp;차량은&nbsp;무려&nbsp;222만대에&nbsp;달합니다.&nbsp;이렇게&nbsp;많은&nbsp;차량이&nbsp;오가는&nbsp;강남구에서&nbsp;주차난&nbsp;해결은&nbsp;선택이&nbsp;아닌&nbsp;반드시&nbsp;해결해야&nbsp;할&nbsp;필수&nbsp;과제입니다.&nbsp;<br />&nbsp;&nbsp;이에&nbsp;본의원은&nbsp;강남구의&nbsp;주차난을&nbsp;해소하기&nbsp;위해&nbsp;다음과&nbsp;같은&nbsp;방안을&nbsp;제안합니다.&nbsp;<br />&nbsp;&nbsp;첫째,&nbsp;유휴&nbsp;주차&nbsp;공간을&nbsp;적극적으로&nbsp;개방하기를&nbsp;바랍니다.&nbsp;<br />&nbsp;&nbsp;관공서,&nbsp;공기업,&nbsp;기업체,&nbsp;종교시설,&nbsp;대형마트,&nbsp;사기업&nbsp;등에서&nbsp;비업무&nbsp;시간과&nbsp;야간에&nbsp;주차장을&nbsp;주민들에게&nbsp;개방할&nbsp;수&nbsp;있도록&nbsp;인센티브를&nbsp;제공하고&nbsp;협약을&nbsp;체결하기를&nbsp;바랍니다.&nbsp;이는&nbsp;주민들에게&nbsp;실질적인&nbsp;도움이&nbsp;될&nbsp;뿐만&nbsp;아니라&nbsp;강남구가&nbsp;나서면&nbsp;다른&nbsp;자치구에도&nbsp;좋은&nbsp;본보기가&nbsp;될&nbsp;것입니다.&nbsp;<br />&nbsp;&nbsp;둘째,&nbsp;공공부지와&nbsp;유휴&nbsp;공간을&nbsp;활용해&nbsp;주차장을&nbsp;확충하기를&nbsp;바랍니다.&nbsp;<br />&nbsp;&nbsp;예를&nbsp;들어&nbsp;개포동&nbsp;근린공원처럼&nbsp;곳곳에&nbsp;산재한&nbsp;공원의&nbsp;지하&nbsp;공간을&nbsp;주차장으로&nbsp;건립하고&nbsp;개포동&nbsp;1266번지에&nbsp;위치한&nbsp;서울시&nbsp;소유의&nbsp;수목&nbsp;가식장과&nbsp;같은&nbsp;유휴부지를&nbsp;주차장으로&nbsp;전환하기를&nbsp;바랍니다.&nbsp;또한&nbsp;좁은&nbsp;공간에는&nbsp;기계식&nbsp;주차타워를&nbsp;설치해&nbsp;다층&nbsp;구조로&nbsp;효율성을&nbsp;높이고&nbsp;기존&nbsp;평면&nbsp;주차장은&nbsp;입체화를&nbsp;통해&nbsp;수용&nbsp;가능&nbsp;대수를&nbsp;확대해야&nbsp;합니다.&nbsp;<br />&nbsp;&nbsp;셋째,&nbsp;주차장&nbsp;특별회계의&nbsp;목적성을&nbsp;회복해야&nbsp;합니다.&nbsp;<br />&nbsp;&nbsp;2024년&nbsp;현재&nbsp;기준&nbsp;주차장&nbsp;특별회계&nbsp;1,239억원이&nbsp;통합재정안정화기금으로&nbsp;예탁된&nbsp;상태입니다.&nbsp;주민들께서&nbsp;내신&nbsp;주차&nbsp;관련&nbsp;과태료와&nbsp;과징금&nbsp;등이&nbsp;주차난&nbsp;해소에&nbsp;쓰이도록&nbsp;마련된&nbsp;자금인데&nbsp;목적에&nbsp;맞게&nbsp;신속하게&nbsp;주차장을&nbsp;건립하는&nbsp;데&nbsp;사용해야&nbsp;합니다.&nbsp;이&nbsp;돈을&nbsp;예금에&nbsp;두는&nbsp;것은&nbsp;능사가&nbsp;아닙니다.&nbsp;구민들은&nbsp;즉각적인&nbsp;주차난&nbsp;해결을&nbsp;원하고&nbsp;있습니다.&nbsp;<br />&nbsp;&nbsp;넷째,&nbsp;출산율&nbsp;문제와&nbsp;연결된&nbsp;주차장&nbsp;배정&nbsp;우선권을&nbsp;마련해야&nbsp;합니다.&nbsp;<br />&nbsp;&nbsp;강남구의&nbsp;출산율&nbsp;저하&nbsp;문제를&nbsp;해결하는&nbsp;데&nbsp;기여하기&nbsp;위해&nbsp;임산부와&nbsp;어린&nbsp;자녀가&nbsp;1명이라도&nbsp;있는&nbsp;가정은&nbsp;가장&nbsp;가까운&nbsp;주차장을&nbsp;최우선적으로&nbsp;배정하는&nbsp;대책이&nbsp;필요합니다.&nbsp;이를&nbsp;위해&nbsp;관련&nbsp;조례와&nbsp;규정을&nbsp;개정하고&nbsp;선도적인&nbsp;행정을&nbsp;펼쳐주실&nbsp;것을&nbsp;제안합니다.&nbsp;<br />&nbsp;&nbsp;다섯째,&nbsp;스마트주차시스템을&nbsp;도입하기를&nbsp;바랍니다.&nbsp;<br />&nbsp;&nbsp;실시간으로&nbsp;빈&nbsp;주차&nbsp;공간&nbsp;정보를&nbsp;제공하고&nbsp;내비게이션과&nbsp;연동해&nbsp;주민들의&nbsp;불편을&nbsp;해소하기를&nbsp;바랍니다.&nbsp;또한&nbsp;스마트&nbsp;센서를&nbsp;통해&nbsp;요금&nbsp;자동결제시스템을&nbsp;구축하고&nbsp;AI&nbsp;기반의&nbsp;수요&nbsp;분석으로&nbsp;지역별&nbsp;맞춤형&nbsp;주차&nbsp;정책을&nbsp;수립하기를&nbsp;바랍니다.&nbsp;<br />&nbsp;&nbsp;마지막으로&nbsp;전동&nbsp;킥보드&nbsp;무질서&nbsp;주차&nbsp;문제를&nbsp;해결해야&nbsp;합니다.&nbsp;<br />&nbsp;&nbsp;아무렇게나&nbsp;방치된&nbsp;전동&nbsp;킥보드는&nbsp;보행자와&nbsp;차량사고의&nbsp;주된&nbsp;원인이&nbsp;되고&nbsp;있습니다.&nbsp;지정된&nbsp;주차구역에&nbsp;주차할&nbsp;때까지&nbsp;요금을&nbsp;계속해서&nbsp;부과하는&nbsp;시스템을&nbsp;도입해&nbsp;무질서한&nbsp;주차를&nbsp;방지하고&nbsp;보행자의&nbsp;안전을&nbsp;확보해야&nbsp;합니다.&nbsp;<br />&nbsp;&nbsp;존경하는&nbsp;동료의원님과&nbsp;관계공무원&nbsp;여러분,&nbsp;주차장은&nbsp;단순한&nbsp;공간이&nbsp;아니라&nbsp;주민의&nbsp;삶의&nbsp;질과&nbsp;도시&nbsp;경쟁력을&nbsp;좌우하는&nbsp;핵심&nbsp;요소입니다.&nbsp;<br />&nbsp;&nbsp;강남구가&nbsp;이제&nbsp;더&nbsp;이상&nbsp;주차난&nbsp;문제를&nbsp;미루지&nbsp;않고&nbsp;구체적이고&nbsp;실효성&nbsp;있는&nbsp;대책을&nbsp;통해&nbsp;주민&nbsp;불편을&nbsp;해소하고&nbsp;강남구의&nbsp;품격을&nbsp;높여야&nbsp;합니다.&nbsp;<br />&nbsp;&nbsp;오늘&nbsp;본의원이&nbsp;제안한&nbsp;방안들이&nbsp;실행에&nbsp;옮겨진다면&nbsp;주차난&nbsp;해결은&nbsp;물론&nbsp;출산율&nbsp;문제와&nbsp;지역경제&nbsp;활성화에도&nbsp;긍정적인&nbsp;영향을&nbsp;미칠&nbsp;것으로&nbsp;생각합니다.&nbsp;강남구의&nbsp;선도적인&nbsp;역할과&nbsp;적극&nbsp;행정을&nbsp;기대하며&nbsp;이만&nbsp;발언을&nbsp;마치겠습니다.&nbsp;<br />&nbsp;&nbsp;경청해&nbsp;주셔서&nbsp;감사합니다.&nbsp;<br /></div><div class='contents-block speaker-block member-speech' data-con_idx='7' data-member_code='09001'><strong>○의장 <a class='member_profile btn_profile' id='btn_profile_222' href='#' data-uid='222' title='이호귀 의원 프로필 보기'>이호귀</a></strong>&nbsp;&nbsp;윤석민의원님&nbsp;수고하셨습니다.&nbsp;<br /><hr /></div><div class='contents-block' data-con_idx='8'><strong class='item-in-contents' id='item2' title='1.  탄천물재생센터 주민협의회 위원 추천의 건(의장 제의)'>1.&nbsp;&nbsp;탄천물재생센터&nbsp;주민협의회&nbsp;위원&nbsp;추천의&nbsp;건(의장&nbsp;제의)</strong>&nbsp;<a href='#' class='go-to-top' title='처음으로'><i class='fa fas fa-arrow-circle-up'></i></a><br /><p class='taged-line tag-R'>(10시11분)</p></div><div class='contents-block speaker-block member-speech' data-con_idx='9' data-member_code='09001'><strong>○의장 <a class='member_profile btn_profile' id='btn_profile_222' href='#' data-uid='222' title='이호귀 의원 프로필 보기'>이호귀</a></strong>&nbsp;&nbsp;다음은&nbsp;의사일정&nbsp;제1항&nbsp;탄천물재생센터&nbsp;주민협의회&nbsp;위원&nbsp;추천의&nbsp;건을&nbsp;상정합니다.&nbsp;<br />&nbsp;&nbsp;본&nbsp;안건은&nbsp;탄천물재생센터&nbsp;주민협의회&nbsp;위원&nbsp;선임으로&nbsp;서울특별시&nbsp;물&nbsp;재생시설&nbsp;설치&nbsp;및&nbsp;관리에&nbsp;관한&nbsp;조례&nbsp;제16조&nbsp;규정에&nbsp;따라&nbsp;주민협의회&nbsp;위원을&nbsp;의회에서&nbsp;추천하고자&nbsp;하는&nbsp;것입니다.&nbsp;<br />&nbsp;&nbsp;위원&nbsp;명단은&nbsp;배부해드린&nbsp;유인물을&nbsp;참고해&nbsp;주시기&nbsp;바랍니다.&nbsp;<br />&nbsp;&nbsp;그러면&nbsp;배부해드린&nbsp;명단대로&nbsp;김일영&nbsp;등&nbsp;3인을&nbsp;추천하고자&nbsp;하는데&nbsp;의원&nbsp;여러분께서는&nbsp;이의가&nbsp;없으십니까?&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;(「없습니다」하는&nbsp;의원&nbsp;많음)<br />&nbsp;&nbsp;이의가&nbsp;없으므로&nbsp;탄천물재생센터&nbsp;주민협의회&nbsp;위원으로&nbsp;추천되었음을&nbsp;선포합니다.&nbsp;<br /><hr /></div><div class='contents-block' data-con_idx='10'><strong class='item-in-contents' id='item3' title='2.  2024년도 강남구의회 운영위원회 행정사무감사 결과보고서 승인의 건(운영위원장 제안)'>2.&nbsp;&nbsp;2024년도&nbsp;강남구의회&nbsp;운영위원회&nbsp;행정사무감사&nbsp;결과보고서&nbsp;승인의&nbsp;건(운영위원장&nbsp;제안)</strong>&nbsp;<a href='#' class='go-to-top' title='처음으로'><i class='fa fas fa-arrow-circle-up'></i></a><br /></div><div class='contents-block' data-con_idx='11'><strong class='item-in-contents' id='item4' title='3.  2024년도 강남구의회 행정안전위원회 행정사무감사 결과보고서 승인의 건(행정안전위원장 제안)'>3.&nbsp;&nbsp;2024년도&nbsp;강남구의회&nbsp;행정안전위원회&nbsp;행정사무감사&nbsp;결과보고서&nbsp;승인의&nbsp;건(행정안전위원장&nbsp;제안)</strong>&nbsp;<a href='#' class='go-to-top' title='처음으로'><i class='fa fas fa-arrow-circle-up'></i></a><br /></div><div class='contents-block' data-con_idx='12'><strong class='item-in-contents' id='item5' title='4.  2024년도 강남구의회 경제도시위원회 행정사무감사 결과보고서 승인의 건(경제도시위원장 제안)'>4.&nbsp;&nbsp;2024년도&nbsp;강남구의회&nbsp;경제도시위원회&nbsp;행정사무감사&nbsp;결과보고서&nbsp;승인의&nbsp;건(경제도시위원장&nbsp;제안)</strong>&nbsp;<a href='#' class='go-to-top' title='처음으로'><i class='fa fas fa-arrow-circle-up'></i></a><br /></div><div class='contents-block' data-con_idx='13'><strong class='item-in-contents' id='item6' title='5.  2024년도 강남구의회 복지문화위원회 행정사무감사 결과보고서 승인의 건(복지문화위원장 제안)'>5.&nbsp;&nbsp;2024년도&nbsp;강남구의회&nbsp;복지문화위원회&nbsp;행정사무감사&nbsp;결과보고서&nbsp;승인의&nbsp;건(복지문화위원장&nbsp;제안)</strong>&nbsp;<a href='#' class='go-to-top' title='처음으로'><i class='fa fas fa-arrow-circle-up'></i></a><br /><p class='taged-line tag-R'>(10시12분)</p></div><div class='contents-block speaker-block member-speech' data-con_idx='14' data-member_code='09001'><strong>○의장 <a class='member_profile btn_profile' id='btn_profile_222' href='#' data-uid='222' title='이호귀 의원 프로필 보기'>이호귀</a></strong>&nbsp;&nbsp;다음은&nbsp;의사일정&nbsp;제2항&nbsp;2024년도&nbsp;강남구의회&nbsp;운영위원회&nbsp;행정사무감사&nbsp;결과보고서&nbsp;승인의&nbsp;건,&nbsp;의사일정&nbsp;제3항&nbsp;2024년도&nbsp;강남구의회&nbsp;행정안전위원회&nbsp;행정사무감사&nbsp;결과보고서&nbsp;승인의&nbsp;건,&nbsp;의사일정&nbsp;제4항&nbsp;2024년도&nbsp;강남구의회&nbsp;경제도시위원회&nbsp;행정사무감사&nbsp;결과보고서&nbsp;승인의&nbsp;건,&nbsp;의사일정&nbsp;제5항&nbsp;2024년도&nbsp;강남구의회&nbsp;복지문화위원회&nbsp;행정사무감사&nbsp;결과보고서&nbsp;승인의&nbsp;건을&nbsp;일괄&nbsp;상정합니다.&nbsp;<br />&nbsp;&nbsp;운영위원회&nbsp;이동호&nbsp;위원장님&nbsp;나오셔서&nbsp;제안설명&nbsp;해&nbsp;주시기&nbsp;바랍니다.&nbsp;<br /></div><div class='contents-block speaker-block member-speech' data-con_idx='15' data-member_code='09021'><strong>○<a class='member_profile btn_profile' id='btn_profile_242' href='#' data-uid='242' title='이동호 의원 프로필 보기'>이동호</a> 의원</strong>&nbsp;&nbsp;안녕하십니까?&nbsp;운영위원장&nbsp;이동호입니다.&nbsp;<br />&nbsp;&nbsp;제323회&nbsp;제2차정례회를&nbsp;마치면서&nbsp;그동안&nbsp;열과&nbsp;성의를&nbsp;다해&nbsp;의정&nbsp;활동을&nbsp;해주신&nbsp;선배,&nbsp;동료의원&nbsp;여러분께&nbsp;깊은&nbsp;감사를&nbsp;드립니다.&nbsp;<br />&nbsp;&nbsp;지방자치법&nbsp;제49조,&nbsp;같은&nbsp;법&nbsp;시행령&nbsp;제41조의&nbsp;규정과&nbsp;서울특별시&nbsp;강남구&nbsp;행정사무감사&nbsp;및&nbsp;조사에&nbsp;관한&nbsp;조례에&nbsp;따라&nbsp;실시한&nbsp;2024년도&nbsp;강남구&nbsp;행정사무감사&nbsp;결과를&nbsp;종합하여&nbsp;보고드리겠습니다.&nbsp;<br />&nbsp;&nbsp;금번&nbsp;행정사무감사는&nbsp;구정&nbsp;운영&nbsp;실태를&nbsp;면밀히&nbsp;파악하여&nbsp;구민의&nbsp;뜻이&nbsp;구정&nbsp;전반에&nbsp;반영되었는지&nbsp;여부를&nbsp;확인하고&nbsp;내년도&nbsp;예산안&nbsp;및&nbsp;각종&nbsp;안건&nbsp;심사를&nbsp;위한&nbsp;자료를&nbsp;확보할&nbsp;목적으로&nbsp;2024년&nbsp;11월&nbsp;18일부터&nbsp;11월&nbsp;25일까지&nbsp;8일간&nbsp;각&nbsp;상임위원회별로&nbsp;실시하였습니다.&nbsp;<br />&nbsp;&nbsp;이번&nbsp;감사를&nbsp;통해&nbsp;집행부&nbsp;사무&nbsp;전반에&nbsp;대한&nbsp;진단과&nbsp;분석을&nbsp;토대로&nbsp;불합리하거나&nbsp;미흡한&nbsp;행정에&nbsp;대해서는&nbsp;합리적인&nbsp;대안을&nbsp;제시하고자&nbsp;하였으며&nbsp;우수한&nbsp;행정&nbsp;사례는&nbsp;더욱&nbsp;발전시킴으로써&nbsp;미래지향적인&nbsp;감사가&nbsp;되도록&nbsp;노력하였습니다.&nbsp;<br />&nbsp;&nbsp;각&nbsp;상임위원회&nbsp;감사&nbsp;지적사항&nbsp;및&nbsp;시정&nbsp;요구사항은&nbsp;운영위원회&nbsp;15건,&nbsp;행정안전위원회&nbsp;152건,&nbsp;경제도시위원회&nbsp;182건,&nbsp;복지문화위원회&nbsp;163건으로&nbsp;총&nbsp;512건으로&nbsp;집계되었습니다.&nbsp;<br />&nbsp;&nbsp;주요&nbsp;지적사항으로는&nbsp;민간위탁&nbsp;사무의&nbsp;관리&nbsp;미흡,&nbsp;예산의&nbsp;중복&nbsp;편성,&nbsp;과다한&nbsp;예산편성&nbsp;및&nbsp;높은&nbsp;불용률,&nbsp;사업의&nbsp;실효성&nbsp;부족과&nbsp;조례&nbsp;미정비,&nbsp;일부&nbsp;수감기관의&nbsp;자료&nbsp;준비&nbsp;미흡과&nbsp;부적절한&nbsp;답변&nbsp;태도&nbsp;등에&nbsp;대한&nbsp;문제를&nbsp;지적한&nbsp;바&nbsp;있습니다.&nbsp;<br />&nbsp;&nbsp;금번&nbsp;감사기간&nbsp;동안&nbsp;제기된&nbsp;지적사항에&nbsp;대하여&nbsp;집행부에서는&nbsp;철저하게&nbsp;검토하고&nbsp;조치하여&nbsp;내년도&nbsp;감사에서는&nbsp;유사한&nbsp;문제가&nbsp;다시&nbsp;지적되는&nbsp;사례가&nbsp;없도록&nbsp;하여야&nbsp;하겠습니다.&nbsp;<br />&nbsp;&nbsp;연례적으로&nbsp;불용이&nbsp;생기는&nbsp;사업과&nbsp;각&nbsp;부서별&nbsp;유사&nbsp;중복사업에&nbsp;대한&nbsp;구조조정이&nbsp;필요하며&nbsp;사업을&nbsp;추진함에&nbsp;있어&nbsp;면밀히&nbsp;계획을&nbsp;수립하고&nbsp;부서&nbsp;간&nbsp;유기적인&nbsp;협력&nbsp;체계를&nbsp;구축하여&nbsp;차질&nbsp;없이&nbsp;추진할&nbsp;수&nbsp;있도록&nbsp;모든&nbsp;행정력을&nbsp;집중해&nbsp;주실&nbsp;것을&nbsp;당부드립니다.&nbsp;<br />&nbsp;&nbsp;다음은&nbsp;수범사례에&nbsp;대해&nbsp;말씀드리겠습니다.&nbsp;<br />&nbsp;&nbsp;먼저&nbsp;감사담당관은&nbsp;전국&nbsp;공공기관&nbsp;청렴도&nbsp;평가에서&nbsp;1등급을&nbsp;달성하였으며&nbsp;도로관리과에서는&nbsp;2024년&nbsp;제설대책&nbsp;종합평가에서&nbsp;최우수구로&nbsp;선정되었고&nbsp;주차관리과는&nbsp;AI&nbsp;주차관제시스템&nbsp;도입으로&nbsp;강남구의&nbsp;고질적&nbsp;주차&nbsp;문제&nbsp;해결에&nbsp;기여하였습니다.&nbsp;이와&nbsp;같은&nbsp;행정의&nbsp;성과가&nbsp;구민들의&nbsp;체감으로&nbsp;이어질&nbsp;수&nbsp;있도록&nbsp;더욱&nbsp;매진해&nbsp;주시기를&nbsp;당부드립니다.&nbsp;<br />&nbsp;&nbsp;그동안&nbsp;바쁜&nbsp;일정에도&nbsp;불구하고&nbsp;행정사무감사에&nbsp;열정적으로&nbsp;임해주신&nbsp;선배,&nbsp;동료의원&nbsp;및&nbsp;관계공무원&nbsp;여러분의&nbsp;노고에&nbsp;다시&nbsp;한번&nbsp;깊은&nbsp;감사를&nbsp;드리며&nbsp;기타&nbsp;자세한&nbsp;내용은&nbsp;각&nbsp;위원회별로&nbsp;미리&nbsp;배부해드린&nbsp;유인물을&nbsp;참고해&nbsp;주시기&nbsp;바랍니다.&nbsp;<br />&nbsp;&nbsp;이상으로&nbsp;2024년도&nbsp;강남구&nbsp;행정사무감사&nbsp;결과&nbsp;보고를&nbsp;마치겠습니다.&nbsp;<br />&nbsp;&nbsp;감사합니다.&nbsp;<br /></div><div class='contents-block speaker-block member-speech' data-con_idx='16' data-member_code='09001'><strong>○의장 <a class='member_profile btn_profile' id='btn_profile_222' href='#' data-uid='222' title='이호귀 의원 프로필 보기'>이호귀</a></strong>&nbsp;&nbsp;이동호&nbsp;위원장님&nbsp;수고하셨습니다.&nbsp;<br />&nbsp;&nbsp;의결을&nbsp;하도록&nbsp;하겠습니다.&nbsp;<br />&nbsp;&nbsp;의사일정&nbsp;제2항&nbsp;2024년도&nbsp;강남구의회&nbsp;운영위원회&nbsp;행정사무감사&nbsp;결과보고서&nbsp;승인의&nbsp;건,&nbsp;의사일정&nbsp;제3항&nbsp;2024년도&nbsp;강남구의회&nbsp;행정안전위원회&nbsp;행정사무감사&nbsp;결과보고서&nbsp;승인의&nbsp;건,&nbsp;의사일정&nbsp;제4항&nbsp;2024년도&nbsp;강남구의회&nbsp;경제도시위원회&nbsp;행정사무감사&nbsp;결과보고서&nbsp;승인의&nbsp;건,&nbsp;의사일정&nbsp;제5항&nbsp;2024년도&nbsp;강남구의회&nbsp;복지문화위원회&nbsp;행정사무감사&nbsp;결과보고서&nbsp;승인의&nbsp;건을&nbsp;원안대로&nbsp;각각&nbsp;의결하고자&nbsp;하는데&nbsp;의원&nbsp;여러분께서는&nbsp;이의가&nbsp;없으십니까?&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;(「없습니다」하는&nbsp;의원&nbsp;많음)<br />&nbsp;&nbsp;이의가&nbsp;없으므로&nbsp;각각&nbsp;가결되었음을&nbsp;선포합니다.&nbsp;<br /><hr /></div><div class='contents-block' data-con_idx='17'><strong class='item-in-contents' id='item7' title='6.  서울특별시 강남구 구민의 상 조례 일부개정조례안(황영각의원 등 13인 발의)'>6.&nbsp;&nbsp;서울특별시&nbsp;강남구&nbsp;구민의&nbsp;상&nbsp;조례&nbsp;일부개정조례안(황영각의원&nbsp;등&nbsp;13인&nbsp;발의)</strong>&nbsp;<a href='#' class='go-to-top' title='처음으로'><i class='fa fas fa-arrow-circle-up'></i></a><br /></div><div class='contents-block' data-con_idx='18'><strong class='item-in-contents' id='item8' title='7.  서울특별시 강남구 공유재산 및 물품 관리 조례 일부개정조례안(노애자의원 등 10인 발의)'>7.&nbsp;&nbsp;서울특별시&nbsp;강남구&nbsp;공유재산&nbsp;및&nbsp;물품&nbsp;관리&nbsp;조례&nbsp;일부개정조례안(노애자의원&nbsp;등&nbsp;10인&nbsp;발의)</strong>&nbsp;<a href='#' class='go-to-top' title='처음으로'><i class='fa fas fa-arrow-circle-up'></i></a><br /></div><div class='contents-block' data-con_idx='19'><strong class='item-in-contents' id='item9' title='8.  서울특별시 강남구 전문가무료상담실 설치 및 운영 조례 일부개정조례안(이성수의원 등 11인 발의)'>8.&nbsp;&nbsp;서울특별시&nbsp;강남구&nbsp;전문가무료상담실&nbsp;설치&nbsp;및&nbsp;운영&nbsp;조례&nbsp;일부개정조례안(이성수의원&nbsp;등&nbsp;11인&nbsp;발의)</strong>&nbsp;<a href='#' class='go-to-top' title='처음으로'><i class='fa fas fa-arrow-circle-up'></i></a><br /></div><div class='contents-block' data-con_idx='20'><strong class='item-in-contents' id='item10' title='9.  서울특별시 강남구 중대재해 예방 및 관리에 관한 조례안(구청장 제출)'>9.&nbsp;&nbsp;서울특별시&nbsp;강남구&nbsp;중대재해&nbsp;예방&nbsp;및&nbsp;관리에&nbsp;관한&nbsp;조례안(구청장&nbsp;제출)</strong>&nbsp;<a href='#' class='go-to-top' title='처음으로'><i class='fa fas fa-arrow-circle-up'></i></a><br /></div><div class='contents-block' data-con_idx='21'><strong class='item-in-contents' id='item11' title='10. 서울특별시 강남구 재난현장 통합자원봉사지원단 구성 및 운영 등에 관한 조례안(구청장 제출)'>10.&nbsp;서울특별시&nbsp;강남구&nbsp;재난현장&nbsp;통합자원봉사지원단&nbsp;구성&nbsp;및&nbsp;운영&nbsp;등에&nbsp;관한&nbsp;조례안(구청장&nbsp;제출)</strong>&nbsp;<a href='#' class='go-to-top' title='처음으로'><i class='fa fas fa-arrow-circle-up'></i></a><br /><p class='taged-line tag-R'>(10시18분)</p></div><div class='contents-block speaker-block member-speech' data-con_idx='22' data-member_code='09001'><strong>○의장 <a class='member_profile btn_profile' id='btn_profile_222' href='#' data-uid='222' title='이호귀 의원 프로필 보기'>이호귀</a></strong>&nbsp;&nbsp;다음은&nbsp;의사일정&nbsp;제6항&nbsp;서울특별시&nbsp;강남구&nbsp;구민의&nbsp;상&nbsp;조례&nbsp;일부개정조례안,&nbsp;의사일정&nbsp;제7항&nbsp;서울특별시&nbsp;강남구&nbsp;공유재산&nbsp;및&nbsp;물품&nbsp;관리&nbsp;조례&nbsp;일부개정조례안,&nbsp;의사일정&nbsp;제8항&nbsp;서울특별시&nbsp;강남구&nbsp;전문가무료상담실&nbsp;설치&nbsp;및&nbsp;운영&nbsp;조례&nbsp;일부개정조례안,&nbsp;의사일정&nbsp;제9항&nbsp;서울특별시&nbsp;강남구&nbsp;중대재해&nbsp;예방&nbsp;및&nbsp;관리에&nbsp;관한&nbsp;조례안,&nbsp;의사일정&nbsp;제10항&nbsp;서울특별시&nbsp;강남구&nbsp;재난현장&nbsp;통합자원봉사지원단&nbsp;구성&nbsp;및&nbsp;운영&nbsp;등에&nbsp;관한&nbsp;조례안을&nbsp;일괄&nbsp;상정합니다.&nbsp;<br />&nbsp;&nbsp;행정안전위원회&nbsp;김진경의원님&nbsp;나오셔서&nbsp;심사보고&nbsp;해&nbsp;주시기&nbsp;바랍니다.&nbsp;<br /></div><div class='contents-block speaker-block member-speech' data-con_idx='23' data-member_code='09017'><strong>○<a class='member_profile btn_profile' id='btn_profile_238' href='#' data-uid='238' title='김진경 의원 프로필 보기'>김진경</a> 의원</strong>&nbsp;&nbsp;안녕하십니까?&nbsp;행정안전위원회&nbsp;소속&nbsp;김진경의원입니다.&nbsp;<br />&nbsp;&nbsp;강남구의회&nbsp;제323회&nbsp;제2차정례회&nbsp;행정안전위원회&nbsp;제2차&nbsp;및&nbsp;제3차&nbsp;회의에서&nbsp;심사한&nbsp;5건의&nbsp;안건에&nbsp;대한&nbsp;심사결과를&nbsp;보고드리겠습니다.&nbsp;<br />&nbsp;&nbsp;먼저&nbsp;서울특별시&nbsp;강남구&nbsp;구민의&nbsp;상&nbsp;조례&nbsp;일부개정조례안입니다.&nbsp;<br />&nbsp;&nbsp;대표발의자인&nbsp;황영각의원으로부터&nbsp;강남구&nbsp;구민의&nbsp;상&nbsp;시상을&nbsp;강남구민의&nbsp;날인&nbsp;10월&nbsp;1일에&nbsp;하도록&nbsp;시상&nbsp;시기를&nbsp;정비하고&nbsp;심사위원회의&nbsp;위촉직&nbsp;위원으로&nbsp;강남구의회에서&nbsp;추천하는&nbsp;구의원&nbsp;2명을&nbsp;포함하고자&nbsp;한다는&nbsp;제안설명을&nbsp;들었습니다.&nbsp;<br />&nbsp;&nbsp;우리&nbsp;위원회에서는&nbsp;규범의&nbsp;명확성과&nbsp;예측&nbsp;가능성을&nbsp;토대로&nbsp;한&nbsp;규범에&nbsp;대한&nbsp;신뢰와&nbsp;법적&nbsp;안정을&nbsp;추구하고자&nbsp;하는&nbsp;본&nbsp;조례안의&nbsp;취지에&nbsp;공감하며&nbsp;심사위원회의&nbsp;구성과&nbsp;관련하여&nbsp;강남구의회에서&nbsp;추천한&nbsp;2명의&nbsp;구의원&nbsp;중에서&nbsp;위촉하도록&nbsp;정한&nbsp;것은&nbsp;상호&nbsp;견제와&nbsp;균형의&nbsp;원칙에&nbsp;입각한&nbsp;집행기관과&nbsp;의결기관과의&nbsp;권한&nbsp;분리&nbsp;및&nbsp;배분의&nbsp;범위&nbsp;등에&nbsp;비추어&nbsp;볼&nbsp;때&nbsp;지방자치법이&nbsp;정하고&nbsp;있는&nbsp;지방의회의&nbsp;집행기관에&nbsp;대한&nbsp;견제의&nbsp;범위&nbsp;안에서&nbsp;허용된다고&nbsp;봄이&nbsp;타당한&nbsp;것으로&nbsp;판단하였으나&nbsp;심사위원회&nbsp;성격에&nbsp;비추어&nbsp;당연직&nbsp;위원의&nbsp;일부를&nbsp;수정하고&nbsp;조문을&nbsp;이해하기&nbsp;쉽도록&nbsp;간결하게&nbsp;정리하여&nbsp;본&nbsp;조례안을&nbsp;수정가결&nbsp;하였습니다.&nbsp;<br />&nbsp;&nbsp;다음은&nbsp;서울특별시&nbsp;강남구&nbsp;공유재산&nbsp;및&nbsp;물품&nbsp;관리&nbsp;조례&nbsp;일부개정조례안입니다.&nbsp;<br />&nbsp;&nbsp;대표발의자인&nbsp;노애자의원으로부터&nbsp;환경친화적&nbsp;자동차&nbsp;충전&nbsp;시설의&nbsp;보급&nbsp;및&nbsp;확대&nbsp;사업을&nbsp;하는&nbsp;자에&nbsp;대한&nbsp;공유재산&nbsp;대부료&nbsp;등의&nbsp;감면&nbsp;조항을&nbsp;신설하고&nbsp;공유재산&nbsp;운영&nbsp;상황의&nbsp;공개&nbsp;관련&nbsp;조항을&nbsp;정비하고자&nbsp;한다는&nbsp;제안설명을&nbsp;들었습니다.&nbsp;<br />&nbsp;&nbsp;우리&nbsp;위원회에서는&nbsp;공유재산의&nbsp;증감&nbsp;및&nbsp;현황&nbsp;등의&nbsp;공고&nbsp;주체를&nbsp;구청장으로&nbsp;명시하고&nbsp;공고하는&nbsp;방법에&nbsp;구보를&nbsp;추가하여&nbsp;공유재산의&nbsp;대부료&nbsp;또는&nbsp;사용료를&nbsp;80%&nbsp;범위에서&nbsp;감면할&nbsp;수&nbsp;있도록&nbsp;감면&nbsp;사유&nbsp;및&nbsp;감면율을&nbsp;조례에&nbsp;반영한&nbsp;것은&nbsp;적절하나&nbsp;집행의&nbsp;통일성과&nbsp;규정의&nbsp;체계화를&nbsp;위하여&nbsp;조문&nbsp;일부를&nbsp;정비하여&nbsp;본&nbsp;조례안을&nbsp;수정가결&nbsp;하였습니다.&nbsp;<br />&nbsp;&nbsp;이어서&nbsp;서울특별시&nbsp;강남구&nbsp;전문가무료상담실&nbsp;설치&nbsp;및&nbsp;운영&nbsp;조례&nbsp;일부개정조례안입니다.&nbsp;<br />&nbsp;&nbsp;대표발의자인&nbsp;이성수의원으로부터&nbsp;각종&nbsp;법률상담에&nbsp;대한&nbsp;지역주민의&nbsp;수요가&nbsp;높아짐에&nbsp;따라&nbsp;강남구&nbsp;전문가무료상담실의&nbsp;효율적인&nbsp;운영에&nbsp;필요한&nbsp;사항을&nbsp;규정하고&nbsp;기존&nbsp;조문을&nbsp;재정비하여&nbsp;구민의&nbsp;권리&nbsp;보호와&nbsp;삶의&nbsp;질&nbsp;향상에&nbsp;기여하고자&nbsp;한다는&nbsp;제안설명을&nbsp;들었습니다.&nbsp;<br />&nbsp;&nbsp;우리&nbsp;위원회에서는&nbsp;생활과&nbsp;밀접한&nbsp;분야에&nbsp;대한&nbsp;법률상담&nbsp;서비스를&nbsp;제공하여&nbsp;구민의&nbsp;이익과&nbsp;권리를&nbsp;보호하고자&nbsp;하는&nbsp;취지에&nbsp;공감하였으나&nbsp;전문가무료상담실에&nbsp;외국인에게&nbsp;제공하는&nbsp;통역&nbsp;서비스에&nbsp;관한&nbsp;사항은&nbsp;기존대로&nbsp;유지하도록&nbsp;하며&nbsp;효율적인&nbsp;운영을&nbsp;위하여&nbsp;상담&nbsp;책임관을&nbsp;무료&nbsp;상담&nbsp;업무를&nbsp;총괄하는&nbsp;해당&nbsp;부서장으로&nbsp;명시하고&nbsp;조례의&nbsp;제명과&nbsp;기타&nbsp;일부&nbsp;조문을&nbsp;정비하여&nbsp;본&nbsp;조례안을&nbsp;수정가결&nbsp;하였습니다.&nbsp;<br />&nbsp;&nbsp;다음은&nbsp;서울특별시&nbsp;강남구&nbsp;중대재해&nbsp;예방&nbsp;및&nbsp;관리에&nbsp;관한&nbsp;조례입니다.&nbsp;<br />&nbsp;&nbsp;2024년&nbsp;1월&nbsp;27일부터&nbsp;중대재해&nbsp;처벌&nbsp;등에&nbsp;관한&nbsp;법률이&nbsp;확대&nbsp;시행됨에&nbsp;따라&nbsp;중대재해&nbsp;예방을&nbsp;위한&nbsp;안전,&nbsp;보건&nbsp;조치&nbsp;의무&nbsp;이행의&nbsp;중요성이&nbsp;더욱&nbsp;커지고&nbsp;있어&nbsp;이에&nbsp;따른&nbsp;실태&nbsp;조사,&nbsp;중점&nbsp;관리&nbsp;대상&nbsp;등의&nbsp;사항을&nbsp;규정하고&nbsp;교육&nbsp;및&nbsp;홍보&nbsp;등에&nbsp;관한&nbsp;근거를&nbsp;마련하기&nbsp;위해&nbsp;제출된&nbsp;조례안으로&nbsp;우리&nbsp;위원회에서는&nbsp;중대재해&nbsp;예방&nbsp;및&nbsp;대응&nbsp;계획의&nbsp;수립&nbsp;및&nbsp;시행에&nbsp;관한&nbsp;기본&nbsp;취지에&nbsp;공감하였으나&nbsp;중대재해&nbsp;예방&nbsp;대책&nbsp;추진을&nbsp;위한&nbsp;유관기관과의&nbsp;협력&nbsp;체계&nbsp;구축&nbsp;근거와&nbsp;표창에&nbsp;관한&nbsp;조문을&nbsp;별도로&nbsp;신설하고&nbsp;실태&nbsp;조사와&nbsp;관련한&nbsp;일부&nbsp;불분명한&nbsp;용어를&nbsp;정비하였으며&nbsp;중대재해&nbsp;예방을&nbsp;위한&nbsp;보다&nbsp;실효적인&nbsp;대응&nbsp;방안에&nbsp;대한&nbsp;추가&nbsp;검토가&nbsp;필요함을&nbsp;당부하며&nbsp;본&nbsp;조례안을&nbsp;수정가결&nbsp;하였습니다.&nbsp;<br />&nbsp;&nbsp;마지막으로&nbsp;서울특별시&nbsp;강남구&nbsp;재난현장&nbsp;통합자원봉사지원단&nbsp;구성&nbsp;및&nbsp;운영&nbsp;등에&nbsp;관한&nbsp;조례안입니다.&nbsp;<br />&nbsp;&nbsp;본&nbsp;조례안은&nbsp;재난&nbsp;및&nbsp;안전관리기본법&nbsp;제17조의2&nbsp;제5항에&nbsp;따라&nbsp;통합자원봉사지원단의&nbsp;구성&nbsp;및&nbsp;운영에&nbsp;필요한&nbsp;사항을&nbsp;규정하여&nbsp;재난&nbsp;현장에서&nbsp;자원봉사&nbsp;활동을&nbsp;지원할&nbsp;근거를&nbsp;마련하기&nbsp;위해&nbsp;제출된&nbsp;것으로&nbsp;우리&nbsp;위원회에서는&nbsp;강남구&nbsp;재난안전대책본부에&nbsp;통합자원봉사지원단을&nbsp;설치하여&nbsp;재난&nbsp;상황이&nbsp;발생할&nbsp;경우&nbsp;민,&nbsp;관&nbsp;협력을&nbsp;통해&nbsp;보다&nbsp;신속하고&nbsp;효율적인&nbsp;수습&nbsp;활동을&nbsp;하고&nbsp;현장에서&nbsp;자원봉사&nbsp;활동을&nbsp;체계적으로&nbsp;지원할&nbsp;것으로&nbsp;사료되어&nbsp;본&nbsp;조례안을&nbsp;원안가결&nbsp;하였습니다.&nbsp;<br />&nbsp;&nbsp;보다&nbsp;자세한&nbsp;내용은&nbsp;배부해드린&nbsp;심사보고서를&nbsp;참조해&nbsp;주시고&nbsp;우리&nbsp;위원회에서&nbsp;심사한&nbsp;대로&nbsp;의결해&nbsp;주시기를&nbsp;부탁드리겠습니다.&nbsp;<br />&nbsp;&nbsp;이상으로&nbsp;심사보고를&nbsp;마치겠습니다.&nbsp;<br />&nbsp;&nbsp;감사합니다.&nbsp;<br /></div><div class='contents-block speaker-block member-speech' data-con_idx='24' data-member_code='09001'><strong>○의장 <a class='member_profile btn_profile' id='btn_profile_222' href='#' data-uid='222' title='이호귀 의원 프로필 보기'>이호귀</a></strong>&nbsp;&nbsp;김진경의원님&nbsp;수고하셨습니다.&nbsp;<br />&nbsp;&nbsp;의결을&nbsp;하도록&nbsp;하겠습니다.&nbsp;<br />&nbsp;&nbsp;의사일정&nbsp;제6항&nbsp;서울특별시&nbsp;강남구&nbsp;구민의&nbsp;상&nbsp;조례&nbsp;일부개정조례안,&nbsp;의사일정&nbsp;제7항&nbsp;서울특별시&nbsp;강남구&nbsp;공유재산&nbsp;및&nbsp;물품&nbsp;관리&nbsp;조례&nbsp;일부개정조례안,&nbsp;의사일정&nbsp;제8항&nbsp;서울특별시&nbsp;강남구&nbsp;전문가무료상담실&nbsp;설치&nbsp;및&nbsp;운영&nbsp;조례&nbsp;일부개정조례안,&nbsp;의사일정&nbsp;제9항&nbsp;서울특별시&nbsp;강남구&nbsp;중대재해&nbsp;예방&nbsp;및&nbsp;관리에&nbsp;관한&nbsp;조례안을&nbsp;수정안대로&nbsp;각각&nbsp;의결하고자&nbsp;하는데&nbsp;의원&nbsp;여러분께서는&nbsp;이의가&nbsp;없으십니까?&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;(「없습니다」하는&nbsp;의원&nbsp;많음)<br />&nbsp;&nbsp;이의가&nbsp;없으므로&nbsp;각각&nbsp;수정가결&nbsp;되었음을&nbsp;선포합니다.&nbsp;<br />&nbsp;&nbsp;다음으로&nbsp;의사일정&nbsp;제10항&nbsp;서울특별시&nbsp;강남구&nbsp;재난현장&nbsp;통합자원봉사지원단&nbsp;구성&nbsp;및&nbsp;운영&nbsp;등에&nbsp;관한&nbsp;조례안을&nbsp;원안대로&nbsp;의결하고자&nbsp;하는데&nbsp;의원&nbsp;여러분께서는&nbsp;이의가&nbsp;없으십니까?&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;(「없습니다」하는&nbsp;의원&nbsp;많음)<br />&nbsp;&nbsp;이의가&nbsp;없으므로&nbsp;가결되었음을&nbsp;선포합니다.&nbsp;<br /><hr /></div><div class='contents-block' data-con_idx='25'><strong class='item-in-contents' id='item12' title='11. 서울특별시 강남구 수수료 징수 조례 일부개정조례안(김영권의원 등 7인 발의)'>11.&nbsp;서울특별시&nbsp;강남구&nbsp;수수료&nbsp;징수&nbsp;조례&nbsp;일부개정조례안(김영권의원&nbsp;등&nbsp;7인&nbsp;발의)</strong>&nbsp;<a href='#' class='go-to-top' title='처음으로'><i class='fa fas fa-arrow-circle-up'></i></a><br /></div><div class='contents-block' data-con_idx='26'><strong class='item-in-contents' id='item13' title='12. 대치우성1차ㆍ쌍용2차아파트 통합재건축정비계획 결정(변경)을 위한 의견청취(안)(구청장 제출)'>12.&nbsp;대치우성1차ㆍ쌍용2차아파트&nbsp;통합재건축정비계획&nbsp;결정(변경)을&nbsp;위한&nbsp;의견청취(안)(구청장&nbsp;제출)</strong>&nbsp;<a href='#' class='go-to-top' title='처음으로'><i class='fa fas fa-arrow-circle-up'></i></a><br /></div><div class='contents-block' data-con_idx='27'><strong class='item-in-contents' id='item14' title='13. 대치쌍용1차 아파트 재건축정비사업정비계획 결정(변경)을 위한 의견청취(안)(구청장 제출)'>13.&nbsp;대치쌍용1차&nbsp;아파트&nbsp;재건축정비사업정비계획&nbsp;결정(변경)을&nbsp;위한&nbsp;의견청취(안)(구청장&nbsp;제출)</strong>&nbsp;<a href='#' class='go-to-top' title='처음으로'><i class='fa fas fa-arrow-circle-up'></i></a><br /></div><div class='contents-block' data-con_idx='28'><strong class='item-in-contents' id='item15' title='14. 압구정특별계획구역⑤ 도시관리계획(압구정 아파트지구 개발 기본계획 및 지구단위계획구역) 및 정비계획(변경) 결정을 위한 의견청취안(구청장 제출)'>14.&nbsp;압구정특별계획구역⑤&nbsp;도시관리계획(압구정&nbsp;아파트지구&nbsp;개발&nbsp;기본계획&nbsp;및&nbsp;지구단위계획구역)&nbsp;및&nbsp;정비계획(변경)&nbsp;결정을&nbsp;위한&nbsp;의견청취안(구청장&nbsp;제출)</strong>&nbsp;<a href='#' class='go-to-top' title='처음으로'><i class='fa fas fa-arrow-circle-up'></i></a><br /></div><div class='contents-block' data-con_idx='29'><strong class='item-in-contents' id='item16' title='15. 압구정특별계획구역③ 도시관리계획(압구정 아파트지구 개발 기본계획 및 지구단위계획구역) 및 정비계획(변경) 결정을 위한 의견청취안(구청장 제출)'>15.&nbsp;압구정특별계획구역③&nbsp;도시관리계획(압구정&nbsp;아파트지구&nbsp;개발&nbsp;기본계획&nbsp;및&nbsp;지구단위계획구역)&nbsp;및&nbsp;정비계획(변경)&nbsp;결정을&nbsp;위한&nbsp;의견청취안(구청장&nbsp;제출)</strong>&nbsp;<a href='#' class='go-to-top' title='처음으로'><i class='fa fas fa-arrow-circle-up'></i></a><br /><p class='taged-line tag-R'>(10시26분)</p></div><div class='contents-block speaker-block member-speech' data-con_idx='30' data-member_code='09001'><strong>○의장 <a class='member_profile btn_profile' id='btn_profile_222' href='#' data-uid='222' title='이호귀 의원 프로필 보기'>이호귀</a></strong>&nbsp;&nbsp;다음은&nbsp;의사일정&nbsp;제11항&nbsp;서울특별시&nbsp;강남구&nbsp;수수료&nbsp;징수&nbsp;조례&nbsp;일부개정조례안,&nbsp;의사일정&nbsp;제12항&nbsp;대치우성1차·쌍용2차아파트&nbsp;통합재건축정비계획&nbsp;결정(변경)을&nbsp;위한&nbsp;의견청취(안),&nbsp;의사일정&nbsp;제13항&nbsp;대치쌍용1차&nbsp;아파트&nbsp;재건축정비사업정비계획&nbsp;결정(변경)을&nbsp;위한&nbsp;의견청취(안),&nbsp;의사일정&nbsp;제14항&nbsp;압구정특별계획구역⑤&nbsp;도시관리계획(압구정&nbsp;아파트지구&nbsp;개발&nbsp;기본계획&nbsp;및&nbsp;지구단위계획구역)&nbsp;및&nbsp;정비계획(변경)&nbsp;결정을&nbsp;위한&nbsp;의견청취안,&nbsp;의사일정&nbsp;제15항&nbsp;압구정특별계획구역③&nbsp;도시관리계획(압구정&nbsp;아파트지구&nbsp;개발&nbsp;기본계획&nbsp;및&nbsp;지구단위계획구역)&nbsp;및&nbsp;정비계획(변경)&nbsp;결정을&nbsp;위한&nbsp;의견청취안을&nbsp;일괄&nbsp;상정합니다.&nbsp;<br />&nbsp;&nbsp;경제도시위원회&nbsp;손민기의원님&nbsp;나오셔서&nbsp;심사결과&nbsp;보고해&nbsp;주시기&nbsp;바랍니다.&nbsp;<br /></div><div class='contents-block speaker-block member-speech' data-con_idx='31' data-member_code='09018'><strong>○<a class='member_profile btn_profile' id='btn_profile_239' href='#' data-uid='239' title='손민기 의원 프로필 보기'>손민기</a> 의원</strong>&nbsp;&nbsp;안녕하십니까?&nbsp;경제도시위원회&nbsp;손민기의원입니다.&nbsp;<br />&nbsp;&nbsp;제323회&nbsp;강남구의회&nbsp;제2차정례회&nbsp;경제도시위원회&nbsp;회의에서&nbsp;심사한&nbsp;5건의&nbsp;안건에&nbsp;대한&nbsp;심사&nbsp;결과를&nbsp;보고드리도록&nbsp;하겠습니다.&nbsp;<br />&nbsp;&nbsp;먼저&nbsp;김형곤의원이&nbsp;대표발의&nbsp;한&nbsp;서울특별시&nbsp;강남구&nbsp;수수료&nbsp;징수&nbsp;조례&nbsp;일부개정조례안입니다.&nbsp;<br />&nbsp;&nbsp;코로나19&nbsp;상황에서&nbsp;한시적으로&nbsp;면제한&nbsp;무인민원발급기&nbsp;민원&nbsp;발급&nbsp;수수료의&nbsp;면제&nbsp;기간이&nbsp;지났음에도&nbsp;조례&nbsp;규정에&nbsp;대한&nbsp;조치가&nbsp;전무하고&nbsp;조례와&nbsp;모순되는&nbsp;행정이&nbsp;지속되고&nbsp;있어&nbsp;이를&nbsp;바로잡고자&nbsp;본&nbsp;조례안이&nbsp;발의되었습니다.&nbsp;<br />&nbsp;&nbsp;우리&nbsp;위원회에서는&nbsp;조례&nbsp;개정&nbsp;취지에&nbsp;공감하면서&nbsp;총괄부서&nbsp;및&nbsp;관련부서의&nbsp;관리&nbsp;소홀과&nbsp;미비를&nbsp;지적하고&nbsp;무인민원발급기,&nbsp;민원&nbsp;발급&nbsp;수수료에&nbsp;대한&nbsp;다른&nbsp;기관의&nbsp;추세,&nbsp;향후&nbsp;행정의&nbsp;취지&nbsp;및&nbsp;방향&nbsp;등에&nbsp;대해&nbsp;심도&nbsp;있는&nbsp;질의와&nbsp;논의를&nbsp;거쳤습니다.&nbsp;<br />&nbsp;&nbsp;혼란을&nbsp;최소화하고&nbsp;수수료&nbsp;관리의&nbsp;효율성을&nbsp;높이면서&nbsp;현행&nbsp;조례의&nbsp;문제점을&nbsp;없애도록&nbsp;조항과&nbsp;부칙을&nbsp;체계적으로&nbsp;조정하고&nbsp;별표의&nbsp;일부&nbsp;명칭과&nbsp;수수료&nbsp;등을&nbsp;현행화하여&nbsp;본&nbsp;조례안을&nbsp;수정가결&nbsp;하였습니다.&nbsp;<br />&nbsp;&nbsp;다음은&nbsp;대치우성1차·쌍용2차아파트&nbsp;통합재건축정비계획&nbsp;결정(변경)을&nbsp;위한&nbsp;의견청취(안)과&nbsp;대치쌍용1차&nbsp;아파트&nbsp;재건축정비사업정비계획&nbsp;결정(변경)을&nbsp;위한&nbsp;의견청취(안)입니다.&nbsp;<br />&nbsp;&nbsp;도시&nbsp;및&nbsp;주거환경정비법&nbsp;제15조&nbsp;규정에&nbsp;따라&nbsp;각&nbsp;재건축&nbsp;사업이&nbsp;정비계획&nbsp;변경&nbsp;입안을&nbsp;위하여&nbsp;구의회&nbsp;의견을&nbsp;청취하고자&nbsp;제출되었습니다.&nbsp;<br />&nbsp;&nbsp;우리&nbsp;위원회에서는&nbsp;대치우성1차와&nbsp;쌍용2차아파트의&nbsp;모범적인&nbsp;통합&nbsp;재건축&nbsp;추진에&nbsp;대해&nbsp;조합의&nbsp;협조와&nbsp;집행부의&nbsp;노고를&nbsp;칭찬하며&nbsp;기부채납&nbsp;시설&nbsp;활용,&nbsp;단지&nbsp;배치&nbsp;및&nbsp;경관&nbsp;개선,&nbsp;지하철&nbsp;역사와&nbsp;지하통로&nbsp;연결,&nbsp;재난&nbsp;대비&nbsp;직통&nbsp;시스템&nbsp;구축,&nbsp;전기자동차&nbsp;충전기&nbsp;화재&nbsp;방지&nbsp;설비&nbsp;등&nbsp;재건축&nbsp;사업에&nbsp;대해&nbsp;다양한&nbsp;의견을&nbsp;제안하고&nbsp;집행부의&nbsp;차질&nbsp;없는&nbsp;후속&nbsp;진행과&nbsp;관리에&nbsp;만전을&nbsp;당부하며&nbsp;본&nbsp;청취안을&nbsp;각각&nbsp;원안채택&nbsp;하였습니다.&nbsp;<br />&nbsp;&nbsp;다음은&nbsp;압구정특별계획구역⑤&nbsp;도시관리계획(압구정&nbsp;아파트지구&nbsp;개발&nbsp;기본계획&nbsp;및&nbsp;지구단위계획구역)&nbsp;및&nbsp;정비계획(변경)&nbsp;결정을&nbsp;위한&nbsp;의견청취안과&nbsp;압구정특별계획구역③&nbsp;도시관리계획(압구정&nbsp;아파트지구&nbsp;개발&nbsp;기본계획&nbsp;및&nbsp;지구단위계획구역)&nbsp;및&nbsp;정비계획(변경)&nbsp;결정을&nbsp;위한&nbsp;의견청취안입니다.&nbsp;<br />&nbsp;&nbsp;신속통합기획&nbsp;사업에&nbsp;선정되어&nbsp;신속통합기획&nbsp;가이드라인을&nbsp;반영한&nbsp;정비계획안에&nbsp;대해&nbsp;관련기관&nbsp;및&nbsp;부서&nbsp;협의를&nbsp;진행한&nbsp;후&nbsp;도시&nbsp;및&nbsp;주거환경정비법&nbsp;제15조&nbsp;규정에&nbsp;따라&nbsp;각&nbsp;재건축사업의&nbsp;정비계획&nbsp;변경&nbsp;입안을&nbsp;위하여&nbsp;구의회의&nbsp;의견을&nbsp;청취하고자&nbsp;제출되었습니다.&nbsp;<br />&nbsp;&nbsp;우리&nbsp;위원회에서는&nbsp;신속통합&nbsp;및&nbsp;사업과&nbsp;다른&nbsp;재건축사업의&nbsp;차이점과&nbsp;유리점&nbsp;등을&nbsp;확인하고&nbsp;대규모&nbsp;건축&nbsp;재건축&nbsp;추진에&nbsp;따른&nbsp;압구정&nbsp;일대&nbsp;교통대책과&nbsp;기부채납&nbsp;시설&nbsp;활용&nbsp;및&nbsp;관리방안&nbsp;등에&nbsp;대해&nbsp;심도&nbsp;있는&nbsp;질의와&nbsp;논의를&nbsp;거친&nbsp;후&nbsp;신속통합기획으로&nbsp;신속하고&nbsp;원활하게&nbsp;사업이&nbsp;추진될&nbsp;수&nbsp;있도록&nbsp;집행부의&nbsp;세심한&nbsp;지도&nbsp;관리를&nbsp;당부하며&nbsp;본&nbsp;의견안을&nbsp;각각&nbsp;원안채택&nbsp;하였습니다.&nbsp;<br />&nbsp;&nbsp;그&nbsp;밖에&nbsp;자세한&nbsp;내용은&nbsp;배부해&nbsp;드린&nbsp;심사보고서를&nbsp;참고해&nbsp;주시기&nbsp;바라며&nbsp;이상으로&nbsp;심사보고를&nbsp;마치도록&nbsp;하겠습니다.&nbsp;<br />&nbsp;&nbsp;감사합니다.&nbsp;<br /></div><div class='contents-block speaker-block member-speech' data-con_idx='32' data-member_code='09001'><strong>○의장 <a class='member_profile btn_profile' id='btn_profile_222' href='#' data-uid='222' title='이호귀 의원 프로필 보기'>이호귀</a></strong>&nbsp;&nbsp;손민기의원님&nbsp;수고하셨습니다.&nbsp;<br />&nbsp;&nbsp;의결을&nbsp;하도록&nbsp;하겠습니다.&nbsp;<br />&nbsp;&nbsp;의사일정&nbsp;제11항&nbsp;서울특별시&nbsp;강남구&nbsp;수수료&nbsp;징수&nbsp;조례&nbsp;일부개정조례안을&nbsp;수정안대로&nbsp;의결하고자&nbsp;하는데&nbsp;의원&nbsp;여러분께서는&nbsp;이의가&nbsp;없으십니까?&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;(「없습니다」하는&nbsp;의원&nbsp;많음)<br />&nbsp;&nbsp;이의가&nbsp;없으므로&nbsp;수정가결&nbsp;되었음을&nbsp;선포합니다.&nbsp;<br />&nbsp;&nbsp;다음으로&nbsp;의결을&nbsp;하도록&nbsp;하겠습니다.&nbsp;<br />&nbsp;&nbsp;의사일정&nbsp;제12항&nbsp;대치우성1차·쌍용2차아파트&nbsp;통합재건축정비계획&nbsp;결정(변경)을&nbsp;위한&nbsp;의견청취(안),&nbsp;의사일정&nbsp;제13항&nbsp;대치쌍용1차&nbsp;아파트&nbsp;재건축정비사업정비계획&nbsp;결정(변경)을&nbsp;위한&nbsp;의견청취(안),&nbsp;의사일정&nbsp;제14항&nbsp;압구정특별계획구역⑤&nbsp;도시관리계획(압구정&nbsp;아파트지구&nbsp;개발&nbsp;기본계획&nbsp;및&nbsp;지구단위계획구역)&nbsp;및&nbsp;정비계획(변경)&nbsp;결정을&nbsp;위한&nbsp;의견청취안,&nbsp;의사일정&nbsp;제15항&nbsp;압구정특별계획구역③&nbsp;도시관리계획(압구정&nbsp;아파트지구&nbsp;개발&nbsp;기본계획&nbsp;및&nbsp;지구단위계획구역)&nbsp;및&nbsp;정비계획(변경)&nbsp;결정을&nbsp;위한&nbsp;의견청취안을&nbsp;원안대로&nbsp;각각&nbsp;채택하고자&nbsp;하는데&nbsp;의원&nbsp;여러분께서는&nbsp;이의가&nbsp;없으십니까?&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;(「없습니다」하는&nbsp;의원&nbsp;많음)<br />&nbsp;&nbsp;이의가&nbsp;없으므로&nbsp;각각&nbsp;원안채택&nbsp;되었음을&nbsp;선포합니다.&nbsp;<br /><hr /></div><div class='contents-block' data-con_idx='33'><strong class='item-in-contents' id='item17' title='16. 서울특별시 강남구 개인정보 보호 사업 활성화 지원 조례안(이성수의원 등 11인 발의)'>16.&nbsp;서울특별시&nbsp;강남구&nbsp;개인정보&nbsp;보호&nbsp;사업&nbsp;활성화&nbsp;지원&nbsp;조례안(이성수의원&nbsp;등&nbsp;11인&nbsp;발의)</strong>&nbsp;<a href='#' class='go-to-top' title='처음으로'><i class='fa fas fa-arrow-circle-up'></i></a><br /></div><div class='contents-block' data-con_idx='34'><strong class='item-in-contents' id='item18' title='17. 서울특별시 강남구 출자·출연기관 사이버보안 관리 조례안(구청장 제출)'>17.&nbsp;서울특별시&nbsp;강남구&nbsp;출자&middot;출연기관&nbsp;사이버보안&nbsp;관리&nbsp;조례안(구청장&nbsp;제출)</strong>&nbsp;<a href='#' class='go-to-top' title='처음으로'><i class='fa fas fa-arrow-circle-up'></i></a><br /></div><div class='contents-block' data-con_idx='35'><strong class='item-in-contents' id='item19' title='18. 서울특별시 강남구 독서문화 진흥에 관한 조례 전부개정조례안(우종혁의원 등 10인 발의)'>18.&nbsp;서울특별시&nbsp;강남구&nbsp;독서문화&nbsp;진흥에&nbsp;관한&nbsp;조례&nbsp;전부개정조례안(우종혁의원&nbsp;등&nbsp;10인&nbsp;발의)</strong>&nbsp;<a href='#' class='go-to-top' title='처음으로'><i class='fa fas fa-arrow-circle-up'></i></a><br /></div><div class='contents-block' data-con_idx='36'><strong class='item-in-contents' id='item20' title='19. 서울특별시 강남구 공중화장실 등의 설치 및 관리 조례 일부개정조례안(복지문화위원장 제안)'>19.&nbsp;서울특별시&nbsp;강남구&nbsp;공중화장실&nbsp;등의&nbsp;설치&nbsp;및&nbsp;관리&nbsp;조례&nbsp;일부개정조례안(복지문화위원장&nbsp;제안)</strong>&nbsp;<a href='#' class='go-to-top' title='처음으로'><i class='fa fas fa-arrow-circle-up'></i></a><br /><p class='taged-line tag-R'>(10시34분)</p></div><div class='contents-block speaker-block member-speech' data-con_idx='37' data-member_code='09001'><strong>○의장 <a class='member_profile btn_profile' id='btn_profile_222' href='#' data-uid='222' title='이호귀 의원 프로필 보기'>이호귀</a></strong>&nbsp;&nbsp;다음은&nbsp;의사일정&nbsp;제16항&nbsp;서울특별시&nbsp;강남구&nbsp;개인정보&nbsp;보호&nbsp;사업&nbsp;활성화&nbsp;지원&nbsp;조례안,&nbsp;의사일정&nbsp;제17항&nbsp;서울특별시&nbsp;강남구&nbsp;출자·출연기관&nbsp;사이버보안&nbsp;관리&nbsp;조례안,&nbsp;의사일정&nbsp;제18항&nbsp;서울특별시&nbsp;강남구&nbsp;독서문화&nbsp;진흥에&nbsp;관한&nbsp;조례&nbsp;전부개정조례안,&nbsp;의사일정&nbsp;제19항&nbsp;서울특별시&nbsp;강남구&nbsp;공중화장실&nbsp;등의&nbsp;설치&nbsp;및&nbsp;관리&nbsp;조례&nbsp;일부개정조례안을&nbsp;일괄&nbsp;상정합니다.&nbsp;<br />&nbsp;&nbsp;복지문화위원회&nbsp;오온누리의원님&nbsp;나오셔서&nbsp;심사결과를&nbsp;보고해&nbsp;주시기&nbsp;바랍니다.&nbsp;<br /></div><div class='contents-block speaker-block member-speech' data-con_idx='38' data-member_code='09023'><strong>○<a class='member_profile btn_profile' id='btn_profile_244' href='#' data-uid='244' title='오온누리 의원 프로필 보기'>오온누리</a> 의원</strong>&nbsp;&nbsp;안녕하십니까?&nbsp;복지문화위원회&nbsp;소속&nbsp;오온누리의원입니다.&nbsp;<br />&nbsp;&nbsp;제323회&nbsp;강남구의회&nbsp;제2차정례회&nbsp;복지문화위원회&nbsp;제1,&nbsp;2차&nbsp;회의에서&nbsp;심사한&nbsp;4건의&nbsp;안건에&nbsp;대한&nbsp;심사결과를&nbsp;보고드리겠습니다.&nbsp;<br />&nbsp;&nbsp;먼저&nbsp;서울특별시&nbsp;강남구&nbsp;개인정보&nbsp;보호&nbsp;사업&nbsp;활성화&nbsp;지원&nbsp;조례안은&nbsp;대표발의자이신&nbsp;이성수의원으로부터&nbsp;개인정보&nbsp;보호&nbsp;사업을&nbsp;활성화하여&nbsp;개인정보&nbsp;침해&nbsp;사고를&nbsp;사전에&nbsp;예방하고&nbsp;구민의&nbsp;불안감을&nbsp;해소하는&nbsp;데&nbsp;기여하고자&nbsp;발의하였다는&nbsp;제안설명을&nbsp;들었으며,&nbsp;서울특별시&nbsp;강남구&nbsp;출자·출연기관&nbsp;사이버보안&nbsp;관리&nbsp;조례안은&nbsp;상위&nbsp;법령인&nbsp;사이버&nbsp;안보&nbsp;업무&nbsp;규정에서&nbsp;지자체&nbsp;조례로&nbsp;위임한&nbsp;사항을&nbsp;규정함에&nbsp;따라&nbsp;우리&nbsp;구&nbsp;출자·출연기관을&nbsp;사이버보안&nbsp;업무&nbsp;대상으로&nbsp;지정하여&nbsp;사이버&nbsp;위협에&nbsp;신속하게&nbsp;대응하고자&nbsp;제안하였다는&nbsp;설명을&nbsp;들었습니다.&nbsp;<br />&nbsp;&nbsp;이에&nbsp;우리&nbsp;위원회에서는&nbsp;입법&nbsp;취지에는&nbsp;공감하나&nbsp;일부&nbsp;조문&nbsp;및&nbsp;규정을&nbsp;명확히&nbsp;정비,&nbsp;보완하여&nbsp;본&nbsp;안건을&nbsp;수정가결&nbsp;하였습니다.&nbsp;<br />&nbsp;&nbsp;다음&nbsp;서울특별시&nbsp;강남구&nbsp;독서문화&nbsp;진흥에&nbsp;관한&nbsp;조례&nbsp;전부개정조례안은&nbsp;대표발의자이신&nbsp;우종혁의원으로부터&nbsp;독서교육의&nbsp;정의를&nbsp;명시하고&nbsp;독서&nbsp;소외인을&nbsp;포함한&nbsp;모든&nbsp;강남구민에게&nbsp;균등한&nbsp;독서&nbsp;기회를&nbsp;제공하기&nbsp;위해&nbsp;발의하게&nbsp;되었다는&nbsp;제안설명을&nbsp;들었으며,&nbsp;우리&nbsp;위원회에서는&nbsp;본&nbsp;조례안&nbsp;개정을&nbsp;통해&nbsp;독서&nbsp;소외인의&nbsp;독서&nbsp;활동&nbsp;보장을&nbsp;위해&nbsp;행정적,&nbsp;재정적&nbsp;지원을&nbsp;강화할&nbsp;수&nbsp;있을&nbsp;것이라&nbsp;기대하나&nbsp;위원회&nbsp;구성과&nbsp;관련한&nbsp;운영상의&nbsp;미비점과&nbsp;일부&nbsp;용어를&nbsp;정비하여&nbsp;수정가결&nbsp;하였습니다.&nbsp;<br />&nbsp;&nbsp;마지막으로,&nbsp;서울특별시&nbsp;강남구&nbsp;공중화장실&nbsp;등의&nbsp;설치&nbsp;및&nbsp;관리&nbsp;조례&nbsp;일부개정조례안은&nbsp;우리&nbsp;위원회에서&nbsp;공중화장실&nbsp;내&nbsp;불법&nbsp;촬영을&nbsp;예방하기&nbsp;위한&nbsp;관,&nbsp;경&nbsp;협력의&nbsp;필요성에&nbsp;공감하여&nbsp;시설&nbsp;개선이&nbsp;시급하다고&nbsp;판단하여&nbsp;본&nbsp;조례&nbsp;개정을&nbsp;통해&nbsp;공중화장실&nbsp;이용자의&nbsp;안전보호와&nbsp;범죄&nbsp;예방을&nbsp;위한&nbsp;행정적,&nbsp;재정적&nbsp;지원에&nbsp;적극&nbsp;협력하고자&nbsp;위원회&nbsp;안으로&nbsp;제안하였습니다.&nbsp;<br />&nbsp;&nbsp;이에&nbsp;우리&nbsp;위원회에서는&nbsp;안심&nbsp;가림판&nbsp;설치&nbsp;등&nbsp;필요한&nbsp;지원이&nbsp;이루어진다면&nbsp;구민의&nbsp;안전한&nbsp;화장실&nbsp;이용&nbsp;환경&nbsp;조성과&nbsp;범죄&nbsp;예방에&nbsp;기여할&nbsp;수&nbsp;있을&nbsp;것이라&nbsp;판단하여&nbsp;위원회&nbsp;안으로&nbsp;원안&nbsp;채택하였습니다.&nbsp;<br />&nbsp;&nbsp;보다&nbsp;상세한&nbsp;내용은&nbsp;배부해&nbsp;드린&nbsp;심사보고서를&nbsp;참고하여&nbsp;주시고&nbsp;우리&nbsp;위원회에서&nbsp;심사&nbsp;보고한&nbsp;대로&nbsp;의결해&nbsp;주시기&nbsp;바라며&nbsp;이상&nbsp;보고를&nbsp;마치겠습니다.&nbsp;<br />&nbsp;&nbsp;감사합니다.&nbsp;<br /></div><div class='contents-block speaker-block member-speech' data-con_idx='39' data-member_code='09001'><strong>○의장 <a class='member_profile btn_profile' id='btn_profile_222' href='#' data-uid='222' title='이호귀 의원 프로필 보기'>이호귀</a></strong>&nbsp;&nbsp;오온누리의원님&nbsp;수고하셨습니다.&nbsp;<br />&nbsp;&nbsp;의결을&nbsp;하도록&nbsp;하겠습니다.&nbsp;<br />&nbsp;&nbsp;의사일정&nbsp;제16항&nbsp;서울특별시&nbsp;강남구&nbsp;개인정보&nbsp;보호&nbsp;사업&nbsp;활성화&nbsp;지원&nbsp;조례안,&nbsp;의사일정&nbsp;제17항&nbsp;서울특별시&nbsp;강남구&nbsp;출자·출연기관&nbsp;사이버보안&nbsp;관리&nbsp;조례안,&nbsp;의사일정&nbsp;제18항&nbsp;서울특별시&nbsp;강남구&nbsp;독서문화&nbsp;진흥에&nbsp;관한&nbsp;조례&nbsp;전부개정조례안을&nbsp;수정안대로&nbsp;각각&nbsp;의결하고자&nbsp;하는데&nbsp;의원&nbsp;여러분께서는&nbsp;이의가&nbsp;없으십니까?&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;(「없습니다」하는&nbsp;의원&nbsp;많음)<br />&nbsp;&nbsp;이의가&nbsp;없으므로&nbsp;각각&nbsp;수정가결&nbsp;되었음을&nbsp;선포합니다.&nbsp;<br />&nbsp;&nbsp;다음으로&nbsp;의사일정&nbsp;제19항&nbsp;서울특별시&nbsp;강남구&nbsp;공중화장실&nbsp;등의&nbsp;설치&nbsp;및&nbsp;관리&nbsp;조례&nbsp;일부개정조례안을&nbsp;원안대로&nbsp;채택하고자&nbsp;하는데&nbsp;의원&nbsp;여러분께서는&nbsp;이의가&nbsp;없으십니까?&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;(「없습니다」하는&nbsp;의원&nbsp;많음)<br />&nbsp;&nbsp;이의가&nbsp;없으므로&nbsp;원안채택&nbsp;되었음을&nbsp;선포합니다.&nbsp;<br /><hr /></div><div class='contents-block' data-con_idx='40'><strong class='item-in-contents' id='item21' title='20. 2025년도 예산안(구청장 제출)'>20.&nbsp;2025년도&nbsp;예산안(구청장&nbsp;제출)</strong>&nbsp;<a href='#' class='go-to-top' title='처음으로'><i class='fa fas fa-arrow-circle-up'></i></a><br /></div><div class='contents-block' data-con_idx='41'><strong class='item-in-contents' id='item22' title='21. 2025년도 기금운용계획안(구청장 제출)'>21.&nbsp;2025년도&nbsp;기금운용계획안(구청장&nbsp;제출)</strong>&nbsp;<a href='#' class='go-to-top' title='처음으로'><i class='fa fas fa-arrow-circle-up'></i></a><br /><p class='taged-line tag-R'>(10시39분)</p></div><div class='contents-block speaker-block member-speech' data-con_idx='42' data-member_code='09001'><strong>○의장 <a class='member_profile btn_profile' id='btn_profile_222' href='#' data-uid='222' title='이호귀 의원 프로필 보기'>이호귀</a></strong>&nbsp;&nbsp;다음으로&nbsp;의사일정&nbsp;제20항&nbsp;2025년도&nbsp;예산안,&nbsp;의사일정&nbsp;제21항&nbsp;2025년도&nbsp;기금운용계획안을&nbsp;일괄&nbsp;상정합니다.&nbsp;<br />&nbsp;&nbsp;예산결산특별위원회&nbsp;안지연&nbsp;위원장님&nbsp;나오셔서&nbsp;심사결과를&nbsp;보고해&nbsp;주시기&nbsp;바랍니다.&nbsp;<br /></div><div class='contents-block speaker-block member-speech' data-con_idx='43' data-member_code='09009'><strong>○<a class='member_profile btn_profile' id='btn_profile_230' href='#' data-uid='230' title='안지연 의원 프로필 보기'>안지연</a> 의원</strong>&nbsp;&nbsp;안녕하십니까?&nbsp;예산결산특별위원회&nbsp;위원장&nbsp;안지연입니다.&nbsp;<br />&nbsp;&nbsp;먼저&nbsp;이번&nbsp;2025년도&nbsp;예산안&nbsp;및&nbsp;기금운용계획안&nbsp;심사를&nbsp;위하여&nbsp;열과&nbsp;성을&nbsp;다해&nbsp;심도&nbsp;있는&nbsp;질의와&nbsp;토론을&nbsp;펼쳐주신&nbsp;예산결산특별위원회&nbsp;위원님들의&nbsp;노고에&nbsp;진심으로&nbsp;깊은&nbsp;감사와&nbsp;경의를&nbsp;표합니다.&nbsp;<br />&nbsp;&nbsp;그러면&nbsp;제323회&nbsp;강남구의회&nbsp;제2차정례회&nbsp;예산결산특별위원회&nbsp;심사결과를&nbsp;보고드리겠습니다.&nbsp;<br />&nbsp;&nbsp;지난&nbsp;11월&nbsp;15일&nbsp;구청장으로부터의&nbsp;시정연설에서&nbsp;2025년은&nbsp;개청&nbsp;50주년을&nbsp;맞는&nbsp;해이자&nbsp;미래&nbsp;100년을&nbsp;준비하는&nbsp;해로&nbsp;미래&nbsp;강남을&nbsp;위한&nbsp;지속&nbsp;가능한&nbsp;성장을&nbsp;이루고자&nbsp;경제,&nbsp;문화,&nbsp;안전,&nbsp;복지,&nbsp;환경&nbsp;등&nbsp;모든&nbsp;분야에&nbsp;균형&nbsp;있게&nbsp;예산안을&nbsp;편성하였다고&nbsp;들었습니다.&nbsp;<br />&nbsp;&nbsp;또한&nbsp;부구청장으로부터&nbsp;세입&nbsp;예산의&nbsp;주된&nbsp;증가&nbsp;이유&nbsp;및&nbsp;세출&nbsp;예산의&nbsp;기능&nbsp;분야별&nbsp;주요&nbsp;내용&nbsp;등의&nbsp;설명과&nbsp;함께&nbsp;일반회계&nbsp;1조3,281억원과&nbsp;특별회계&nbsp;456억원,&nbsp;총&nbsp;1조3,737억원으로&nbsp;2024년&nbsp;대비&nbsp;6.5%인&nbsp;843억원이&nbsp;증가한&nbsp;규모이고&nbsp;2025년도&nbsp;기금운용계획안은&nbsp;16개&nbsp;기금&nbsp;총&nbsp;5,694억원이라는&nbsp;총괄&nbsp;제안설명을&nbsp;들었습니다.&nbsp;<br />&nbsp;&nbsp;이어서&nbsp;전문위원으로부터&nbsp;국과별&nbsp;주요&nbsp;사업에&nbsp;대한&nbsp;구체적인&nbsp;검토&nbsp;의견을&nbsp;청취하였습니다.&nbsp;<br />&nbsp;&nbsp;이에&nbsp;본&nbsp;특위에서는&nbsp;각&nbsp;상임위원회에서&nbsp;심사한&nbsp;예비심사&nbsp;의견서와&nbsp;계속&nbsp;사업의&nbsp;주요&nbsp;쟁점&nbsp;사항에&nbsp;대하여&nbsp;심도&nbsp;있는&nbsp;질의를&nbsp;거쳤습니다.&nbsp;또한&nbsp;3차에&nbsp;걸친&nbsp;계수조정과&nbsp;집행부와의&nbsp;지속적인&nbsp;질의답변&nbsp;과정&nbsp;및&nbsp;간담회를&nbsp;거친&nbsp;후에&nbsp;그&nbsp;결과를&nbsp;종합하여&nbsp;예산안에&nbsp;대하여&nbsp;수정가결&nbsp;하였습니다.&nbsp;<br />&nbsp;&nbsp;수정안의&nbsp;총&nbsp;규모는&nbsp;1조3,736억8,369만원으로&nbsp;일반회계&nbsp;세출&nbsp;예산에서&nbsp;효과성&nbsp;검토&nbsp;및&nbsp;사업&nbsp;시급성이&nbsp;낮은&nbsp;강남라이프TV&nbsp;운영&nbsp;등&nbsp;36개&nbsp;사업에서&nbsp;57억8,072만원을&nbsp;일부&nbsp;또는&nbsp;전액&nbsp;삭감하였고&nbsp;조직&nbsp;분석&nbsp;및&nbsp;진단&nbsp;등&nbsp;18개&nbsp;의원&nbsp;발의&nbsp;사업으로&nbsp;편성&nbsp;의결하였습니다.&nbsp;<br />&nbsp;&nbsp;특별회계&nbsp;세출&nbsp;예산에서는&nbsp;거주자우선주차장&nbsp;운영&nbsp;관리&nbsp;사업에서&nbsp;11억2,712만원을&nbsp;일부&nbsp;삭감하여&nbsp;내부유보금으로&nbsp;편성&nbsp;의결하였으며,&nbsp;기금운용계획안은&nbsp;원안&nbsp;의결하였습니다.&nbsp;<br />&nbsp;&nbsp;특히&nbsp;본&nbsp;특위에서는&nbsp;어수선한&nbsp;사회&nbsp;분위기와&nbsp;경기침체로&nbsp;인한&nbsp;구민들의&nbsp;어려움을&nbsp;감안하여&nbsp;더욱&nbsp;심도&nbsp;있는&nbsp;세밀한&nbsp;심사를&nbsp;하였습니다.&nbsp;<br />&nbsp;&nbsp;구민의&nbsp;삶의&nbsp;질&nbsp;향상을&nbsp;최우선으로&nbsp;꼭&nbsp;필요한&nbsp;사업만을&nbsp;편성하였으며,&nbsp;구민이&nbsp;이해하고&nbsp;신뢰할&nbsp;수&nbsp;있는&nbsp;예산안이&nbsp;될&nbsp;수&nbsp;있도록&nbsp;최선을&nbsp;다했습니다.&nbsp;<br />&nbsp;&nbsp;끝으로&nbsp;심사에&nbsp;열과&nbsp;성의를&nbsp;다해&nbsp;주신&nbsp;예산결산특별위원회&nbsp;이향숙&nbsp;부위원장님을&nbsp;비롯한&nbsp;예결특위&nbsp;위원님&nbsp;한&nbsp;분&nbsp;한&nbsp;분께&nbsp;다시&nbsp;한번&nbsp;깊은&nbsp;감사를&nbsp;드리며&nbsp;더불어&nbsp;집행부&nbsp;공무원들께도&nbsp;진심으로&nbsp;수고&nbsp;많이&nbsp;하셨다는&nbsp;말씀을&nbsp;전합니다.&nbsp;<br />&nbsp;&nbsp;그&nbsp;밖에&nbsp;보다&nbsp;상세한&nbsp;내용은&nbsp;배부해&nbsp;드린&nbsp;심사보고서를&nbsp;참고해&nbsp;주시기&nbsp;바라며&nbsp;심사보고를&nbsp;마치겠습니다.&nbsp;<br />&nbsp;&nbsp;고맙습니다.&nbsp;<br /></div><div class='contents-block speaker-block member-speech' data-con_idx='44' data-member_code='09001'><strong>○의장 <a class='member_profile btn_profile' id='btn_profile_222' href='#' data-uid='222' title='이호귀 의원 프로필 보기'>이호귀</a></strong>&nbsp;&nbsp;안지연&nbsp;위원장님&nbsp;수고하셨습니다.&nbsp;<br />&nbsp;&nbsp;이어서&nbsp;지방자치법&nbsp;제142조제3항&nbsp;규정에&nbsp;따라&nbsp;2025년도&nbsp;예산안의&nbsp;수정안에&nbsp;대하여&nbsp;집행부의&nbsp;의견을&nbsp;듣도록&nbsp;하겠습니다.&nbsp;<br />&nbsp;&nbsp;구청장&nbsp;나오셔서&nbsp;의견을&nbsp;말씀해&nbsp;주시기&nbsp;바랍니다.&nbsp;<br /></div><div class='contents-block speaker-block' data-con_idx='45' data-member_code=''><strong>○구청장 조성명</strong>&nbsp;&nbsp;안녕하십니까?&nbsp;구청장&nbsp;조성명입니다.&nbsp;<br />&nbsp;&nbsp;강남구민의&nbsp;복리증진과&nbsp;구정발전을&nbsp;위해&nbsp;최선을&nbsp;다하시는&nbsp;이호귀&nbsp;의장님,&nbsp;복진경&nbsp;부의장님을&nbsp;비롯한&nbsp;의원&nbsp;여러분들께&nbsp;진심으로&nbsp;감사드립니다.&nbsp;<br />&nbsp;&nbsp;특히&nbsp;심도&nbsp;있는&nbsp;예산안&nbsp;심사를&nbsp;위해&nbsp;애써&nbsp;주신&nbsp;예산결산특별위원회&nbsp;안지연&nbsp;위원장님과&nbsp;이향숙&nbsp;부위원장님을&nbsp;비롯한&nbsp;예산결산특별위원회&nbsp;위원님께도&nbsp;다시&nbsp;한번&nbsp;감사의&nbsp;말씀을&nbsp;드립니다.&nbsp;<br />&nbsp;&nbsp;강남구의회&nbsp;제323회&nbsp;정례회에&nbsp;제출한&nbsp;2025년도&nbsp;예산안&nbsp;및&nbsp;기금운용계획안&nbsp;수정안을&nbsp;검토한&nbsp;결과&nbsp;이의가&nbsp;없으므로&nbsp;동의합니다.&nbsp;<br />&nbsp;&nbsp;위원님들께서&nbsp;의결해&nbsp;주신&nbsp;2025년도&nbsp;예산안&nbsp;및&nbsp;기금운용계획안은&nbsp;우리&nbsp;강남구의&nbsp;지역경제&nbsp;활력과&nbsp;구민&nbsp;생활안정&nbsp;그리고&nbsp;복리증진을&nbsp;위해&nbsp;낭비&nbsp;없이&nbsp;알차게&nbsp;집행하도록&nbsp;하겠습니다.&nbsp;<br />&nbsp;&nbsp;감사합니다.&nbsp;<br /></div><div class='contents-block speaker-block member-speech' data-con_idx='46' data-member_code='09001'><strong>○의장 <a class='member_profile btn_profile' id='btn_profile_222' href='#' data-uid='222' title='이호귀 의원 프로필 보기'>이호귀</a></strong>&nbsp;&nbsp;구청장&nbsp;수고하셨습니다.&nbsp;<br />&nbsp;&nbsp;의결을&nbsp;하도록&nbsp;하겠습니다.&nbsp;<br />&nbsp;&nbsp;의사일정&nbsp;제20항&nbsp;2025년도&nbsp;예산안을&nbsp;수정안대로&nbsp;의결하고자&nbsp;하는데&nbsp;의원&nbsp;여러분께서는&nbsp;이의가&nbsp;없으십니까?&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;(「없습니다」하는&nbsp;의원&nbsp;많음)<br />&nbsp;&nbsp;이의가&nbsp;없으므로&nbsp;수정가결&nbsp;되었음을&nbsp;선포합니다.&nbsp;<br />&nbsp;&nbsp;다음으로&nbsp;의사일정&nbsp;제21항&nbsp;2025년도&nbsp;기금운용계획안을&nbsp;원안대로&nbsp;의결하고자&nbsp;하는데&nbsp;의원&nbsp;여러분께서는&nbsp;이의가&nbsp;없으십니까?&nbsp;<br />&nbsp;&nbsp;&nbsp;&nbsp;(「없습니다」하는&nbsp;의원&nbsp;많음)<br />&nbsp;&nbsp;이의가&nbsp;없으므로&nbsp;가결되었음을&nbsp;선포합니다.&nbsp;<br />&nbsp;&nbsp;동료의원&nbsp;여러분,&nbsp;관계공무원&nbsp;여러분,&nbsp;제323회&nbsp;제2차정례회가&nbsp;오늘을&nbsp;마지막으로&nbsp;긴&nbsp;회기를&nbsp;모두&nbsp;마무리하게&nbsp;됐습니다.&nbsp;35일간에&nbsp;걸쳐&nbsp;행정사무감사부터&nbsp;2025년&nbsp;예산안&nbsp;심사까지&nbsp;무사히&nbsp;제323회&nbsp;제2차정례회를&nbsp;마무리하기&nbsp;위해&nbsp;애쓰신&nbsp;동료의원님들과&nbsp;의회사무국&nbsp;직원&nbsp;여러분&nbsp;그리고&nbsp;행정사무감사와&nbsp;예산안&nbsp;심사를&nbsp;준비하기&nbsp;위해&nbsp;밤낮으로&nbsp;고생한&nbsp;집행부&nbsp;직원&nbsp;여러분,&nbsp;정말&nbsp;고생&nbsp;많으셨습니다.&nbsp;특히&nbsp;예산안&nbsp;심사에&nbsp;힘써주신&nbsp;안지연&nbsp;위원장님,&nbsp;예산결산특별위원회&nbsp;위원&nbsp;여러분,&nbsp;수고하셨습니다.&nbsp;<br />&nbsp;&nbsp;의회는&nbsp;새롭게&nbsp;시작하는&nbsp;마음으로&nbsp;2025년도에는&nbsp;실천하는&nbsp;의회의&nbsp;면모를&nbsp;보여드리기&nbsp;위해&nbsp;열심히&nbsp;노력하겠습니다.&nbsp;<br />&nbsp;&nbsp;얼마&nbsp;남지&nbsp;않은&nbsp;2024년&nbsp;잘&nbsp;마무리하시고&nbsp;새해를&nbsp;기쁜&nbsp;마음으로&nbsp;맞이하시길&nbsp;소망합니다.&nbsp;<br />&nbsp;&nbsp;감사합니다.&nbsp;<br />&nbsp;&nbsp;산회를&nbsp;선포합니다.&nbsp;<br /><p class='taged-line tag-R'>(10시48분 산회)</p></div></div><hr /><div id='minutes-footer'><p class='font-bold attend-head-line' id='attend-member-head-line'>○출석의원(23명)</p><p class='attend-line attend-member-line'><span class='attend-member'><a class='member_profile btn_profile' id='btn_profile_222' href='#' data-uid='222' title='이호귀 의원 프로필 보기'>이호귀</a></span>&nbsp;&nbsp;<span class='attend-member'><a class='member_profile btn_profile' id='btn_profile_229' href='#' data-uid='229' title='복진경 의원 프로필 보기'>복진경</a></span>&nbsp;&nbsp;<span class='attend-member'><a class='member_profile btn_profile' id='btn_profile_241' href='#' data-uid='241' title='우종혁 의원 프로필 보기'>우종혁</a></span>&nbsp;&nbsp;<span class='attend-member'><a class='member_profile btn_profile' id='btn_profile_244' href='#' data-uid='244' title='오온누리 의원 프로필 보기'>오온누리</a></span></p><p class='attend-line attend-member-line'><span class='attend-member'><a class='member_profile btn_profile' id='btn_profile_239' href='#' data-uid='239' title='손민기 의원 프로필 보기'>손민기</a></span>&nbsp;&nbsp;<span class='attend-member'><a class='member_profile btn_profile' id='btn_profile_238' href='#' data-uid='238' title='김진경 의원 프로필 보기'>김진경</a></span>&nbsp;&nbsp;<span class='attend-member'><a class='member_profile btn_profile' id='btn_profile_237' href='#' data-uid='237' title='김형곤 의원 프로필 보기'>김형곤</a></span>&nbsp;&nbsp;<span class='attend-member'><a class='member_profile btn_profile' id='btn_profile_236' href='#' data-uid='236' title='이성수 의원 프로필 보기'>이성수</a></span>&nbsp;&nbsp;</p><p class='attend-line attend-member-line'><span class='attend-member'><a class='member_profile btn_profile' id='btn_profile_243' href='#' data-uid='243' title='노애자 의원 프로필 보기'>노애자</a></span>&nbsp;&nbsp;<span class='attend-member'><a class='member_profile btn_profile' id='btn_profile_235' href='#' data-uid='235' title='황영각 의원 프로필 보기'>황영각</a></span>&nbsp;&nbsp;<span class='attend-member'><a class='member_profile btn_profile' id='btn_profile_232' href='#' data-uid='232' title='박다미 의원 프로필 보기'>박다미</a></span>&nbsp;&nbsp;<span class='attend-member'><a class='member_profile btn_profile' id='btn_profile_230' href='#' data-uid='230' title='안지연 의원 프로필 보기'>안지연</a></span>&nbsp;&nbsp;</p><p class='attend-line attend-member-line'><span class='attend-member'><a class='member_profile btn_profile' id='btn_profile_245' href='#' data-uid='245' title='윤석민 의원 프로필 보기'>윤석민</a></span>&nbsp;&nbsp;<span class='attend-member'><a class='member_profile btn_profile' id='btn_profile_228' href='#' data-uid='228' title='한윤수 의원 프로필 보기'>한윤수</a></span>&nbsp;&nbsp;<span class='attend-member'><a class='member_profile btn_profile' id='btn_profile_227' href='#' data-uid='227' title='이향숙 의원 프로필 보기'>이향숙</a></span>&nbsp;&nbsp;<span class='attend-member'><a class='member_profile btn_profile' id='btn_profile_224' href='#' data-uid='224' title='김영권 의원 프로필 보기'>김영권</a></span>&nbsp;&nbsp;</p><p class='attend-line attend-member-line'><span class='attend-member'><a class='member_profile btn_profile' id='btn_profile_223' href='#' data-uid='223' title='김광심 의원 프로필 보기'>김광심</a></span>&nbsp;&nbsp;<span class='attend-member'><a class='member_profile btn_profile' id='btn_profile_226' href='#' data-uid='226' title='전인수 의원 프로필 보기'>전인수</a></span>&nbsp;&nbsp;<span class='attend-member'><a class='member_profile btn_profile' id='btn_profile_225' href='#' data-uid='225' title='김형대 의원 프로필 보기'>김형대</a></span>&nbsp;&nbsp;<span class='attend-member'><a class='member_profile btn_profile' id='btn_profile_242' href='#' data-uid='242' title='이동호 의원 프로필 보기'>이동호</a></span>&nbsp;&nbsp;</p><p class='attend-line attend-member-line'><span class='attend-member'><a class='member_profile btn_profile' id='btn_profile_234' href='#' data-uid='234' title='강을석 의원 프로필 보기'>강을석</a></span>&nbsp;&nbsp;<span class='attend-member'><a class='member_profile btn_profile' id='btn_profile_231' href='#' data-uid='231' title='이도희 의원 프로필 보기'>이도희</a></span>&nbsp;&nbsp;<span class='attend-member'><a class='member_profile btn_profile' id='btn_profile_233' href='#' data-uid='233' title='김현정 의원 프로필 보기'>김현정</a></span>&nbsp;&nbsp;</p><p class='font-bold attend-head-line'>○출석관계공무원</p><p class='attend-line'><span class='attend-split'>구청장</span><span class='attend-split'>조성명</span></p><p class='attend-line'><span class='attend-split'>행정국장</span><span class='attend-split'>정찬식</span></p><p class='attend-line'><span class='attend-split'>기획경제국장</span><span class='attend-split'>김하성</span></p><p class='attend-line'><span class='attend-split'>복지생활국장</span><span class='attend-split'>오선미</span></p><p class='attend-line'><span class='attend-split'>미래문화국장</span><span class='attend-split'>문경수</span></p><p class='attend-line'><span class='attend-split'>도시환경국장</span><span class='attend-split'>김동구</span></p><p class='attend-line'><span class='attend-split'>안전교통국장</span><span class='attend-split'>최진우</span></p><p class='attend-line'><span class='attend-split'>미래전략기획단장</span><span class='attend-split'>은승일</span></p><p class='attend-line'><span class='attend-split'>보건소장</span><span class='attend-split'>이종철</span></p><p class='attend-line'><span class='attend-split'>도시관리공단이사장</span><span class='attend-split'>양승미</span></p><hr><p class='font-bold attend-head-line'>○의안심의</p><p class='attend-line'>*탄천물재생센터&nbsp;주민협의회&nbsp;위원&nbsp;추천의&nbsp;건&nbsp;:&nbsp;원안가결</p><p class='attend-line'>-재석의원(23명)</p><p class='attend-line'>-찬성의원(23명)</p><p class='attend-line'>이호귀&nbsp;&nbsp;&nbsp;복진경&nbsp;&nbsp;&nbsp;우종혁&nbsp;&nbsp;&nbsp;오온누리</p><p class='attend-line'>손민기&nbsp;&nbsp;&nbsp;김진경&nbsp;&nbsp;&nbsp;김형곤&nbsp;&nbsp;&nbsp;이성수</p><p class='attend-line'>노애자&nbsp;&nbsp;&nbsp;황영각&nbsp;&nbsp;&nbsp;박다미&nbsp;&nbsp;&nbsp;안지연</p><p class='attend-line'>윤석민&nbsp;&nbsp;&nbsp;한윤수&nbsp;&nbsp;&nbsp;이향숙&nbsp;&nbsp;&nbsp;김영권</p><p class='attend-line'>김광심&nbsp;&nbsp;&nbsp;전인수&nbsp;&nbsp;&nbsp;김형대&nbsp;&nbsp;&nbsp;이동호</p><p class='attend-line'>강을석&nbsp;&nbsp;&nbsp;이도희&nbsp;&nbsp;&nbsp;김현정</p><p class='attend-line'>*2024년도&nbsp;강남구의회&nbsp;운영위원회&nbsp;행정사무감사&nbsp;결과보고서&nbsp;승인의&nbsp;건&nbsp;:&nbsp;원안채택</p><p class='attend-line'>-재석의원(23명)</p><p class='attend-line'>-찬성의원(23명)</p><p class='attend-line'>이호귀&nbsp;&nbsp;&nbsp;복진경&nbsp;&nbsp;&nbsp;우종혁&nbsp;&nbsp;&nbsp;오온누리</p><p class='attend-line'>손민기&nbsp;&nbsp;&nbsp;김진경&nbsp;&nbsp;&nbsp;김형곤&nbsp;&nbsp;&nbsp;이성수</p><p class='attend-line'>노애자&nbsp;&nbsp;&nbsp;황영각&nbsp;&nbsp;&nbsp;박다미&nbsp;&nbsp;&nbsp;안지연</p><p class='attend-line'>윤석민&nbsp;&nbsp;&nbsp;한윤수&nbsp;&nbsp;&nbsp;이향숙&nbsp;&nbsp;&nbsp;김영권</p><p class='attend-line'>김광심&nbsp;&nbsp;&nbsp;전인수&nbsp;&nbsp;&nbsp;김형대&nbsp;&nbsp;&nbsp;이동호</p><p class='attend-line'>강을석&nbsp;&nbsp;&nbsp;이도희&nbsp;&nbsp;&nbsp;김현정</p><p class='attend-line'>*2024년도&nbsp;강남구의회&nbsp;행정안전위원회&nbsp;행정사무감사&nbsp;결과보고서&nbsp;승인의&nbsp;건&nbsp;:&nbsp;원안채택</p><p class='attend-line'>-재석의원(23명)</p><p class='attend-line'>-찬성의원(23명)</p><p class='attend-line'>이호귀&nbsp;&nbsp;&nbsp;복진경&nbsp;&nbsp;&nbsp;우종혁&nbsp;&nbsp;&nbsp;오온누리</p><p class='attend-line'>손민기&nbsp;&nbsp;&nbsp;김진경&nbsp;&nbsp;&nbsp;김형곤&nbsp;&nbsp;&nbsp;이성수</p><p class='attend-line'>노애자&nbsp;&nbsp;&nbsp;황영각&nbsp;&nbsp;&nbsp;박다미&nbsp;&nbsp;&nbsp;안지연</p><p class='attend-line'>윤석민&nbsp;&nbsp;&nbsp;한윤수&nbsp;&nbsp;&nbsp;이향숙&nbsp;&nbsp;&nbsp;김영권</p><p class='attend-line'>김광심&nbsp;&nbsp;&nbsp;전인수&nbsp;&nbsp;&nbsp;김형대&nbsp;&nbsp;&nbsp;이동호</p><p class='attend-line'>강을석&nbsp;&nbsp;&nbsp;이도희&nbsp;&nbsp;&nbsp;김현정</p><p class='attend-line'>*2024년도&nbsp;강남구의회&nbsp;경제도시위원회&nbsp;행정사무감사&nbsp;결과보고서&nbsp;승인의&nbsp;건&nbsp;:&nbsp;원안채택</p><p class='attend-line'>-재석의원(23명)</p><p class='attend-line'>-찬성의원(23명)</p><p class='attend-line'>이호귀&nbsp;&nbsp;&nbsp;복진경&nbsp;&nbsp;&nbsp;우종혁&nbsp;&nbsp;&nbsp;오온누리</p><p class='attend-line'>손민기&nbsp;&nbsp;&nbsp;김진경&nbsp;&nbsp;&nbsp;김형곤&nbsp;&nbsp;&nbsp;이성수</p><p class='attend-line'>노애자&nbsp;&nbsp;&nbsp;황영각&nbsp;&nbsp;&nbsp;박다미&nbsp;&nbsp;&nbsp;안지연</p><p class='attend-line'>윤석민&nbsp;&nbsp;&nbsp;한윤수&nbsp;&nbsp;&nbsp;이향숙&nbsp;&nbsp;&nbsp;김영권</p><p class='attend-line'>김광심&nbsp;&nbsp;&nbsp;전인수&nbsp;&nbsp;&nbsp;김형대&nbsp;&nbsp;&nbsp;이동호</p><p class='attend-line'>강을석&nbsp;&nbsp;&nbsp;이도희&nbsp;&nbsp;&nbsp;김현정</p><p class='attend-line'>*2024년도&nbsp;강남구의회&nbsp;복지문화위원회&nbsp;행정사무감사&nbsp;결과보고서&nbsp;승인의&nbsp;건&nbsp;:&nbsp;원안채택</p><p class='attend-line'>-재석의원(23명)</p><p class='attend-line'>-찬성의원(23명)</p><p class='attend-line'>이호귀&nbsp;&nbsp;&nbsp;복진경&nbsp;&nbsp;&nbsp;우종혁&nbsp;&nbsp;&nbsp;오온누리</p><p class='attend-line'>손민기&nbsp;&nbsp;&nbsp;김진경&nbsp;&nbsp;&nbsp;김형곤&nbsp;&nbsp;&nbsp;이성수</p><p class='attend-line'>노애자&nbsp;&nbsp;&nbsp;황영각&nbsp;&nbsp;&nbsp;박다미&nbsp;&nbsp;&nbsp;안지연</p><p class='attend-line'>윤석민&nbsp;&nbsp;&nbsp;한윤수&nbsp;&nbsp;&nbsp;이향숙&nbsp;&nbsp;&nbsp;김영권</p><p class='attend-line'>김광심&nbsp;&nbsp;&nbsp;전인수&nbsp;&nbsp;&nbsp;김형대&nbsp;&nbsp;&nbsp;이동호</p><p class='attend-line'>강을석&nbsp;&nbsp;&nbsp;이도희&nbsp;&nbsp;&nbsp;김현정</p><p class='attend-line'>*서울특별시&nbsp;강남구&nbsp;구민의&nbsp;상&nbsp;조례&nbsp;일부개정조례안&nbsp;:&nbsp;수정가결</p><p class='attend-line'>-재석의원(23명)</p><p class='attend-line'>-찬성의원(23명)</p><p class='attend-line'>이호귀&nbsp;&nbsp;&nbsp;복진경&nbsp;&nbsp;&nbsp;우종혁&nbsp;&nbsp;&nbsp;오온누리</p><p class='attend-line'>손민기&nbsp;&nbsp;&nbsp;김진경&nbsp;&nbsp;&nbsp;김형곤&nbsp;&nbsp;&nbsp;이성수</p><p class='attend-line'>노애자&nbsp;&nbsp;&nbsp;황영각&nbsp;&nbsp;&nbsp;박다미&nbsp;&nbsp;&nbsp;안지연</p><p class='attend-line'>윤석민&nbsp;&nbsp;&nbsp;한윤수&nbsp;&nbsp;&nbsp;이향숙&nbsp;&nbsp;&nbsp;김영권</p><p class='attend-line'>김광심&nbsp;&nbsp;&nbsp;전인수&nbsp;&nbsp;&nbsp;김형대&nbsp;&nbsp;&nbsp;이동호</p><p class='attend-line'>강을석&nbsp;&nbsp;&nbsp;이도희&nbsp;&nbsp;&nbsp;김현정</p><p class='attend-line'>*서울특별시&nbsp;강남구&nbsp;공유재산&nbsp;및&nbsp;물품&nbsp;관리&nbsp;조례&nbsp;일부개정조례안&nbsp;:&nbsp;수정가결</p><p class='attend-line'>-재석의원(23명)</p><p class='attend-line'>-찬성의원(23명)</p><p class='attend-line'>이호귀&nbsp;&nbsp;&nbsp;복진경&nbsp;&nbsp;&nbsp;우종혁&nbsp;&nbsp;&nbsp;오온누리</p><p class='attend-line'>손민기&nbsp;&nbsp;&nbsp;김진경&nbsp;&nbsp;&nbsp;김형곤&nbsp;&nbsp;&nbsp;이성수</p><p class='attend-line'>노애자&nbsp;&nbsp;&nbsp;황영각&nbsp;&nbsp;&nbsp;박다미&nbsp;&nbsp;&nbsp;안지연</p><p class='attend-line'>윤석민&nbsp;&nbsp;&nbsp;한윤수&nbsp;&nbsp;&nbsp;이향숙&nbsp;&nbsp;&nbsp;김영권</p><p class='attend-line'>김광심&nbsp;&nbsp;&nbsp;전인수&nbsp;&nbsp;&nbsp;김형대&nbsp;&nbsp;&nbsp;이동호</p><p class='attend-line'>강을석&nbsp;&nbsp;&nbsp;이도희&nbsp;&nbsp;&nbsp;김현정</p><p class='attend-line'>*서울특별시&nbsp;강남구&nbsp;전문가무료상담실&nbsp;설치&nbsp;및&nbsp;운영&nbsp;조례&nbsp;일부개정조례안&nbsp;:&nbsp;수정가결</p><p class='attend-line'>-재석의원(23명)</p><p class='attend-line'>-찬성의원(23명)</p><p class='attend-line'>이호귀&nbsp;&nbsp;&nbsp;복진경&nbsp;&nbsp;&nbsp;우종혁&nbsp;&nbsp;&nbsp;오온누리</p><p class='attend-line'>손민기&nbsp;&nbsp;&nbsp;김진경&nbsp;&nbsp;&nbsp;김형곤&nbsp;&nbsp;&nbsp;이성수</p><p class='attend-line'>노애자&nbsp;&nbsp;&nbsp;황영각&nbsp;&nbsp;&nbsp;박다미&nbsp;&nbsp;&nbsp;안지연</p><p class='attend-line'>윤석민&nbsp;&nbsp;&nbsp;한윤수&nbsp;&nbsp;&nbsp;이향숙&nbsp;&nbsp;&nbsp;김영권</p><p class='attend-line'>김광심&nbsp;&nbsp;&nbsp;전인수&nbsp;&nbsp;&nbsp;김형대&nbsp;&nbsp;&nbsp;이동호</p><p class='attend-line'>강을석&nbsp;&nbsp;&nbsp;이도희&nbsp;&nbsp;&nbsp;김현정</p><p class='attend-line'>*서울특별시&nbsp;강남구&nbsp;중대재해&nbsp;예방&nbsp;및&nbsp;관리에&nbsp;관한&nbsp;조례안&nbsp;:&nbsp;수정가결</p><p class='attend-line'>-재석의원(23명)</p><p class='attend-line'>-찬성의원(23명)</p><p class='attend-line'>이호귀&nbsp;&nbsp;&nbsp;복진경&nbsp;&nbsp;&nbsp;우종혁&nbsp;&nbsp;&nbsp;오온누리</p><p class='attend-line'>손민기&nbsp;&nbsp;&nbsp;김진경&nbsp;&nbsp;&nbsp;김형곤&nbsp;&nbsp;&nbsp;이성수</p><p class='attend-line'>노애자&nbsp;&nbsp;&nbsp;황영각&nbsp;&nbsp;&nbsp;박다미&nbsp;&nbsp;&nbsp;안지연</p><p class='attend-line'>윤석민&nbsp;&nbsp;&nbsp;한윤수&nbsp;&nbsp;&nbsp;이향숙&nbsp;&nbsp;&nbsp;김영권</p><p class='attend-line'>김광심&nbsp;&nbsp;&nbsp;전인수&nbsp;&nbsp;&nbsp;김형대&nbsp;&nbsp;&nbsp;이동호</p><p class='attend-line'>강을석&nbsp;&nbsp;&nbsp;이도희&nbsp;&nbsp;&nbsp;김현정</p><p class='attend-line'>*서울특별시&nbsp;강남구&nbsp;재난현장&nbsp;통합자원봉사지원단&nbsp;구성&nbsp;및&nbsp;운영&nbsp;등에&nbsp;관한&nbsp;조례안&nbsp;:&nbsp;원안가결</p><p class='attend-line'>-재석의원(23명)</p><p class='attend-line'>-찬성의원(23명)</p><p class='attend-line'>이호귀&nbsp;&nbsp;&nbsp;복진경&nbsp;&nbsp;&nbsp;우종혁&nbsp;&nbsp;&nbsp;오온누리</p><p class='attend-line'>손민기&nbsp;&nbsp;&nbsp;김진경&nbsp;&nbsp;&nbsp;김형곤&nbsp;&nbsp;&nbsp;이성수</p><p class='attend-line'>노애자&nbsp;&nbsp;&nbsp;황영각&nbsp;&nbsp;&nbsp;박다미&nbsp;&nbsp;&nbsp;안지연</p><p class='attend-line'>윤석민&nbsp;&nbsp;&nbsp;한윤수&nbsp;&nbsp;&nbsp;이향숙&nbsp;&nbsp;&nbsp;김영권</p><p class='attend-line'>김광심&nbsp;&nbsp;&nbsp;전인수&nbsp;&nbsp;&nbsp;김형대&nbsp;&nbsp;&nbsp;이동호</p><p class='attend-line'>강을석&nbsp;&nbsp;&nbsp;이도희&nbsp;&nbsp;&nbsp;김현정</p><p class='attend-line'>*서울특별시&nbsp;강남구&nbsp;수수료&nbsp;징수&nbsp;조례&nbsp;일부개정조례안&nbsp;:&nbsp;수정가결</p><p class='attend-line'>-재석의원(23명)</p><p class='attend-line'>-찬성의원(23명)</p><p class='attend-line'>이호귀&nbsp;&nbsp;&nbsp;복진경&nbsp;&nbsp;&nbsp;우종혁&nbsp;&nbsp;&nbsp;오온누리</p><p class='attend-line'>손민기&nbsp;&nbsp;&nbsp;김진경&nbsp;&nbsp;&nbsp;김형곤&nbsp;&nbsp;&nbsp;이성수</p><p class='attend-line'>노애자&nbsp;&nbsp;&nbsp;황영각&nbsp;&nbsp;&nbsp;박다미&nbsp;&nbsp;&nbsp;안지연</p><p class='attend-line'>윤석민&nbsp;&nbsp;&nbsp;한윤수&nbsp;&nbsp;&nbsp;이향숙&nbsp;&nbsp;&nbsp;김영권</p><p class='attend-line'>김광심&nbsp;&nbsp;&nbsp;전인수&nbsp;&nbsp;&nbsp;김형대&nbsp;&nbsp;&nbsp;이동호</p><p class='attend-line'>강을석&nbsp;&nbsp;&nbsp;이도희&nbsp;&nbsp;&nbsp;김현정</p><p class='attend-line'>*대치우성1차ㆍ쌍용2차아파트&nbsp;통합재건축정비계획&nbsp;결정(변경)을&nbsp;위한&nbsp;의견청취(안)&nbsp;:&nbsp;원안채택</p><p class='attend-line'>-재석의원(23명)</p><p class='attend-line'>-찬성의원(23명)</p><p class='attend-line'>이호귀&nbsp;&nbsp;&nbsp;복진경&nbsp;&nbsp;&nbsp;우종혁&nbsp;&nbsp;&nbsp;오온누리</p><p class='attend-line'>손민기&nbsp;&nbsp;&nbsp;김진경&nbsp;&nbsp;&nbsp;김형곤&nbsp;&nbsp;&nbsp;이성수</p><p class='attend-line'>노애자&nbsp;&nbsp;&nbsp;황영각&nbsp;&nbsp;&nbsp;박다미&nbsp;&nbsp;&nbsp;안지연</p><p class='attend-line'>윤석민&nbsp;&nbsp;&nbsp;한윤수&nbsp;&nbsp;&nbsp;이향숙&nbsp;&nbsp;&nbsp;김영권</p><p class='attend-line'>김광심&nbsp;&nbsp;&nbsp;전인수&nbsp;&nbsp;&nbsp;김형대&nbsp;&nbsp;&nbsp;이동호</p><p class='attend-line'>강을석&nbsp;&nbsp;&nbsp;이도희&nbsp;&nbsp;&nbsp;김현정</p><p class='attend-line'>*대치쌍용1차&nbsp;아파트&nbsp;재건축정비사업정비계획&nbsp;결정(변경)을&nbsp;위한&nbsp;의견청취(안)&nbsp;:&nbsp;원안채택</p><p class='attend-line'>-재석의원(23명)</p><p class='attend-line'>-찬성의원(23명)</p><p class='attend-line'>이호귀&nbsp;&nbsp;&nbsp;복진경&nbsp;&nbsp;&nbsp;우종혁&nbsp;&nbsp;&nbsp;오온누리</p><p class='attend-line'>손민기&nbsp;&nbsp;&nbsp;김진경&nbsp;&nbsp;&nbsp;김형곤&nbsp;&nbsp;&nbsp;이성수</p><p class='attend-line'>노애자&nbsp;&nbsp;&nbsp;황영각&nbsp;&nbsp;&nbsp;박다미&nbsp;&nbsp;&nbsp;안지연</p><p class='attend-line'>윤석민&nbsp;&nbsp;&nbsp;한윤수&nbsp;&nbsp;&nbsp;이향숙&nbsp;&nbsp;&nbsp;김영권</p><p class='attend-line'>김광심&nbsp;&nbsp;&nbsp;전인수&nbsp;&nbsp;&nbsp;김형대&nbsp;&nbsp;&nbsp;이동호</p><p class='attend-line'>강을석&nbsp;&nbsp;&nbsp;이도희&nbsp;&nbsp;&nbsp;김현정</p><p class='attend-line'>*압구정특별계획구역⑤&nbsp;도시관리계획(압구정&nbsp;아파트지구&nbsp;개발&nbsp;기본계획&nbsp;및&nbsp;지구단위계획구역)&nbsp;및&nbsp;정비계획(변경)&nbsp;결정을&nbsp;위한&nbsp;의견청취안&nbsp;:&nbsp;원안채택</p><p class='attend-line'>-재석의원(23명)</p><p class='attend-line'>-찬성의원(23명)</p><p class='attend-line'>이호귀&nbsp;&nbsp;&nbsp;복진경&nbsp;&nbsp;&nbsp;우종혁&nbsp;&nbsp;&nbsp;오온누리</p><p class='attend-line'>손민기&nbsp;&nbsp;&nbsp;김진경&nbsp;&nbsp;&nbsp;김형곤&nbsp;&nbsp;&nbsp;이성수</p><p class='attend-line'>노애자&nbsp;&nbsp;&nbsp;황영각&nbsp;&nbsp;&nbsp;박다미&nbsp;&nbsp;&nbsp;안지연</p><p class='attend-line'>윤석민&nbsp;&nbsp;&nbsp;한윤수&nbsp;&nbsp;&nbsp;이향숙&nbsp;&nbsp;&nbsp;김영권</p><p class='attend-line'>김광심&nbsp;&nbsp;&nbsp;전인수&nbsp;&nbsp;&nbsp;김형대&nbsp;&nbsp;&nbsp;이동호</p><p class='attend-line'>강을석&nbsp;&nbsp;&nbsp;이도희&nbsp;&nbsp;&nbsp;김현정</p><p class='attend-line'>*압구정특별계획구역③&nbsp;도시관리계획(압구정&nbsp;아파트지구&nbsp;개발&nbsp;기본계획&nbsp;및&nbsp;지구단위계획구역)&nbsp;및&nbsp;정비계획(변경)&nbsp;결정을&nbsp;위한&nbsp;의견청취안&nbsp;:&nbsp;원안채택</p><p class='attend-line'>-재석의원(23명)</p><p class='attend-line'>-찬성의원(23명)</p><p class='attend-line'>이호귀&nbsp;&nbsp;&nbsp;복진경&nbsp;&nbsp;&nbsp;우종혁&nbsp;&nbsp;&nbsp;오온누리</p><p class='attend-line'>손민기&nbsp;&nbsp;&nbsp;김진경&nbsp;&nbsp;&nbsp;김형곤&nbsp;&nbsp;&nbsp;이성수</p><p class='attend-line'>노애자&nbsp;&nbsp;&nbsp;황영각&nbsp;&nbsp;&nbsp;박다미&nbsp;&nbsp;&nbsp;안지연</p><p class='attend-line'>윤석민&nbsp;&nbsp;&nbsp;한윤수&nbsp;&nbsp;&nbsp;이향숙&nbsp;&nbsp;&nbsp;김영권</p><p class='attend-line'>김광심&nbsp;&nbsp;&nbsp;전인수&nbsp;&nbsp;&nbsp;김형대&nbsp;&nbsp;&nbsp;이동호</p><p class='attend-line'>강을석&nbsp;&nbsp;&nbsp;이도희&nbsp;&nbsp;&nbsp;김현정</p><p class='attend-line'>*서울특별시&nbsp;강남구&nbsp;개인정보&nbsp;보호&nbsp;사업&nbsp;활성화&nbsp;지원&nbsp;조례안&nbsp;:&nbsp;수정가결</p><p class='attend-line'>-재석의원(23명)</p><p class='attend-line'>-찬성의원(23명)</p><p class='attend-line'>이호귀&nbsp;&nbsp;&nbsp;복진경&nbsp;&nbsp;&nbsp;우종혁&nbsp;&nbsp;&nbsp;오온누리</p><p class='attend-line'>손민기&nbsp;&nbsp;&nbsp;김진경&nbsp;&nbsp;&nbsp;김형곤&nbsp;&nbsp;&nbsp;이성수</p><p class='attend-line'>노애자&nbsp;&nbsp;&nbsp;황영각&nbsp;&nbsp;&nbsp;박다미&nbsp;&nbsp;&nbsp;안지연</p><p class='attend-line'>윤석민&nbsp;&nbsp;&nbsp;한윤수&nbsp;&nbsp;&nbsp;이향숙&nbsp;&nbsp;&nbsp;김영권</p><p class='attend-line'>김광심&nbsp;&nbsp;&nbsp;전인수&nbsp;&nbsp;&nbsp;김형대&nbsp;&nbsp;&nbsp;이동호</p><p class='attend-line'>강을석&nbsp;&nbsp;&nbsp;이도희&nbsp;&nbsp;&nbsp;김현정</p><p class='attend-line'>*서울특별시&nbsp;강남구&nbsp;출자&middot;출연기관&nbsp;사이버보안&nbsp;관리&nbsp;조례안&nbsp;:&nbsp;수정가결</p><p class='attend-line'>-재석의원(23명)</p><p class='attend-line'>-찬성의원(23명)</p><p class='attend-line'>이호귀&nbsp;&nbsp;&nbsp;복진경&nbsp;&nbsp;&nbsp;우종혁&nbsp;&nbsp;&nbsp;오온누리</p><p class='attend-line'>손민기&nbsp;&nbsp;&nbsp;김진경&nbsp;&nbsp;&nbsp;김형곤&nbsp;&nbsp;&nbsp;이성수</p><p class='attend-line'>노애자&nbsp;&nbsp;&nbsp;황영각&nbsp;&nbsp;&nbsp;박다미&nbsp;&nbsp;&nbsp;안지연</p><p class='attend-line'>윤석민&nbsp;&nbsp;&nbsp;한윤수&nbsp;&nbsp;&nbsp;이향숙&nbsp;&nbsp;&nbsp;김영권</p><p class='attend-line'>김광심&nbsp;&nbsp;&nbsp;전인수&nbsp;&nbsp;&nbsp;김형대&nbsp;&nbsp;&nbsp;이동호</p><p class='attend-line'>강을석&nbsp;&nbsp;&nbsp;이도희&nbsp;&nbsp;&nbsp;김현정</p><p class='attend-line'>*서울특별시&nbsp;강남구&nbsp;독서문화&nbsp;진흥에&nbsp;관한&nbsp;조례&nbsp;전부개정조례안&nbsp;:&nbsp;수정가결</p><p class='attend-line'>-재석의원(23명)</p><p class='attend-line'>-찬성의원(23명)</p><p class='attend-line'>이호귀&nbsp;&nbsp;&nbsp;복진경&nbsp;&nbsp;&nbsp;우종혁&nbsp;&nbsp;&nbsp;오온누리</p><p class='attend-line'>손민기&nbsp;&nbsp;&nbsp;김진경&nbsp;&nbsp;&nbsp;김형곤&nbsp;&nbsp;&nbsp;이성수</p><p class='attend-line'>노애자&nbsp;&nbsp;&nbsp;황영각&nbsp;&nbsp;&nbsp;박다미&nbsp;&nbsp;&nbsp;안지연</p><p class='attend-line'>윤석민&nbsp;&nbsp;&nbsp;한윤수&nbsp;&nbsp;&nbsp;이향숙&nbsp;&nbsp;&nbsp;김영권</p><p class='attend-line'>김광심&nbsp;&nbsp;&nbsp;전인수&nbsp;&nbsp;&nbsp;김형대&nbsp;&nbsp;&nbsp;이동호</p><p class='attend-line'>강을석&nbsp;&nbsp;&nbsp;이도희&nbsp;&nbsp;&nbsp;김현정</p><p class='attend-line'>*서울특별시&nbsp;강남구&nbsp;공중화장실&nbsp;등의&nbsp;설치&nbsp;및&nbsp;관리&nbsp;조례&nbsp;일부개정조례안&nbsp;:&nbsp;원안채택</p><p class='attend-line'>-재석의원(23명)</p><p class='attend-line'>-찬성의원(23명)</p><p class='attend-line'>이호귀&nbsp;&nbsp;&nbsp;복진경&nbsp;&nbsp;&nbsp;우종혁&nbsp;&nbsp;&nbsp;오온누리</p><p class='attend-line'>손민기&nbsp;&nbsp;&nbsp;김진경&nbsp;&nbsp;&nbsp;김형곤&nbsp;&nbsp;&nbsp;이성수</p><p class='attend-line'>노애자&nbsp;&nbsp;&nbsp;황영각&nbsp;&nbsp;&nbsp;박다미&nbsp;&nbsp;&nbsp;안지연</p><p class='attend-line'>윤석민&nbsp;&nbsp;&nbsp;한윤수&nbsp;&nbsp;&nbsp;이향숙&nbsp;&nbsp;&nbsp;김영권</p><p class='attend-line'>김광심&nbsp;&nbsp;&nbsp;전인수&nbsp;&nbsp;&nbsp;김형대&nbsp;&nbsp;&nbsp;이동호</p><p class='attend-line'>강을석&nbsp;&nbsp;&nbsp;이도희&nbsp;&nbsp;&nbsp;김현정</p><p class='attend-line'>*2025년도&nbsp;예산안&nbsp;:&nbsp;수정가결</p><p class='attend-line'>-재석의원(23명)</p><p class='attend-line'>-찬성의원(23명)</p><p class='attend-line'>이호귀&nbsp;&nbsp;&nbsp;복진경&nbsp;&nbsp;&nbsp;우종혁&nbsp;&nbsp;&nbsp;오온누리</p><p class='attend-line'>손민기&nbsp;&nbsp;&nbsp;김진경&nbsp;&nbsp;&nbsp;김형곤&nbsp;&nbsp;&nbsp;이성수</p><p class='attend-line'>노애자&nbsp;&nbsp;&nbsp;황영각&nbsp;&nbsp;&nbsp;박다미&nbsp;&nbsp;&nbsp;안지연</p><p class='attend-line'>윤석민&nbsp;&nbsp;&nbsp;한윤수&nbsp;&nbsp;&nbsp;이향숙&nbsp;&nbsp;&nbsp;김영권</p><p class='attend-line'>김광심&nbsp;&nbsp;&nbsp;전인수&nbsp;&nbsp;&nbsp;김형대&nbsp;&nbsp;&nbsp;이동호</p><p class='attend-line'>강을석&nbsp;&nbsp;&nbsp;이도희&nbsp;&nbsp;&nbsp;김현정</p><p class='attend-line'>*2025년도&nbsp;기금운용계획안&nbsp;:&nbsp;원안가결</p><p class='attend-line'>-재석의원(23명)</p><p class='attend-line'>-찬성의원(23명)</p><p class='attend-line'>이호귀&nbsp;&nbsp;&nbsp;복진경&nbsp;&nbsp;&nbsp;우종혁&nbsp;&nbsp;&nbsp;오온누리</p><p class='attend-line'>손민기&nbsp;&nbsp;&nbsp;김진경&nbsp;&nbsp;&nbsp;김형곤&nbsp;&nbsp;&nbsp;이성수</p><p class='attend-line'>노애자&nbsp;&nbsp;&nbsp;황영각&nbsp;&nbsp;&nbsp;박다미&nbsp;&nbsp;&nbsp;안지연</p><p class='attend-line'>윤석민&nbsp;&nbsp;&nbsp;한윤수&nbsp;&nbsp;&nbsp;이향숙&nbsp;&nbsp;&nbsp;김영권</p><p class='attend-line'>김광심&nbsp;&nbsp;&nbsp;전인수&nbsp;&nbsp;&nbsp;김형대&nbsp;&nbsp;&nbsp;이동호</p><p class='attend-line'>강을석&nbsp;&nbsp;&nbsp;이도희&nbsp;&nbsp;&nbsp;김현정</p></div></div></div>
+    </div>
+</div>
+	</div>
+	
+
+
+<!-- 레이어 프로필 팝업-->
+<div class="pop_profile" id="profile_layer_popup">
+    <input type="hidden" id="profile_hidden_uid" name="profile_hidden_uid" value="" />
+    <div class="tit">
+        <h1>강남구의회 의원프로필</h1>
+        <div class="btn_p_close"><a href="javascript:document.getElementById('profile_layer_popup').focus();" title="창을 닫습니다.">창닫기</a></div>
+    </div>
+    <div class="info">
+        <div class="pic_wrap">
+            <div class="pic">
+                <p class="member_profile_image"><img src="/images/kr/main/pic_member1.jpg" alt="홍길동" /></p>
+                <p class="name"></p>
+            </div>
+            <ul class="detail">
+                
+            </ul>
+        </div>
+        <div class="career">
+            <h2>학력사항 및 경력사항</h2>
+            <div class="list" tabindex="0">
+                <strong>&lt;학력사항&gt;</strong>
+                <ul class="dash">
+                    
+                </ul>
+                <strong>&lt;경력사항&gt;</strong>
+                <ul class="dash">
+                    
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="btn_p_close"><a href="javascript:document.getElementById('profile_layer_popup').focus();" title="창을 닫습니다.">x close</a></div>
+</div>
+	<div class="mask"></div>
+	<script src="/material/plugins/jquery/jquery.min.js"></script>
+	<script src="/material/plugins/bootstrap/js/bootstrap.js"></script>
+	<script src="/material/plugins/bootstrap-select/js/bootstrap-select.js"></script>
+	<script src="/material/plugins/jquery-slimscroll/jquery.slimscroll.js"></script>
+	
+	<script src="/material/plugins/node-waves/waves.js"></script>
+	
+	<script src="/material/plugins/jquery-countto/jquery.countTo.js"></script>
+	<script src="/material/plugins/raphael/raphael.min.js"></script>
+	<script src="/material/plugins/morrisjs/morris.js"></script>
+	<script src="/material/plugins/jquery-sparkline/jquery.sparkline.js"></script>
+	<script src="/assets/plugins/jquery-print/jQuery.print.js"></script>
+	<script src="/assets/plugins/mark.js/jquery.mark.min.js"></script>
+	
+	<script src="/material/js/admin.js"></script>
+	
+	
+	<script>
+        const conf = {"cl_cd":"BO","th":10,"half":"F","cl_nm":"강남구","cl_abbr_nm":"강남구","cl_full_nm":"강남구","en_nm":"GANGNAM-GU COUNCIL","cn_nm":"江南区议会","jp_nm":"江南区議会","units_nm":"구","gvmt_head":"청장","addr":"우) 06288 서울특별시 강남구 삼성로 154(대치동 509-2)","addr_en":"56180) 154, Samseong-ro, Gangnam-gu, Seoul (509-2 Daechi-dong), 06288","addr_cn":"06288 首尔特别市江南区三成洞154（大峙洞509-2)","addr_jp":"06288 ソウル特別市江南区三成路154（大峙洞509-2）","copyright":"COPYRIGHT(c) 2022 GANGNAM-GU COUNCI \u0026amp; jeyun corp","meta_copy":"COPYRIGHT(C) GANGNAM-GU COUNCIL ALL RIGHTS RESERVED.","meta_copy_en":"COPYRIGHT © GANGNAM-GU COUNCIL ALL RIGHTS RESERVED.","meta_copy_cn":"COPYRIGHT © GANGNAM-GU COUNCIL ALL RIGHTS RESERVED.","meta_copy_jp":"COPYRIGHT © GANGNAM-GU COUNCIL ALL RIGHTS RESERVED.","meta_kword":"대한민국,서울특별시,강남구의회","meta_kword_en":"","meta_kword_cn":"","meta_kword_jp":"","meta_desc":"강남구의회입니다.","meta_desc_en":"","meta_desc_cn":"江南區義會","meta_desc_jp":"","cl_phone":"Tel : \u003Ca href=\"tel:02-3423-8199\"\u003E:02-3423-8199\u003C/a\u003E","cl_fax":"Fax : 02-3423-8926","mng_phone":"","blog":"https://blog.naver.com/gncouncil","facebook":"https://www.facebook.com/gangnamcucouncil/?modal=admin_todo_tour","twitter":"","kakaostory":"","instagram":"https://www.instagram.com/gangnamcouncil","youtube":"https://www.youtube.com/channel/UCP0igIzispACuMJlfg7FH3w?view_as=subscriber","decMng_phone":""};
+        const reqInfo = {"url":"https://www.gncouncil.go.kr/viewer/minutes.do","host":"www.gncouncil.go.kr:443","path":"/viewer/minutes.do","path_seq":["viewer","minutes.do"],"page_group":"viewer","upper_path":"/viewer","cntx_path":"","parameters":{"schwrd":"","con_idx_sch":"","flag":"all","mem_sch":"","item_sch":"","page":"1","list_style":""},"param_str":"schwrd=\u0026con_idx_sch=\u0026flag=all\u0026mem_sch=\u0026item_sch=\u0026page=1\u0026list_style=","param_enc_str":"schwrd=\u0026con_idx_sch=\u0026flag=all\u0026mem_sch=\u0026item_sch=\u0026page=1\u0026list_style=","main_page":false,"page_title":"강남구의회","user_agent":{"platform":"Unknown OS","browser":"Unknown Browser","version_str":"Unknown Version","version":0.0,"is_mobile":false,"is_robot":false}};
+		const reform = "view";
+		const userAgent = {"platform":"Unknown OS","browser":"Unknown Browser","version_str":"Unknown Version","version":0.0,"is_mobile":false,"is_robot":false};
+		const is_modern_browser = true;
+		
+	</script>
+	<script src="/assets/plugins/kakao/kakao.min.js"></script>
+	<script src="/resources/js/common.js"></script>
+	<script src="/resources/js/profile.js?1790816862528"></script>
+	<script src="/resources/viewer/minutes/viewer.js?1790816862528"></script>
+	
+
+
+<script>
+    var _vsto = _vsto || {};
+    (function() {
+        var _rt =(("https:" === document.location.protocol) ? "https" : "http") + "://www.gncouncil.go.kr:443";
+        _vsto._rt = _rt;
+        var _log = "/visitant/log.do";
+        _vsto._log = _log;
+        var d = document, g = d.createElement("script"), s = d.getElementsByTagName("script")[0]; g.type = "text/javascript";
+        g.defer = true; g.async = true; g.src = _rt + "/assets/plugins/visitantjs/visitant.min.js"; s.parentNode.insertBefore(g, s);
+    })();
+</script>
+	
+	
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "url": "https://www.gncouncil.go.kr/kr/billview.do?uid=3450",
+  "retrieved_at": "2026-10-01T01:06:39.273246+00:00",
+  "status": 200,
+  "resolved_url": "https://www.gncouncil.go.kr/kr/billview.do?uid=3450",
+  "headers": {
+    "Cache-Control": "private",
+    "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+    "Content-Type": "text/html;charset=UTF-8",
+    "Content-Language": "en-US",
+    "Transfer-Encoding": "chunked",
+    "Date": "Thu, 01 Oct 2026 01:06:45 GMT",
+    "Connection": "close",
+    "Server": "www.gncouncil.go.kr"
+  },
+  "file": "council-budget-bill.html",
+  "sha256": "1520f2eba53bf7ead458b38d769bcce35da9230f9121dedb07d9a85150a2885d",
+  "bytes": 70591,
+  "omitted_response_headers": [
+    "Set-Cookie"
+  ]
+}

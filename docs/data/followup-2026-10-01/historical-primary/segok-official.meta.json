@@ -1,0 +1,20 @@
+{
+  "url": "https://library.gangnam.go.kr/sklib/20001/bbsPostDetail.do?postIdx=58938",
+  "retrieved_at": "2026-10-01T01:04:22.513992+00:00",
+  "status": 200,
+  "resolved_url": "https://library.gangnam.go.kr/sklib/20001/bbsPostDetail.do?postIdx=58938",
+  "headers": {
+    "Date": "Thu, 01 Oct 2026 01:04:30 GMT",
+    "Server": "Apache",
+    "Content-Language": "ko",
+    "Connection": "close",
+    "Transfer-Encoding": "chunked",
+    "Content-Type": "text/html;charset=UTF-8"
+  },
+  "file": "segok-official.html",
+  "sha256": "b60e71bc8197342a080bca8080876b342458fdfdd6d50b260b58a8aed718a5c2",
+  "bytes": 26092,
+  "omitted_response_headers": [
+    "Set-Cookie"
+  ]
+}

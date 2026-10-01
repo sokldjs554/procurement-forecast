@@ -1,0 +1,22 @@
+{
+  "url": "https://www.gncouncil.go.kr/viewer/minutes.do?uid=8965",
+  "retrieved_at": "2026-10-01T01:16:19.698520+00:00",
+  "status": 200,
+  "resolved_url": "https://www.gncouncil.go.kr/viewer/minutes.do?uid=8965",
+  "headers": {
+    "Cache-Control": "private",
+    "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+    "Content-Type": "text/html;charset=UTF-8",
+    "Content-Language": "en-US",
+    "Transfer-Encoding": "chunked",
+    "Date": "Thu, 01 Oct 2026 01:16:24 GMT",
+    "Connection": "close",
+    "Server": "www.gncouncil.go.kr"
+  },
+  "file": "water-audit-minutes.html",
+  "sha256": "7df411eb9e9b43096c4f389059b2098d8f69e02476bac9a738f115f2eea26a3c",
+  "bytes": 374861,
+  "omitted_response_headers": [
+    "Set-Cookie"
+  ]
+}

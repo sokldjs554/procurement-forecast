@@ -1,0 +1,23 @@
+{
+  "verified_at": "2026-10-01T01:25:13.030443+00:00",
+  "status": "PASS",
+  "expected_field_changes": 1,
+  "changed_case": "iv3-yc-kiosk-reduction",
+  "changed_field": "expected[0].commitment",
+  "before": "planned",
+  "after": "committed",
+  "checks": [
+    "exactly one scalar expected field differs after JSON parse",
+    "all original25 frozen files unchanged",
+    "all5 original and normalized source hashes match manifest",
+    "all23 exact source excerpt offsets and excerpt hashes match",
+    "cohort,review,adjudication,prior manifest and cases hashes match",
+    "23 cases;15 positive cases;20 positive signals;8 negatives;3 authorities;5 documents"
+  ],
+  "commitment_signal_counts": {
+    "committed": 16,
+    "planned": 4
+  },
+  "predictions_seen_or_extractor_run": false,
+  "human_expert_review": "NONE"
+}

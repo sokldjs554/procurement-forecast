@@ -1,0 +1,71 @@
+{
+  "scope": "Material search routes; not an exhaustive search-engine transcript or outcome census.",
+  "date_utc": "2026-10-01",
+  "routes": [
+    {
+      "route": "Official council bill and plenary attachment navigation",
+      "artifacts": [
+        "council-budget-bill.html",
+        "council-budget-plenary.html",
+        "budget-report-public-viewer-lookup.json"
+      ],
+      "result": "Provenance and meeting dates; no upload timestamp."
+    },
+    {
+      "route": "Official Gangnam budget listing pages1-2",
+      "artifacts": [
+        "gangnam-budget-list.html",
+        "gangnam-budget-page2.html"
+      ],
+      "result": "Alternative budget book posted2025-01-21; attachment path excluded by robots."
+    },
+    {
+      "route": "District notice title search",
+      "queries": [
+        "원격",
+        "스마트보안등",
+        "복합문화센터"
+      ],
+      "artifacts": [
+        "notice-pump.html",
+        "notice-lights.html",
+        "notice-remodel.html"
+      ],
+      "result": "No target records in these responses; not a negative procurement finding."
+    },
+    {
+      "route": "Current district contract menu",
+      "artifact": "lights-official.html",
+      "result": "Links lead to contract.seoul.go.kr/new1/views/contractInfo.do and orderPlan.do, and G2B single-link searches. Seoul robots prohibits relevant paths."
+    },
+    {
+      "route": "Archived district opendoc order link",
+      "artifact": "gangnam-opendoc-order.meta.json",
+      "result": "HTTP404; not a target outcome test."
+    },
+    {
+      "route": "G2B tender single-link and robots",
+      "artifact": "g2b-robots.meta.json",
+      "result": "Gateway/timeouts; no original tender obtained."
+    },
+    {
+      "route": "Official 2025-11-24 water audit minutes and linked work report",
+      "artifacts": [
+        "water-audit-minutes.html",
+        "water-outcome-report.pdf"
+      ],
+      "result": "Maintenance contract is not the target upgrade. Selected-programme report cannot establish absence."
+    },
+    {
+      "route": "Search engines1 and2, exact titles and aliases",
+      "queries": [
+        "강남구 스마트 빗물펌프장2025",
+        "강남구 원격제어 고도화 계약",
+        "일원1동 스마트보안등 시스템 구축공사 입찰",
+        "세곡동복합문화센터 리모델링",
+        "신사동 주민도서관 재개관"
+      ],
+      "result": "Official notices plus secondary tender leads. Final conclusions depend on archived official bytes."
+    }
+  ]
+}

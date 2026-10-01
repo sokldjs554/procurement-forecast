@@ -1,0 +1,22 @@
+{
+  "url": "https://www.gncouncil.go.kr/viewer/pdf.do?group=appendix&uid=33982",
+  "retrieved_at": "2026-10-01T01:07:25.788898+00:00",
+  "status": 200,
+  "resolved_url": "https://www.gncouncil.go.kr/viewer/pdf.do?group=appendix&uid=33982",
+  "headers": {
+    "Cache-Control": "private",
+    "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+    "Content-Type": "text/html;charset=UTF-8",
+    "Content-Language": "en-US",
+    "Transfer-Encoding": "chunked",
+    "Date": "Thu, 01 Oct 2026 01:07:32 GMT",
+    "Connection": "close",
+    "Server": "www.gncouncil.go.kr"
+  },
+  "file": "council-water-report-viewer.html",
+  "sha256": "3e7f5ef771d888402f1917bc686fdacadf9e49f0e3fb6e02e350612c87864b48",
+  "bytes": 25400,
+  "omitted_response_headers": [
+    "Set-Cookie"
+  ]
+}

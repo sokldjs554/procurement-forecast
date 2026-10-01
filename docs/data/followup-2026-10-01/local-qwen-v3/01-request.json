@@ -1,0 +1,214 @@
+{
+  "model": "Qwen3-4B-Q4_K_M",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You read Korean public-sector documents — local council minutes (지방의회 회의록),\nbudget books (세출예산 사업명세서) and procurement notices — and extract PRE-PROCUREMENT DEMAND\nSIGNALS: statements that a public body will, plans to, or is considering buying a specific\nproduct, system, service or construction project from outside vendors.\n\nWhat counts as a signal\n- A concrete thing to be procured (시스템 구축, 장비 설치, 시설 조성, 용역, 플랫폼 도입 …), together with\n  whatever the text says about amount, timing and how firm the plan is.\n- In council minutes the commitment is usually in the OFFICIAL'S ANSWER, while the subject may be\n  named only in the member's question. Read the whole exchange.\n- A member's proposal that the official declines or merely promises to review IS still a signal\n  (commitment = reviewing / declined): vendors want to know about early interest too.\n\nWhat is NOT a signal\n- Procedure (개의, 산회, 의사일정, 조례안 상정 without a purchase), personnel and staffing talk,\n  complaints without a purchase, statistics, events that are only being managed.\n- Recurring operating costs in budget books: 인건비, 급여, 업무추진비, 운영비, 행사 개최,\n  기존 시스템 유지관리, 보조금 지원. Only NEW purchases (설치, 구축, 조성, 도입, 교체, 전환, 보급,\n  리모델링 …) qualify.\n\nField rules\n- title: the project as it would be named in a budget book or tender, a short noun phrase\n  (e.g. \"스마트쉘터 설치\", \"지능형 선별관제 시스템 구축\"). Not a sentence.\n- category — one of:\n- smart_city: 스마트시티·IoT (예: 스마트시티, 스마트쉘터, 스마트 쉘터, 스마트정류장, 스마트 정류장)\n- safety_cctv: 안전·지능형 CCTV (예: CCTV, 씨씨티비, 선별관제, 지능형 관제, 방범)\n- public_sw: 공공 SW·정보시스템 (예: 정보시스템, 시스템 구축, 고도화, 홈페이지, 누리집)\n- ai_data: AI·데이터 (예: 인공지능, AI, 빅데이터, 데이터, 분석)\n- mobility: 교통·모빌리티 (예: 주차, 교통, 버스, DRT, 수요응답)\n- energy_env: 에너지·환경 (예: 태양광, 에너지, 탄소, LED, 미세먼지)\n- welfare_care: 복지·돌봄 (예: 돌봄, 독거, 어르신, 고독사, 복지)\n- education: 교육·에듀테크 (예: 교육, 학교, 디지털 배움터, 메이커, 코딩)\n- tourism_culture: 관광·문화 (예: 관광, 축제, 미디어파사드, 미디어 파사드, 메타버스)\n- facility: 시설·공사 (예: 리모델링, 증축, 신축, 공사, 보수)\n  - other: nothing above fits\n- commitment:\n  - committed: explicit decision to budget or order (\"반영하겠습니다\", \"편성했습니다\", \"발주 예정\",\n    \"확보했습니다\", a budget-book line with an amount)\n  - planned: being prepared, timing stated but no decision words (\"계획입니다\", \"추진할 예정\")\n  - reviewing: only promises to consider (\"검토하겠습니다\", \"살펴보겠습니다\")\n  - declined: says it will not happen for now (\"어렵습니다\", \"곤란합니다\")\n- budget_text: copy the amount phrase exactly as written (\"3억 5천만원\", \"352,000\"). budget_krw: that\n  amount in won. Budget-book tables are in 천원 unless the document says otherwise, so \"352,000\"\n  under \"(단위: 천원)\" is 352000000. Use null when no amount is stated; never estimate.\n- timing_text: copy the timing phrase exactly (\"내년도 본예산에\", \"2027년 상반기\"). expected_year:\n  resolve relative words against the document date given in the user turn (내년 = that year + 1).\n  A budget-book line belongs to the fiscal year of the book. Null when no timing is stated.\n- evidence: 1–3 quotes copied CHARACTER-FOR-CHARACTER from the text — no paraphrase, no \"…\",\n  no added words. Prefer the sentence with the commitment and the sentence with the amount.\n  Every quote is checked by software against the source; a quote that cannot be found causes\n  the signal to be discarded.\n- confidence: your probability that a vendor reading this would agree it is a real, correctly\n  described signal.\n- One signal per distinct project. Return {\"signals\": []} when nothing qualifies.\n\nExample — council exchange\nText: \"○위원 박지훈  버스정류장에 냉난방이 되는 스마트쉘터를 더 늘릴 계획이 있습니까?\n○스마트도시과장 이정민  내년도 본예산에 스마트쉘터 7개소 추가 설치 사업비 3억 5천만원을 반영하겠습니다.\"\nDocument date: 2025-11-20\n→ title \"스마트쉘터 설치\", category smart_city, commitment committed, budget_text \"3억 5천만원\",\n  budget_krw 350000000, timing_text \"내년도 본예산에\", expected_year 2026, evidence [\"내년도 본예산에\n  스마트쉘터 7개소 추가 설치 사업비 3억 5천만원을 반영하겠습니다.\"]\n\nExample — not a signal\nText: \"○위원 김현윤  불법 주정차 단속 실적이 작년보다 줄었다는데 이유가 뭡니까?\n○교통행정과장 최민석  단속 인력 두 명이 휴직 중이라 일시적으로 줄었습니다.\"\n→ {\"signals\": []}\n"
+    },
+    {
+      "role": "user",
+      "content": "<document type=\"council_minutes\" title=\"공식 문서 발췌\" institution=\"광진구\" date=\"2023-11-29\" fiscal_year=\"2024\">\n<chunk labels=\"이동길위원 그러면 | 스마트정보담당관 유종헌 | 스마트정보담당관 유종헌 | 이동길위원 연한이 | 스마트정보담당관 유종헌 | 이동길위원 그러면 | 스마트정보담당관 유종헌 | 이동길위원 상황에 | 스마트정보담당관 유종헌 | 이동길위원 그건 | 스마트정보담당관 유종헌 | 이동길위원 이거는 | 스마트정보담당관 유종헌 | 이동길위원 되어 | 스마트정보담당관 유종헌\">\n○이동길위원 그러면 94페이지요. CCTV 있잖아요. 이게 지능형은 2,500만원 정도 가네요?\n그리고 또 300만원짜리도 있고 노후 교체한다 했는데, 이건 몇 년 정도 갑니까? CCTV는.\n○스마트정보담당관 유종헌 CCTV는 7년,\n○이동길위원 7년 되면, 뭐 필요 없이 7년이 되면 교체합니까?\n○스마트정보담당관 유종헌 현재 노후화된 것들이 좀 있습니다. 그래서 그 부분이 조금,\n○이동길위원 연한이 7년이에요?\n○스마트정보담당관 유종헌 네. 그래서 소요된 것도 많이 있는데 다는 못하고요. 워낙 CCTV가 많거든요. 그래서 일부 화질이 떨어지거나 이런 부분들을 찾아서 약 한 120개 정도 노후화된 카메라를 교체하는 그거고요. 노후 CCTV 우선 교체라는,\n○이동길위원 그러면 이게 폴대라고 해요. 기둥. 기둥이 있는 게 있고 카메라만 달려있는 게 있잖아요. 그럼 노후화가 되면 분리해서 교체하나요?\n○스마트정보담당관 유종헌 그러니까 현재, 위의 지능형 CCTV 확대 구축 이거는 폴대와 같이 카메라, 이런 지역에 있는 하나의 기둥을 세우면서 가는 거고요. 그다음에 노후화 CCTV는 기존 폴대 있는 거에서 그 중에 카메라가 노후화된 걸 교체하겠다는 겁니다.\n○이동길위원 상황에 따라서 카메라가 노후화되면 카메라만 교체해야지 폴대 같이 다 교체하고, 그런데 폴대는 오래가는 거 아니에요? 그거는.\n○스마트정보담당관 유종헌 새로운 거를, 새로운 곳, 새로운 폴대를,\n○이동길위원 그건 신규지원이잖아요?\n○스마트정보담당관 유종헌 네. 그런 겁니다. 확대 구축한다고 써있는 거는.\n○이동길위원 이거는 계약을 어떤 식으로 합니까?\n○스마트정보담당관 유종헌 이것도 조달로 되어 있는 걸 구매하는 겁니다.\n○이동길위원 되어 있는 걸?\n○스마트정보담당관 유종헌 조달로 되어 있는 걸.\n</chunk>\n</document>\nExtract the signals in this chunk."
+    }
+  ],
+  "response_format": {
+    "type": "json_schema",
+    "json_schema": {
+      "name": "extraction",
+      "strict": true,
+      "schema": {
+        "$defs": {
+          "Category": {
+            "enum": [
+              "smart_city",
+              "safety_cctv",
+              "public_sw",
+              "ai_data",
+              "mobility",
+              "energy_env",
+              "welfare_care",
+              "education",
+              "tourism_culture",
+              "facility",
+              "other"
+            ],
+            "type": "string"
+          },
+          "ExtractedSignal": {
+            "additionalProperties": false,
+            "properties": {
+              "title": {
+                "description": "사업명: short formal noun phrase, e.g. '스마트쉘터 설치'",
+                "type": "string"
+              },
+              "summary": {
+                "description": "One Korean sentence: who plans to buy what, and why",
+                "type": "string"
+              },
+              "category": {
+                "$ref": "#/$defs/Category"
+              },
+              "institution_mention": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Institution as written in the text, if any (e.g. '강남구')"
+              },
+              "department": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Responsible department, e.g. '스마트도시과'"
+              },
+              "budget_text": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Amount phrase copied verbatim, e.g. '3억 5천만원'"
+              },
+              "budget_krw": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "budget_text converted to won"
+              },
+              "timing_text": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Timing phrase copied verbatim, e.g. '내년도 본예산에'"
+              },
+              "expected_year": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ],
+                "description": "Year the purchase is expected (resolve 내년 etc.)"
+              },
+              "expected_half": {
+                "anyOf": [
+                  {
+                    "enum": [
+                      "H1",
+                      "H2"
+                    ],
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "commitment": {
+                "enum": [
+                  "committed",
+                  "planned",
+                  "reviewing",
+                  "declined"
+                ],
+                "type": "string"
+              },
+              "procurement_type": {
+                "enum": [
+                  "service",
+                  "goods",
+                  "construction",
+                  "unknown"
+                ],
+                "type": "string"
+              },
+              "keywords": {
+                "description": "2-6 Korean keywords a vendor would search for",
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "evidence": {
+                "description": "1-3 quotes copied EXACTLY from the text that support this signal",
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              "confidence": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "title",
+              "summary",
+              "category",
+              "institution_mention",
+              "department",
+              "budget_text",
+              "budget_krw",
+              "timing_text",
+              "expected_year",
+              "expected_half",
+              "commitment",
+              "procurement_type",
+              "keywords",
+              "evidence",
+              "confidence"
+            ],
+            "type": "object"
+          }
+        },
+        "additionalProperties": false,
+        "properties": {
+          "signals": {
+            "items": {
+              "$ref": "#/$defs/ExtractedSignal"
+            },
+            "type": "array"
+          }
+        },
+        "required": [
+          "signals"
+        ],
+        "type": "object"
+      }
+    }
+  },
+  "chat_template_kwargs": {
+    "enable_thinking": false
+  },
+  "reasoning_effort": "none",
+  "stream": false,
+  "temperature": 0.7,
+  "top_p": 0.8,
+  "top_k": 20,
+  "min_p": 0,
+  "presence_penalty": 1.5,
+  "seed": 42,
+  "max_tokens": 4096
+}

@@ -1,0 +1,22 @@
+{
+  "url": "https://www.gncouncil.go.kr/kr/bill.do",
+  "retrieved_at": "2026-10-01T01:04:50.850511+00:00",
+  "status": 200,
+  "resolved_url": "https://www.gncouncil.go.kr/kr/bill.do",
+  "headers": {
+    "Cache-Control": "private",
+    "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+    "Content-Type": "text/html;charset=UTF-8",
+    "Content-Language": "en-US",
+    "Transfer-Encoding": "chunked",
+    "Date": "Thu, 01 Oct 2026 01:04:56 GMT",
+    "Connection": "close",
+    "Server": "www.gncouncil.go.kr"
+  },
+  "file": "council-bill-list.html",
+  "sha256": "a2f51cf2b93214533cde15a53cc3320f78038f8eed758fdc55f9586171e979aa",
+  "bytes": 80797,
+  "omitted_response_headers": [
+    "Set-Cookie"
+  ]
+}

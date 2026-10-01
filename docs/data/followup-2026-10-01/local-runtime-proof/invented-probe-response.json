@@ -1,0 +1,36 @@
+{
+  "choices": [
+    {
+      "finish_reason": "stop",
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "{\n  \"project_name\": \"별빛도서관 안내책자 제작\",\n  \"deadline\": \"2026-11-09 15:00\",\n  \"budget_krw\": 12500000,\n  \"deliverables\": [\n    \"인쇄 안내책자 300부\",\n    \"편집 원본 파일\"\n  ]\n}"
+      }
+    }
+  ],
+  "created": 1790818437,
+  "model": "Qwen3-4B-Q4_K_M",
+  "system_fingerprint": "b11308-feb9a3d6d",
+  "object": "chat.completion",
+  "usage": {
+    "completion_tokens": 89,
+    "prompt_tokens": 171,
+    "total_tokens": 260,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "id": "chatcmpl-xtJwMtQBDlEd9FqSQkKXPuPb0hrOcwUu",
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 171,
+    "prompt_ms": 2702.337,
+    "prompt_per_token_ms": 15.803140350877193,
+    "prompt_per_second": 63.278562222254294,
+    "predicted_n": 89,
+    "predicted_ms": 5427.245,
+    "predicted_per_token_ms": 61.673238636363635,
+    "predicted_per_second": 16.21448819797153
+  }
+}

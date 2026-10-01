@@ -1,0 +1,22 @@
+{
+  "url": "https://www.gncouncil.go.kr/viewer/minutes.do?uid=8634",
+  "retrieved_at": "2026-10-01T01:07:36.110259+00:00",
+  "status": 200,
+  "resolved_url": "https://www.gncouncil.go.kr/viewer/minutes.do?uid=8634",
+  "headers": {
+    "Cache-Control": "private",
+    "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+    "Content-Type": "text/html;charset=UTF-8",
+    "Content-Language": "en-US",
+    "Transfer-Encoding": "chunked",
+    "Date": "Thu, 01 Oct 2026 01:07:42 GMT",
+    "Connection": "close",
+    "Server": "www.gncouncil.go.kr"
+  },
+  "file": "council-budget-plenary.html",
+  "sha256": "806bbb100660c6cee76fc7f52e12e8f0acecbe35c5cdaa9ad8db9141573c20b2",
+  "bytes": 164878,
+  "omitted_response_headers": [
+    "Set-Cookie"
+  ]
+}

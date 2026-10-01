@@ -1,0 +1,349 @@
+{
+  "review_finished_at": "2026-10-01T01:22:39.085530+00:00",
+  "reviewer": "Separate AI source-only adjudication agent; not the label author; not human or domain-expert review",
+  "review_scope": "All 23 frozen excerpts and source context; title identity, signal count, amount/unit, fiscal year, commitment, negatives and archive integrity. This is not exhaustive full-document acquisition annotation.",
+  "predictions_seen": false,
+  "production_or_provider_code_seen": false,
+  "previous_result_or_development_gold_seen": false,
+  "frozen_files_modified": false,
+  "git_commands_run": false,
+  "input_manifest": "independent-v3/manifest.json",
+  "input_cases_sha256": "8418023c868c4e29b8eb60d64f03d8db03c870103594bd781de2bbedba284919",
+  "integrity_checks": {
+    "cases_sha256_matches_manifest": true,
+    "all_five_normalized_sources_match_manifest_hashes": true,
+    "all_five_original_sources_match_manifest_hashes": true,
+    "all_23_unicode_offsets_reproduce_exact_excerpt": true,
+    "all_23_excerpt_sha256_values_match": true,
+    "all_four_pdf_page_locators_match_formfeed_counts": true,
+    "all_19_html_cases_occur_in_original_html_after_whitespace_removal": true,
+    "independent_pdftotext_layout_reproduces_archived_text_byte_for_byte": true,
+    "annotation_review_hash_matches_manifest": true,
+    "workplan_date_provenance_html_hash_matches_metadata": true,
+    "visual_pdf_pages_1based": [
+      14,
+      30,
+      43
+    ],
+    "minute_dates_verified_in_archived_original_html": [
+      "2023-11-29",
+      "2023-11-30",
+      "2023-12-04",
+      "2023-12-12"
+    ],
+    "workplan_hearing_date_and_attachment_title_verified_in_archived_html": "2024-02-21; 2024년 주요업무 계획(도시관리공단)",
+    "date_interpretation": "Meeting/workplan presentation dates, not public-release dates",
+    "full_FROZEN_SHA256SUMS_verification": "Not performed by this reviewer; manifest-declared source, original, cases and annotation hashes independently checked."
+  },
+  "counts": {
+    "cases": 23,
+    "positive_cases": 15,
+    "positive_signals": 20,
+    "negative_cases": 8,
+    "documents": 5,
+    "authorities": 3
+  },
+  "pre_score_findings": [
+    {
+      "case_id": "iv3-yc-kiosk-reduction",
+      "field": "commitment",
+      "stored_value": "planned",
+      "recommended_value": "committed",
+      "severity": "material_field_inconsistency",
+      "source_id": "yangcheon-8370",
+      "text_char_start": 36157,
+      "text_char_end": 36453,
+      "evidence": "내년에는 한 2대 정도로 축소를 해가지고 구매해서 보급할 계획으로 감액을 했습니다.",
+      "reason": "The declared convention assigns committed to concrete executive-backed budget items, including budget proposals. This sentence explicitly links a reduced budget to next-year purchase/distribution; it does not state unresolved site or demand. Missing numerical budget does not negate budget assertion, as other committed gold cases demonstrate.",
+      "recommended_action": "Before any predictions: preserve v3 and either create a separately named corrected version with commitment=committed and new hashes, or predeclare exclusion of this commitment field only. Identity/category/budget/year and positive signal count can remain scored."
+    }
+  ],
+  "additional_mandatory_case_exclusions": [],
+  "overall_conclusion": "One commitment-label inconsistency requires pre-score correction or field exclusion. No additional material identity, budget, unit, year, count, or provenance error found under the stated excerpt and scope conventions. Category and scope sensitivity remain disclosed judgments rather than objective universal labels.",
+  "case_reviews": [
+    {
+      "case_id": "iv3-gj-cctv-scope",
+      "source_id": "gwangjin-5492",
+      "locator": {
+        "text_char_start": 48491,
+        "text_char_end": 49373,
+        "offset_unit": "Unicode code points",
+        "text_sha256": "1ae1981ba1115a4c8d1dac3477c50d586df4f7bdee6d0b8392895df8558c5864"
+      },
+      "status": "supported_under_declared_conventions",
+      "source_reason": "Two purchases: pole-plus-camera expansion and replacement of roughly 120 old cameras. 2,500만원/300만원 are unit prices; null totals justified."
+    },
+    {
+      "case_id": "iv3-gj-mentoring",
+      "source_id": "gwangjin-5614",
+      "locator": {
+        "text_char_start": 56154,
+        "text_char_end": 56638,
+        "offset_unit": "Unicode code points",
+        "text_sha256": "839940d5dbe0e1fee8e8a71df774edcd93c9d3617019e278040976bace8a058f"
+      },
+      "status": "supported_under_declared_conventions",
+      "source_reason": "Explicit newly budgeted mentoring vouchers; physical counseling center is an alternative rejected in the same excerpt."
+    },
+    {
+      "case_id": "iv3-gj-elementary-subscription",
+      "source_id": "gwangjin-5614",
+      "locator": {
+        "text_char_start": 56741,
+        "text_char_end": 57265,
+        "offset_unit": "Unicode code points",
+        "text_sha256": "aec47479f31d4bc9136295ab995544e80908abe5c0e83ba58bd1499c1dd4482b"
+      },
+      "status": "supported_under_declared_conventions",
+      "source_reason": "New elementary online class subscriptions; 6만원, 90명 and 5기 do not state an explicit project total."
+    },
+    {
+      "case_id": "iv3-gj-mobile-water",
+      "source_id": "gwangjin-5614",
+      "locator": {
+        "text_char_start": 55265,
+        "text_char_end": 55825,
+        "offset_unit": "Unicode code points",
+        "text_sha256": "a7f04d055174fd842ac58beee10e56039542b6f0947d089617a6e73948cafb3f"
+      },
+      "status": "supported_under_declared_conventions",
+      "source_reason": "Future mobile waterplay equipment, July-August, four unfixed areas. Planned reflects explicit site uncertainty. Facility category is a declared purpose judgment."
+    },
+    {
+      "case_id": "iv3-gj-tools",
+      "source_id": "gwangjin-5614",
+      "locator": {
+        "text_char_start": 24997,
+        "text_char_end": 25438,
+        "offset_unit": "Unicode code points",
+        "text_sha256": "eed1a64e6059574cf04be3b2afa332e9c42aea8a394386746aada1e96f2b3d99"
+      },
+      "status": "supported_under_declared_conventions",
+      "source_reason": "Budget increase explicitly buys replacements for lost/damaged loan tools; replacement goods are distinct from maintenance labor."
+    },
+    {
+      "case_id": "iv3-gj-maintenance",
+      "source_id": "gwangjin-5492",
+      "locator": {
+        "text_char_start": 39228,
+        "text_char_end": 39699,
+        "offset_unit": "Unicode code points",
+        "text_sha256": "77f62a7d00debb44e7125e582be624038428b5c80caf38df240426ad3fae8b0c"
+      },
+      "status": "supported_under_declared_conventions",
+      "source_reason": "Existing network/server maintenance contracts and resident staff; no new acquisition stated."
+    },
+    {
+      "case_id": "iv3-yc-completed-smartcity",
+      "source_id": "yangcheon-8370",
+      "locator": {
+        "text_char_start": 37300,
+        "text_char_end": 37861,
+        "offset_unit": "Unicode code points",
+        "text_sha256": "f6207641b5643d7ee2cce365d2e6da86409a5c6a966a446cc2215579c8d496f6"
+      },
+      "status": "supported_under_declared_conventions",
+      "source_reason": "Executive explicitly dates completion to October of meeting year 2023; installed RFID bicycle system is historical."
+    },
+    {
+      "case_id": "iv3-yc-appraisal-contingency",
+      "source_id": "yangcheon-8370",
+      "locator": {
+        "text_char_start": 43264,
+        "text_char_end": 43503,
+        "offset_unit": "Unicode code points",
+        "text_sha256": "4ee53edb4e43aadfdbf56f03c7044be51dcb2ff533753f7a9a177adce3c0a26e"
+      },
+      "status": "supported_under_declared_conventions",
+      "source_reason": "Executive expressly denies any particular planned purchase/sale; appraisal fees are contingency only."
+    },
+    {
+      "case_id": "iv3-yc-maintenance-period",
+      "source_id": "yangcheon-8370",
+      "locator": {
+        "text_char_start": 39226,
+        "text_char_end": 39597,
+        "offset_unit": "Unicode code points",
+        "text_sha256": "02307ef0622e4daa3ccbe305762ca4097e19a5a05a5c37b990e4dec3c367ba4e"
+      },
+      "status": "supported_under_declared_conventions",
+      "source_reason": "Two months in 2024 and twelve months thereafter are maintenance after 2023 completion; negative under declared maintenance scope."
+    },
+    {
+      "case_id": "iv3-yc-kiosk-reduction",
+      "source_id": "yangcheon-8370",
+      "locator": {
+        "text_char_start": 36157,
+        "text_char_end": 36453,
+        "offset_unit": "Unicode code points",
+        "text_sha256": "c4dfef74bc0e7dc605376a3dd784822f9cb461e3853526e782fd67330d008099"
+      },
+      "status": "commitment_correction_or_field_exclusion",
+      "source_reason": "Positive identity, education purpose, null amount and 2024 year supported. Commitment conflicts with budget-backed convention: executive explicitly reduced next-year purchase budget to approximately two kiosks, without site/demand contingency."
+    },
+    {
+      "case_id": "iv3-yc-onnara-total",
+      "source_id": "yangcheon-8370",
+      "locator": {
+        "text_char_start": 41254,
+        "text_char_end": 41623,
+        "offset_unit": "Unicode code points",
+        "text_sha256": "ac3e71a646d96eeff76850cdd4ad53c02e3122ec593659c5a8da5bad8cbaf6ef"
+      },
+      "status": "supported_under_declared_conventions",
+      "source_reason": "Integrated Onnara 2.0 migration total 6억6,200 = 662,000,000 won; 4억7,000 is equipment subtotal. Spoken approximation is disclosed."
+    },
+    {
+      "case_id": "iv3-yc-data-vs-consulting",
+      "source_id": "yangcheon-8370",
+      "locator": {
+        "text_char_start": 38368,
+        "text_char_end": 38750,
+        "offset_unit": "Unicode code points",
+        "text_sha256": "2a083283c0f986fb2637859c859e59614118b0ecd00f04f4240e948d222bd366"
+      },
+      "status": "supported_under_declared_conventions",
+      "source_reason": "Next-year purchased data budget 2,000만원 inferred from same-paragraph 8,000만원 and 6,000 savings; canceled consulting is not an extra signal."
+    },
+    {
+      "case_id": "iv3-yc-display-carryover",
+      "source_id": "yangcheon-8370",
+      "locator": {
+        "text_char_start": 3863,
+        "text_char_end": 3976,
+        "offset_unit": "Unicode code points",
+        "text_sha256": "8d612341fa6351af72dc48f6d07a63a89a644fc1d120d1e49e2564d9fefd4096"
+      },
+      "status": "supported_under_declared_conventions",
+      "source_reason": "Explicit purchase-and-install carryover to 2024 because location changes prevent in-year execution. Site uncertainty supports planned; no amount stated."
+    },
+    {
+      "case_id": "iv3-sb-health-equipment",
+      "source_id": "seongbuk-300-4",
+      "locator": {
+        "text_char_start": 25671,
+        "text_char_end": 26576,
+        "offset_unit": "Unicode code points",
+        "text_sha256": "533c305402424ecdf44f55b4a11ffaa3e0399dd5b1f1b63f706d2e7cdb0df012"
+      },
+      "status": "supported_under_declared_conventions",
+      "source_reason": "New InBody/body-composition health-room equipment for 2024; prior thermometers/cholesterol devices already purchased and stored are excluded."
+    },
+    {
+      "case_id": "iv3-sb-tools-next-year",
+      "source_id": "seongbuk-300-4",
+      "locator": {
+        "text_char_start": 63440,
+        "text_char_end": 63658,
+        "offset_unit": "Unicode code points",
+        "text_sha256": "de1d6b368c734795e8a97525fd3e737d16013615cabc41ea3c8bd14f21eb22d2"
+      },
+      "status": "supported_under_declared_conventions",
+      "source_reason": "Next-year tool purchases expressly depend on district demand survey. Bare 200 lacks a unit within this excerpt; null budget justified."
+    },
+    {
+      "case_id": "iv3-sb-led-budget",
+      "source_id": "seongbuk-300-4",
+      "locator": {
+        "text_char_start": 2374,
+        "text_char_end": 2568,
+        "offset_unit": "Unicode code points",
+        "text_sha256": "f8eefbd66fc400cb95ad7af1c1b5de366aec60336edc280a7944309279b8d262"
+      },
+      "status": "supported_under_declared_conventions",
+      "source_reason": "2024 fund expenditure for LED replacement is explicitly 1,000만원; fund receipts and retained deposit are separate amounts."
+    },
+    {
+      "case_id": "iv3-sb-maintenance-newline",
+      "source_id": "seongbuk-300-4",
+      "locator": {
+        "text_char_start": 18156,
+        "text_char_end": 18869,
+        "offset_unit": "Unicode code points",
+        "text_sha256": "748b71f8e63d897e9c503412f8825d8abab348085bf944915059545bc4355d95"
+      },
+      "status": "supported_under_declared_conventions",
+      "source_reason": "New budget line is seven months of maintenance after warranty on the system built May 2023; negative under declared maintenance scope."
+    },
+    {
+      "case_id": "iv3-sb-solar-proposal",
+      "source_id": "seongbuk-300-4",
+      "locator": {
+        "text_char_start": 73538,
+        "text_char_end": 74205,
+        "offset_unit": "Unicode code points",
+        "text_sha256": "d5d9b7227e200fc68894eb4fe30fb2383fbc2a2c9f3a5fc06cfa8405a8649381"
+      },
+      "status": "supported_under_declared_conventions",
+      "source_reason": "Parking-lot solar is a member proposal followed by conditional willingness to review; no executive procurement plan. Adjacent full-source context says no suitable next-year solar site found. Accept only under disclosed concrete-purchase scope; incidental LED/general public-building references do not by themselves specify another new purchase in this excerpt."
+    },
+    {
+      "case_id": "iv3-sb-private-charger",
+      "source_id": "seongbuk-300-4",
+      "locator": {
+        "text_char_start": 66393,
+        "text_char_end": 67341,
+        "offset_unit": "Unicode code points",
+        "text_sha256": "399e0bb35b2ba13b53309e4f59802069d33ccf4e6779378548210de193ba059e"
+      },
+      "status": "supported_under_declared_conventions",
+      "source_reason": "Executive plans more sites but expressly says operators install at no public equipment purchase cost and recover investment through usage charges. Negative only under declared authority-purchase scope; public location incentives and private demand still exist."
+    },
+    {
+      "case_id": "iv3-sb-plan-iot",
+      "source_id": "seongbuk-workplan-2024",
+      "locator": {
+        "text_char_start": 42490,
+        "text_char_end": 43913,
+        "offset_unit": "Unicode code points",
+        "text_sha256": "f762873021f6cd9a074e739c0c4e729bd0075b74eedb7ab6e0a20f0648346421",
+        "pdf_page_1based": 30,
+        "pdf_end_page_1based": 30
+      },
+      "status": "supported_under_declared_conventions",
+      "source_reason": "PDF page 30 visually confirms 2024 additional installation for 50 spaces; historical revenue is not a budget and operating company names are not a new award. Mobility versus smart_city remains a declared purpose judgment."
+    },
+    {
+      "case_id": "iv3-sb-plan-cctv-replacements",
+      "source_id": "seongbuk-workplan-2024",
+      "locator": {
+        "text_char_start": 56017,
+        "text_char_end": 56193,
+        "offset_unit": "Unicode code points",
+        "text_sha256": "89de59261adf49dc2c105e72cd2e4721311b139c65ad100419f1b4125f383b8f",
+        "pdf_page_1based": 43,
+        "pdf_end_page_1based": 43
+      },
+      "status": "supported_under_declared_conventions",
+      "source_reason": "PDF page 43 visually confirms three separate CCTV asset rows and amounts 18,450/12,300/9,250천원. Each correctly multiplied by 1,000."
+    },
+    {
+      "case_id": "iv3-sb-plan-parking-systems",
+      "source_id": "seongbuk-workplan-2024",
+      "locator": {
+        "text_char_start": 56413,
+        "text_char_end": 56589,
+        "offset_unit": "Unicode code points",
+        "text_sha256": "6283d80d415141a0c3c5e44abce055ae062d09511aed77e43d7fd3288596671f",
+        "pdf_page_1based": 43,
+        "pdf_end_page_1based": 43
+      },
+      "status": "supported_under_declared_conventions",
+      "source_reason": "PDF page 43 visually confirms separate smart fire monitoring, access barriers, and Samseon CCTV rows at 40,000/50,000/40,000천원. Adjacent canopy row lies outside excerpt. Fire-monitoring category remains a declared judgment."
+    },
+    {
+      "case_id": "iv3-sb-plan-historical-safety",
+      "source_id": "seongbuk-workplan-2024",
+      "locator": {
+        "text_char_start": 23337,
+        "text_char_end": 24225,
+        "offset_unit": "Unicode code points",
+        "text_sha256": "17ff1855baf3b63b97d76816065655cf761fcf5c2a75de1a1debf92fdaf401fb",
+        "pdf_page_1based": 14,
+        "pdf_end_page_1based": 14
+      },
+      "status": "supported_under_declared_conventions",
+      "source_reason": "PDF page 14 visually confirms 2023 performance heading governs AED replacement, fire detection, CCTV and emergency bells; no 2024 purchase signal."
+    }
+  ]
+}

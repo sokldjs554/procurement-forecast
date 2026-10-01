@@ -1,0 +1,44 @@
+{
+  "cohort_fixed_at": "2026-10-01T01:03:34.174938+00:00",
+  "selection_procedure": "Three new Seoul district authorities selected by researcher before reading full documents or choosing excerpts: Gwangjin, Seongbuk, Yangcheon. Broad official-domain searches for 2024 budget committee records (no purchase or model-target phrase queries) identified committee sessions. Fix five sources now: two consecutive Gwangjin budget hearings to cover executive department diversity, one Seongbuk budget hearing, one Yangcheon budget hearing, and the 2024 Seongbuk facility corporation workplan discovered through the same broad query. Search snippets exposed brief source passages before this freeze; no model outputs or provider code were inspected. All selected full texts will be archived before case selection. Within-cohort purposive excerpts will target diverse positive purchase signals and difficult contextual negatives, not prevalence estimation. No source substitution based on model behavior. If a source cannot be downloaded after robots review, record failure; do not bypass access restrictions.",
+  "authorities": [
+    "서울특별시 광진구",
+    "서울특별시 성북구",
+    "서울특별시 양천구"
+  ],
+  "sources": [
+    {
+      "id": "gwangjin-5492",
+      "url": "https://council.gwangjin.go.kr/record/main/contents?uid=5492",
+      "date": "2023-11-29",
+      "doc_type": "council_minutes"
+    },
+    {
+      "id": "gwangjin-5614",
+      "url": "https://council.gwangjin.go.kr/record/main/contents?uid=5614",
+      "date": "2023-11-30",
+      "doc_type": "council_minutes"
+    },
+    {
+      "id": "seongbuk-300-4",
+      "url": "https://www.sbc.go.kr/record/recordView.do?key=0cdd53157e8c4a278cbef98f67c9e7a8a92d2ccf6a80c8f54a756d4438321214288d2424c6b1b2bd",
+      "date": "2023-12-04",
+      "doc_type": "council_minutes"
+    },
+    {
+      "id": "yangcheon-8370",
+      "url": "https://www.ycc.go.kr/record/main?code=C050&uid=8370&view=full_view",
+      "date": "2023-12-12",
+      "doc_type": "council_minutes"
+    },
+    {
+      "id": "seongbuk-workplan-2024",
+      "url": "https://www.sbc.go.kr/attach/record/SEONGBUK/appendix/a09/A0006310.pdf",
+      "date": "2024-02",
+      "doc_type": "work_plan"
+    }
+  ],
+  "human_expert_review": "NONE",
+  "model_predictions_seen": false,
+  "implementation_seen": false
+}

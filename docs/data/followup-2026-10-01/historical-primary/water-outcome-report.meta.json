@@ -1,0 +1,21 @@
+{
+  "url": "https://www.gncouncil.go.kr/attach/minutes/BO/apdx/09/a00017549.pdf",
+  "retrieved_at": "2026-10-01T01:10:49.367853+00:00",
+  "status": 200,
+  "resolved_url": "https://www.gncouncil.go.kr/attach/minutes/BO/apdx/09/a00017549.pdf",
+  "headers": {
+    "Cache-Control": "private",
+    "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+    "Accept-Ranges": "bytes",
+    "ETag": "W/\"3146217-1767343503000\"",
+    "Last-Modified": "Fri, 02 Jan 2026 08:45:03 GMT",
+    "Content-Type": "application/pdf",
+    "Content-Length": "3146217",
+    "Date": "Thu, 01 Oct 2026 01:10:57 GMT",
+    "Connection": "close",
+    "Server": "www.gncouncil.go.kr"
+  },
+  "file": "water-outcome-report.pdf",
+  "sha256": "37a4e8de3aaf6a09f97904e5a5e53b12f49dfe2624a3e4488b4c2c86c52dccf8",
+  "bytes": 3146217
+}

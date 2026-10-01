@@ -1,0 +1,985 @@
+{
+  "schema_version": "source-holdout-result-v1",
+  "evaluated_at": "2026-10-01T01:26:27.074881+00:00",
+  "code_revision": "da5fdb98cca25ddedbd0f568a8c6027f33b71854",
+  "extractor": "heuristic-v10",
+  "api_cost_usd": 0,
+  "manifest_sha256": "78e527557f084cd52b8686bffc0a0a2f47d58565bc72a01d3a014d37056d7be5",
+  "cases_sha256": "d8c20ed97a8ac7d36d983bb7ffbc4d92137317bd46dad84791edb5e0c2b87abe",
+  "label_origin": "Separate evaluation agent authored labels before predictions/provider implementation. Independent AI source reviewer identified one commitment-convention inconsistency; original annotator independently source-adjudicated it before scoring. One scalar corrected in a new version, original preserved. No human/expert review, no predictions or extraction run. Labels must not change after scoring.",
+  "independent_human_gold": false,
+  "scope": "selected_parsed_excerpts_extraction_only_not_ocr_linking_or_forecasting",
+  "matching": "maximum_one_to_one_title_phrase_whitespace_insensitive_budget_2pct",
+  "context_policy": "speaker_labels_and_grounding_offsets_from_verified_full_source_not_gold",
+  "documents": 5,
+  "institutions": [
+    "광진구",
+    "성북구",
+    "성북구도시관리공단",
+    "양천구"
+  ],
+  "raw": {
+    "cases": 23,
+    "expected": 20,
+    "predicted": 6,
+    "matched": 0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "negative_cases": 8,
+    "negative_cases_with_predictions": 2,
+    "negative_case_false_positive_rate": 0.25,
+    "fields": {
+      "category": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 20,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": 0.0
+      },
+      "commitment": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 20,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": 0.0
+      },
+      "budget_krw": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 20,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": 0.0
+      },
+      "expected_year": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 20,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": 0.0
+      }
+    },
+    "failures": [
+      {
+        "case": "iv3-gj-cctv-scope",
+        "missing": [
+          "지능형 CCTV"
+        ]
+      },
+      {
+        "case": "iv3-gj-cctv-scope",
+        "missing": [
+          "노후 CCTV",
+          "노후화 CCTV"
+        ]
+      },
+      {
+        "case": "iv3-gj-mentoring",
+        "missing": [
+          "멘토링",
+          "온라인진학 상담"
+        ]
+      },
+      {
+        "case": "iv3-gj-elementary-subscription",
+        "missing": [
+          "초등학생",
+          "온라인학습",
+          "수강권"
+        ]
+      },
+      {
+        "case": "iv3-gj-elementary-subscription",
+        "unexpected": "일반 초등학교 대상으로 하는 학습지원시스템"
+      },
+      {
+        "case": "iv3-gj-mobile-water",
+        "missing": [
+          "이동형 물놀이장"
+        ]
+      },
+      {
+        "case": "iv3-gj-tools",
+        "missing": [
+          "공구"
+        ]
+      },
+      {
+        "case": "iv3-yc-kiosk-reduction",
+        "missing": [
+          "교육용 키오스크",
+          "키오스크"
+        ]
+      },
+      {
+        "case": "iv3-yc-kiosk-reduction",
+        "unexpected": "현재는 어느 정도 보급"
+      },
+      {
+        "case": "iv3-yc-onnara-total",
+        "missing": [
+          "온나라",
+          "행정정보시스템"
+        ]
+      },
+      {
+        "case": "iv3-yc-onnara-total",
+        "unexpected": "지금 이래저래 해가지고 시스템 전환 구축"
+      },
+      {
+        "case": "iv3-yc-data-vs-consulting",
+        "missing": [
+          "데이터",
+          "빅데이터"
+        ]
+      },
+      {
+        "case": "iv3-yc-display-carryover",
+        "missing": [
+          "목동깨비시장",
+          "홍보전광판",
+          "홍보전자게시대"
+        ]
+      },
+      {
+        "case": "iv3-sb-health-equipment",
+        "missing": [
+          "인바디",
+          "건강증진실"
+        ]
+      },
+      {
+        "case": "iv3-sb-tools-next-year",
+        "missing": [
+          "공구대여소",
+          "공구"
+        ]
+      },
+      {
+        "case": "iv3-sb-led-budget",
+        "missing": [
+          "LED"
+        ]
+      },
+      {
+        "case": "iv3-sb-solar-proposal",
+        "unexpected": "있는 주차장에 대해서도 태양광 설치"
+      },
+      {
+        "case": "iv3-sb-private-charger",
+        "unexpected": "일곱 개 장소에 설치"
+      },
+      {
+        "case": "iv3-sb-private-charger",
+        "unexpected": "하는 게 아니라 충전소 설치"
+      },
+      {
+        "case": "iv3-sb-plan-iot",
+        "missing": [
+          "IOT",
+          "IoT",
+          "Iot",
+          "센서"
+        ]
+      },
+      {
+        "case": "iv3-sb-plan-cctv-replacements",
+        "missing": [
+          "장위3동",
+          "진흥선원"
+        ]
+      },
+      {
+        "case": "iv3-sb-plan-cctv-replacements",
+        "missing": [
+          "솔샘터널",
+          "정릉3동"
+        ]
+      },
+      {
+        "case": "iv3-sb-plan-cctv-replacements",
+        "missing": [
+          "정릉2동"
+        ]
+      },
+      {
+        "case": "iv3-sb-plan-parking-systems",
+        "missing": [
+          "마을공원",
+          "화재 감시"
+        ]
+      },
+      {
+        "case": "iv3-sb-plan-parking-systems",
+        "missing": [
+          "입출차",
+          "차단기"
+        ]
+      },
+      {
+        "case": "iv3-sb-plan-parking-systems",
+        "missing": [
+          "삼선동"
+        ]
+      }
+    ]
+  },
+  "after_verifier": {
+    "cases": 23,
+    "expected": 20,
+    "predicted": 6,
+    "matched": 0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "negative_cases": 8,
+    "negative_cases_with_predictions": 2,
+    "negative_case_false_positive_rate": 0.25,
+    "fields": {
+      "category": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 20,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": 0.0
+      },
+      "commitment": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 20,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": 0.0
+      },
+      "budget_krw": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 20,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": 0.0
+      },
+      "expected_year": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 20,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": 0.0
+      }
+    },
+    "failures": [
+      {
+        "case": "iv3-gj-cctv-scope",
+        "missing": [
+          "지능형 CCTV"
+        ]
+      },
+      {
+        "case": "iv3-gj-cctv-scope",
+        "missing": [
+          "노후 CCTV",
+          "노후화 CCTV"
+        ]
+      },
+      {
+        "case": "iv3-gj-mentoring",
+        "missing": [
+          "멘토링",
+          "온라인진학 상담"
+        ]
+      },
+      {
+        "case": "iv3-gj-elementary-subscription",
+        "missing": [
+          "초등학생",
+          "온라인학습",
+          "수강권"
+        ]
+      },
+      {
+        "case": "iv3-gj-elementary-subscription",
+        "unexpected": "일반 초등학교 대상으로 하는 학습지원시스템"
+      },
+      {
+        "case": "iv3-gj-mobile-water",
+        "missing": [
+          "이동형 물놀이장"
+        ]
+      },
+      {
+        "case": "iv3-gj-tools",
+        "missing": [
+          "공구"
+        ]
+      },
+      {
+        "case": "iv3-yc-kiosk-reduction",
+        "missing": [
+          "교육용 키오스크",
+          "키오스크"
+        ]
+      },
+      {
+        "case": "iv3-yc-kiosk-reduction",
+        "unexpected": "현재는 어느 정도 보급"
+      },
+      {
+        "case": "iv3-yc-onnara-total",
+        "missing": [
+          "온나라",
+          "행정정보시스템"
+        ]
+      },
+      {
+        "case": "iv3-yc-onnara-total",
+        "unexpected": "지금 이래저래 해가지고 시스템 전환 구축"
+      },
+      {
+        "case": "iv3-yc-data-vs-consulting",
+        "missing": [
+          "데이터",
+          "빅데이터"
+        ]
+      },
+      {
+        "case": "iv3-yc-display-carryover",
+        "missing": [
+          "목동깨비시장",
+          "홍보전광판",
+          "홍보전자게시대"
+        ]
+      },
+      {
+        "case": "iv3-sb-health-equipment",
+        "missing": [
+          "인바디",
+          "건강증진실"
+        ]
+      },
+      {
+        "case": "iv3-sb-tools-next-year",
+        "missing": [
+          "공구대여소",
+          "공구"
+        ]
+      },
+      {
+        "case": "iv3-sb-led-budget",
+        "missing": [
+          "LED"
+        ]
+      },
+      {
+        "case": "iv3-sb-solar-proposal",
+        "unexpected": "있는 주차장에 대해서도 태양광 설치"
+      },
+      {
+        "case": "iv3-sb-private-charger",
+        "unexpected": "일곱 개 장소에 설치"
+      },
+      {
+        "case": "iv3-sb-private-charger",
+        "unexpected": "하는 게 아니라 충전소 설치"
+      },
+      {
+        "case": "iv3-sb-plan-iot",
+        "missing": [
+          "IOT",
+          "IoT",
+          "Iot",
+          "센서"
+        ]
+      },
+      {
+        "case": "iv3-sb-plan-cctv-replacements",
+        "missing": [
+          "장위3동",
+          "진흥선원"
+        ]
+      },
+      {
+        "case": "iv3-sb-plan-cctv-replacements",
+        "missing": [
+          "솔샘터널",
+          "정릉3동"
+        ]
+      },
+      {
+        "case": "iv3-sb-plan-cctv-replacements",
+        "missing": [
+          "정릉2동"
+        ]
+      },
+      {
+        "case": "iv3-sb-plan-parking-systems",
+        "missing": [
+          "마을공원",
+          "화재 감시"
+        ]
+      },
+      {
+        "case": "iv3-sb-plan-parking-systems",
+        "missing": [
+          "입출차",
+          "차단기"
+        ]
+      },
+      {
+        "case": "iv3-sb-plan-parking-systems",
+        "missing": [
+          "삼선동"
+        ]
+      }
+    ]
+  },
+  "by_institution": {
+    "광진구": {
+      "cases": 6,
+      "expected": 6,
+      "predicted": 1,
+      "matched": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "negative_cases": 1,
+      "negative_cases_with_predictions": 0,
+      "negative_case_false_positive_rate": 0.0,
+      "fields": {
+        "category": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 6,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "commitment": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 6,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "budget_krw": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 6,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "expected_year": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 6,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        }
+      },
+      "failures": [
+        {
+          "case": "iv3-gj-cctv-scope",
+          "missing": [
+            "지능형 CCTV"
+          ]
+        },
+        {
+          "case": "iv3-gj-cctv-scope",
+          "missing": [
+            "노후 CCTV",
+            "노후화 CCTV"
+          ]
+        },
+        {
+          "case": "iv3-gj-mentoring",
+          "missing": [
+            "멘토링",
+            "온라인진학 상담"
+          ]
+        },
+        {
+          "case": "iv3-gj-elementary-subscription",
+          "missing": [
+            "초등학생",
+            "온라인학습",
+            "수강권"
+          ]
+        },
+        {
+          "case": "iv3-gj-elementary-subscription",
+          "unexpected": "일반 초등학교 대상으로 하는 학습지원시스템"
+        },
+        {
+          "case": "iv3-gj-mobile-water",
+          "missing": [
+            "이동형 물놀이장"
+          ]
+        },
+        {
+          "case": "iv3-gj-tools",
+          "missing": [
+            "공구"
+          ]
+        }
+      ]
+    },
+    "성북구": {
+      "cases": 6,
+      "expected": 3,
+      "predicted": 3,
+      "matched": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "negative_cases": 3,
+      "negative_cases_with_predictions": 2,
+      "negative_case_false_positive_rate": 0.6667,
+      "fields": {
+        "category": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 3,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "commitment": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 3,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "budget_krw": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 3,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "expected_year": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 3,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        }
+      },
+      "failures": [
+        {
+          "case": "iv3-sb-health-equipment",
+          "missing": [
+            "인바디",
+            "건강증진실"
+          ]
+        },
+        {
+          "case": "iv3-sb-tools-next-year",
+          "missing": [
+            "공구대여소",
+            "공구"
+          ]
+        },
+        {
+          "case": "iv3-sb-led-budget",
+          "missing": [
+            "LED"
+          ]
+        },
+        {
+          "case": "iv3-sb-solar-proposal",
+          "unexpected": "있는 주차장에 대해서도 태양광 설치"
+        },
+        {
+          "case": "iv3-sb-private-charger",
+          "unexpected": "일곱 개 장소에 설치"
+        },
+        {
+          "case": "iv3-sb-private-charger",
+          "unexpected": "하는 게 아니라 충전소 설치"
+        }
+      ]
+    },
+    "성북구도시관리공단": {
+      "cases": 4,
+      "expected": 7,
+      "predicted": 0,
+      "matched": 0,
+      "precision": null,
+      "recall": 0.0,
+      "negative_cases": 1,
+      "negative_cases_with_predictions": 0,
+      "negative_case_false_positive_rate": 0.0,
+      "fields": {
+        "category": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 7,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "commitment": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 7,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "budget_krw": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 7,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "expected_year": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 7,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        }
+      },
+      "failures": [
+        {
+          "case": "iv3-sb-plan-iot",
+          "missing": [
+            "IOT",
+            "IoT",
+            "Iot",
+            "센서"
+          ]
+        },
+        {
+          "case": "iv3-sb-plan-cctv-replacements",
+          "missing": [
+            "장위3동",
+            "진흥선원"
+          ]
+        },
+        {
+          "case": "iv3-sb-plan-cctv-replacements",
+          "missing": [
+            "솔샘터널",
+            "정릉3동"
+          ]
+        },
+        {
+          "case": "iv3-sb-plan-cctv-replacements",
+          "missing": [
+            "정릉2동"
+          ]
+        },
+        {
+          "case": "iv3-sb-plan-parking-systems",
+          "missing": [
+            "마을공원",
+            "화재 감시"
+          ]
+        },
+        {
+          "case": "iv3-sb-plan-parking-systems",
+          "missing": [
+            "입출차",
+            "차단기"
+          ]
+        },
+        {
+          "case": "iv3-sb-plan-parking-systems",
+          "missing": [
+            "삼선동"
+          ]
+        }
+      ]
+    },
+    "양천구": {
+      "cases": 7,
+      "expected": 4,
+      "predicted": 2,
+      "matched": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "negative_cases": 3,
+      "negative_cases_with_predictions": 0,
+      "negative_case_false_positive_rate": 0.0,
+      "fields": {
+        "category": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 4,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "commitment": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 4,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "budget_krw": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 4,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "expected_year": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 4,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        }
+      },
+      "failures": [
+        {
+          "case": "iv3-yc-kiosk-reduction",
+          "missing": [
+            "교육용 키오스크",
+            "키오스크"
+          ]
+        },
+        {
+          "case": "iv3-yc-kiosk-reduction",
+          "unexpected": "현재는 어느 정도 보급"
+        },
+        {
+          "case": "iv3-yc-onnara-total",
+          "missing": [
+            "온나라",
+            "행정정보시스템"
+          ]
+        },
+        {
+          "case": "iv3-yc-onnara-total",
+          "unexpected": "지금 이래저래 해가지고 시스템 전환 구축"
+        },
+        {
+          "case": "iv3-yc-data-vs-consulting",
+          "missing": [
+            "데이터",
+            "빅데이터"
+          ]
+        },
+        {
+          "case": "iv3-yc-display-carryover",
+          "missing": [
+            "목동깨비시장",
+            "홍보전광판",
+            "홍보전자게시대"
+          ]
+        }
+      ]
+    }
+  },
+  "predictions": [
+    {
+      "case": "iv3-gj-cctv-scope",
+      "predictions": []
+    },
+    {
+      "case": "iv3-gj-mentoring",
+      "predictions": []
+    },
+    {
+      "case": "iv3-gj-elementary-subscription",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "일반 초등학교 대상으로 하는 학습지원시스템",
+            "keywords": [
+              "학교"
+            ],
+            "category": "education",
+            "commitment": "committed",
+            "budget_krw": null,
+            "expected_year": null
+          },
+          "verdict": "accepted",
+          "issues": []
+        }
+      ]
+    },
+    {
+      "case": "iv3-gj-mobile-water",
+      "predictions": []
+    },
+    {
+      "case": "iv3-gj-tools",
+      "predictions": []
+    },
+    {
+      "case": "iv3-gj-maintenance",
+      "predictions": []
+    },
+    {
+      "case": "iv3-yc-completed-smartcity",
+      "predictions": []
+    },
+    {
+      "case": "iv3-yc-appraisal-contingency",
+      "predictions": []
+    },
+    {
+      "case": "iv3-yc-maintenance-period",
+      "predictions": []
+    },
+    {
+      "case": "iv3-yc-kiosk-reduction",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "현재는 어느 정도 보급",
+            "keywords": [
+              "교육",
+              "학교"
+            ],
+            "category": "education",
+            "commitment": "planned",
+            "budget_krw": null,
+            "expected_year": 2024
+          },
+          "verdict": "accepted",
+          "issues": []
+        }
+      ]
+    },
+    {
+      "case": "iv3-yc-onnara-total",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "지금 이래저래 해가지고 시스템 전환 구축",
+            "keywords": [
+              "정보시스템",
+              "전환",
+              "행정"
+            ],
+            "category": "public_sw",
+            "commitment": "planned",
+            "budget_krw": 600000000,
+            "expected_year": null
+          },
+          "verdict": "accepted",
+          "issues": []
+        }
+      ]
+    },
+    {
+      "case": "iv3-yc-data-vs-consulting",
+      "predictions": []
+    },
+    {
+      "case": "iv3-yc-display-carryover",
+      "predictions": []
+    },
+    {
+      "case": "iv3-sb-health-equipment",
+      "predictions": []
+    },
+    {
+      "case": "iv3-sb-tools-next-year",
+      "predictions": []
+    },
+    {
+      "case": "iv3-sb-led-budget",
+      "predictions": []
+    },
+    {
+      "case": "iv3-sb-maintenance-newline",
+      "predictions": []
+    },
+    {
+      "case": "iv3-sb-solar-proposal",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "있는 주차장에 대해서도 태양광 설치",
+            "keywords": [
+              "주차",
+              "태양광",
+              "에너지",
+              "LED",
+              "기후",
+              "복지"
+            ],
+            "category": "energy_env",
+            "commitment": "reviewing",
+            "budget_krw": null,
+            "expected_year": null
+          },
+          "verdict": "accepted",
+          "issues": []
+        }
+      ]
+    },
+    {
+      "case": "iv3-sb-private-charger",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "일곱 개 장소에 설치",
+            "keywords": [
+              "버스",
+              "전기차 충전",
+              "충전소"
+            ],
+            "category": "mobility",
+            "commitment": "planned",
+            "budget_krw": null,
+            "expected_year": 2025
+          },
+          "verdict": "accepted",
+          "issues": []
+        },
+        {
+          "prediction": {
+            "title": "하는 게 아니라 충전소 설치",
+            "keywords": [
+              "충전소",
+              "신축"
+            ],
+            "category": "mobility",
+            "commitment": "planned",
+            "budget_krw": null,
+            "expected_year": 2024
+          },
+          "verdict": "accepted",
+          "issues": []
+        }
+      ]
+    },
+    {
+      "case": "iv3-sb-plan-iot",
+      "predictions": []
+    },
+    {
+      "case": "iv3-sb-plan-cctv-replacements",
+      "predictions": []
+    },
+    {
+      "case": "iv3-sb-plan-parking-systems",
+      "predictions": []
+    },
+    {
+      "case": "iv3-sb-plan-historical-safety",
+      "predictions": []
+    }
+  ]
+}

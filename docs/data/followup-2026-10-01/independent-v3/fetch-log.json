@@ -1,0 +1,131 @@
+[
+  {
+    "url": "https://council.gwangjin.go.kr/robots.txt",
+    "status": 200,
+    "fetched_at": "2026-10-01T01:04:08.395867+00:00",
+    "sha256": "cfcc8f48802a940510ae4e291b707af70811694316d64306e6c5ebe94f1f98bf",
+    "note": "Parsed policy"
+  },
+  {
+    "id": "gwangjin-5492",
+    "url": "https://council.gwangjin.go.kr/record/main/contents?uid=5492",
+    "status": 200,
+    "headers": {
+      "Date": "Thu, 01 Oct 2026 01:04:18 GMT",
+      "Server": "Apache",
+      "Set-Cookie": "jy_cName=17083525c727b13367dcdc3d26312788; expires=Thu, 01-Oct-2026 03:04:18 GMT; Max-Age=7200; path=/",
+      "Expires": "Thu, 19 Nov 1981 08:52:00 GMT",
+      "Cache-Control": "no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+      "Pragma": "no-cache",
+      "Connection": "close",
+      "Transfer-Encoding": "chunked",
+      "Content-Type": "text/html; charset=UTF-8"
+    },
+    "fetched_at": "2026-10-01T01:04:21.605561+00:00",
+    "original_path": "gwangjin-5492.html",
+    "original_sha256": "ac6da54b14b813f8e43677ed57b89514cd304b371e8b30cdcd1566a16661da24",
+    "bytes": 258011
+  },
+  {
+    "id": "gwangjin-5614",
+    "url": "https://council.gwangjin.go.kr/record/main/contents?uid=5614",
+    "status": 200,
+    "headers": {
+      "Date": "Thu, 01 Oct 2026 01:04:30 GMT",
+      "Server": "Apache",
+      "Set-Cookie": "jy_cName=de0ba6c44d6779c00a1e70bb99d9ccee; expires=Thu, 01-Oct-2026 03:04:30 GMT; Max-Age=7200; path=/",
+      "Expires": "Thu, 19 Nov 1981 08:52:00 GMT",
+      "Cache-Control": "no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+      "Pragma": "no-cache",
+      "Connection": "close",
+      "Transfer-Encoding": "chunked",
+      "Content-Type": "text/html; charset=UTF-8"
+    },
+    "fetched_at": "2026-10-01T01:04:33.799623+00:00",
+    "original_path": "gwangjin-5614.html",
+    "original_sha256": "c5ad00fcf91555881626281e022b4f7f7fa64b013c50d3e002d738f987068bd4",
+    "bytes": 385055
+  },
+  {
+    "url": "https://www.sbc.go.kr/robots.txt",
+    "status": 404,
+    "fetched_at": "2026-10-01T01:04:42.053489+00:00",
+    "sha256": "66b08c777fcc5a89b5236a3268f0181b042cfee37bbe116ab1d299ca5c4a07e7",
+    "note": "404 means robots policy absent"
+  },
+  {
+    "id": "seongbuk-300-4",
+    "url": "https://www.sbc.go.kr/record/recordView.do?key=0cdd53157e8c4a278cbef98f67c9e7a8a92d2ccf6a80c8f54a756d4438321214288d2424c6b1b2bd",
+    "status": 200,
+    "headers": {
+      "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate",
+      "Pragma": "no-cache",
+      "Expires": "0",
+      "Strict-Transport-Security": "max-age=31536000 ; includeSubDomains",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Content-Type-Options": "nosniff",
+      "Set-Cookie": "JSESSIONID=4D81F7271C60505753992B7018AEC9FF; Path=/; Secure; HttpOnly",
+      "Content-Type": "text/html;charset=utf-8",
+      "Content-Language": "ko-KR",
+      "Transfer-Encoding": "chunked",
+      "Date": "Thu, 01 Oct 2026 01:04:51 GMT",
+      "Connection": "close"
+    },
+    "fetched_at": "2026-10-01T01:04:53.866607+00:00",
+    "original_path": "seongbuk-300-4.html",
+    "original_sha256": "32634bc79effa9383662969a0933363547e33df99711ea6f043d3d8cd85fe5f5",
+    "bytes": 430924
+  },
+  {
+    "url": "https://www.ycc.go.kr/robots.txt",
+    "status": 404,
+    "fetched_at": "2026-10-01T01:05:10.159641+00:00",
+    "sha256": "16ce845440c38f491f80553aee7a8144dcc0a82c46258deaffdd10a0fa3d2db2",
+    "note": "404 means robots policy absent"
+  },
+  {
+    "id": "yangcheon-8370",
+    "url": "https://www.ycc.go.kr/record/main?code=C050&uid=8370&view=full_view",
+    "status": 200,
+    "headers": {
+      "Cache-Control": "no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+      "Pragma": "no-cache",
+      "Content-Type": "text/html; charset=UTF-8",
+      "Expires": "Thu, 19 Nov 1981 08:52:00 GMT",
+      "Server": "www.ycc.go.kr",
+      "Set-Cookie": "ci_sess=29le4ho7rbp4ao6sb61a30tejiidrnt8; expires=Thu, 01-Oct-2026 02:03:30 GMT; Max-Age=3600; path=/; HttpOnly",
+      "X-Powered-By": "www.ycc.go.kr",
+      "Date": "Thu, 01 Oct 2026 01:03:31 GMT",
+      "Connection": "close",
+      "Content-Length": "225698"
+    },
+    "fetched_at": "2026-10-01T01:05:21.016468+00:00",
+    "original_path": "yangcheon-8370.html",
+    "original_sha256": "166ad86255eaf8ce1c017bbe1d6ca34293585d3fde5af4964c839a6d37cfcc56",
+    "bytes": 225698
+  },
+  {
+    "id": "seongbuk-workplan-2024",
+    "url": "https://www.sbc.go.kr/attach/record/SEONGBUK/appendix/a09/A0006310.pdf",
+    "status": 200,
+    "headers": {
+      "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate",
+      "Pragma": "no-cache",
+      "Expires": "0",
+      "Strict-Transport-Security": "max-age=31536000 ; includeSubDomains",
+      "X-XSS-Protection": "1; mode=block",
+      "X-Content-Type-Options": "nosniff",
+      "Accept-Ranges": "bytes",
+      "ETag": "W/\"1457037-1710403939000\"",
+      "Last-Modified": "Thu, 14 Mar 2024 08:12:19 GMT",
+      "Content-Type": "application/pdf",
+      "Content-Length": "1457037",
+      "Date": "Thu, 01 Oct 2026 01:05:28 GMT",
+      "Connection": "close"
+    },
+    "fetched_at": "2026-10-01T01:05:33.139028+00:00",
+    "original_path": "seongbuk-workplan-2024.pdf",
+    "original_sha256": "b29ca0a95cbd76171fd0073fbaa18db11587634393ebbd3b268087ccca7a645e",
+    "bytes": 1457037
+  }
+]

@@ -1,0 +1,22 @@
+{
+  "url": "https://www.gncouncil.go.kr/kr/main.do",
+  "retrieved_at": "2026-10-01T01:03:58.011978+00:00",
+  "status": 200,
+  "resolved_url": "https://www.gncouncil.go.kr/kr/main.do",
+  "headers": {
+    "Cache-Control": "private",
+    "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+    "Content-Type": "text/html;charset=UTF-8",
+    "Content-Language": "en-US",
+    "Transfer-Encoding": "chunked",
+    "Date": "Thu, 01 Oct 2026 01:04:07 GMT",
+    "Connection": "close",
+    "Server": "www.gncouncil.go.kr"
+  },
+  "file": "council-home.html",
+  "sha256": "8e0a4044b5f3b9a796fac2720f80575b3248b9dc279d7e7f58ed503d4473167f",
+  "bytes": 158719,
+  "omitted_response_headers": [
+    "Set-Cookie"
+  ]
+}

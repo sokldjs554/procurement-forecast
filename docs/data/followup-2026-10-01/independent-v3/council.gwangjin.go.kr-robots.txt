@@ -1,0 +1,3 @@
+User-agent: *
+Disallow:/kr/open/bbs
+Disallow:/kr/data/search

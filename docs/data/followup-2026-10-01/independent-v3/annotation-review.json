@@ -1,0 +1,110 @@
+{
+  "review_finished_at": "2026-10-01T01:14:15.944721+00:00",
+  "reviewer": "same separate evaluation agent that authored labels; source reread, not a second person",
+  "human_expert_review": "NONE",
+  "predictions_seen": false,
+  "provider_or_parser_implementation_seen": false,
+  "format_context_seen": [
+    "AGENTS.md",
+    "fresh-manifest.json",
+    "fresh-cases.jsonl",
+    "app.llm.schemas only",
+    "parent-supplied category/commitment enums and doc_type contract"
+  ],
+  "scope": "Concrete prospective authority purchases of goods, software/data/services, and installed assets. Mere existing maintenance, completed work, contingent fees without a specified purchase, member-only proposals without executive implementation commitment, and wholly privately funded installations are negative.",
+  "commitment_convention": {
+    "committed": "Executive-backed concrete budget item / assigned asset budget, including proposed next-year budget. Does NOT imply legislative adoption, signed contract, award, completed procurement, or irreversible approval.",
+    "planned": "Concrete executive future purchase or workplan with unfinalized site/demand or no budget assertion in the excerpt."
+  },
+  "timing_convention": "Use explicit 2024 fiscal context of the source when a row lacks repetition of year. Resolve 내년 from historical meeting date. Never current evaluation clock. All cases fiscal2024; purchase_year2024 is not independently sampled across years.",
+  "budget_convention": "Explicit project total only. null when unavailable, units genuinely missing, or only unit prices/quantities shown. Same-paragraph monetary ellipsis retained only when Korean units are unambiguous (Onnara 6억6,200 and data2,000 after 8,000만원). No synthetic unit-times-quantity totals. PDF 천원 converted to won.",
+  "specific_ambiguities_reviewed": [
+    {
+      "case": "iv3-gj-cctv-scope",
+      "decision": "two signals; both safety_cctv; no total derived from unit prices",
+      "remaining_uncertainty": "Budget-backed committed uses convention rather than legal approval."
+    },
+    {
+      "case": "iv3-gj-mobile-water",
+      "decision": "planned goods purchase; locations unsettled; facility category",
+      "remaining_uncertainty": "Recreation could also fall under tourism_culture; primary asset purpose chosen before scoring."
+    },
+    {
+      "case": "iv3-yc-kiosk-reduction",
+      "decision": "new education kiosk purchase only; completed robots omitted; education category",
+      "remaining_uncertainty": "Administrative smart-city program category could differ from primary educational end-use."
+    },
+    {
+      "case": "iv3-yc-onnara-total",
+      "decision": "662,000,000won full system total, not470,000,000 hardware subtotal",
+      "remaining_uncertainty": "Amounts approximate in the spoken source."
+    },
+    {
+      "case": "iv3-yc-data-vs-consulting",
+      "decision": "20,000,000won data purchase; no consulting signal",
+      "remaining_uncertainty": "2,000 uses omitted 만원 units inferable from same paragraph; amount approximate."
+    },
+    {
+      "case": "iv3-yc-display-carryover",
+      "decision": "planned; other category; unknown total",
+      "remaining_uncertainty": "Public display may be classified differently in another taxonomy."
+    },
+    {
+      "case": "iv3-sb-tools-next-year",
+      "decision": "budget null because bare200 lacks unit; planned demand-dependent replacement",
+      "remaining_uncertainty": "Full budget book could disambiguate unit but is outside fixed source cohort."
+    },
+    {
+      "case": "iv3-sb-solar-proposal",
+      "decision": "negative: sympathetic review reply without executive procurement plan",
+      "remaining_uncertainty": "A broader lead-generation task might retain it as reviewing; this benchmark targets concrete purchase forecasts."
+    },
+    {
+      "case": "iv3-sb-private-charger",
+      "decision": "negative under public procurement scope",
+      "remaining_uncertainty": "A broader market-demand forecast including concessionary/private investments could retain this. Scope-sensitive, predeclared; do not silently relabel after outputs."
+    },
+    {
+      "case": "iv3-sb-plan-iot",
+      "decision": "positive planned 2024 sensor addition; mobility purpose; budgetnull",
+      "remaining_uncertainty": "smart_city also plausible category; named operating firms are not a new award."
+    },
+    {
+      "case": "iv3-sb-plan-parking-systems",
+      "decision": "three asset signals; safety_cctv for monitoring; mobility for entry barriers",
+      "remaining_uncertainty": "Taxonomy boundary for fire monitoring and facility barriers."
+    },
+    {
+      "case": "iv3-sb-plan-historical-safety",
+      "decision": "negative despite2024 document title; 2023 results heading dominates local equipment mentions",
+      "remaining_uncertainty": "None on temporal reading; visual PDF review confirmed heading."
+    }
+  ],
+  "excluded_candidates_before_scoring": [
+    {
+      "source": "seongbuk-300-4",
+      "candidate": "지진가속도계측기 교체",
+      "reason": "Same hearing uses3,500만원 and2,900 plus separate prior-server600만원; avoid choosing a budget without resolving discrepancy."
+    },
+    {
+      "source": "seongbuk-300-4",
+      "candidate": "돈암시장 CCTV31대",
+      "reason": "Conflicting spoken prior-installation years and district share versus project total require more authoritative detail."
+    },
+    {
+      "source": "gwangjin-5492",
+      "candidate": "new publicity camera",
+      "reason": "Council challenges cost/useful-life; extensive unresolved amount discussion. No output-informed exclusion."
+    }
+  ],
+  "visual_qa": {
+    "source": "seongbuk-workplan-2024.pdf",
+    "pages_1based": [
+      14,
+      30,
+      43
+    ],
+    "method": "pdftoppm rendered pages viewed by same evaluation agent",
+    "findings": "Historical heading,2024 sensor timetable, individual CCTV/fire/barrier rows and천원 units confirmed. pdftotext emitted PDF dictionary warnings on unrelated objects; selected pages visually readable and text verified."
+  }
+}

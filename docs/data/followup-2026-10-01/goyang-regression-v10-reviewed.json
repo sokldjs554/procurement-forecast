@@ -1,0 +1,241 @@
+{
+  "schema_version": "source-holdout-result-v1",
+  "evaluated_at": "2026-10-01T01:18:28.431659+00:00",
+  "code_revision": "da5fdb98cca25ddedbd0f568a8c6027f33b71854",
+  "extractor": "heuristic-v10",
+  "api_cost_usd": 0,
+  "manifest_sha256": "e0909c91c8b9a184b834b6ca9a918c4117ef240cc1e20c17a7d851e467f2dd23",
+  "cases_sha256": "6ff9f77355c2a0dbad54b9d5162b82dfb7018fca4e966fd9624546d8439c70df",
+  "label_origin": "Same implementation agent authored labels on new source BEFORE any model outputs; not independently authored, not human-reviewed, convenience sample of 2 procurement and 2 operating-budget excerpts. No nationwide/generalization claim. Do not modify labels after scoring.",
+  "independent_human_gold": false,
+  "scope": "selected_parsed_excerpts_extraction_only_not_ocr_linking_or_forecasting",
+  "matching": "maximum_one_to_one_title_phrase_whitespace_insensitive_budget_2pct",
+  "context_policy": "speaker_labels_and_grounding_offsets_from_verified_full_source_not_gold",
+  "documents": 1,
+  "institutions": [
+    "고양시"
+  ],
+  "raw": {
+    "cases": 4,
+    "expected": 2,
+    "predicted": 2,
+    "matched": 2,
+    "precision": 1.0,
+    "recall": 1.0,
+    "negative_cases": 2,
+    "negative_cases_with_predictions": 0,
+    "negative_case_false_positive_rate": 0.0,
+    "fields": {
+      "category": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 0,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": null
+      },
+      "commitment": {
+        "correct": 2,
+        "matched_eligible": 2,
+        "all_expected_eligible": 2,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": 1.0,
+        "end_to_end_recall": 1.0
+      },
+      "budget_krw": {
+        "correct": 2,
+        "matched_eligible": 2,
+        "all_expected_eligible": 2,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": 1.0,
+        "end_to_end_recall": 1.0
+      },
+      "expected_year": {
+        "correct": 1,
+        "matched_eligible": 2,
+        "all_expected_eligible": 2,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": 0.5,
+        "end_to_end_recall": 0.5
+      }
+    },
+    "failures": [
+      {
+        "case": "goyang-equipment",
+        "title": "직소민원 운영 시 상담직원 보호를 위한 방호장비 구입",
+        "wrong": {
+          "expected_year": {
+            "expected": 2023,
+            "got": null
+          }
+        }
+      }
+    ]
+  },
+  "after_verifier": {
+    "cases": 4,
+    "expected": 2,
+    "predicted": 2,
+    "matched": 2,
+    "precision": 1.0,
+    "recall": 1.0,
+    "negative_cases": 2,
+    "negative_cases_with_predictions": 0,
+    "negative_case_false_positive_rate": 0.0,
+    "fields": {
+      "category": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 0,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": null
+      },
+      "commitment": {
+        "correct": 2,
+        "matched_eligible": 2,
+        "all_expected_eligible": 2,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": 1.0,
+        "end_to_end_recall": 1.0
+      },
+      "budget_krw": {
+        "correct": 2,
+        "matched_eligible": 2,
+        "all_expected_eligible": 2,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": 1.0,
+        "end_to_end_recall": 1.0
+      },
+      "expected_year": {
+        "correct": 1,
+        "matched_eligible": 2,
+        "all_expected_eligible": 2,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": 0.5,
+        "end_to_end_recall": 0.5
+      }
+    },
+    "failures": [
+      {
+        "case": "goyang-equipment",
+        "title": "직소민원 운영 시 상담직원 보호를 위한 방호장비 구입",
+        "wrong": {
+          "expected_year": {
+            "expected": 2023,
+            "got": null
+          }
+        }
+      }
+    ]
+  },
+  "by_institution": {
+    "고양시": {
+      "cases": 4,
+      "expected": 2,
+      "predicted": 2,
+      "matched": 2,
+      "precision": 1.0,
+      "recall": 1.0,
+      "negative_cases": 2,
+      "negative_cases_with_predictions": 0,
+      "negative_case_false_positive_rate": 0.0,
+      "fields": {
+        "category": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        },
+        "commitment": {
+          "correct": 2,
+          "matched_eligible": 2,
+          "all_expected_eligible": 2,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": 1.0,
+          "end_to_end_recall": 1.0
+        },
+        "budget_krw": {
+          "correct": 2,
+          "matched_eligible": 2,
+          "all_expected_eligible": 2,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": 1.0,
+          "end_to_end_recall": 1.0
+        },
+        "expected_year": {
+          "correct": 1,
+          "matched_eligible": 2,
+          "all_expected_eligible": 2,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": 0.5,
+          "end_to_end_recall": 0.5
+        }
+      },
+      "failures": [
+        {
+          "case": "goyang-equipment",
+          "title": "직소민원 운영 시 상담직원 보호를 위한 방호장비 구입",
+          "wrong": {
+            "expected_year": {
+              "expected": 2023,
+              "got": null
+            }
+          }
+        }
+      ]
+    }
+  },
+  "predictions": [
+    {
+      "case": "goyang-car",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "늘어서 의정활동 수행 관용차 구입",
+            "keywords": [
+              "늘어서 의정활동 수행 관용차 구입"
+            ],
+            "category": "other",
+            "commitment": "planned",
+            "budget_krw": null,
+            "expected_year": 2024
+          },
+          "verdict": "needs_review",
+          "issues": [
+            "low_confidence"
+          ]
+        }
+      ]
+    },
+    {
+      "case": "goyang-equipment",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "직소민원 운영 시 상담직원 보호를 위한 방호장비 구입",
+            "keywords": [
+              "직소민원 운영 시 상담직원 보호를 위한 방호장비 구입"
+            ],
+            "category": "public_sw",
+            "commitment": "committed",
+            "budget_krw": 1200000,
+            "expected_year": null
+          },
+          "verdict": "accepted",
+          "issues": []
+        }
+      ]
+    },
+    {
+      "case": "goyang-maintenance",
+      "predictions": []
+    },
+    {
+      "case": "goyang-salary",
+      "predictions": []
+    }
+  ]
+}

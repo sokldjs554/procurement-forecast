@@ -1,0 +1,62 @@
+{
+  "model_repository": "Qwen/Qwen3-4B-GGUF",
+  "model_revision": "bc640142c66e1fdd12af0bd68f40445458f3869b",
+  "model": {
+    "source_url": "https://huggingface.co/Qwen/Qwen3-4B-GGUF/resolve/bc640142c66e1fdd12af0bd68f40445458f3869b/Qwen3-4B-Q4_K_M.gguf?download=true",
+    "path": "/tmp/procurement-local-llm/Qwen3-4B-Q4_K_M.gguf",
+    "bytes": 2497280256,
+    "sha256": "7485fe6f11af29433bc51cab58009521f205840f5b4ae3a32fa7f92e8534fdf5",
+    "elapsed_seconds": 46.082030648
+  },
+  "runtime": {
+    "tag": "b11308",
+    "commit": "feb9a3d6debb3a8544052b04c84fa1f445fd77f5",
+    "asset": "llama-b11308-bin-ubuntu-x64.tar.gz",
+    "url": "https://github.com/ggml-org/llama.cpp/releases/download/b11308/llama-b11308-bin-ubuntu-x64.tar.gz",
+    "sha256": "028c7bfafd267fa468acae107832e8cd0eeb185cf9c0ab7294314fda229141ee",
+    "bytes": 17537173
+  },
+  "runtime_version": "version: 0.5.0-dev (build 11308, commit feb9a3d6d)\nbuilt with GNU 11.4.0 for Linux x86_64",
+  "server_start_script": "/tmp/procurement-local-llm/start-server.sh",
+  "same_network_namespace_wrapper": "/tmp/procurement-local-llm/run-with-server.py",
+  "startup_seconds": 3.532,
+  "probe_summary": {
+    "elapsed_seconds": 8.138677846000064,
+    "content": {
+      "project_name": "별빛도서관 안내책자 제작",
+      "deadline": "2026-11-09 15:00",
+      "budget_krw": 12500000,
+      "deliverables": [
+        "인쇄 안내책자 300부",
+        "편집 원본 파일"
+      ]
+    },
+    "exact_match_to_invented_expected": true,
+    "usage": {
+      "completion_tokens": 89,
+      "prompt_tokens": 171,
+      "total_tokens": 260,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      }
+    },
+    "timings": {
+      "cache_n": 0,
+      "prompt_n": 171,
+      "prompt_ms": 2702.337,
+      "prompt_per_token_ms": 15.803140350877193,
+      "prompt_per_second": 63.278562222254294,
+      "predicted_n": 89,
+      "predicted_ms": 5427.245,
+      "predicted_per_token_ms": 61.673238636363635,
+      "predicted_per_second": 16.21448819797153
+    },
+    "finish_reason": "stop",
+    "reasoning_content": null
+  },
+  "proof_log": "/tmp/procurement-local-llm/invented-probe-server.log",
+  "session_id": 86448,
+  "session_exit_code": 0,
+  "server_active": false,
+  "note": "No repository files or evaluation cases were read. The sole extraction probe was an invented Korean notice. Start server and client using wrapper in a single exec command because separate exec calls have isolated network namespaces."
+}

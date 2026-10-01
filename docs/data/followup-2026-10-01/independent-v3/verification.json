@@ -1,0 +1,36 @@
+{
+  "verified_at": "2026-10-01T01:16:22.662733+00:00",
+  "status": "PASS",
+  "checks": [
+    "all5 original and text hashes match manifest",
+    "all23 exact contiguous excerpt offsets and hashes match",
+    "all23 historical dates before2026-01-01",
+    "all expected fields use allowed types and enums",
+    "23 unique case IDs;15 positive cases;20 signals;8 negatives;3 new authorities",
+    "workplan date-provenance appendix is byte-identical",
+    "case/source/review/cohort hashes match manifest"
+  ],
+  "source_case_counts": {
+    "gwangjin-5492": 2,
+    "gwangjin-5614": 4,
+    "yangcheon-8370": 7,
+    "seongbuk-300-4": 6,
+    "seongbuk-workplan-2024": 4
+  },
+  "category_signal_counts": {
+    "safety_cctv": 7,
+    "education": 3,
+    "facility": 1,
+    "other": 3,
+    "public_sw": 1,
+    "ai_data": 1,
+    "welfare_care": 1,
+    "energy_env": 1,
+    "mobility": 2
+  },
+  "commitment_signal_counts": {
+    "committed": 15,
+    "planned": 5
+  },
+  "predictions_or_extractor_run": false
+}

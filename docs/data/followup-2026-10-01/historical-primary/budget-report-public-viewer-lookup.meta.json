@@ -1,0 +1,10 @@
+{
+  "url": "https://www.gncouncil.go.kr/viewer/pdf/loadFile.do",
+  "method": "POST",
+  "body": "group=appendix&uid=31980",
+  "retrieved_at": "2026-10-01T01:10:29.596436+00:00",
+  "request_note": "Public viewer client flow, cookie jar, Referer and X-Requested-With as jQuery normally sends.",
+  "status": 200,
+  "file": "budget-report-public-viewer-lookup.json",
+  "sha256": "699e726f2478d7f0c6f8ae32a0e9b89757f97ba9b3de82eb19e42a6776ca5f52"
+}

@@ -1,0 +1,28 @@
+{
+  "version": "independent-v3-adjudicated",
+  "adjudicated_at": "2026-10-01T01:24:31.046203+00:00",
+  "timing": "Before any scoring/model output; parent confirms no outputs yet and final independent source review contained no other material corrections/exclusions.",
+  "parent_manifest_path": "../independent-v3/manifest.json",
+  "parent_manifest_sha256": "3745a3370729211f25b1709b28d8769a046fd3bfb4474c68b92a6abb0fc68b14",
+  "parent_cases_sha256": "8418023c868c4e29b8eb60d64f03d8db03c870103594bd781de2bbedba284919",
+  "parent_freeze_index_sha256": "034f1dc4ada31ed546e0c366b0eba18f6b578f4307cb2a3ecf244e6ee1057426",
+  "changed_expected_fields": [
+    {
+      "case_id": "iv3-yc-kiosk-reduction",
+      "path": "expected[0].commitment",
+      "before": "planned",
+      "after": "committed",
+      "source_id": "yangcheon-8370",
+      "source_text_char_start": 36157,
+      "source_text_char_end": 36453,
+      "reason": "Executive explicitly reduced the next-year budget to purchase and distribute about two education kiosks. This meets the already-declared committed convention for a concrete executive budget item. Approximate quantity and missing total do not establish a site/demand condition. Existing robots and kiosks remain history, with only the future kiosk purchase labeled."
+    }
+  ],
+  "unchanged": "All23 source excerpts, offsets, title/category/budget/year labels, positive/negative decisions and all other case fields are byte-equivalent after JSON parse; only the one commitment scalar differs. Original independent-v3 files are unchanged.",
+  "source_review": "Separate AI source reviewer identified convention conflict; original separate evaluation annotator independently reread archived case/source and convention and agreed. Final reviewer report via parent: no other material errors or exclusions.",
+  "human_expert_review": "NONE",
+  "provider_or_parser_implementation_seen": false,
+  "model_predictions_seen": false,
+  "extraction_or_model_run": false,
+  "post_freeze_policy": "Preserve both versions; this is a documented pre-score correction, never output-fit relabeling."
+}

@@ -1,0 +1,34 @@
+{
+  "elapsed_seconds": 8.138677846000064,
+  "content": {
+    "project_name": "별빛도서관 안내책자 제작",
+    "deadline": "2026-11-09 15:00",
+    "budget_krw": 12500000,
+    "deliverables": [
+      "인쇄 안내책자 300부",
+      "편집 원본 파일"
+    ]
+  },
+  "exact_match_to_invented_expected": true,
+  "usage": {
+    "completion_tokens": 89,
+    "prompt_tokens": 171,
+    "total_tokens": 260,
+    "prompt_tokens_details": {
+      "cached_tokens": 0
+    }
+  },
+  "timings": {
+    "cache_n": 0,
+    "prompt_n": 171,
+    "prompt_ms": 2702.337,
+    "prompt_per_token_ms": 15.803140350877193,
+    "prompt_per_second": 63.278562222254294,
+    "predicted_n": 89,
+    "predicted_ms": 5427.245,
+    "predicted_per_token_ms": 61.673238636363635,
+    "predicted_per_second": 16.21448819797153
+  },
+  "finish_reason": "stop",
+  "reasoning_content": null
+}

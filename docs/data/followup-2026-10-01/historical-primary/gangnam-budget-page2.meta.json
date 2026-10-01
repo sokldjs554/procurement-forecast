@@ -1,0 +1,23 @@
+{
+  "url": "https://www.gangnam.go.kr/board/B_000742/list.do?mid=ID05_050302&pgno=2",
+  "retrieved_at": "2026-10-01T01:14:47.426721+00:00",
+  "status": 200,
+  "resolved_url": "https://www.gangnam.go.kr/board/B_000742/list.do?mid=ID05_050302&pgno=2",
+  "headers": {
+    "Date": "Thu, 01 Oct 2026 01:14:56 GMT",
+    "Server": ".",
+    "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+    "Cache-Control": "private",
+    "Access-Control-Allow-Origin": "*",
+    "Content-Language": "en",
+    "Content-Type": "text/html; charset=utf-8",
+    "Connection": "close",
+    "Transfer-Encoding": "chunked"
+  },
+  "file": "gangnam-budget-page2.html",
+  "sha256": "e555ca4129b9193b15d1f96e6b572093c49d79857a42fb295839f188a756cfd7",
+  "bytes": 472990,
+  "omitted_response_headers": [
+    "Set-Cookie"
+  ]
+}

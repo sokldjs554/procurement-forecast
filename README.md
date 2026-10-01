@@ -114,7 +114,7 @@
 | Docker 기반 개발 환경 구성 경험 | `docker compose up`으로 DB·Redis·메일·API·워커·웹 |
 | 로깅·에러 트래킹 기반 장애 대응 경험 | structlog JSON(요청·작업 ID), Sentry, 워커 헬스체크, 런북 |
 | Git 브랜치 전략과 코드 리뷰 기반 협업 경험 | 짧은 브랜치 + 트렁크, squash merge, Conventional Commits, PR 템플릿, CODEOWNERS. PR 예: [#6](https://github.com/sokldjs554/procurement-forecast/pull/6) 의존성 PR 검토(액션 10개 호환성 대조), [#7](https://github.com/sokldjs554/procurement-forecast/pull/7) 기능 PR(코드 리뷰 15건 중 13건 반영, 2건은 이유 답변). 초기 구축은 main 직접 커밋 ([CONTRIBUTING](CONTRIBUTING.md)) |
-| 테스트 작성 및 정적 타입 검사를 습관으로 갖춘 분 | pytest 974개(실제 PostgreSQL·Redis), vitest 웹 69개(BFF 프록시 헤더, 과금 요청의 재시도·멱등 키 포함)·작업 API 30개(실제 PostgreSQL에서 여러 워커가 동시에 가져가도 한 번만 처리, 끊긴 다운로드 이어받기 포함), Playwright E2E 3개(README 둘러보기를 실제 브라우저로), mypy strict, [후속 검증 PR #65](https://github.com/sokldjs554/procurement-forecast/pull/65) |
+| 테스트 작성 및 정적 타입 검사를 습관으로 갖춘 분 | pytest 999개(실제 PostgreSQL·Redis, [검증 실행](https://github.com/sokldjs554/procurement-forecast/actions/runs/36800436277)), vitest 웹 69개(BFF 프록시 헤더, 과금 요청의 재시도·멱등 키 포함)·작업 API 30개(실제 PostgreSQL에서 여러 워커가 동시에 가져가도 한 번만 처리, 끊긴 다운로드 이어받기 포함), Playwright E2E 3개(README 둘러보기를 실제 브라우저로), mypy strict, [후속 검증 PR #65](https://github.com/sokldjs554/procurement-forecast/pull/65) |
 | 명세가 불완전한 상태에서 구조를 세우고 문서로 남길 수 있는 능력 | 주요업무 9번 |
 
 </details>
@@ -286,6 +286,8 @@ docs/                 조사, ADR, 아키텍처, 평가, 데이터 소스, 런�
 ```
 
 ## 한계와 다음 단계
+
+**2026-10-01 후속 검증:** 여러 사업의 금액·시점이 섞이는 문제와 취소·과거 지출 처리 오류를 보완했습니다. 알려진 수기 세트의 재현율은 54% → 78%, 기존 실문서 개발 세트는 제목 일치 4/20 → 8/20으로 올랐습니다. 그러나 새 3개 기관·23개 발췌문 평가에서는 규칙 추출기 v9/v10 모두 0/20으로, 일반화 개선은 입증되지 않았습니다. [원문·사전 고정 정답·실패 결과](docs/data/followup-2026-10-01/README.md)를 공개합니다. 별도 에이전트의 원문 검토를 거쳤으나 전문가가 작성한 정답은 아닙니다. 과거 사업 3건의 공식 후속 활동도 대조했지만, 원입찰과 입력 공개일이 확인되지 않아 발주 적중률을 산출하지 않았습니다.
 
 **2026-09-30 새 기관 평가:** 3개 기관의 공식 문서 8개에서 32개 사례를 모델 실행 전에 고정하고 무료 규칙 추출기를 측정했습니다. 첫 결과는 정답 28개 중 일치 0개였습니다. [새 실문서 평가](docs/independent-evaluation.md)에 원문·정답 해시, 실패 내역과 수정 범위를 공개했습니다. 전문가 연결 정답과 장기 실관측 정확도는 아직 확보되지 않았으며, [후속 관측 평가 도구](docs/longitudinal-validation.md)는 관측 부족을 실패로 계산하지 않습니다.
 

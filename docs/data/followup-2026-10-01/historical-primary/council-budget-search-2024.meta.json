@@ -1,0 +1,22 @@
+{
+  "url": "https://www.gncouncil.go.kr/kr/bill.do?schwrd=2025%EB%85%84%EB%8F%84+%EC%98%88%EC%82%B0%EC%95%88&th_sch=9&begin_dt=2024-11-01&end_dt=2024-12-31",
+  "retrieved_at": "2026-10-01T01:06:12.241304+00:00",
+  "status": 200,
+  "resolved_url": "https://www.gncouncil.go.kr/kr/bill.do?schwrd=2025%EB%85%84%EB%8F%84+%EC%98%88%EC%82%B0%EC%95%88&th_sch=9&begin_dt=2024-11-01&end_dt=2024-12-31",
+  "headers": {
+    "Cache-Control": "private",
+    "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+    "Content-Type": "text/html;charset=UTF-8",
+    "Content-Language": "en-US",
+    "Transfer-Encoding": "chunked",
+    "Date": "Thu, 01 Oct 2026 01:06:18 GMT",
+    "Connection": "close",
+    "Server": "www.gncouncil.go.kr"
+  },
+  "file": "council-budget-search-2024.html",
+  "sha256": "6a8a5965ef5fc948b67a033b18fbd6e767b50dbc9a3e654f08df019c03405b12",
+  "bytes": 73893,
+  "omitted_response_headers": [
+    "Set-Cookie"
+  ]
+}

@@ -1,0 +1,143 @@
+{
+  "extractor": "heuristic-v10",
+  "code_revision": "da5fdb98cca25ddedbd0f568a8c6027f33b71854",
+  "method": "direct_provider_plus_production_verifier_without_DB_cache",
+  "after_verifier": {
+    "expected": 50,
+    "predicted": 40,
+    "matched": 39,
+    "precision": 0.975,
+    "recall": 0.78,
+    "f1": 0.867,
+    "field_accuracy": {
+      "category": 0.949,
+      "commitment": 0.923,
+      "budget": 0.974,
+      "expected_year": 0.949
+    }
+  },
+  "failures": [
+    {
+      "case": "r01",
+      "missing": "수요응답"
+    },
+    {
+      "case": "r01",
+      "unexpected": "차량 임차와 플랫폼 구축"
+    },
+    {
+      "case": "r02",
+      "title": "수위계와 자동 차단시설을 설치하는 사업",
+      "wrong": {
+        "category": {
+          "got": "other",
+          "expected": "safety_cctv"
+        }
+      }
+    },
+    {
+      "case": "r05",
+      "missing": "메타버스"
+    },
+    {
+      "case": "r06",
+      "title": "독거어르신 돌봄 스피커 사업",
+      "wrong": {
+        "commitment": {
+          "got": "planned",
+          "expected": "committed"
+        }
+      }
+    },
+    {
+      "case": "r09",
+      "title": "지난달 정부 AI 공모사업",
+      "wrong": {
+        "category": {
+          "got": "ai_data",
+          "expected": "public_sw"
+        }
+      }
+    },
+    {
+      "case": "r10",
+      "missing": "태양광"
+    },
+    {
+      "case": "r16",
+      "title": "오창초 앞 스마트 횡단보도 2개소",
+      "wrong": {
+        "expected_year": {
+          "got": null,
+          "expected": 2025
+        }
+      }
+    },
+    {
+      "case": "r21",
+      "missing": "통합관제"
+    },
+    {
+      "case": "r24",
+      "missing": "종량기"
+    },
+    {
+      "case": "r26",
+      "title": "둘레길 CCTV 12대 추가 설치",
+      "wrong": {
+        "commitment": {
+          "got": "planned",
+          "expected": "committed"
+        }
+      }
+    },
+    {
+      "case": "r29",
+      "missing": "키오스크"
+    },
+    {
+      "case": "r31",
+      "missing": "치매"
+    },
+    {
+      "case": "r32",
+      "title": "노후 방범 CCTV 교 체  7",
+      "wrong": {
+        "budget": {
+          "got": 20000000,
+          "expected": 720000000
+        }
+      }
+    },
+    {
+      "case": "r33",
+      "title": "미세먼지 알림 같은 서비스",
+      "wrong": {
+        "commitment": {
+          "got": "reviewing",
+          "expected": "planned"
+        },
+        "expected_year": {
+          "got": null,
+          "expected": 2026
+        }
+      }
+    },
+    {
+      "case": "r34",
+      "missing": "앱"
+    },
+    {
+      "case": "r35",
+      "missing": "대출"
+    },
+    {
+      "case": "r43",
+      "missing": "수소"
+    },
+    {
+      "case": "r52",
+      "missing": "산불"
+    }
+  ]
+}

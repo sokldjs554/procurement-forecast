@@ -1,0 +1,272 @@
+{
+  "conditions": {
+    "anchor": "2026-09-25",
+    "seed": 7,
+    "scale": 1.0,
+    "scanned_ratio": null,
+    "extractor_mode": "heuristic"
+  },
+  "extraction": {
+    "gold": 106,
+    "predicted": 106,
+    "precision": 1.0,
+    "recall": 1.0,
+    "field_accuracy": {
+      "budget": 1.0,
+      "expected_year": 1.0,
+      "commitment": 1.0,
+      "category": 0.972,
+      "institution": 1.0
+    },
+    "verdicts": {
+      "accepted": 103,
+      "needs_review": 3
+    },
+    "triage": {
+      "chunks": 888,
+      "passed": 328,
+      "skipped_rate": 0.631,
+      "gold_recall_after_triage": 0.991
+    }
+  },
+  "linking": {
+    "labeled_signals": 190,
+    "pairwise": {
+      "precision": 1.0,
+      "recall": 0.985,
+      "f1": 0.992
+    },
+    "truths_in_single_opportunity": 0.986,
+    "pure_opportunities": 1.0
+  },
+  "ocr": {
+    "scanned_documents": 6,
+    "cer_raw": 0.0113,
+    "cer_corrected": 0.0099,
+    "amount_token_accuracy_raw": 1.0,
+    "amount_token_accuracy_corrected": 1.0
+  },
+  "realistic": {
+    "cases": 54,
+    "extractor": "heuristic-v10",
+    "expected": 50,
+    "predicted": 40,
+    "matched": 39,
+    "precision": 0.975,
+    "recall": 0.78,
+    "f1": 0.867,
+    "field_accuracy": {
+      "category": 0.949,
+      "commitment": 0.923,
+      "budget": 0.974,
+      "expected_year": 0.949
+    },
+    "after_verifier": {
+      "expected": 50,
+      "predicted": 40,
+      "matched": 39,
+      "precision": 0.975,
+      "recall": 0.78,
+      "f1": 0.867,
+      "field_accuracy": {
+        "category": 0.949,
+        "commitment": 0.923,
+        "budget": 0.974,
+        "expected_year": 0.949
+      },
+      "rejected": 0
+    },
+    "failures": [
+      {
+        "case": "r01",
+        "missing": "수요응답"
+      },
+      {
+        "case": "r01",
+        "unexpected": "차량 임차와 플랫폼 구축"
+      },
+      {
+        "case": "r02",
+        "title": "수위계와 자동 차단시설을 설치하는 사업",
+        "wrong": {
+          "category": {
+            "got": "other",
+            "expected": "safety_cctv"
+          }
+        }
+      },
+      {
+        "case": "r05",
+        "missing": "메타버스"
+      },
+      {
+        "case": "r06",
+        "title": "독거어르신 돌봄 스피커 사업",
+        "wrong": {
+          "commitment": {
+            "got": "planned",
+            "expected": "committed"
+          }
+        }
+      },
+      {
+        "case": "r09",
+        "title": "지난달 정부 AI 공모사업",
+        "wrong": {
+          "category": {
+            "got": "ai_data",
+            "expected": "public_sw"
+          }
+        }
+      },
+      {
+        "case": "r10",
+        "missing": "태양광"
+      },
+      {
+        "case": "r16",
+        "title": "오창초 앞 스마트 횡단보도 2개소",
+        "wrong": {
+          "expected_year": {
+            "got": null,
+            "expected": 2025
+          }
+        }
+      },
+      {
+        "case": "r21",
+        "missing": "통합관제"
+      },
+      {
+        "case": "r24",
+        "missing": "종량기"
+      },
+      {
+        "case": "r26",
+        "title": "둘레길 CCTV 12대 추가 설치",
+        "wrong": {
+          "commitment": {
+            "got": "planned",
+            "expected": "committed"
+          }
+        }
+      },
+      {
+        "case": "r29",
+        "missing": "키오스크"
+      },
+      {
+        "case": "r31",
+        "missing": "치매"
+      },
+      {
+        "case": "r32",
+        "title": "노후 방범 CCTV 교 체  7",
+        "wrong": {
+          "budget": {
+            "got": 20000000,
+            "expected": 720000000
+          }
+        }
+      },
+      {
+        "case": "r33",
+        "title": "미세먼지 알림 같은 서비스",
+        "wrong": {
+          "commitment": {
+            "got": "reviewing",
+            "expected": "planned"
+          },
+          "expected_year": {
+            "got": null,
+            "expected": 2026
+          }
+        }
+      },
+      {
+        "case": "r34",
+        "missing": "앱"
+      },
+      {
+        "case": "r35",
+        "missing": "대출"
+      },
+      {
+        "case": "r43",
+        "missing": "수소"
+      },
+      {
+        "case": "r52",
+        "missing": "산불"
+      }
+    ]
+  },
+  "backtest": {
+    "as_of": "2026-09-25",
+    "calibration": {
+      "budget_line:committed": 0.778,
+      "council_mention:committed": 0.818,
+      "council_mention:reviewing": 0.222
+    },
+    "limitations": [
+      "Current link groups are used; this is not a historical prediction replay.",
+      "Missing tenders can reflect incomplete source coverage, not non-procurement."
+    ],
+    "horizon_days": 540,
+    "lead_time_days": {
+      "n": 34,
+      "p25": 192.75,
+      "p75": 347.75,
+      "median": 273.5,
+      "by_first_stage": {
+        "budget_line": {
+          "n": 15,
+          "median": 192
+        },
+        "council_mention": {
+          "n": 19,
+          "median": 330
+        }
+      }
+    },
+    "method_version": "public-date-cohort-v2",
+    "evaluation_scope": "retrospective_linked_signals",
+    "tender_early_coverage": {
+      "rate": 0.447,
+      "tenders": 76,
+      "with_early_signal": 34
+    },
+    "censored_opportunities": 35,
+    "excluded_uncertain_dates": 0,
+    "conversion_by_first_signal": {
+      "budget_line:*": {
+        "n": 9,
+        "rate": 0.778
+      },
+      "council_mention:*": {
+        "n": 25,
+        "rate": 0.56
+      },
+      "budget_line:committed": {
+        "n": 9,
+        "rate": 0.778
+      },
+      "council_mention:planned": {
+        "n": 3,
+        "rate": 1.0
+      },
+      "council_mention:declined": {
+        "n": 2,
+        "rate": 0.0
+      },
+      "council_mention:committed": {
+        "n": 11,
+        "rate": 0.818
+      },
+      "council_mention:reviewing": {
+        "n": 9,
+        "rate": 0.222
+      }
+    }
+  }
+}

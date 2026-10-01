@@ -1,0 +1,6 @@
+{
+  "status": "interrupted_before_first_response",
+  "reason": "execution session disappeared before next tool call",
+  "output_observed": false,
+  "no_score": true
+}

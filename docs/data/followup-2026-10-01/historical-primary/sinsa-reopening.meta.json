@@ -1,0 +1,23 @@
+{
+  "url": "https://www.gangnam.go.kr/center/board/B_000282/1105020/view.do?mid=MC150301&office=3220040",
+  "retrieved_at": "2026-10-01T01:17:21.040341+00:00",
+  "status": 200,
+  "resolved_url": "https://www.gangnam.go.kr/center/board/B_000282/1105020/view.do?mid=MC150301&office=3220040",
+  "headers": {
+    "Date": "Thu, 01 Oct 2026 01:17:28 GMT",
+    "Server": ".",
+    "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+    "Cache-Control": "private",
+    "Access-Control-Allow-Origin": "*",
+    "Content-Language": "en",
+    "Content-Type": "text/html; charset=utf-8",
+    "Connection": "close",
+    "Transfer-Encoding": "chunked"
+  },
+  "file": "sinsa-reopening.html",
+  "sha256": "997d6a3b8bd24d2e38c8759613119a80a607eec4c43c334641bf21d583b5cb5d",
+  "bytes": 28966,
+  "omitted_response_headers": [
+    "Set-Cookie"
+  ]
+}

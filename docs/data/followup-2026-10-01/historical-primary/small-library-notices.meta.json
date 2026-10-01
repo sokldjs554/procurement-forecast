@@ -1,0 +1,20 @@
+{
+  "url": "https://library.gangnam.go.kr/small/menu/11446/bbs/20007/bbsPostList.do",
+  "retrieved_at": "2026-10-01T01:16:18.350019+00:00",
+  "status": 200,
+  "resolved_url": "https://library.gangnam.go.kr/small/menu/11446/bbs/20007/bbsPostList.do",
+  "headers": {
+    "Date": "Thu, 01 Oct 2026 01:16:26 GMT",
+    "Server": "Apache",
+    "Content-Language": "ko",
+    "Connection": "close",
+    "Transfer-Encoding": "chunked",
+    "Content-Type": "text/html;charset=UTF-8"
+  },
+  "file": "small-library-notices.html",
+  "sha256": "7a75104bed6332a21b56cb478c10e74745ed74e9010e65fe44a96ae12132eeb5",
+  "bytes": 31017,
+  "omitted_response_headers": [
+    "Set-Cookie"
+  ]
+}

@@ -1,0 +1,1029 @@
+{
+  "review_date_utc": "2026-10-01",
+  "hash_algorithm": "sha256",
+  "request_policy": "Individual public requests; no login, paid calls or permission bypass; cookie response headers omitted from metadata.",
+  "retrievals": [
+    {
+      "metadata": "budget-report-current.meta.json",
+      "url": "https://www.gncouncil.go.kr/attach/council_text/323/323_3_20.pdf",
+      "retrieved_at": "2026-10-01T01:08:50.021557+00:00",
+      "status": 200,
+      "resolved_url": "https://www.gncouncil.go.kr/attach/council_text/323/323_3_20.pdf",
+      "headers": {
+        "Cache-Control": "private",
+        "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+        "Accept-Ranges": "bytes",
+        "ETag": "W/\"6774892-1734598055000\"",
+        "Last-Modified": "Thu, 19 Dec 2024 08:47:35 GMT",
+        "Content-Type": "application/pdf",
+        "Content-Length": "6774892",
+        "Date": "Thu, 01 Oct 2026 01:08:56 GMT",
+        "Connection": "close",
+        "Server": "www.gncouncil.go.kr"
+      },
+      "file": "budget-report-current.pdf",
+      "sha256": "f6855d4b4fc8cc4af8755d2e4e8be27e752ee9fcfe03d8b90a1424b9069d9cd2",
+      "bytes": 6774892
+    },
+    {
+      "metadata": "budget-report-public-viewer-lookup.meta.json",
+      "url": "https://www.gncouncil.go.kr/viewer/pdf/loadFile.do",
+      "method": "POST",
+      "body": "group=appendix&uid=31980",
+      "retrieved_at": "2026-10-01T01:10:29.596436+00:00",
+      "request_note": "Public viewer client flow, cookie jar, Referer and X-Requested-With as jQuery normally sends.",
+      "status": 200,
+      "file": "budget-report-public-viewer-lookup.json",
+      "sha256": "699e726f2478d7f0c6f8ae32a0e9b89757f97ba9b3de82eb19e42a6776ca5f52"
+    },
+    {
+      "metadata": "contract-robots.meta.json",
+      "url": "https://contract.seoul.go.kr/robots.txt",
+      "retrieved_at": "2026-10-01T01:04:49.510245+00:00",
+      "status": 200,
+      "resolved_url": "https://contract.seoul.go.kr/robots.txt",
+      "headers": {
+        "Connection": "keep-alive",
+        "Last-Modified": "Thu, 06 Aug 2026 05:35:56 GMT",
+        "Content-Length": "420",
+        "Date": "Thu, 01 Oct 2026 01:04:58 GMT",
+        "Content-Type": "text/plain;charset=UTF-8"
+      },
+      "file": "contract-robots.html",
+      "sha256": "d7a54688758eea6973f7b74161fc93c227218a0be4e9d969a158534a633d7ba3",
+      "bytes": 420
+    },
+    {
+      "metadata": "council-bill-list.meta.json",
+      "url": "https://www.gncouncil.go.kr/kr/bill.do",
+      "retrieved_at": "2026-10-01T01:04:50.850511+00:00",
+      "status": 200,
+      "resolved_url": "https://www.gncouncil.go.kr/kr/bill.do",
+      "headers": {
+        "Cache-Control": "private",
+        "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+        "Content-Type": "text/html;charset=UTF-8",
+        "Content-Language": "en-US",
+        "Transfer-Encoding": "chunked",
+        "Date": "Thu, 01 Oct 2026 01:04:56 GMT",
+        "Connection": "close",
+        "Server": "www.gncouncil.go.kr"
+      },
+      "file": "council-bill-list.html",
+      "sha256": "a2f51cf2b93214533cde15a53cc3320f78038f8eed758fdc55f9586171e979aa",
+      "bytes": 80797,
+      "omitted_response_headers": [
+        "Set-Cookie"
+      ]
+    },
+    {
+      "metadata": "council-budget-bill.meta.json",
+      "url": "https://www.gncouncil.go.kr/kr/billview.do?uid=3450",
+      "retrieved_at": "2026-10-01T01:06:39.273246+00:00",
+      "status": 200,
+      "resolved_url": "https://www.gncouncil.go.kr/kr/billview.do?uid=3450",
+      "headers": {
+        "Cache-Control": "private",
+        "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+        "Content-Type": "text/html;charset=UTF-8",
+        "Content-Language": "en-US",
+        "Transfer-Encoding": "chunked",
+        "Date": "Thu, 01 Oct 2026 01:06:45 GMT",
+        "Connection": "close",
+        "Server": "www.gncouncil.go.kr"
+      },
+      "file": "council-budget-bill.html",
+      "sha256": "1520f2eba53bf7ead458b38d769bcce35da9230f9121dedb07d9a85150a2885d",
+      "bytes": 70591,
+      "omitted_response_headers": [
+        "Set-Cookie"
+      ]
+    },
+    {
+      "metadata": "council-budget-plenary.meta.json",
+      "url": "https://www.gncouncil.go.kr/viewer/minutes.do?uid=8634",
+      "retrieved_at": "2026-10-01T01:07:36.110259+00:00",
+      "status": 200,
+      "resolved_url": "https://www.gncouncil.go.kr/viewer/minutes.do?uid=8634",
+      "headers": {
+        "Cache-Control": "private",
+        "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+        "Content-Type": "text/html;charset=UTF-8",
+        "Content-Language": "en-US",
+        "Transfer-Encoding": "chunked",
+        "Date": "Thu, 01 Oct 2026 01:07:42 GMT",
+        "Connection": "close",
+        "Server": "www.gncouncil.go.kr"
+      },
+      "file": "council-budget-plenary.html",
+      "sha256": "806bbb100660c6cee76fc7f52e12e8f0acecbe35c5cdaa9ad8db9141573c20b2",
+      "bytes": 164878,
+      "omitted_response_headers": [
+        "Set-Cookie"
+      ]
+    },
+    {
+      "metadata": "council-budget-report-file.meta.json",
+      "url": "https://www.gncouncil.go.kr/viewer/pdf/loadFile.do?group=appendix&uid=31980",
+      "retrieved_at": "2026-10-01T01:08:46.119608+00:00",
+      "error": "HTTP Error 405: "
+    },
+    {
+      "metadata": "council-budget-report-lookup.meta.json",
+      "url": "https://www.gncouncil.go.kr/viewer/pdf/loadFile.do",
+      "method": "POST",
+      "body": "group=appendix&uid=31980",
+      "retrieved_at": "2026-10-01T01:09:20.256561+00:00",
+      "status": 200,
+      "headers": {
+        "Content-Type": "application/json;charset=utf-8",
+        "Content-Length": "492",
+        "Date": "Thu, 01 Oct 2026 01:09:26 GMT",
+        "Connection": "close",
+        "Server": "www.gncouncil.go.kr"
+      },
+      "file": "council-budget-report-lookup.json",
+      "sha256": "d5c65cc6718cc21717f7f5e669b4a2a34641428e1db00be74399fd00d88564ba",
+      "omitted_response_headers": [
+        "Set-Cookie"
+      ]
+    },
+    {
+      "metadata": "council-budget-search-2024.meta.json",
+      "url": "https://www.gncouncil.go.kr/kr/bill.do?schwrd=2025%EB%85%84%EB%8F%84+%EC%98%88%EC%82%B0%EC%95%88&th_sch=9&begin_dt=2024-11-01&end_dt=2024-12-31",
+      "retrieved_at": "2026-10-01T01:06:12.241304+00:00",
+      "status": 200,
+      "resolved_url": "https://www.gncouncil.go.kr/kr/bill.do?schwrd=2025%EB%85%84%EB%8F%84+%EC%98%88%EC%82%B0%EC%95%88&th_sch=9&begin_dt=2024-11-01&end_dt=2024-12-31",
+      "headers": {
+        "Cache-Control": "private",
+        "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+        "Content-Type": "text/html;charset=UTF-8",
+        "Content-Language": "en-US",
+        "Transfer-Encoding": "chunked",
+        "Date": "Thu, 01 Oct 2026 01:06:18 GMT",
+        "Connection": "close",
+        "Server": "www.gncouncil.go.kr"
+      },
+      "file": "council-budget-search-2024.html",
+      "sha256": "6a8a5965ef5fc948b67a033b18fbd6e767b50dbc9a3e654f08df019c03405b12",
+      "bytes": 73893,
+      "omitted_response_headers": [
+        "Set-Cookie"
+      ]
+    },
+    {
+      "metadata": "council-budget-search.meta.json",
+      "url": "https://www.gncouncil.go.kr/kr/bill.do?schwrd=2025%EB%85%84%EB%8F%84+%EC%98%88%EC%82%B0%EC%95%88&th_sch=9",
+      "retrieved_at": "2026-10-01T01:05:42.099141+00:00",
+      "status": 200,
+      "resolved_url": "https://www.gncouncil.go.kr/kr/bill.do?schwrd=2025%EB%85%84%EB%8F%84+%EC%98%88%EC%82%B0%EC%95%88&th_sch=9",
+      "headers": {
+        "Cache-Control": "private",
+        "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+        "Content-Type": "text/html;charset=UTF-8",
+        "Content-Language": "en-US",
+        "Transfer-Encoding": "chunked",
+        "Date": "Thu, 01 Oct 2026 01:05:47 GMT",
+        "Connection": "close",
+        "Server": "www.gncouncil.go.kr"
+      },
+      "file": "council-budget-search.html",
+      "sha256": "a6ed447be4ce28084dea2310662b3f254c089186c3d074e1e19b06ba39d6f640",
+      "bytes": 79269,
+      "omitted_response_headers": [
+        "Set-Cookie"
+      ]
+    },
+    {
+      "metadata": "council-home.meta.json",
+      "url": "https://www.gncouncil.go.kr/kr/main.do",
+      "retrieved_at": "2026-10-01T01:03:58.011978+00:00",
+      "status": 200,
+      "resolved_url": "https://www.gncouncil.go.kr/kr/main.do",
+      "headers": {
+        "Cache-Control": "private",
+        "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+        "Content-Type": "text/html;charset=UTF-8",
+        "Content-Language": "en-US",
+        "Transfer-Encoding": "chunked",
+        "Date": "Thu, 01 Oct 2026 01:04:07 GMT",
+        "Connection": "close",
+        "Server": "www.gncouncil.go.kr"
+      },
+      "file": "council-home.html",
+      "sha256": "8e0a4044b5f3b9a796fac2720f80575b3248b9dc279d7e7f58ed503d4473167f",
+      "bytes": 158719,
+      "omitted_response_headers": [
+        "Set-Cookie"
+      ]
+    },
+    {
+      "metadata": "council-pdf-viewer-js.meta.json",
+      "url": "https://www.gncouncil.go.kr/resources/viewer/pdf/viewer.js",
+      "retrieved_at": "2026-10-01T01:08:03.539422+00:00",
+      "status": 200,
+      "resolved_url": "https://www.gncouncil.go.kr/resources/viewer/pdf/viewer.js",
+      "headers": {
+        "Cache-Control": "max-age=31556926",
+        "Expires": "",
+        "Last-Modified": "Fri, 04 Aug 2023 00:58:46 GMT",
+        "Accept-Ranges": "bytes",
+        "Content-Type": "application/javascript",
+        "Content-Length": "685177",
+        "Date": "Thu, 01 Oct 2026 01:08:10 GMT",
+        "Connection": "close",
+        "Server": "www.gncouncil.go.kr"
+      },
+      "file": "council-pdf-viewer-js.html",
+      "sha256": "eaa621ef0c367f69510231a0c57cb70957e38558ef791364a7d379e862ce4e50",
+      "bytes": 685177
+    },
+    {
+      "metadata": "council-water-report-file.meta.json",
+      "url": "https://www.gncouncil.go.kr/viewer/pdf/loadFile.do?group=appendix&uid=33982",
+      "retrieved_at": "2026-10-01T01:08:36.822043+00:00",
+      "error": "HTTP Error 405: "
+    },
+    {
+      "metadata": "council-water-report-lookup.meta.json",
+      "url": "https://www.gncouncil.go.kr/viewer/pdf/loadFile.do",
+      "method": "POST",
+      "body": "group=appendix&uid=33982",
+      "retrieved_at": "2026-10-01T01:09:08.583720+00:00",
+      "status": 200,
+      "headers": {
+        "Content-Type": "application/json;charset=utf-8",
+        "Content-Length": "492",
+        "Date": "Thu, 01 Oct 2026 01:09:16 GMT",
+        "Connection": "close",
+        "Server": "www.gncouncil.go.kr"
+      },
+      "file": "council-water-report-lookup.json",
+      "sha256": "d5c65cc6718cc21717f7f5e669b4a2a34641428e1db00be74399fd00d88564ba",
+      "omitted_response_headers": [
+        "Set-Cookie"
+      ]
+    },
+    {
+      "metadata": "council-water-report-viewer.meta.json",
+      "url": "https://www.gncouncil.go.kr/viewer/pdf.do?group=appendix&uid=33982",
+      "retrieved_at": "2026-10-01T01:07:25.788898+00:00",
+      "status": 200,
+      "resolved_url": "https://www.gncouncil.go.kr/viewer/pdf.do?group=appendix&uid=33982",
+      "headers": {
+        "Cache-Control": "private",
+        "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+        "Content-Type": "text/html;charset=UTF-8",
+        "Content-Language": "en-US",
+        "Transfer-Encoding": "chunked",
+        "Date": "Thu, 01 Oct 2026 01:07:32 GMT",
+        "Connection": "close",
+        "Server": "www.gncouncil.go.kr"
+      },
+      "file": "council-water-report-viewer.html",
+      "sha256": "3e7f5ef771d888402f1917bc686fdacadf9e49f0e3fb6e02e350612c87864b48",
+      "bytes": 25400,
+      "omitted_response_headers": [
+        "Set-Cookie"
+      ]
+    },
+    {
+      "metadata": "g2b-robots.meta.json",
+      "url": "https://www.g2b.go.kr/robots.txt",
+      "retrieved_at": "2026-10-01T01:05:08.068522+00:00",
+      "error": "HTTP Error 502: Bad Gateway"
+    },
+    {
+      "metadata": "gangnam-budget-list.meta.json",
+      "url": "https://www.gangnam.go.kr/board/B_000742/list.do?mid=ID05_050302",
+      "retrieved_at": "2026-10-01T01:14:18.220515+00:00",
+      "status": 200,
+      "resolved_url": "https://www.gangnam.go.kr/board/B_000742/list.do?mid=ID05_050302",
+      "headers": {
+        "Date": "Thu, 01 Oct 2026 01:14:28 GMT",
+        "Server": ".",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Cache-Control": "private",
+        "Access-Control-Allow-Origin": "*",
+        "Content-Language": "en",
+        "Content-Type": "text/html; charset=utf-8",
+        "Connection": "close",
+        "Transfer-Encoding": "chunked"
+      },
+      "file": "gangnam-budget-list.html",
+      "sha256": "ebe80012bd49f5a12ecff640617e480a9210e413f5f7d66c6dbbcb32a4a4b8c4",
+      "bytes": 472983,
+      "omitted_response_headers": [
+        "Set-Cookie"
+      ]
+    },
+    {
+      "metadata": "gangnam-budget-page2.meta.json",
+      "url": "https://www.gangnam.go.kr/board/B_000742/list.do?mid=ID05_050302&pgno=2",
+      "retrieved_at": "2026-10-01T01:14:47.426721+00:00",
+      "status": 200,
+      "resolved_url": "https://www.gangnam.go.kr/board/B_000742/list.do?mid=ID05_050302&pgno=2",
+      "headers": {
+        "Date": "Thu, 01 Oct 2026 01:14:56 GMT",
+        "Server": ".",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Cache-Control": "private",
+        "Access-Control-Allow-Origin": "*",
+        "Content-Language": "en",
+        "Content-Type": "text/html; charset=utf-8",
+        "Connection": "close",
+        "Transfer-Encoding": "chunked"
+      },
+      "file": "gangnam-budget-page2.html",
+      "sha256": "e555ca4129b9193b15d1f96e6b572093c49d79857a42fb295839f188a756cfd7",
+      "bytes": 472990,
+      "omitted_response_headers": [
+        "Set-Cookie"
+      ]
+    },
+    {
+      "metadata": "gangnam-notice-list.meta.json",
+      "url": "https://www.gangnam.go.kr/notice/list.do?mid=ID05_040201",
+      "retrieved_at": "2026-10-01T01:14:19.576220+00:00",
+      "status": 200,
+      "resolved_url": "https://www.gangnam.go.kr/notice/list.do?mid=ID05_040201",
+      "headers": {
+        "Date": "Thu, 01 Oct 2026 01:14:27 GMT",
+        "Server": ".",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Cache-Control": "private",
+        "Access-Control-Allow-Origin": "*",
+        "Content-Language": "en",
+        "Content-Type": "text/html; charset=utf-8",
+        "Connection": "close",
+        "Transfer-Encoding": "chunked"
+      },
+      "file": "gangnam-notice-list.html",
+      "sha256": "7a7fe09e441c36f1ba18b2174c8fdec14a0909ef1659bbdd9da7f4f02c054ddd",
+      "bytes": 457323,
+      "omitted_response_headers": [
+        "Set-Cookie"
+      ]
+    },
+    {
+      "metadata": "gangnam-opendoc-order.meta.json",
+      "url": "https://www.gangnam.go.kr/opendoc/order/R25DD20205556/view.do",
+      "retrieved_at": "2026-10-01T01:08:38.162534+00:00",
+      "error": "HTTP Error 404: Not Found"
+    },
+    {
+      "metadata": "lights-official.meta.json",
+      "url": "https://www.gangnam.go.kr/board/B_000031/1074583/view.do?mid=ID01_0313",
+      "retrieved_at": "2026-10-01T01:04:11.426187+00:00",
+      "status": 200,
+      "resolved_url": "https://www.gangnam.go.kr/board/B_000031/1074583/view.do?mid=ID01_0313",
+      "headers": {
+        "Date": "Thu, 01 Oct 2026 01:04:19 GMT",
+        "Server": ".",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Cache-Control": "private",
+        "Access-Control-Allow-Origin": "*",
+        "Content-Language": "en",
+        "Content-Type": "text/html; charset=utf-8",
+        "Connection": "close",
+        "Transfer-Encoding": "chunked"
+      },
+      "file": "lights-official.html",
+      "sha256": "9c6f0dec7bb3bfef16a8b582d388503182a9e6842b2ed5f8d516c396aac2f68b",
+      "bytes": 471827,
+      "omitted_response_headers": [
+        "Set-Cookie"
+      ]
+    },
+    {
+      "metadata": "notice-lights.meta.json",
+      "url": "https://www.gangnam.go.kr/notice/list.do?mid=ID05_040201&keyfield=BNI_MAIN_TITLE&keyword=%EC%8A%A4%EB%A7%88%ED%8A%B8%EB%B3%B4%EC%95%88%EB%93%B1",
+      "retrieved_at": "2026-10-01T01:15:11.520281+00:00",
+      "status": 200,
+      "resolved_url": "https://www.gangnam.go.kr/notice/list.do?mid=ID05_040201&keyfield=BNI_MAIN_TITLE&keyword=%EC%8A%A4%EB%A7%88%ED%8A%B8%EB%B3%B4%EC%95%88%EB%93%B1",
+      "headers": {
+        "Date": "Thu, 01 Oct 2026 01:15:18 GMT",
+        "Server": ".",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Cache-Control": "private",
+        "Access-Control-Allow-Origin": "*",
+        "Content-Language": "en",
+        "Content-Type": "text/html; charset=utf-8",
+        "Connection": "close",
+        "Transfer-Encoding": "chunked"
+      },
+      "file": "notice-lights.html",
+      "sha256": "48e67e4d6c49601818d578e79353e290c29b1d0e0adb2dcd868bea7cb7eb2fa9",
+      "bytes": 451126,
+      "omitted_response_headers": [
+        "Set-Cookie"
+      ]
+    },
+    {
+      "metadata": "notice-pump.meta.json",
+      "url": "https://www.gangnam.go.kr/notice/list.do?mid=ID05_040201&keyfield=BNI_MAIN_TITLE&keyword=%EC%9B%90%EA%B2%A9",
+      "retrieved_at": "2026-10-01T01:14:59.977885+00:00",
+      "status": 200,
+      "resolved_url": "https://www.gangnam.go.kr/notice/list.do?mid=ID05_040201&keyfield=BNI_MAIN_TITLE&keyword=%EC%9B%90%EA%B2%A9",
+      "headers": {
+        "Date": "Thu, 01 Oct 2026 01:15:08 GMT",
+        "Server": ".",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Cache-Control": "private",
+        "Access-Control-Allow-Origin": "*",
+        "Content-Language": "en",
+        "Content-Type": "text/html; charset=utf-8",
+        "Connection": "close",
+        "Transfer-Encoding": "chunked"
+      },
+      "file": "notice-pump.html",
+      "sha256": "e60cc1d830b7f861f1ca7f76334663b4196bd0e8d11716d2ff6323c3670464d1",
+      "bytes": 451114,
+      "omitted_response_headers": [
+        "Set-Cookie"
+      ]
+    },
+    {
+      "metadata": "notice-remodel.meta.json",
+      "url": "https://www.gangnam.go.kr/notice/list.do?mid=ID05_040201&keyfield=BNI_MAIN_TITLE&keyword=%EB%B3%B5%ED%95%A9%EB%AC%B8%ED%99%94%EC%84%BC%ED%84%B0",
+      "retrieved_at": "2026-10-01T01:15:21.856574+00:00",
+      "status": 200,
+      "resolved_url": "https://www.gangnam.go.kr/notice/list.do?mid=ID05_040201&keyfield=BNI_MAIN_TITLE&keyword=%EB%B3%B5%ED%95%A9%EB%AC%B8%ED%99%94%EC%84%BC%ED%84%B0",
+      "headers": {
+        "Date": "Thu, 01 Oct 2026 01:15:28 GMT",
+        "Server": ".",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Cache-Control": "private",
+        "Access-Control-Allow-Origin": "*",
+        "Content-Language": "en",
+        "Content-Type": "text/html; charset=utf-8",
+        "Connection": "close",
+        "Transfer-Encoding": "chunked"
+      },
+      "file": "notice-remodel.html",
+      "sha256": "621b81e5385f3c8acabafbaaa2d65a2f3a94c5a7af4eb30d029f6f46c8cc263c",
+      "bytes": 453511,
+      "omitted_response_headers": [
+        "Set-Cookie"
+      ]
+    },
+    {
+      "metadata": "segok-official.meta.json",
+      "url": "https://library.gangnam.go.kr/sklib/20001/bbsPostDetail.do?postIdx=58938",
+      "retrieved_at": "2026-10-01T01:04:22.513992+00:00",
+      "status": 200,
+      "resolved_url": "https://library.gangnam.go.kr/sklib/20001/bbsPostDetail.do?postIdx=58938",
+      "headers": {
+        "Date": "Thu, 01 Oct 2026 01:04:30 GMT",
+        "Server": "Apache",
+        "Content-Language": "ko",
+        "Connection": "close",
+        "Transfer-Encoding": "chunked",
+        "Content-Type": "text/html;charset=UTF-8"
+      },
+      "file": "segok-official.html",
+      "sha256": "b60e71bc8197342a080bca8080876b342458fdfdd6d50b260b58a8aed718a5c2",
+      "bytes": 26092,
+      "omitted_response_headers": [
+        "Set-Cookie"
+      ]
+    },
+    {
+      "metadata": "sinsa-official.meta.json",
+      "url": "https://library.gangnam.go.kr/small/20007/bbsPostDetail.do?postIdx=58742",
+      "retrieved_at": "2026-10-01T01:09:31.363532+00:00",
+      "status": 200,
+      "resolved_url": "https://library.gangnam.go.kr/small/20007/bbsPostDetail.do?postIdx=58742",
+      "headers": {
+        "Date": "Thu, 01 Oct 2026 01:09:38 GMT",
+        "Server": "Apache",
+        "Content-Language": "ko",
+        "Connection": "close",
+        "Transfer-Encoding": "chunked",
+        "Content-Type": "text/html;charset=UTF-8"
+      },
+      "file": "sinsa-official.html",
+      "sha256": "b54281c4589e08ed9aaca188a379a031e647647e0e95b0e2ecebbd3219eeae49",
+      "bytes": 24843,
+      "omitted_response_headers": [
+        "Set-Cookie"
+      ]
+    },
+    {
+      "metadata": "sinsa-reopening-poster.meta.json",
+      "url": "https://www.gangnam.go.kr/upload/editor/2025/12/23/edc2a93e-8b21-4678-9844-b2b6fdbeb621.jpg",
+      "retrieved_at": "2026-10-01T01:17:53.179079+00:00",
+      "status": 200,
+      "resolved_url": "https://www.gangnam.go.kr/upload/editor/2025/12/23/edc2a93e-8b21-4678-9844-b2b6fdbeb621.jpg",
+      "headers": {
+        "Date": "Thu, 01 Oct 2026 01:18:03 GMT",
+        "Server": ".",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Cache-Control": "private",
+        "Access-Control-Allow-Origin": "*",
+        "ETag": "\"9bC+yeNdSlT\"",
+        "Last-Modified": "Mon, 22 Dec 2025 23:04:46 GMT",
+        "Accept-Ranges": "bytes",
+        "Content-Type": "image/jpeg",
+        "Content-Length": "537895",
+        "Connection": "close"
+      },
+      "file": "sinsa-reopening-poster.jpg",
+      "sha256": "b49eaa7a9b2b2f69bdcf09a88a4493b7b62807decd334e2f7e7f6221a99fbdbc",
+      "bytes": 537895,
+      "omitted_response_headers": [
+        "Set-Cookie"
+      ]
+    },
+    {
+      "metadata": "sinsa-reopening.meta.json",
+      "url": "https://www.gangnam.go.kr/center/board/B_000282/1105020/view.do?mid=MC150301&office=3220040",
+      "retrieved_at": "2026-10-01T01:17:21.040341+00:00",
+      "status": 200,
+      "resolved_url": "https://www.gangnam.go.kr/center/board/B_000282/1105020/view.do?mid=MC150301&office=3220040",
+      "headers": {
+        "Date": "Thu, 01 Oct 2026 01:17:28 GMT",
+        "Server": ".",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Cache-Control": "private",
+        "Access-Control-Allow-Origin": "*",
+        "Content-Language": "en",
+        "Content-Type": "text/html; charset=utf-8",
+        "Connection": "close",
+        "Transfer-Encoding": "chunked"
+      },
+      "file": "sinsa-reopening.html",
+      "sha256": "997d6a3b8bd24d2e38c8759613119a80a607eec4c43c334641bf21d583b5cb5d",
+      "bytes": 28966,
+      "omitted_response_headers": [
+        "Set-Cookie"
+      ]
+    },
+    {
+      "metadata": "small-library-notices.meta.json",
+      "url": "https://library.gangnam.go.kr/small/menu/11446/bbs/20007/bbsPostList.do",
+      "retrieved_at": "2026-10-01T01:16:18.350019+00:00",
+      "status": 200,
+      "resolved_url": "https://library.gangnam.go.kr/small/menu/11446/bbs/20007/bbsPostList.do",
+      "headers": {
+        "Date": "Thu, 01 Oct 2026 01:16:26 GMT",
+        "Server": "Apache",
+        "Content-Language": "ko",
+        "Connection": "close",
+        "Transfer-Encoding": "chunked",
+        "Content-Type": "text/html;charset=UTF-8"
+      },
+      "file": "small-library-notices.html",
+      "sha256": "7a75104bed6332a21b56cb478c10e74745ed74e9010e65fe44a96ae12132eeb5",
+      "bytes": 31017,
+      "omitted_response_headers": [
+        "Set-Cookie"
+      ]
+    },
+    {
+      "metadata": "water-audit-minutes.meta.json",
+      "url": "https://www.gncouncil.go.kr/viewer/minutes.do?uid=8965",
+      "retrieved_at": "2026-10-01T01:16:19.698520+00:00",
+      "status": 200,
+      "resolved_url": "https://www.gncouncil.go.kr/viewer/minutes.do?uid=8965",
+      "headers": {
+        "Cache-Control": "private",
+        "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+        "Content-Type": "text/html;charset=UTF-8",
+        "Content-Language": "en-US",
+        "Transfer-Encoding": "chunked",
+        "Date": "Thu, 01 Oct 2026 01:16:24 GMT",
+        "Connection": "close",
+        "Server": "www.gncouncil.go.kr"
+      },
+      "file": "water-audit-minutes.html",
+      "sha256": "7df411eb9e9b43096c4f389059b2098d8f69e02476bac9a738f115f2eea26a3c",
+      "bytes": 374861,
+      "omitted_response_headers": [
+        "Set-Cookie"
+      ]
+    },
+    {
+      "metadata": "water-outcome-report.meta.json",
+      "url": "https://www.gncouncil.go.kr/attach/minutes/BO/apdx/09/a00017549.pdf",
+      "retrieved_at": "2026-10-01T01:10:49.367853+00:00",
+      "status": 200,
+      "resolved_url": "https://www.gncouncil.go.kr/attach/minutes/BO/apdx/09/a00017549.pdf",
+      "headers": {
+        "Cache-Control": "private",
+        "Expires": "Thu, 01 Jan 1970 00:00:00 GMT",
+        "Accept-Ranges": "bytes",
+        "ETag": "W/\"3146217-1767343503000\"",
+        "Last-Modified": "Fri, 02 Jan 2026 08:45:03 GMT",
+        "Content-Type": "application/pdf",
+        "Content-Length": "3146217",
+        "Date": "Thu, 01 Oct 2026 01:10:57 GMT",
+        "Connection": "close",
+        "Server": "www.gncouncil.go.kr"
+      },
+      "file": "water-outcome-report.pdf",
+      "sha256": "37a4e8de3aaf6a09f97904e5a5e53b12f49dfe2624a3e4488b4c2c86c52dccf8",
+      "bytes": 3146217
+    },
+    {
+      "metadata": "water-report-public-viewer-lookup.meta.json",
+      "url": "https://www.gncouncil.go.kr/viewer/pdf/loadFile.do",
+      "method": "POST",
+      "body": "group=appendix&uid=33982",
+      "retrieved_at": "2026-10-01T01:10:10.624463+00:00",
+      "request_note": "Public viewer client flow, cookie jar, Referer and X-Requested-With as jQuery normally sends.",
+      "status": 200,
+      "file": "water-report-public-viewer-lookup.json",
+      "sha256": "2a180eea924af7b2ec79a7c70328001da40f1214a925a157d3f54bee40b95a58"
+    }
+  ],
+  "initial_robots_snapshots": [
+    {
+      "file": "robots-www.gncouncil.go.kr.txt",
+      "url": "https://www.gncouncil.go.kr/robots.txt",
+      "access_date_utc": "2026-10-01",
+      "exact_access_time_recorded": false
+    },
+    {
+      "file": "robots-www.gangnam.go.kr.txt",
+      "url": "https://www.gangnam.go.kr/robots.txt",
+      "access_date_utc": "2026-10-01",
+      "exact_access_time_recorded": false
+    },
+    {
+      "file": "robots-library.gangnam.go.kr.txt",
+      "url": "https://library.gangnam.go.kr/robots.txt",
+      "access_date_utc": "2026-10-01",
+      "exact_access_time_recorded": false
+    }
+  ],
+  "parsing": {
+    "pdf": "pdftotext -layout; page indices are 1-based; budget parsed text is byte-identical to archived replay input. Page128 was rendered with pdftoppm and visually checked for the separate KRW55m/145m projects and RTU-panel scope; qa-budget-pump-page128.png preserves that view.",
+    "water_pdf_warning": "Poppler warned Invalid Font Weight / Can't get Fields array but extracted23984bytes of readable text across10pages. It is used only as a reviewed selective report, not as complete procurement data.",
+    "html": "UTF-8 public HTML preserved; selected dates/headings/body read directly. water-audit-minutes.txt removes tags and unescapes entities, with no inference of absent rows.",
+    "image": "sinsa-reopening-poster.jpg visually inspected; transcription in findings.json.",
+    "failed_lookup_files": "council-*-report-lookup.json are error HTML despite the json filename/content-type; only *-public-viewer-lookup.json contain successful JSON mappings."
+  },
+  "files": [
+    {
+      "file": "REPORT.md",
+      "bytes": 9495,
+      "sha256": "853b1fb3b788d97f7c8f2b38595ba81664fa9e21d9e31455ddef2808795c420a"
+    },
+    {
+      "file": "budget-report-current.meta.json",
+      "bytes": 782,
+      "sha256": "1222cb63789ea7b26c025529b4fb000478008054e877e285c3701ad2840a33e8"
+    },
+    {
+      "file": "budget-report-current.pdf",
+      "bytes": 6774892,
+      "sha256": "f6855d4b4fc8cc4af8755d2e4e8be27e752ee9fcfe03d8b90a1424b9069d9cd2"
+    },
+    {
+      "file": "budget-report-current.txt",
+      "bytes": 1173252,
+      "sha256": "62717606686014286f91f41920349a6ba6f897923feaf93b6f3afb9492d7411c"
+    },
+    {
+      "file": "budget-report-public-viewer-lookup.json",
+      "bytes": 155,
+      "sha256": "699e726f2478d7f0c6f8ae32a0e9b89757f97ba9b3de82eb19e42a6776ca5f52"
+    },
+    {
+      "file": "budget-report-public-viewer-lookup.meta.json",
+      "bytes": 442,
+      "sha256": "cb3abda74469c83779da59fa0439d3979fe92e8c1bb1ecfefc61c9ca53416799"
+    },
+    {
+      "file": "build_findings.py",
+      "bytes": 19708,
+      "sha256": "c5957e7a1bd84336fb592e6d57d8e935da95153079a294a48ee3ea8e742ad8a6"
+    },
+    {
+      "file": "contract-robots.html",
+      "bytes": 420,
+      "sha256": "d7a54688758eea6973f7b74161fc93c227218a0be4e9d969a158534a633d7ba3"
+    },
+    {
+      "file": "contract-robots.meta.json",
+      "bytes": 543,
+      "sha256": "41d8a0ca7c82c3dcbe707296c895e9ed0281dd725bb34d777a52f4fd2eef60fc"
+    },
+    {
+      "file": "council-bill-list.html",
+      "bytes": 80797,
+      "sha256": "a2f51cf2b93214533cde15a53cc3320f78038f8eed758fdc55f9586171e979aa"
+    },
+    {
+      "file": "council-bill-list.meta.json",
+      "bytes": 697,
+      "sha256": "fb193e518e9ba0ddc9bd8ab80e5fdd87912ec5edce73f8d78f52009c05c2503a"
+    },
+    {
+      "file": "council-budget-bill.html",
+      "bytes": 70591,
+      "sha256": "1520f2eba53bf7ead458b38d769bcce35da9230f9121dedb07d9a85150a2885d"
+    },
+    {
+      "file": "council-budget-bill.meta.json",
+      "bytes": 725,
+      "sha256": "f4f45e9c02d6d4757d11691cd669467069aa64af52be9185fad5a4d988674e69"
+    },
+    {
+      "file": "council-budget-plenary.html",
+      "bytes": 164878,
+      "sha256": "806bbb100660c6cee76fc7f52e12e8f0acecbe35c5cdaa9ad8db9141573c20b2"
+    },
+    {
+      "file": "council-budget-plenary.meta.json",
+      "bytes": 735,
+      "sha256": "f3a6d4fc5eb2ce0d558ee291c70383e422612611a5357e794e1df6672ff7c17a"
+    },
+    {
+      "file": "council-budget-report-file.meta.json",
+      "bytes": 175,
+      "sha256": "a3605fbb49f9b913539bc4034738f90ab669d59cea4d2445acef408765d12a68"
+    },
+    {
+      "file": "council-budget-report-lookup.json",
+      "bytes": 492,
+      "sha256": "d5c65cc6718cc21717f7f5e669b4a2a34641428e1db00be74399fd00d88564ba"
+    },
+    {
+      "file": "council-budget-report-lookup.meta.json",
+      "bytes": 587,
+      "sha256": "d57f7324fc70c3e33a9dbee1f779c5dbd8a047392dcbdbb4c6794ee78485a23e"
+    },
+    {
+      "file": "council-budget-search-2024.html",
+      "bytes": 73893,
+      "sha256": "6a8a5965ef5fc948b67a033b18fbd6e767b50dbc9a3e654f08df019c03405b12"
+    },
+    {
+      "file": "council-budget-search-2024.meta.json",
+      "bytes": 916,
+      "sha256": "aedc96c768aaf0fa3992ff7faa1dfde098f46567c2b90b1e8a5558e925ffb439"
+    },
+    {
+      "file": "council-budget-search.html",
+      "bytes": 79269,
+      "sha256": "a6ed447be4ce28084dea2310662b3f254c089186c3d074e1e19b06ba39d6f640"
+    },
+    {
+      "file": "council-budget-search.meta.json",
+      "bytes": 835,
+      "sha256": "b7d3f3855cfb170a17504ac17c17b55cf00bad4e4c0496e79ac8c006b92d2625"
+    },
+    {
+      "file": "council-home.html",
+      "bytes": 158719,
+      "sha256": "8e0a4044b5f3b9a796fac2720f80575b3248b9dc279d7e7f58ed503d4473167f"
+    },
+    {
+      "file": "council-home.meta.json",
+      "bytes": 693,
+      "sha256": "a0f9de116bffc274822a750c1a7048bcd3782271a32dcba51f93773ce118b2be"
+    },
+    {
+      "file": "council-pdf-viewer-js.html",
+      "bytes": 685177,
+      "sha256": "eaa621ef0c367f69510231a0c57cb70957e38558ef791364a7d379e862ce4e50"
+    },
+    {
+      "file": "council-pdf-viewer-js.meta.json",
+      "bytes": 713,
+      "sha256": "908cb6543778326796c78e23de96a0fde61978dba45bae96b923ec553b5447b1"
+    },
+    {
+      "file": "council-water-report-file.meta.json",
+      "bytes": 175,
+      "sha256": "200a00edf3e6ed4fe8218640f21823574966929e4d36927d6e837cfdc6854651"
+    },
+    {
+      "file": "council-water-report-lookup.json",
+      "bytes": 492,
+      "sha256": "d5c65cc6718cc21717f7f5e669b4a2a34641428e1db00be74399fd00d88564ba"
+    },
+    {
+      "file": "council-water-report-lookup.meta.json",
+      "bytes": 586,
+      "sha256": "b37c7f52a8b70c48f7bbf4afd19ce62ae4781c233126c1319db88b1f147f4f9a"
+    },
+    {
+      "file": "council-water-report-viewer.html",
+      "bytes": 25400,
+      "sha256": "3e7f5ef771d888402f1917bc686fdacadf9e49f0e3fb6e02e350612c87864b48"
+    },
+    {
+      "file": "council-water-report-viewer.meta.json",
+      "bytes": 763,
+      "sha256": "514d25f04b573d9816d454004916a6f9eccd9ddc87bbac339a73070a4184d5c1"
+    },
+    {
+      "file": "fetch_public.py",
+      "bytes": 1533,
+      "sha256": "f8701357ed5c0cd6d12db935cc324c609ef7c340551f28c08e56e8e4be82a5d4"
+    },
+    {
+      "file": "findings.json",
+      "bytes": 16766,
+      "sha256": "9acbcb9a89436d7b8e1608cc25b2c0a4b7e17b9f71f1ddd63c3a26f255907cd2"
+    },
+    {
+      "file": "g2b-robots.meta.json",
+      "bytes": 143,
+      "sha256": "ccd7151b203b414f6d5127d3bb0886e576eeecf35b291f4e08195bcad5403c83"
+    },
+    {
+      "file": "gangnam-budget-list.html",
+      "bytes": 472983,
+      "sha256": "ebe80012bd49f5a12ecff640617e480a9210e413f5f7d66c6dbbcb32a4a4b8c4"
+    },
+    {
+      "file": "gangnam-budget-list.meta.json",
+      "bytes": 796,
+      "sha256": "0b753cb73bb829993e54f1b96667713c082f415e61f98af63cce190fe2f3906e"
+    },
+    {
+      "file": "gangnam-budget-page2.html",
+      "bytes": 472990,
+      "sha256": "e555ca4129b9193b15d1f96e6b572093c49d79857a42fb295839f188a756cfd7"
+    },
+    {
+      "file": "gangnam-budget-page2.meta.json",
+      "bytes": 811,
+      "sha256": "5b2f2a93847d3fd81efd76d4c1ea28ea9aeff347eb71a7dc6459702ab580f7e0"
+    },
+    {
+      "file": "gangnam-notice-list.html",
+      "bytes": 457323,
+      "sha256": "7a7fe09e441c36f1ba18b2174c8fdec14a0909ef1659bbdd9da7f4f02c054ddd"
+    },
+    {
+      "file": "gangnam-notice-list.meta.json",
+      "bytes": 780,
+      "sha256": "0481b565493da6b4d8691bcb5ad271db496e0c6ca70997f26bf4e2a106417043"
+    },
+    {
+      "file": "gangnam-opendoc-order.meta.json",
+      "bytes": 170,
+      "sha256": "2b55b7bdf40e25ac9dcf78801bd6cd5a105241d65874818486d150c64b75e072"
+    },
+    {
+      "file": "lights-official.html",
+      "bytes": 471827,
+      "sha256": "9c6f0dec7bb3bfef16a8b582d388503182a9e6842b2ed5f8d516c396aac2f68b"
+    },
+    {
+      "file": "lights-official.meta.json",
+      "bytes": 804,
+      "sha256": "51d40f1efbe3b8f565ee559c8f240ddcaad873edbd780a0f2d1e464854cb392b"
+    },
+    {
+      "file": "notice-lights.html",
+      "bytes": 451126,
+      "sha256": "48e67e4d6c49601818d578e79353e290c29b1d0e0adb2dcd868bea7cb7eb2fa9"
+    },
+    {
+      "file": "notice-lights.meta.json",
+      "bytes": 948,
+      "sha256": "9ffca6d27740ac2272ad8c9325239630525a68504053ab947acd2407353a6c40"
+    },
+    {
+      "file": "notice-pump.html",
+      "bytes": 451114,
+      "sha256": "e60cc1d830b7f861f1ca7f76334663b4196bd0e8d11716d2ff6323c3670464d1"
+    },
+    {
+      "file": "notice-pump.meta.json",
+      "bytes": 874,
+      "sha256": "aec28398e46f5bf65f2f67780b6dd8b8c105225323155c20b5ea7ca85ee03892"
+    },
+    {
+      "file": "notice-remodel.html",
+      "bytes": 453511,
+      "sha256": "621b81e5385f3c8acabafbaaa2d65a2f3a94c5a7af4eb30d029f6f46c8cc263c"
+    },
+    {
+      "file": "notice-remodel.meta.json",
+      "bytes": 949,
+      "sha256": "026cd09c88d4859176a31a4d9f16e6c7915b402f25f4dda6aa2a61fe51cfc351"
+    },
+    {
+      "file": "qa-budget-pump-page128.png",
+      "bytes": 215130,
+      "sha256": "1a14a2427d990f9d0a3ec43e5da746d8f2c2251792aed72bc7abdf36d30646bb"
+    },
+    {
+      "file": "robots-library.gangnam.go.kr.txt",
+      "bytes": 38,
+      "sha256": "81dafae2faa016a3a681be84d8bb07e5f69c2930c02223f366fcee1f8e10dca7"
+    },
+    {
+      "file": "robots-www.gangnam.go.kr.txt",
+      "bytes": 387,
+      "sha256": "486e156b41d129fb9aab97dbfe5187b7876f8206e0ab9fe6fdd1b0a27e52611d"
+    },
+    {
+      "file": "robots-www.gncouncil.go.kr.txt",
+      "bytes": 22,
+      "sha256": "44f3f8eafdf064cf69acb05f23ee4dfc9ab5b3d67d81c64246bc29f7e438789a"
+    },
+    {
+      "file": "search-log.json",
+      "bytes": 2530,
+      "sha256": "71d14f3766fb8677c0c3618eebdb53958719241c0ce9f63f0b57e9d438bed82d"
+    },
+    {
+      "file": "segok-official.html",
+      "bytes": 26092,
+      "sha256": "b60e71bc8197342a080bca8080876b342458fdfdd6d50b260b58a8aed718a5c2"
+    },
+    {
+      "file": "segok-official.meta.json",
+      "bytes": 666,
+      "sha256": "9f10301519c6ea6c29cdea5192235f0d0397a3901f09d2157834df97225cb530"
+    },
+    {
+      "file": "sinsa-official.html",
+      "bytes": 24843,
+      "sha256": "b54281c4589e08ed9aaca188a379a031e647647e0e95b0e2ecebbd3219eeae49"
+    },
+    {
+      "file": "sinsa-official.meta.json",
+      "bytes": 666,
+      "sha256": "f5bce25991f3067ac61b39298d4e9edc3365cddf3dee10e960def2d75670fc82"
+    },
+    {
+      "file": "sinsa-reopening-poster.jpg",
+      "bytes": 537895,
+      "sha256": "b49eaa7a9b2b2f69bdcf09a88a4493b7b62807decd334e2f7e7f6221a99fbdbc"
+    },
+    {
+      "file": "sinsa-reopening-poster.meta.json",
+      "bytes": 919,
+      "sha256": "7f911c52504a9bab44e670d959be3bf460bbf07d927520974d1df14ebc69366e"
+    },
+    {
+      "file": "sinsa-reopening.html",
+      "bytes": 28966,
+      "sha256": "997d6a3b8bd24d2e38c8759613119a80a607eec4c43c334641bf21d583b5cb5d"
+    },
+    {
+      "file": "sinsa-reopening.meta.json",
+      "bytes": 845,
+      "sha256": "a37f89883eda2a8ef769054d4571e869a6c8606a4ea26642825b1e79f221c774"
+    },
+    {
+      "file": "small-library-notices.html",
+      "bytes": 31017,
+      "sha256": "7a75104bed6332a21b56cb478c10e74745ed74e9010e65fe44a96ae12132eeb5"
+    },
+    {
+      "file": "small-library-notices.meta.json",
+      "bytes": 671,
+      "sha256": "ac9117e75291bd7712d836f3423c582cbec4e7c7ceeefcb3dd23f4c7bc83ceab"
+    },
+    {
+      "file": "water-audit-minutes.html",
+      "bytes": 374861,
+      "sha256": "7df411eb9e9b43096c4f389059b2098d8f69e02476bac9a738f115f2eea26a3c"
+    },
+    {
+      "file": "water-audit-minutes.meta.json",
+      "bytes": 732,
+      "sha256": "27c0a2b01510cb30483db00b53ad5818f2ba6934d6c532d844a000febe369c7e"
+    },
+    {
+      "file": "water-audit-minutes.txt",
+      "bytes": 155457,
+      "sha256": "c09b2402f1a0aa9c800c161d60b082e63d653908911dadd6f8883191e316f89e"
+    },
+    {
+      "file": "water-outcome-report.meta.json",
+      "bytes": 787,
+      "sha256": "b3cbe257d5a8b9d9fe01a5daf4158884988750d58d4c8c06de102538d95c2204"
+    },
+    {
+      "file": "water-outcome-report.pdf",
+      "bytes": 3146217,
+      "sha256": "37a4e8de3aaf6a09f97904e5a5e53b12f49dfe2624a3e4488b4c2c86c52dccf8"
+    },
+    {
+      "file": "water-outcome-report.txt",
+      "bytes": 23984,
+      "sha256": "b75b0167313fa9bb60c8aabc84da644bc59aa5501ae6766423e642a46b210075"
+    },
+    {
+      "file": "water-report-public-viewer-lookup.json",
+      "bytes": 113,
+      "sha256": "2a180eea924af7b2ec79a7c70328001da40f1214a925a157d3f54bee40b95a58"
+    },
+    {
+      "file": "water-report-public-viewer-lookup.meta.json",
+      "bytes": 441,
+      "sha256": "657be9a8b17c1eb31f9f50cbbf0e02fbb76b9c2b9db0c220ec5525f72690a3d0"
+    }
+  ]
+}
