@@ -29,14 +29,15 @@ from app.llm.prompts import EXTRACT_PROMPT_VERSION, BriefFacts, ChunkContext
 from app.llm.providers.procurement_narratives import (
     allocated_purchases,
     numbered_review_signals,
+    purchase_category,
     review_table_signals,
     work_plan_signals,
 )
 from app.llm.schemas import Commitment, ExtractedSignal, ExtractionOutput
 from app.llm.types import LLMResult
-from app.parsing.chunking import budget_project_row, chunk_budget, match_speaker
+from app.parsing.chunking import budget_project_row, chunk_budget, chunk_minutes, match_speaker
 
-HEURISTIC_VERSION = "heuristic-v9"
+HEURISTIC_VERSION = "heuristic-v10"
 
 _SENTENCE_RE = re.compile(r"[^.?!。]+[.?!。]?")
 _SPEAKER_LABEL_RE = re.compile(r"(?P<role>[가-힣A-Za-z·]{1,20}) [가-힣]{2,4}")
@@ -59,6 +60,13 @@ _PROJECT_SUFFIX = (
     "시스템",
     "서비스",
     "사업",
+    "구입",
+    "구매",
+    "임차",
+    "용역",
+    "공사",
+    "수립",
+    "대체 취득",
 )
 _TITLE_RE = re.compile(
     r"((?:[가-힣A-Za-z0-9·()]+\s){0,4}[가-힣A-Za-z0-9·()]*(?:"
@@ -87,6 +95,10 @@ _GENERIC_TITLE_HEADS = (
     "현재",
     "위원님",
     "말씀",
+    "별도",
+    "또한",
+    "그리고",
+    "다음으로",
 )
 
 
@@ -199,6 +211,9 @@ def _clean_title(title: str) -> str:
 _SUBJECT_RE = re.compile(
     r"((?:[가-힣A-Za-z0-9·]+\s){0,2}[가-힣A-Za-z0-9·]+?)(?:은|는|을|를)\s(?:필요성|도입|운영|추진|설치)"
 )
+_NAMED_SUBJECT_RE = re.compile(
+    r"((?:[가-힣A-Za-z0-9·]+\s){0,5}[가-힣A-Za-z0-9·]+?)(?:은|는)(?=\s|요[?.]|[?.])"
+)
 
 
 def _guess_title(answer: str, question: str) -> str | None:
@@ -212,6 +227,11 @@ def _guess_title(answer: str, question: str) -> str | None:
             _, conf = classify_category(candidate)
             if len(candidate) >= 2 and conf > 0:
                 return candidate
+        for m in _NAMED_SUBJECT_RE.finditer(source):
+            candidate = _clean_title(m.group(1))
+            _, conf = classify_category(candidate)
+            if len(candidate) >= 3 and conf > 0 and _meaningful_title(candidate):
+                return candidate
     return None
 
 
@@ -220,14 +240,52 @@ def _guess_project_title(answer: str, question: str) -> str | None:
         best: str | None = None
         for m in _TITLE_RE.finditer(source):
             candidate = _with_relative_clause(source, m.start(1), _clean_title(m.group(1)))
+            if suffix := re.match(
+                r"\s+(?:구입|구매|구축|교체|설치|도입|공사|용역)(?:\s+공사)?", source[m.end() :]
+            ):
+                candidate += suffix.group(0)
             if len(candidate) < 3:
                 continue
+            if not _meaningful_title(candidate):
+                continue
             _, conf = classify_category(candidate)
-            relevant = conf > 0 or any(v in candidate for v in PROCUREMENT_VERBS)
+            relevant = (
+                conf > 0
+                or any(v in candidate for v in PROCUREMENT_VERBS)
+                or bool(_NEW_PURCHASE_RE.search(candidate))
+            )
             if relevant and (best is None or len(candidate) > len(best)):
                 best = candidate
         if best:
             return best
+    return None
+
+
+def _meaningful_title(title: str) -> bool:
+    words = re.sub(
+        r"구입|구매|구축|교체|설치|도입|공사|용역|사업|추진|수립|신규|별도|및|말까지|원씩|"
+        r"들어서|지금|단계에서는|계획|예정",
+        "",
+        title,
+    )
+    return len(re.sub(r"[\s\d,.]", "", words)) >= 3
+
+
+def _answer_commitment(text: str) -> str | None:
+    if re.search(r"어렵고|어렵습니다|곤란합니다|추진하지\s*않|보류|불가", text):
+        return "declined"
+    if re.search(r"협의.*추진\s*여부|확정되면|확보되면|검토해\s*보겠습니다", text):
+        return "reviewing"
+    if re.search(r"확보(?:돼|되어)\s*있|확보해서|발주합니다", text):
+        return "committed"
+    if level := commitment_level(text):
+        return level
+    if re.search(
+        r"(?:구입|구매|교체|설치|도입|구축|추진|편성|발주|용역)(?:하려고|할\s*예정|할\s*것)|"
+        r"예산을\s*세우|책정돼|계획을\s*세우",
+        text,
+    ):
+        return "planned"
     return None
 
 
@@ -337,12 +395,98 @@ def _budget_list_signals(ctx: ChunkContext) -> list[ExtractedSignal]:
     return signals
 
 
-def _extract_exchange(ctx: ChunkContext) -> list[ExtractedSignal]:
+def _extract_exchange(ctx: ChunkContext, *, split: bool = True) -> list[ExtractedSignal]:
+    if split:
+        exchanges = chunk_minutes(ctx.text)
+        if sum(chunk.kind == "exchange" for chunk in exchanges) > 1:
+            return [
+                signal
+                for chunk in exchanges
+                for signal in _extract_exchange(
+                    ChunkContext(
+                        ctx.doc_type,
+                        ctx.title,
+                        ctx.institution,
+                        ctx.document_date,
+                        chunk.labels,
+                        chunk.text,
+                        ctx.fiscal_year,
+                    ),
+                    split=False,
+                )
+            ]
     if listed := _budget_list_signals(ctx):
         return listed
     question, answer = _answer_text(ctx.text, ctx.labels)
     if not answer:
         return []
+    if _MAINTENANCE_RE.search(answer) and not _NEW_PURCHASE_RE.search(question + " " + answer):
+        return []
+    segments = _project_answers(answer)
+    signals = []
+    for segment in segments:
+        signals.extend(_extract_project(ctx, question, segment))
+    return signals
+
+
+_COMPLETED_PROJECT = re.compile(
+    r"(?:지난해|작년|기집행)|"
+    r"(?:구축|설치|구입|구매|교체|준공)(?:했|하였|을\s*완료|가\s*완료)|"
+    r"(?:설치|구축|공사)\s*완료"
+)
+_CANCELLED_PROJECT = re.compile(r"(?:사업[은을이]?\s*.*)?(?:취소|철회)(?:되|했|하였)|전액\s*삭감")
+_NONPURCHASE = re.compile(
+    r"(?:설치비|구입비|비용)[를을]?\s*(?:일부\s*)?지원|"
+    r"(?:가구|명|인)당.*지원|장학금|장학기금|출연금|생활안정자금"
+)
+
+
+def _project_answers(answer: str) -> list[str]:
+    """Keep future project clauses together, without money from completed work.
+
+    Split only on two distinct, named purchase commitments. A generic amount or
+    follow-up timing sentence stays with its project. Denial remains in scope;
+    cancellation of an unnamed '해당 사업' makes the whole answer unsafe.
+    """
+    if _CANCELLED_PROJECT.search(answer):
+        return []
+    sentences = [
+        sentence
+        for sentence in _sentences(answer)
+        if not _COMPLETED_PROJECT.search(sentence)
+        and not _NONPURCHASE.search(sentence)
+        and not re.search(r"확보되면.*(?:계상|편성|구입|구매)", sentence)
+        and not (_MAINTENANCE_RE.search(sentence) and not _NEW_PURCHASE_RE.search(sentence))
+    ]
+    if not sentences:
+        return []
+    starts: list[int] = []
+    previous_title = ""
+    for index, sentence in enumerate(sentences):
+        title = _guess_title(sentence, "")
+        explicitly_enumerated = re.match(r"(?:첫째|둘째|셋째|넷째|다섯째)\s*[,，]", sentence)
+        if (
+            not title
+            or not (_NEW_PURCHASE_RE.search(title) or explicitly_enumerated)
+            or not _answer_commitment(sentence)
+        ):
+            continue
+        # The same named project can be explained in successive sentences.
+        compact = re.sub(r"\s+", "", title)
+        if previous_title and (compact in previous_title or previous_title in compact):
+            continue
+        starts.append(index)
+        previous_title = compact
+    if len(starts) < 2:
+        return [" ".join(sentences)]
+    starts[0] = 0
+    return [
+        " ".join(sentences[start : starts[i + 1] if i + 1 < len(starts) else len(sentences)])
+        for i, start in enumerate(starts)
+    ]
+
+
+def _extract_project(ctx: ChunkContext, question: str, answer: str) -> list[ExtractedSignal]:
     if allocated := allocated_purchases(ctx, answer):
         for signal in allocated:
             signal.title = _clean_title(signal.title)
@@ -351,22 +495,40 @@ def _extract_exchange(ctx: ChunkContext) -> list[ExtractedSignal]:
     # mixed discussions when a concrete purchase action is also stated.
     if _MAINTENANCE_RE.search(answer) and not _NEW_PURCHASE_RE.search(question + " " + answer):
         return []
-    level = commitment_level(answer)
+    level = _answer_commitment(answer)
     if level is None:
         return []
     title = _guess_title(answer, question)
+    focused = [
+        candidate
+        for sentence in _sentences(answer)
+        if _answer_commitment(sentence) is not None
+        and (candidate := _guess_project_title(sentence, ""))
+        and _NEW_PURCHASE_RE.search(candidate)
+    ]
+    if focused:
+        title = max(focused, key=len)
+    question_title = _guess_project_title(question, "")
+    if question_title and re.search(r"(?:이|그)\s*(?:예산|사업)(?:에서|은|는|의)", answer):
+        title = question_title
     if title is None:
         return []
     # The project name is the best evidence of its category; the surrounding exchange often
     # drifts to other programmes (a parking question that mentions 어르신 이동 편의).
     category, cat_conf = classify_category(title)
+    purchase_cat = purchase_category(title)
+    if purchase_cat is not Category.OTHER:
+        category, cat_conf = purchase_cat, max(cat_conf, 0.65)
     if cat_conf < 0.5:
         category, cat_conf = classify_category(question + " " + answer)
-    if category is Category.OTHER:
+    if category is Category.OTHER and not _NEW_PURCHASE_RE.search(title):
         return []
     sentences = _sentences(answer)
     ladder = [p for phrases in COMMITMENT_LADDER.values() for p in phrases]
-    evidence = [s for s in sentences if any(p in s for p in ladder)]
+    evidence = [s for s in sentences if any(p in s for p in ladder) or _answer_commitment(s)]
+    title_sentence = next((s for s in sentences if title in s), None)
+    if title_sentence and title_sentence not in evidence:
+        evidence.insert(0, title_sentence)
     # A full rollout estimate or a previous purchase is not the current budget.
     # Distinct remaining amounts are ambiguous: do not pick the largest one.
     budget_sentences = [
@@ -374,7 +536,12 @@ def _extract_exchange(ctx: ChunkContext) -> list[ExtractedSignal]:
         for s in sentences
         if not re.search(r"(?:다고\s*)?하면|경우|가정|지난해|작년|기집행|취소|반납", s)
     ]
-    candidates = [(amount, s) for s in budget_sentences for amount in find_amounts(s)]
+    candidates = [
+        (amount, s)
+        for s in budget_sentences
+        for amount in find_amounts(s)
+        if not re.match(r"\s*(?:이상|이하|초과|미만)", s[amount.end :])
+    ]
     totals = [
         (amount, s)
         for amount, s in candidates
@@ -387,9 +554,15 @@ def _extract_exchange(ctx: ChunkContext) -> list[ExtractedSignal]:
     amount_sentence = candidates[0][1] if budget else None
     if amount_sentence and amount_sentence not in evidence:
         evidence.append(amount_sentence)
-    timing = (
-        resolve_timing(answer, ctx.document_date) if level in ("committed", "planned") else None
-    )
+    timing = None
+    if level in ("committed", "planned"):
+        timing = resolve_timing(" ".join(evidence), ctx.document_date) or resolve_timing(
+            answer, ctx.document_date
+        )
+        # A building's opening or a previous implementation year is not a new
+        # procurement date. Unresolved timing remains unknown for review.
+        if timing and timing.year < ctx.document_date.year:
+            timing = None
     timing_text = None
     if timing is not None:
         idx = answer.find(timing.basis)
@@ -417,7 +590,7 @@ def _extract_exchange(ctx: ChunkContext) -> list[ExtractedSignal]:
             procurement_type="unknown",
             keywords=_keywords(question + " " + answer) or [title],
             evidence=evidence[:3] or sentences[-1:],
-            confidence=round(min(confidence, 0.85), 2),
+            confidence=0.35 if category is Category.OTHER else round(min(confidence, 0.85), 2),
         )
     ]
 

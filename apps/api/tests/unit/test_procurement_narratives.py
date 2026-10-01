@@ -50,13 +50,13 @@ async def test_exchange_explicit_total_is_not_confused_with_funding_component() 
     assert signals[0].budget_krw == 700_000_000
 
 
-async def test_exchange_multiple_project_totals_remain_ambiguous() -> None:
+async def test_exchange_multiple_named_projects_get_separate_totals() -> None:
     signals = await extract(
         "○정보화과장 김서준  민원 플랫폼 구축에 총 7억 원을 사용할 계획입니다. "
         "별도 관제시스템 구축에도 총 9억 원을 사용할 계획입니다."
     )
-    assert len(signals) == 1
-    assert signals[0].budget_krw is None
+    assert len(signals) == 2
+    assert [s.budget_krw for s in signals] == [700_000_000, 900_000_000]
 
 
 @pytest.mark.parametrize(
@@ -96,12 +96,13 @@ async def test_numbered_review_does_not_guess_without_column_header() -> None:
     assert await extract(text, "budget_book") == []
 
 
-async def test_numbered_review_survives_production_chunking_with_offsets() -> None:
+@pytest.mark.parametrize("page_break", ["", "\f"])
+async def test_numbered_review_survives_production_chunking_with_offsets(page_break: str) -> None:
     text = (
         "검토보고서\n1) 주민센터 리모델링 공사(신규)(p.70)\n"
         "- 소요재원\n(단위: 천원)\n재원별 예산액 전년도당초예산액 비교증감\n"
         "계 125,400 0 125,400\n"
-        "2) 행정망 서버 교체(신규)(p.71)\n"
+        f"{page_break}2) 행정망 서버 교체(신규)(p.71)\n"
         "- 소요재원\n(단위: 천원)\n재원별 예산액 전년도당초예산액 비교증감\n"
         "계 88,000 0 88,000\n"
     )

@@ -15,7 +15,9 @@ from app.domain.timing import resolve_timing
 from app.llm.prompts import ChunkContext
 from app.llm.schemas import Commitment, ExtractedSignal
 
-_PURCHASE = re.compile(r"구입|구매|교체|구축|도입|설치|고도화|신축|증축|건립|공사|리모델링")
+_PURCHASE = re.compile(
+    r"구입|구매|교체|구축|도입|설치|고도화|신축|증축|건립|공사|리모델링|용역|제작"
+)
 _ALLOCATION = re.compile(r"(?:계상|편성|반영)(?:하였|했|하겠)")
 _COMPLETED = re.compile(r"(?:집행|설치|구입|구매|교체|공사)\s*완료|완료하였|완료했")
 _UNSAFE_ALLOCATION = re.compile(
@@ -36,7 +38,7 @@ _ASSET_CATEGORIES = (
 )
 
 
-def _category(title: str) -> Category:
+def purchase_category(title: str) -> Category:
     for category, pattern in _ASSET_CATEGORIES:
         if pattern.search(title):
             return category
@@ -57,7 +59,7 @@ def _signal(
     timing = resolve_timing(
         " ".join(evidence) if timing_source is None else timing_source, ctx.document_date
     )
-    category = _category(title)
+    category = purchase_category(title)
     return ExtractedSignal(
         title=title,
         summary=f"{ctx.institution or '기관'}의 {title} ({commitment})",
@@ -208,7 +210,7 @@ def review_table_signals(ctx: ChunkContext, unit: int) -> list[ExtractedSignal]:
     return signals
 
 
-_REVIEW_HEADING = re.compile(r"(?m)^[ \t]*\d+\)[ \t]+(?P<title>[^\n]+)")
+_REVIEW_HEADING = re.compile(r"(?m)^[ \t\f]*\d+\)[ \t]+(?P<title>[^\n]+)")
 _REVIEW_TOTAL = re.compile(r"(?m)^[ \t]*계[ \t]+(?P<amount>\d[\d,]*)[ \t]+")
 
 

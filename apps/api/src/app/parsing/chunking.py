@@ -299,7 +299,7 @@ def chunk_budget(text: str, *, standalone: bool = False) -> list[Chunk]:
 
 def _budget_narrative_chunks(text: str) -> list[Chunk]:
     candidates: list[Chunk] = []
-    review_headings = list(re.finditer(r"(?m)^[ \t]*\d+\)[ \t]+[^\n]+", text))
+    review_headings = list(re.finditer(r"(?m)^[ \t\f]*\d+\)[ \t]+[^\n]+", text))
     for index, heading in enumerate(review_headings):
         start = heading.start()
         end = review_headings[index + 1].start() if index + 1 < len(review_headings) else len(text)
