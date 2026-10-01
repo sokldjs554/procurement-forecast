@@ -8,55 +8,29 @@ permissions:
 jobs:
   sources:
     runs-on: ubuntu-24.04
-    timeout-minutes: 8
+    timeout-minutes: 3
     steps:
-      - name: Retrieve only the selected public inputs with robots and TLS checks
+      - name: Archive one selected official meeting without model execution
         shell: python
         run: |
-          import datetime, hashlib, json, pathlib, time, urllib.error, urllib.parse, urllib.request, urllib.robotparser
-          out = pathlib.Path('evidence')
-          out.mkdir()
-          agent = 'ProcurementForecastResearch/1.0'
-          targets = [
-            ('gwacheon-8093', 'https://www.gccouncil.go.kr/viewer/minutes.do?uid=8093'),
-            ('gimpo-3495', 'https://gimpocouncil.go.kr/cnts/mnt/mntsViewer.php?schSn=3495'),
-            ('sejong-6400', 'https://council.sejong.go.kr/cms/mntsViewer.do?mntsId=6400'),
-            ('gwangmyeong-budget-post', 'https://www.gm.go.kr/pt/user/bbs/BD_selectBbs.do?q_bbsCode=2261&q_bbscttSn=20241230162518456'),
-            ('gwangmyeong-ict-budget', 'https://www.gm.go.kr/component/file/ND_fileDownload.do?q_fileId=c43f6fdf-0310-427e-a298-bdecaf9f44fb&q_fileSn=78709'),
-            ('asan-budget-post', 'https://www.asan.go.kr/main/cms/?PageNo=1&category=&m_mode=view&no=65&pds_no=2024121914253089538&tb_nm=budgeting'),
-            ('asan-budget-book', 'https://www.asan.go.kr/main/cms/download.php?bbs_board=Y&d8_chk=&pds_no=2024121914253089538&tb_nm=budgeting&uid=82772'),
-          ]
-          policies = {}
-          for name, url in targets:
-              record = {'id':name, 'url':url, 'retrieved_at':datetime.datetime.now(datetime.timezone.utc).isoformat(), 'model_executed':False}
-              try:
-                  host = urllib.parse.urlsplit(url).netloc
-                  if host not in policies:
-                      try:
-                          with urllib.request.urlopen(urllib.request.Request('https://'+host+'/robots.txt',headers={'User-Agent':agent}),timeout=15) as r:
-                              robot = r.read()
-                          (out/(host+'-robots.txt')).write_bytes(robot)
-                          policy = urllib.robotparser.RobotFileParser()
-                          policy.parse(robot.decode('utf-8',errors='replace').splitlines())
-                      except urllib.error.HTTPError as exc:
-                          if exc.code != 404: raise
-                          policy = None
-                          record['robots_status'] = 404
-                      policies[host] = policy
-                  policy = policies[host]
-                  if policy is not None and not policy.can_fetch(agent,url):
-                      raise RuntimeError('robots.txt disallows selected input')
-                  time.sleep(max(2, (policy.crawl_delay(agent) or 0) if policy else 0))
-                  with urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':agent}),timeout=35) as r:
-                      raw = r.read(32000001)
-                      if len(raw)>32000000: raise RuntimeError('input exceeds bounded retrieval size')
-                      record.update(status=r.status,final_url=r.url,headers={k:r.headers.get(k) for k in ('Content-Type','Content-Disposition','Last-Modified','ETag')})
-                  (out/(name+'.raw')).write_bytes(raw)
-                  record.update(sha256=hashlib.sha256(raw).hexdigest(),size=len(raw))
-              except Exception as exc:
-                  record['error'] = type(exc).__name__+': '+str(exc)
-              (out/(name+'.json')).write_text(json.dumps(record,ensure_ascii=False,indent=2),encoding='utf-8')
-              print(json.dumps(record,ensure_ascii=False))
+          import datetime,hashlib,json,pathlib,time,urllib.request,urllib.error,urllib.robotparser
+          root='https://council.goseong.go.kr'
+          url=root+'/record/recordView.do?key=1d26187d4c36c5edb8eec98727a8c30daa76ba3eb6ce467f2c49548a43efc35c1e13cf6928ddc653'
+          out=pathlib.Path('evidence');out.mkdir();agent='ProcurementForecastResearch/1.0'
+          d={'id':'goseong-20241209','url':url,'retrieved_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'model_executed':False}
+          try:
+            try:
+              with urllib.request.urlopen(urllib.request.Request(root+'/robots.txt',headers={'User-Agent':agent}),timeout=20) as r: robot=r.read()
+              (out/'robots.txt').write_bytes(robot);p=urllib.robotparser.RobotFileParser();p.parse(robot.decode('utf-8',errors='replace').splitlines())
+              if not p.can_fetch(agent,url):raise RuntimeError('robots excludes source')
+              time.sleep(max(2,p.crawl_delay(agent) or 0))
+            except urllib.error.HTTPError as exc:
+              if exc.code!=404:raise
+              d['robots_status']=404
+            with urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':agent}),timeout=35) as r: raw=r.read();d.update(status=r.status,final_url=r.url)
+            (out/'goseong-20241209.raw').write_bytes(raw);d.update(sha256=hashlib.sha256(raw).hexdigest(),size=len(raw))
+          except Exception as exc:d['error']=str(exc)
+          (out/'goseong-20241209.json').write_text(json.dumps(d,ensure_ascii=False,indent=2),encoding='utf-8');print(d)
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         if: always()
         with:
