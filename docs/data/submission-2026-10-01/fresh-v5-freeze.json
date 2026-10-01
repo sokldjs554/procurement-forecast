@@ -1,0 +1,24 @@
+{
+  "frozen_at": "2026-10-01T04:16:46.305391+00:00",
+  "stage": "labels schema/source/offset and candidate hashes verified before either provider execution",
+  "cases": 24,
+  "expected": 19,
+  "negative_cases": 10,
+  "sha256": {
+    "cases.jsonl": "787e8f3b48b2d5d3cbd8cadee97bd11f02885b8a9357a05a7308f6ad2e2ee525",
+    "manifest.json": "768f6903b19a4dc70ee09072e5f36074a52070208be269f29b7bc5edb113c862",
+    "candidate-code-freeze.json": "8e74666be8ffc9cd16038e8ac13dac6e31fc062b7ba920d20facb4e04ad2c2ed"
+  },
+  "source_artifact": {
+    "run_id": 36813667366,
+    "artifact_id": 11140937167,
+    "sha256": "2baab46bb9ec22dc521f25c9588671bb9500f37744fcb52aaaf420c0b88f5b36"
+  },
+  "authorities": ["문경시", "옥천군"],
+  "source_sha256": {
+    "https://council.gbmg.go.kr/viewer/minutes/3433.do": "e110e687759ea8a49d88b11408d6e4bff32e2a6e2bdaf7d5d36e32c0078f0075",
+    "https://council.oc.go.kr/viewer/minutes/15645.do": "a8f1a6da77120ad57b3aa4c5fca219e9e322a3a32be76b00a46e8ae74faadc18"
+  },
+  "label_origin": "Same implementation assistant annotated literal archived sources before any baseline/candidate output; no independent expert or second-agent review. Selected convenience sample, not population representative.",
+  "policy": "Do not relabel or tune then call this version unseen. Invalid category/commitment labels, source hashes and offsets were validated before scoring. Failed TLS retrievals are not negatives. No API spending, main merge or deployment."
+}
