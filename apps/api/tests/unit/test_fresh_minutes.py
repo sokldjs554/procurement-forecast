@@ -107,22 +107,37 @@ async def test_the_rule_not_the_reader_picks_the_meetings(tmp_path: Path) -> Non
     assert saved["rule"]["order"] == "sha256(meeting id) ascending"
 
 
-def test_excerpts_are_the_turns_with_money_or_a_purchase_whoever_labels_them() -> None:
-    text = (
-        "○위원장 이도윤  다음은 의사일정 제2항을 상정합니다. 위원 여러분께서는 자료를 참고해 주시기 바랍니다.\n"
-        + MINUTES
-        + "○위원 최민지  경로당 냉난방비 지원 단가가 1개소당 월 15만 원인데 올해 동결된 이유가 무엇인지 여쭙겠습니다.\n"
+def test_excerpts_are_blocks_with_money_or_a_purchase_whatever_the_speaker_layout() -> None:
+    from app.eval.fresh_minutes import blocks
+
+    # 서초구의회 writes the role and the name on lines of their own, with no ○.
+    layout = (
+        "위원장\n신정태\n의석을 정돈하여 주시기 바랍니다. 성원이 되었으므로 개의하겠습니다.\n" * 12
+        + "도로과장\n남만조\n금회 추경에 반영한 6억원은 포트홀 긴급 보수 위주로 편성했습니다.\n"
+        * 12
+        + "위원장\n신정태\n다음 위원님 질의하여 주시기 바랍니다. 질의하실 위원님 계십니까?\n" * 12
     )
-    picked = select_excerpts("s1", text, per_source=10, min_chars=30)
+    spans = blocks(layout, target=300)
+    assert spans[0][0] == 0 and all(a < b for a, b in spans)
+    assert all(layout[a:b] == layout[a:b].strip("\n") for a, b in spans)  # whole lines only
+    picked = select_excerpts("s1", layout, per_source=10)
+    assert picked and all("6억원" in p["text"] or "편성" in p["text"] for p in picked)
+    assert not any("6억원" not in p["text"] and "보수" not in p["text"] for p in picked)
+    for p in picked:
+        assert layout[p["text_char_start"] :].startswith(p["text"])
     starts = [p["text_char_start"] for p in picked]
     assert starts == sorted(starts)
-    bodies = [p["text"] for p in picked]
-    assert not any(b.startswith("○위원장") for b in bodies)  # no amount, no purchase act
-    assert any("4억 8천만 원" in b for b in bodies)
-    assert any("15만 원" in b for b in bodies)  # an amount with nothing to procure stays in
-    for p in picked:
-        assert text[p["text_char_start"] :].startswith(p["text"])
-    assert len(select_excerpts("s1", text, per_source=1, min_chars=30)) == 1
+    assert len(select_excerpts("s1", layout, per_source=1)) == 1
+
+
+def test_a_very_long_line_is_cut_at_sentence_ends() -> None:
+    from app.eval.fresh_minutes import blocks
+
+    line = "예산 3억 원을 반영했습니다. " * 400  # one 6,800-character line
+    spans = blocks(line, target=1000, longest=1800)
+    assert len(spans) > 4
+    assert all(b - a <= 1600 for a, b in spans)
+    assert "".join(line[a:b] for a, b in spans).replace(" ", "") == line.strip().replace(" ", "")
 
 
 async def test_drafted_excerpts_freeze_into_a_holdout_the_evaluator_accepts(tmp_path: Path) -> None:
@@ -135,7 +150,7 @@ async def test_drafted_excerpts_freeze_into_a_holdout_the_evaluator_accepts(tmp_
     rule = Rule("2026-09-01", "2026-09-07", "위원회", ("성남시",), meetings=5, per_council=1)
     await sample_minutes(ClikMinutesAdapter(client, "k"), tmp_path, rule)
     counts = draft_cases(tmp_path, per_source=6, development=1)
-    assert counts == {"dev": 1, "test": 1}  # one priced turn in each archived meeting
+    assert counts == {"dev": 1, "test": 1}  # each short meeting is one priced block
 
     for split in ("dev", "test"):
         draft = (tmp_path / f"cases-{split}.draft.jsonl").read_text(encoding="utf-8")
@@ -149,6 +164,6 @@ async def test_drafted_excerpts_freeze_into_a_holdout_the_evaluator_accepts(tmp_
         )
         manifest = freeze(tmp_path, split, label_origin="test")
         _, cases = load_holdout(manifest)
-        assert len(cases) == 1 and cases[0]["_source_labels"] == ["교통과장 박서준"]
+        assert len(cases) == 1 and "교통과장 박서준" in cases[0]["_source_labels"]
         with pytest.raises(ValueError, match="never rewritten"):
             freeze(tmp_path, split, label_origin="test")

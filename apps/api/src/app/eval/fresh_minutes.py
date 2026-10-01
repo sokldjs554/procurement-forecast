@@ -7,10 +7,11 @@ SHA-256 of their CLIK meeting id — an order nobody chooses — and at most ``p
 each council. The first ``meetings`` of that order are read in full and archived with their
 hashes.
 
-:func:`select_excerpts` then picks, again by rule and from the archived text alone, the speaker
-turns that will be labelled: turns that state an amount of money or name a purchase-like act.
-That selection keeps turns that turn out to hold no procurement (a 수당 amount, a 보조금), which
-is what makes the negatives honest.
+:func:`select_excerpts` then picks, again by rule and from the archived text alone, the passages
+that will be labelled: blocks of whole lines that state an amount of money or name a
+purchase-like act. Blocks know nothing about speakers, so a council whose speaker layout the
+product does not parse is sampled like any other. The selection keeps passages that turn out to
+hold no procurement (a 수당 amount, a 보조금), which is what makes the negatives honest.
 """
 
 from __future__ import annotations
@@ -23,7 +24,6 @@ from datetime import UTC, date, datetime
 from pathlib import Path
 from typing import Any
 
-from app.parsing.chunking import split_turns
 from app.sources.base import FetchWindow
 from app.sources.clik import ClikMinutesAdapter, external_id
 
@@ -127,19 +127,53 @@ async def sample_minutes(adapter: ClikMinutesAdapter, out_dir: Path, rule: Rule)
     return manifest
 
 
+def blocks(text: str, *, target: int = 1000, longest: int = 1800) -> list[tuple[int, int]]:
+    """Contiguous runs of whole lines of about ``target`` characters, as ``(start, end)``.
+
+    Councils write speakers in many ways ("○위원 김하늘", "위원장 김홍순", or the role and the name
+    on lines of their own), so the unit of selection knows nothing about speakers: a block is
+    just lines. A single line longer than ``longest`` is cut at sentence ends."""
+    out: list[tuple[int, int]] = []
+    start: int | None = None
+    offset = 0
+    for line in text.splitlines(keepends=True):
+        end = offset + len(line.rstrip("\r\n"))
+        if start is None:
+            start = offset
+        if end - start >= target:
+            if end - start <= longest:
+                out.append((start, end))
+            else:
+                out += _cut(text, start, end, target)
+            start = None
+        offset += len(line)
+    if start is not None and text[start:offset].strip():
+        out.append((start, len(text.rstrip("\r\n"))))
+    return [(a, b) for a, b in out if text[a:b].strip()]
+
+
+def _cut(text: str, start: int, end: int, target: int) -> list[tuple[int, int]]:
+    pieces = []
+    while end - start > target * 1.5:
+        cut = text.rfind(". ", start, start + target)
+        cut = cut + 1 if cut > start + target // 3 else start + target
+        pieces.append((start, cut))
+        start = cut + (1 if text[cut : cut + 1] == " " else 0)
+    pieces.append((start, end))
+    return pieces
+
+
 def select_excerpts(
-    source_id: str, text: str, *, per_source: int, min_chars: int = 80, max_chars: int = 2500
+    source_id: str, text: str, *, per_source: int, min_chars: int = 80
 ) -> list[dict[str, Any]]:
-    """Speaker turns that state an amount or name a purchase-like act, in an order fixed by the
-    hash of (source, offset), at most ``per_source``; returned in document order."""
+    """Blocks (:func:`blocks`) that state an amount or name a purchase-like act, in an order
+    fixed by the hash of (source, offset), at most ``per_source``; returned in document order."""
     picked = []
-    for turn in split_turns(text):
-        body = text[turn.start : turn.end]
-        if not min_chars <= len(body) <= max_chars:
+    for start, end in blocks(text):
+        body = text[start:end]
+        if len(body.strip()) < min_chars or not (AMOUNT.search(body) or ACT.search(body)):
             continue
-        if not (AMOUNT.search(body) or ACT.search(body)):
-            continue
-        picked.append((_sha(f"{source_id}:{turn.start}"), turn.start, body))
+        picked.append((_sha(f"{source_id}:{start}"), start, body))
     picked.sort()
     return [
         {"source_id": source_id, "text_char_start": start, "text": body}
@@ -157,7 +191,9 @@ def draft_cases(sample_dir: Path, *, per_source: int = 6, development: int = 5) 
     for split, sources in (("dev", archived[:development]), ("test", archived[development:])):
         rows = []
         for source in sources:
-            text = (sample_dir / source["path"]).read_text(encoding="utf-8")
+            # Bytes, not read_text: universal newlines would turn a source's \r\n into \n and
+            # the excerpts would no longer be found in the archived file.
+            text = (sample_dir / source["path"]).read_bytes().decode("utf-8")
             for n, excerpt in enumerate(
                 select_excerpts(source["id"], text, per_source=per_source), 1
             ):

@@ -1,0 +1,47 @@
+{
+ "schema_version": "source-holdout-v1",
+ "name": "fresh-minutes-2026-10-01-dev",
+ "frozen_before_scoring": true,
+ "frozen_at": "2026-10-01T10:42:14+00:00",
+ "label_origin": "정답: 이 저장소 작업을 맡은 AI(Claude Code)가 2026-10-01 원문만 읽고 작성. 어떤 추출기 출력도 보기 전에 고정. 독립 전문가 정답 아님. 신호 정의는 제품 추출 기준(prompts.py SIGNALS)과 같고, 판단이 갈리는 사업은 ambiguous로 분리(채점에서 제외하고 따로 셈).",
+ "cases_path": "cases-dev.jsonl",
+ "cases_sha256": "093a296e8e74edfca4aa4bddf68e3347c4d116d63a573c71133aa39c95b400e3",
+ "sources": [
+  {
+   "id": "전남광주통합특별시-여수시의회-기획행정위원회-2026-09-02",
+   "path": "sources/전남광주통합특별시-여수시의회-기획행정위원회-2026-09-02.txt",
+   "sha256": "ebe34886fbec1e69182a2ade11cdfbc0fbaf0cc70b728035077f45e0876b7ece",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC2912610263066033",
+   "institution": "전남광주통합특별시 여수시",
+   "title": "전남광주통합특별시 여수시의회 제257회 기획행정위원회 제1차 (2026-09-02)",
+   "meeting_date": "2026-09-02"
+  },
+  {
+   "id": "서울특별시-서초구의회-임시-재정건설위원회-2026-09-14",
+   "path": "sources/서울특별시-서초구의회-임시-재정건설위원회-2026-09-14.txt",
+   "sha256": "8056fc6168279c4742a115f637b48523b7a50badc4dca26431a24038dd845421",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC3076266006944847",
+   "institution": "서울특별시 서초구",
+   "title": "서울특별시 서초구의회 제352회 [임시]재정건설위원회 제5차 (2026-09-14)",
+   "meeting_date": "2026-09-14"
+  },
+  {
+   "id": "전남광주통합특별시-곡성군의회-예산결산특별위원회-2026-09-15",
+   "path": "sources/전남광주통합특별시-곡성군의회-예산결산특별위원회-2026-09-15.txt",
+   "sha256": "5146eb4c0c6d04d4e05031b684d3810f29c1e0299c29344a38eeaa62d2bd14c0",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC3030717065595699",
+   "institution": "전남광주통합특별시 곡성군",
+   "title": "전남광주통합특별시 곡성군의회 제280회 예산결산특별위원회 제6차 (2026-09-15)",
+   "meeting_date": "2026-09-15"
+  },
+  {
+   "id": "충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02",
+   "path": "sources/충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02.txt",
+   "sha256": "c7963fdcdbdc9825a48ce10f28c1f7a2ae1b9280bf4e02b927c9b1ef669097fc",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC3068561877185814",
+   "institution": "충청남도 홍성군",
+   "title": "충청남도 홍성군의회 제321회 홍성군청사이전대책특별위원회 제2차 (2026-09-02)",
+   "meeting_date": "2026-09-02"
+  }
+ ]
+}

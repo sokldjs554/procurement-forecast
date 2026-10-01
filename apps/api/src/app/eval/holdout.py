@@ -96,6 +96,13 @@ def load_holdout(path: Path) -> tuple[dict[str, Any], list[dict[str, Any]]]:
         date.fromisoformat(case["date"])
         if not isinstance(case["expected"], list):
             raise ValueError("expected must be an exhaustive signal list for the excerpt")
+        unsure = case.get("ambiguous", [])
+        if not isinstance(unsure, list) or any(
+            not isinstance(k, str) or not k.strip() for k in unsure
+        ):
+            raise ValueError("ambiguous must be a list of nonempty title phrases")
+        if unsure and not str(case.get("ambiguous_reason", "")).strip():
+            raise ValueError("an ambiguous project needs its reason written down")
         for expected in case["expected"]:
             if not isinstance(expected, dict):
                 raise ValueError("expected signal must be an object")
@@ -160,8 +167,16 @@ def score_cases(rows: list[tuple[dict[str, Any], list[Prediction]]]) -> dict[str
         for k in FIELDS
     }
     failures: list[dict[str, Any]] = []
-    for case, predictions in rows:
+    ignored = 0
+    for case, all_predictions in rows:
         expected = case["expected"]
+        # Projects the labeller marked ambiguous (with a reason) are neither required nor
+        # penalised: a prediction naming one is set aside and counted, never scored.
+        unsure = [_normalized(k) for k in case.get("ambiguous", [])]
+        predictions = [
+            p for p in all_predictions if not any(k in _normalized(p.title) for k in unsure)
+        ]
+        ignored += len(all_predictions) - len(predictions)
         expected_count += len(expected)
         predicted_count += len(predictions)
         negatives += not expected
@@ -223,6 +238,7 @@ def score_cases(rows: list[tuple[dict[str, Any], list[Prediction]]]) -> dict[str
         "negative_cases": negatives,
         "negative_cases_with_predictions": false_negative_cases,
         "negative_case_false_positive_rate": _ratio(false_negative_cases, negatives),
+        "ambiguous_predictions_set_aside": ignored,
         "fields": {
             key: value
             | {
