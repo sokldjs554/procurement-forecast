@@ -14,15 +14,15 @@
   "충청북도",
   "고양시"
  ],
- "updated_at": "2026-10-01T15:04:28+00:00",
- "stopped": "time limit",
- "calls": 1533,
- "seconds": 18031.6,
+ "updated_at": "2026-10-01T15:19:11+00:00",
+ "stopped": null,
+ "calls": 1610,
+ "seconds": 18764.4,
  "summary": {
   "slices_expected": 432,
-  "slices_complete": 406,
-  "rows_read": 1319773,
-  "notices_kept": 71834,
+  "slices_complete": 432,
+  "rows_read": 1382389,
+  "notices_kept": 75054,
   "incomplete": []
  },
  "slices": [
@@ -4084,6 +4084,266 @@
    "read": 3144,
    "kept": 125,
    "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-08-03",
+   "end": "2026-08-09",
+   "total": 2847,
+   "read": 2847,
+   "kept": 173,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-08-03",
+   "end": "2026-08-09",
+   "total": 2059,
+   "read": 2059,
+   "kept": 149,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-08-10",
+   "end": "2026-08-16",
+   "total": 3053,
+   "read": 3053,
+   "kept": 117,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-08-10",
+   "end": "2026-08-16",
+   "total": 3305,
+   "read": 3305,
+   "kept": 267,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-08-10",
+   "end": "2026-08-16",
+   "total": 2147,
+   "read": 2147,
+   "kept": 142,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-08-17",
+   "end": "2026-08-23",
+   "total": 2545,
+   "read": 2545,
+   "kept": 79,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-08-17",
+   "end": "2026-08-23",
+   "total": 2483,
+   "read": 2483,
+   "kept": 122,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-08-17",
+   "end": "2026-08-23",
+   "total": 1741,
+   "read": 1741,
+   "kept": 131,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-08-24",
+   "end": "2026-08-30",
+   "total": 2680,
+   "read": 2680,
+   "kept": 102,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-08-24",
+   "end": "2026-08-30",
+   "total": 2658,
+   "read": 2658,
+   "kept": 80,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-08-24",
+   "end": "2026-08-30",
+   "total": 2334,
+   "read": 2334,
+   "kept": 138,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-08-31",
+   "end": "2026-09-06",
+   "total": 2913,
+   "read": 2913,
+   "kept": 101,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-08-31",
+   "end": "2026-09-06",
+   "total": 2570,
+   "read": 2570,
+   "kept": 65,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-08-31",
+   "end": "2026-09-06",
+   "total": 2120,
+   "read": 2120,
+   "kept": 163,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-09-07",
+   "end": "2026-09-13",
+   "total": 2890,
+   "read": 2890,
+   "kept": 107,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-09-07",
+   "end": "2026-09-13",
+   "total": 3083,
+   "read": 3083,
+   "kept": 144,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-09-07",
+   "end": "2026-09-13",
+   "total": 2350,
+   "read": 2350,
+   "kept": 110,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-09-14",
+   "end": "2026-09-20",
+   "total": 2924,
+   "read": 2924,
+   "kept": 113,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-09-14",
+   "end": "2026-09-20",
+   "total": 3118,
+   "read": 3118,
+   "kept": 228,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-09-14",
+   "end": "2026-09-20",
+   "total": 2132,
+   "read": 2132,
+   "kept": 191,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-09-21",
+   "end": "2026-09-27",
+   "total": 2010,
+   "read": 2010,
+   "kept": 88,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-09-21",
+   "end": "2026-09-27",
+   "total": 1752,
+   "read": 1752,
+   "kept": 38,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-09-21",
+   "end": "2026-09-27",
+   "total": 1416,
+   "read": 1416,
+   "kept": 101,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-09-28",
+   "end": "2026-09-30",
+   "total": 2002,
+   "read": 2002,
+   "kept": 84,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-09-28",
+   "end": "2026-09-30",
+   "total": 1757,
+   "read": 1757,
+   "kept": 64,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-09-28",
+   "end": "2026-09-30",
+   "total": 1727,
+   "read": 1727,
+   "kept": 123,
+   "pages": 2,
    "error": null
   }
  ]
