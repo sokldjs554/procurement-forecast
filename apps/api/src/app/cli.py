@@ -16,6 +16,8 @@ manage queue enqueue-media VIDEO --org 1 --title … --meeting-date …   # the 
 manage queue worker               # Postgres-queue stage worker (media.transcribe)
 manage apikey create --org 1 --name ci --scope jobs:write   # printed once
 manage worker                     # arq worker + cron (+ /healthz on $PORT for Cloud Run)
+manage ops bootstrap              # real reference data only (institutions, keyed live sources)
+manage ops tick                   # one scheduled pass without a resident worker or Redis
 manage openapi > openapi.json     # schema for the web app's generated types
 """
 
@@ -48,6 +50,7 @@ link_app = typer.Typer(help="Linking real signals again, without fetching or ext
 media_app = typer.Typer(help="Council meeting video → transcript → signals")
 queue_app = typer.Typer(help="Postgres job queue (long, costed, tenant-owned jobs)")
 apikey_app = typer.Typer(help="API keys for the job API")
+ops_app = typer.Typer(help="Scheduled operation without a resident worker (free hosting)")
 app.add_typer(db_app, name="db")
 app.add_typer(demo_app, name="demo")
 app.add_typer(eval_app, name="eval")
@@ -58,6 +61,7 @@ app.add_typer(link_app, name="link")
 app.add_typer(media_app, name="media")
 app.add_typer(queue_app, name="queue")
 app.add_typer(apikey_app, name="apikey")
+app.add_typer(ops_app, name="ops")
 
 T = TypeVar("T")
 
@@ -1019,6 +1023,76 @@ def bench(
     sizes = {k: max(1, int(v * scale)) for k, v in SIZES.items()}
     results = _run(lambda: run_bench(sizes, report, log=typer.echo))
     typer.echo(json.dumps(results, ensure_ascii=False, indent=2, default=str))
+
+
+@ops_app.command("bootstrap")
+def ops_bootstrap() -> None:
+    """Institutions and the live sources whose keys are set; refuses a demo-seeded database."""
+    from app.db.session import dispose_engine
+    from app.ops import bootstrap
+
+    configure_logging(json=False, level="WARNING", stream=sys.stderr)
+
+    async def go() -> dict[str, Any]:
+        try:
+            return await bootstrap(get_settings())
+        finally:
+            await dispose_engine()
+
+    try:
+        result = _run(go)
+    except RuntimeError as exc:
+        typer.echo(f"Refused: {exc}", err=True)
+        raise typer.Exit(1) from None
+    typer.echo(json.dumps(result, ensure_ascii=False))
+
+
+@ops_app.command("tick")
+def ops_tick(
+    max_minutes: float = typer.Option(
+        50.0, min=1, help="Start no new job after this long; durable state carries over"
+    ),
+    first_window_days: int = typer.Option(
+        7, min=1, max=30, help="Days a source that was never fetched backfills"
+    ),
+    storage_limit_mb: float = typer.Option(
+        None, min=1, help="Database size the host allows; fetching pauses at 90% of it"
+    ),
+    prune_raw: bool = typer.Option(
+        False, help="Delete originals of processed documents (file:// store on a CI runner)"
+    ),
+    since: str = typer.Option(None, help="Look for due crons from here (ISO), not the last pass"),
+    report: Path = typer.Option(None, help="Also write the JSON report here"),
+) -> None:
+    """Run the crons due since the previous pass with the worker's own schedule and jobs, then
+    every job they enqueue, in this process. Exit 1 when a job failed (retries are not
+    failures)."""
+    from app.db.session import dispose_engine
+    from app.ops import tick
+
+    configure_logging(json=False, level="WARNING", stream=sys.stderr)
+
+    async def go() -> dict[str, Any]:
+        try:
+            result = await tick(
+                get_settings(),
+                since=datetime.fromisoformat(since) if since else None,
+                max_minutes=max_minutes,
+                first_window_days=first_window_days,
+                storage_limit_mb=storage_limit_mb,
+                prune=prune_raw,
+            )
+            return result.as_dict()
+        finally:
+            await dispose_engine()
+
+    result = _run(go)
+    out = json.dumps(result, ensure_ascii=False, indent=2)
+    if report is not None:
+        report.write_text(out + "\n", encoding="utf-8")
+    typer.echo(out)
+    if result["failed"]:
+        raise typer.Exit(1)
 
 
 @app.command()

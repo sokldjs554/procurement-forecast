@@ -1,0 +1,131 @@
+name: Scheduled operations (free tier)
+
+# The free deployment's worker (docs/free-operations.md). Every hour a runner starts, migrates the
+# hosted PostgreSQL, and runs one pass of the worker's own schedule (`manage ops tick`): the crons
+# that came due since the previous pass and everything they enqueue — fetch, process, link,
+# recommend. Then it exits. No paid model is called. Off until the repository variable
+# OPS_ENABLED is 'true'.
+on:
+  schedule:
+    - cron: "23 * * * *"
+  workflow_dispatch:
+    inputs:
+      first_window_days:
+        description: Days a source that was never fetched backfills (1–30)
+        default: "7"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ops-tick
+  cancel-in-progress: false
+
+jobs:
+  tick:
+    name: One scheduled pass
+    if: vars.OPS_ENABLED == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 90
+    env:
+      APP_ENV: production
+      APP_LOG_JSON: "false"
+      APP_LLM_PROVIDER: heuristic
+      APP_EMBEDDING_PROVIDER: hashing
+      # Originals live on the runner. Each pass deletes those it processed and carries the
+      # pending ones to the next pass in the Actions cache (manage ops tick --prune-raw).
+      APP_STORAGE_URL: file://${{ github.workspace }}/.ops-raw
+      APP_DATA_GO_KR_SERVICE_KEY: ${{ secrets.APP_DATA_GO_KR_SERVICE_KEY }}
+      APP_CLIK_API_KEY: ${{ secrets.APP_CLIK_API_KEY }}
+      APP_LOFIN_API_KEY: ${{ secrets.APP_LOFIN_API_KEY }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: OCR engine and Korean fonts (scanned budget books)
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-kor fonts-nanum
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.8.17"
+          python-version: "3.11"
+          enable-cache: true
+          cache-dependency-glob: apps/api/uv.lock
+      - name: Connect to the hosted database
+        env:
+          OPS_DATABASE_URL: ${{ secrets.OPS_DATABASE_URL }}
+          APP_JWT_SECRET: ${{ secrets.APP_JWT_SECRET }}
+          APP_BILLING_KEY_ENCRYPTION_KEY: ${{ secrets.APP_BILLING_KEY_ENCRYPTION_KEY }}
+        # Hosts hand out libpq URLs (postgresql://…?sslmode=require); asyncpg takes ssl=require.
+        # The derived values are masked before anything could print them. A pass never signs
+        # tokens or reads billing keys; production settings still refuse the development
+        # defaults, so a per-run value stands in when no secret is set.
+        run: |
+          python3 - <<'PY'
+          import base64, os, secrets, sys
+          from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+
+          raw = os.environ.get("OPS_DATABASE_URL", "").strip()
+          if not raw:
+              sys.exit("Set the OPS_DATABASE_URL repository secret (docs/free-operations.md).")
+          parts = urlsplit(raw)
+          if parts.scheme not in {"postgres", "postgresql", "postgresql+asyncpg"} or not parts.hostname:
+              sys.exit("OPS_DATABASE_URL is not a PostgreSQL connection string.")
+          query = dict(parse_qsl(parts.query))
+          ssl = query.pop("sslmode", None)
+          query.pop("channel_binding", None)
+          if ssl and ssl != "disable":
+              query["ssl"] = "require"
+          values = {
+              "APP_DATABASE_URL": urlunsplit(("postgresql+asyncpg", parts.netloc, parts.path, urlencode(query), "")),
+              "APP_JWT_SECRET": os.environ.get("APP_JWT_SECRET") or secrets.token_urlsafe(48),
+              "APP_BILLING_KEY_ENCRYPTION_KEY": os.environ.get("APP_BILLING_KEY_ENCRYPTION_KEY")
+              or base64.urlsafe_b64encode(secrets.token_bytes(32)).decode(),
+          }
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env:
+              for name, value in values.items():
+                  print(f"::add-mask::{value}")
+                  env.write(f"{name}={value}\n")
+          PY
+      - name: Migrate and load real reference data
+        working-directory: apps/api
+        run: |
+          uv sync --frozen
+          uv run manage db upgrade
+          uv run manage ops bootstrap
+      - name: Bring the originals still waiting from the previous pass
+        uses: actions/cache/restore@v4
+        with:
+          path: .ops-raw
+          key: ops-raw-${{ github.run_id }}
+          restore-keys: ops-raw-
+      - name: One pass of the worker's schedule
+        working-directory: apps/api
+        env:
+          FIRST_WINDOW_DAYS: ${{ inputs.first_window_days || '7' }}
+          STORAGE_LIMIT_MB: ${{ vars.OPS_DB_LIMIT_MB }}
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/.ops-raw"
+          args=(--max-minutes 70 --first-window-days "$FIRST_WINDOW_DAYS" --prune-raw --report "$RUNNER_TEMP/tick.json")
+          if [ -n "$STORAGE_LIMIT_MB" ]; then args+=(--storage-limit-mb "$STORAGE_LIMIT_MB"); fi
+          uv run manage ops tick "${args[@]}"
+      - name: Summary
+        if: always()
+        run: |
+          [ -f "$RUNNER_TEMP/tick.json" ] || exit 0
+          jq -r '
+            "### Scheduled pass\n",
+            "| | |", "|---|---|",
+            "| Window | \(.since) → \(.until) |",
+            "| Crons run | \(.crons | join(", ")) |",
+            "| Crons skipped | \(.skipped_crons | join(", ")) |",
+            "| Jobs | \(.jobs | to_entries | map("\(.key) \(.value)") | join(", ")) |",
+            "| Succeeded · retry later · failed | \(.succeeded) · \(.retry_later) · \(.failed) |",
+            "| Pending documents after | \(.pending_documents) |",
+            "| Database size | \(.database_mb) MB\(if .storage_guard then " — fetching paused (storage guard)" else "" end) |",
+            "| Stopped at deadline | \(.stopped_at_deadline) |",
+            "| Another pass held the lock | \(.locked_out) |"
+          ' "$RUNNER_TEMP/tick.json" >> "$GITHUB_STEP_SUMMARY"
+      - name: Carry the originals still waiting to the next pass
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: .ops-raw
+          key: ops-raw-${{ github.run_id }}
