@@ -1,0 +1,42 @@
+name: Research checkpoint (no deployment)
+
+on:
+  pull_request:
+    paths:
+      - .github/workflows/research-checkpoint.yml
+
+permissions:
+  contents: read
+
+jobs:
+  checkpoint:
+    if: github.event.pull_request.number == 65 && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          path: code
+          persist-credentials: false
+      - uses: actions/checkout@v7
+        with:
+          ref: eval/2026-10-01-v10-evidence
+          path: evidence
+          persist-credentials: false
+      - name: Archive tracked research inputs and code only
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir checkpoint
+          git -C code rev-parse HEAD > checkpoint/code-sha.txt
+          git -C evidence rev-parse HEAD > checkpoint/evidence-sha.txt
+          git -C code archive --format=tar.gz HEAD apps/api eval scripts docs/data docs/local-llm.md AGENTS.md .github > checkpoint/code.tar.gz
+          git -C evidence archive --format=tar.gz HEAD docs/data > checkpoint/evidence.tar.gz
+          (cd checkpoint && sha256sum code.tar.gz evidence.tar.gz > SHA256SUMS)
+      - uses: actions/upload-artifact@v7
+        with:
+          name: research-checkpoint
+          path: checkpoint/
+          if-no-files-found: error
+          retention-days: 1
