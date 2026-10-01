@@ -1,0 +1,206 @@
+{
+  "extractor": "heuristic-v9",
+  "method": "direct_provider_plus_production_verifier_without_DB_cache",
+  "after_verifier": {
+    "expected": 50,
+    "predicted": 29,
+    "matched": 27,
+    "precision": 0.931,
+    "recall": 0.54,
+    "f1": 0.684,
+    "field_accuracy": {
+      "category": 0.926,
+      "commitment": 0.852,
+      "budget": 0.889,
+      "expected_year": 0.926
+    }
+  },
+  "failures": [
+    {
+      "case": "r01",
+      "missing": "수요응답"
+    },
+    {
+      "case": "r01",
+      "unexpected": "차량 임차와 플랫폼 구축"
+    },
+    {
+      "case": "r02",
+      "missing": "지하차도"
+    },
+    {
+      "case": "r03",
+      "title": "다만 행안부 공통기반 전환",
+      "wrong": {
+        "commitment": {
+          "got": "committed",
+          "expected": "declined"
+        },
+        "expected_year": {
+          "got": 2025,
+          "expected": null
+        }
+      }
+    },
+    {
+      "case": "r05",
+      "missing": "메타버스"
+    },
+    {
+      "case": "r06",
+      "title": "독거어르신 돌봄 스피커 사업",
+      "wrong": {
+        "commitment": {
+          "got": "planned",
+          "expected": "committed"
+        }
+      }
+    },
+    {
+      "case": "r07",
+      "title": "송도 쪽 스마트폴 설치",
+      "wrong": {
+        "commitment": {
+          "got": "committed",
+          "expected": "reviewing"
+        },
+        "expected_year": {
+          "got": 2025,
+          "expected": null
+        },
+        "budget": {
+          "got": 950000000,
+          "expected": null
+        }
+      }
+    },
+    {
+      "case": "r07",
+      "missing": "선별관제"
+    },
+    {
+      "case": "r09",
+      "title": "지난달 정부 AI 공모사업",
+      "wrong": {
+        "category": {
+          "got": "ai_data",
+          "expected": "public_sw"
+        }
+      }
+    },
+    {
+      "case": "r10",
+      "missing": "태양광"
+    },
+    {
+      "case": "r16",
+      "missing": "횡단보도"
+    },
+    {
+      "case": "r16",
+      "title": "전 구간에 비상벨을 추가하는 사업",
+      "wrong": {
+        "budget": {
+          "got": 120000000,
+          "expected": null
+        }
+      }
+    },
+    {
+      "case": "r16",
+      "missing": "보행자"
+    },
+    {
+      "case": "r21",
+      "missing": "통합관제"
+    },
+    {
+      "case": "r24",
+      "missing": "종량기"
+    },
+    {
+      "case": "r25",
+      "missing": "킥보드"
+    },
+    {
+      "case": "r26",
+      "title": "생태 보호구역이 포함돼 있어서 설치",
+      "wrong": {
+        "category": {
+          "got": "smart_city",
+          "expected": "safety_cctv"
+        },
+        "commitment": {
+          "got": "planned",
+          "expected": "committed"
+        }
+      }
+    },
+    {
+      "case": "r26",
+      "missing": "가로등"
+    },
+    {
+      "case": "r28",
+      "missing": "데이터"
+    },
+    {
+      "case": "r29",
+      "missing": "키오스크"
+    },
+    {
+      "case": "r31",
+      "missing": "치매"
+    },
+    {
+      "case": "r32",
+      "title": "노후 방범 CCTV 교 체  7",
+      "wrong": {
+        "budget": {
+          "got": 20000000,
+          "expected": 720000000
+        }
+      }
+    },
+    {
+      "case": "r34",
+      "missing": "앱"
+    },
+    {
+      "case": "r35",
+      "missing": "대출"
+    },
+    {
+      "case": "r37",
+      "missing": "쉘터"
+    },
+    {
+      "case": "r40",
+      "missing": "접근성"
+    },
+    {
+      "case": "r43",
+      "missing": "수소"
+    },
+    {
+      "case": "r46",
+      "missing": "드론"
+    },
+    {
+      "case": "r48",
+      "missing": "자전거"
+    },
+    {
+      "case": "r48",
+      "unexpected": "원씩 들어서 지금 단계에서는 도입"
+    },
+    {
+      "case": "r50",
+      "missing": "쓰레기통"
+    },
+    {
+      "case": "r52",
+      "missing": "산불"
+    }
+  ]
+}

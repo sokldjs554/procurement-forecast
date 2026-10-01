@@ -36,7 +36,7 @@ from app.llm.schemas import Commitment, ExtractedSignal, ExtractionOutput
 from app.llm.types import LLMResult
 from app.parsing.chunking import budget_project_row, chunk_budget, match_speaker
 
-HEURISTIC_VERSION = "heuristic-v8"
+HEURISTIC_VERSION = "heuristic-v9"
 
 _SENTENCE_RE = re.compile(r"[^.?!。]+[.?!。]?")
 _SPEAKER_LABEL_RE = re.compile(r"(?P<role>[가-힣A-Za-z·]{1,20}) [가-힣]{2,4}")
@@ -372,9 +372,16 @@ def _extract_exchange(ctx: ChunkContext) -> list[ExtractedSignal]:
     budget_sentences = [
         s
         for s in sentences
-        if not re.search(r"(?:다고\s*)?하면|경우|가정|지난해|작년|기집행|이미|취소|반납", s)
+        if not re.search(r"(?:다고\s*)?하면|경우|가정|지난해|작년|기집행|취소|반납", s)
     ]
     candidates = [(amount, s) for s in budget_sentences for amount in find_amounts(s)]
+    totals = [
+        (amount, s)
+        for amount, s in candidates
+        if re.search(r"(?:총|총사업비|총예산)(?:은|는|이|가)?\s*$", s[: amount.start])
+    ]
+    if totals:
+        candidates = totals
     values = {amount.value for amount, _ in candidates}
     budget = candidates[0][0] if len(values) == 1 else None
     amount_sentence = candidates[0][1] if budget else None

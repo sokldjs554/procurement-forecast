@@ -41,6 +41,38 @@ async def test_exchange_unattributed_multiple_amounts_stay_unknown() -> None:
     assert signals[0].budget_krw is None
 
 
+async def test_exchange_explicit_total_is_not_confused_with_funding_component() -> None:
+    signals = await extract(
+        "○정보화과장 김서준  국비 2억 원을 확보했고 시비를 더해 "
+        "총 7억 원 규모로 민원 플랫폼 구축을 올해 추진할 계획입니다."
+    )
+    assert len(signals) == 1
+    assert signals[0].budget_krw == 700_000_000
+
+
+async def test_exchange_multiple_project_totals_remain_ambiguous() -> None:
+    signals = await extract(
+        "○정보화과장 김서준  민원 플랫폼 구축에 총 7억 원을 사용할 계획입니다. "
+        "별도 관제시스템 구축에도 총 9억 원을 사용할 계획입니다."
+    )
+    assert len(signals) == 1
+    assert signals[0].budget_krw is None
+
+
+@pytest.mark.parametrize(
+    "cost_statement",
+    ["공사비 6억 원은 이미 확보했습니다.", "설계는 이미 끝났고 공사비는 6억 원입니다."],
+)
+async def test_completed_preparation_does_not_erase_future_purchase_budget(
+    cost_statement: str,
+) -> None:
+    signals = await extract(
+        "○시설과장 김서준  주민센터 리모델링 공사를 내년에 발주할 예정입니다. " + cost_statement
+    )
+    assert len(signals) == 1
+    assert signals[0].budget_krw == 600_000_000
+
+
 async def test_numbered_review_sections_preserve_current_budget_and_boundaries() -> None:
     text = (
         "1) 주민센터 리모델링 공사(신규)(p.70)\n"
