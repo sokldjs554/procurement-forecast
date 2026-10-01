@@ -281,3 +281,68 @@ def test_a_long_speech_keeps_its_lead_line_with_what_follows() -> None:
     assert chunks[0].text.rstrip().endswith("주요사업비 예산 반영 내역입니다.")
     assert chunks[1].text.lstrip().startswith("주요사업비 예산 반영 내역입니다.")
     assert speech[chunks[1].char_start : chunks[1].char_end] == chunks[1].text
+
+
+# Two layouts seen in CLIK minutes with no ○ at all (2026-09, docs/fresh-holdout.md).
+SEOCHO_LAYOUT = """의사일정
+1. 2026년도 제2회 추가경정예산안
+9시 59분 개의
+위원장
+신정태
+의석을 정돈하여 주시기 바랍니다.
+김해바른
+위원
+예산서 249페이지 도로굴착 관련 건인데 이번 추경에서 아스팔트 재포장 예산이 늘었습니다. 왜 그렇습니까?
+위원장
+신정태
+과장님 답변하여 주시기 바랍니다.
+도로과장
+남만조
+금회 추경에 반영한 6억원은 포트홀 긴급 보수 위주로 편성했습니다.
+"""
+
+GOKSEONG_LAYOUT = """(10시00분 개의)
+위원장 김홍순
+의석을 정돈해 주시기 바랍니다.
+전문위원 장연환
+전문위원 장연환입니다.
+2025회계연도 결산 총괄 설명을 드리겠습니다.
+위원장 김홍순
+수고하셨습니다.
+"""
+
+
+def test_speakers_without_a_mark_are_read_when_the_marked_forms_find_nothing() -> None:
+    turns = split_turns(SEOCHO_LAYOUT)
+    assert [f"{t.role} {t.name}" for t in turns] == [
+        "위원장 신정태",
+        "위원 김해바른",
+        "위원장 신정태",
+        "도로과장 남만조",
+    ]
+    answer = turns[-1]
+    assert SEOCHO_LAYOUT[answer.start : answer.end].endswith("편성했습니다.")
+    kinds = [c.kind for c in chunk_minutes(SEOCHO_LAYOUT)]
+    assert "exchange" in kinds  # the member's question stays with the official's answer
+    exchange = next(c for c in chunk_minutes(SEOCHO_LAYOUT) if c.kind == "exchange")
+    assert "6억원" in exchange.text and "도로굴착" in exchange.text
+
+    assert [f"{t.role} {t.name}" for t in split_turns(GOKSEONG_LAYOUT)] == [
+        "위원장 김홍순",
+        "전문위원 장연환",
+        "위원장 김홍순",
+    ]
+
+
+def test_marked_minutes_are_split_exactly_as_before() -> None:
+    marked = (
+        "○위원장 이도윤  개의하겠습니다.\n"
+        "위원장\n신정태\n"  # would read as a bare speaker if the fallback ran
+        "○위원 김하늘  쉘터 설치 계획을 여쭙겠습니다.\n"
+        "○교통과장 박서준  내년 본예산에 반영하겠습니다.\n"
+    )
+    assert [f"{t.role} {t.name}" for t in split_turns(marked)] == [
+        "위원장 이도윤",
+        "위원 김하늘",
+        "교통과장 박서준",
+    ]
