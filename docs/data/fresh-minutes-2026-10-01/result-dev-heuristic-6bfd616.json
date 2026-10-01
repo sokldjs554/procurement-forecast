@@ -1,0 +1,690 @@
+{
+  "schema_version": "source-holdout-result-v1",
+  "evaluated_at": "2026-10-01T10:42:41.374678+00:00",
+  "code_revision": "6bfd616",
+  "extractor": "heuristic-v5",
+  "api_cost_usd": 0.0,
+  "max_usd": 0,
+  "skipped_cases": [],
+  "manifest_sha256": "f034c20b8b650e4f92be253a784c017530cde9132b2ca7bbb8ef5041f5ab4479",
+  "cases_sha256": "093a296e8e74edfca4aa4bddf68e3347c4d116d63a573c71133aa39c95b400e3",
+  "label_origin": "정답: 이 저장소 작업을 맡은 AI(Claude Code)가 2026-10-01 원문만 읽고 작성. 어떤 추출기 출력도 보기 전에 고정. 독립 전문가 정답 아님. 신호 정의는 제품 추출 기준(prompts.py SIGNALS)과 같고, 판단이 갈리는 사업은 ambiguous로 분리(채점에서 제외하고 따로 셈).",
+  "independent_human_gold": false,
+  "scope": "selected_parsed_excerpts_extraction_only_not_ocr_linking_or_forecasting",
+  "matching": "maximum_one_to_one_title_phrase_whitespace_insensitive_budget_2pct",
+  "context_policy": "speaker_labels_and_grounding_offsets_from_verified_full_source_not_gold",
+  "documents": 4,
+  "institutions": [
+    "서울특별시 서초구",
+    "전남광주통합특별시 곡성군",
+    "전남광주통합특별시 여수시",
+    "충청남도 홍성군"
+  ],
+  "raw": {
+    "cases": 24,
+    "expected": 8,
+    "predicted": 1,
+    "matched": 0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "negative_cases": 19,
+    "negative_cases_with_predictions": 0,
+    "negative_case_false_positive_rate": 0.0,
+    "ambiguous_predictions_set_aside": 1,
+    "fields": {
+      "category": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 0,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": null
+      },
+      "commitment": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 8,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": 0.0
+      },
+      "budget_krw": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 7,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": 0.0
+      },
+      "expected_year": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 7,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": 0.0
+      }
+    },
+    "failures": [
+      {
+        "case": "dev-서울특별시-서초구의회-임시-재정건설위원회-2026-09-14-2",
+        "missing": [
+          "카페골목"
+        ]
+      },
+      {
+        "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-1",
+        "missing": [
+          "홍주성"
+        ]
+      },
+      {
+        "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-1",
+        "missing": [
+          "문화거점",
+          "홍주초"
+        ]
+      },
+      {
+        "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-1",
+        "unexpected": "이거는타지역성공사례라든가그리고주민토론회라든가를거쳐서저희가향후에국·도비공모사업"
+      },
+      {
+        "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-2",
+        "missing": [
+          "연구용역"
+        ]
+      },
+      {
+        "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-2",
+        "missing": [
+          "문화거점",
+          "홍주초"
+        ]
+      },
+      {
+        "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-3",
+        "missing": [
+          "공영주차장"
+        ]
+      },
+      {
+        "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-6",
+        "missing": [
+          "어울림센터"
+        ]
+      },
+      {
+        "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-6",
+        "missing": [
+          "특화가로",
+          "특화거리"
+        ]
+      }
+    ]
+  },
+  "after_verifier": {
+    "cases": 24,
+    "expected": 8,
+    "predicted": 1,
+    "matched": 0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "negative_cases": 19,
+    "negative_cases_with_predictions": 0,
+    "negative_case_false_positive_rate": 0.0,
+    "ambiguous_predictions_set_aside": 1,
+    "fields": {
+      "category": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 0,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": null
+      },
+      "commitment": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 8,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": 0.0
+      },
+      "budget_krw": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 7,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": 0.0
+      },
+      "expected_year": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 7,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": 0.0
+      }
+    },
+    "failures": [
+      {
+        "case": "dev-서울특별시-서초구의회-임시-재정건설위원회-2026-09-14-2",
+        "missing": [
+          "카페골목"
+        ]
+      },
+      {
+        "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-1",
+        "missing": [
+          "홍주성"
+        ]
+      },
+      {
+        "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-1",
+        "missing": [
+          "문화거점",
+          "홍주초"
+        ]
+      },
+      {
+        "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-1",
+        "unexpected": "이거는타지역성공사례라든가그리고주민토론회라든가를거쳐서저희가향후에국·도비공모사업"
+      },
+      {
+        "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-2",
+        "missing": [
+          "연구용역"
+        ]
+      },
+      {
+        "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-2",
+        "missing": [
+          "문화거점",
+          "홍주초"
+        ]
+      },
+      {
+        "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-3",
+        "missing": [
+          "공영주차장"
+        ]
+      },
+      {
+        "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-6",
+        "missing": [
+          "어울림센터"
+        ]
+      },
+      {
+        "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-6",
+        "missing": [
+          "특화가로",
+          "특화거리"
+        ]
+      }
+    ]
+  },
+  "by_institution": {
+    "서울특별시 서초구": {
+      "cases": 6,
+      "expected": 1,
+      "predicted": 0,
+      "matched": 0,
+      "precision": null,
+      "recall": 0.0,
+      "negative_cases": 5,
+      "negative_cases_with_predictions": 0,
+      "negative_case_false_positive_rate": 0.0,
+      "ambiguous_predictions_set_aside": 0,
+      "fields": {
+        "category": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        },
+        "commitment": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 1,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "budget_krw": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 1,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "expected_year": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 1,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        }
+      },
+      "failures": [
+        {
+          "case": "dev-서울특별시-서초구의회-임시-재정건설위원회-2026-09-14-2",
+          "missing": [
+            "카페골목"
+          ]
+        }
+      ]
+    },
+    "전남광주통합특별시 곡성군": {
+      "cases": 6,
+      "expected": 0,
+      "predicted": 0,
+      "matched": 0,
+      "precision": null,
+      "recall": null,
+      "negative_cases": 6,
+      "negative_cases_with_predictions": 0,
+      "negative_case_false_positive_rate": 0.0,
+      "ambiguous_predictions_set_aside": 0,
+      "fields": {
+        "category": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        },
+        "commitment": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        },
+        "budget_krw": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        },
+        "expected_year": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        }
+      },
+      "failures": []
+    },
+    "전남광주통합특별시 여수시": {
+      "cases": 6,
+      "expected": 0,
+      "predicted": 0,
+      "matched": 0,
+      "precision": null,
+      "recall": null,
+      "negative_cases": 6,
+      "negative_cases_with_predictions": 0,
+      "negative_case_false_positive_rate": 0.0,
+      "ambiguous_predictions_set_aside": 0,
+      "fields": {
+        "category": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        },
+        "commitment": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        },
+        "budget_krw": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        },
+        "expected_year": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        }
+      },
+      "failures": []
+    },
+    "충청남도 홍성군": {
+      "cases": 6,
+      "expected": 7,
+      "predicted": 1,
+      "matched": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "negative_cases": 2,
+      "negative_cases_with_predictions": 0,
+      "negative_case_false_positive_rate": 0.0,
+      "ambiguous_predictions_set_aside": 1,
+      "fields": {
+        "category": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        },
+        "commitment": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 7,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "budget_krw": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 6,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        },
+        "expected_year": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 6,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": 0.0
+        }
+      },
+      "failures": [
+        {
+          "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-1",
+          "missing": [
+            "홍주성"
+          ]
+        },
+        {
+          "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-1",
+          "missing": [
+            "문화거점",
+            "홍주초"
+          ]
+        },
+        {
+          "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-1",
+          "unexpected": "이거는타지역성공사례라든가그리고주민토론회라든가를거쳐서저희가향후에국·도비공모사업"
+        },
+        {
+          "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-2",
+          "missing": [
+            "연구용역"
+          ]
+        },
+        {
+          "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-2",
+          "missing": [
+            "문화거점",
+            "홍주초"
+          ]
+        },
+        {
+          "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-3",
+          "missing": [
+            "공영주차장"
+          ]
+        },
+        {
+          "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-6",
+          "missing": [
+            "어울림센터"
+          ]
+        },
+        {
+          "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-6",
+          "missing": [
+            "특화가로",
+            "특화거리"
+          ]
+        }
+      ]
+    }
+  },
+  "predictions": [
+    {
+      "case": "dev-전남광주통합특별시-여수시의회-기획행정위원회-2026-09-02-1",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-전남광주통합특별시-여수시의회-기획행정위원회-2026-09-02-2",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-전남광주통합특별시-여수시의회-기획행정위원회-2026-09-02-3",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-전남광주통합특별시-여수시의회-기획행정위원회-2026-09-02-4",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-전남광주통합특별시-여수시의회-기획행정위원회-2026-09-02-5",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-전남광주통합특별시-여수시의회-기획행정위원회-2026-09-02-6",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-서울특별시-서초구의회-임시-재정건설위원회-2026-09-14-1",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-서울특별시-서초구의회-임시-재정건설위원회-2026-09-14-2",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-서울특별시-서초구의회-임시-재정건설위원회-2026-09-14-3",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-서울특별시-서초구의회-임시-재정건설위원회-2026-09-14-4",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-서울특별시-서초구의회-임시-재정건설위원회-2026-09-14-5",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-서울특별시-서초구의회-임시-재정건설위원회-2026-09-14-6",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-전남광주통합특별시-곡성군의회-예산결산특별위원회-2026-09-15-1",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-전남광주통합특별시-곡성군의회-예산결산특별위원회-2026-09-15-2",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-전남광주통합특별시-곡성군의회-예산결산특별위원회-2026-09-15-3",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-전남광주통합특별시-곡성군의회-예산결산특별위원회-2026-09-15-4",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-전남광주통합특별시-곡성군의회-예산결산특별위원회-2026-09-15-5",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-전남광주통합특별시-곡성군의회-예산결산특별위원회-2026-09-15-6",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-1",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "이거는타지역성공사례라든가그리고주민토론회라든가를거쳐서저희가향후에국·도비공모사업",
+            "keywords": [
+              "학교",
+              "관광",
+              "문화",
+              "콘텐츠",
+              "공사"
+            ],
+            "category": "facility",
+            "commitment": "reviewing",
+            "budget_krw": 50000000,
+            "expected_year": null
+          },
+          "verdict": "accepted",
+          "issues": []
+        }
+      ],
+      "raw_signals": [
+        {
+          "title": "이거는타지역성공사례라든가그리고주민토론회라든가를거쳐서저희가향후에국·도비공모사업",
+          "summary": "충청남도 홍성군에서 이거는타지역성공사례라든가그리고주민토론회라든가를거쳐서저희가향후에국·도비공모사업 관련 발언(reviewing)",
+          "category": "facility",
+          "institution_mention": "충청남도 홍성군",
+          "department": "문화유산과",
+          "budget_text": "5,000만원",
+          "budget_krw": 50000000,
+          "timing_text": null,
+          "expected_year": null,
+          "expected_half": null,
+          "commitment": "reviewing",
+          "procurement_type": "unknown",
+          "keywords": [
+            "학교",
+            "관광",
+            "문화",
+            "콘텐츠",
+            "공사"
+          ],
+          "evidence": [
+            "위원님께서걱정하는부분은알겠는데요,저희가자료담을때만큼의결정이된사항은아니고저희가이번추경을보시면홍주성활용및원도심활성화계획관련돼서연구용역비5,000만원이지금계상이됐습니다."
+          ],
+          "confidence": 0.65
+        }
+      ]
+    },
+    {
+      "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-2",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "저희가다철거가아니라활용으로지금전환",
+            "keywords": [
+              "전환",
+              "학교",
+              "관광",
+              "문화",
+              "리모델링"
+            ],
+            "category": "public_sw",
+            "commitment": "planned",
+            "budget_krw": 10000000000,
+            "expected_year": 2027
+          },
+          "verdict": "accepted",
+          "issues": []
+        }
+      ],
+      "raw_signals": [
+        {
+          "title": "저희가다철거가아니라활용으로지금전환",
+          "summary": "충청남도 홍성군에서 저희가다철거가아니라활용으로지금전환 관련 발언(planned)",
+          "category": "public_sw",
+          "institution_mention": "충청남도 홍성군",
+          "department": "문화유산과",
+          "budget_text": "100억",
+          "budget_krw": 10000000000,
+          "timing_text": "내년7월이면나가",
+          "expected_year": 2027,
+          "expected_half": "H2",
+          "commitment": "planned",
+          "procurement_type": "unknown",
+          "keywords": [
+            "전환",
+            "학교",
+            "관광",
+            "문화",
+            "리모델링"
+          ],
+          "evidence": [
+            "그래서국가유산청에서아마승인이나지도않을뿐더러지금저희가활용방안계획연구용역을할때는분명한타깃팅을저희가잡을겁니다.",
+            "관광객을잡든우리주민들의편의성을보든해서어떤방향,어떤타깃을두고서할건지를두고서연구용역으로갈거거든요.",
+            "그래서현재는아직추경에…지금추경심의가아직안됐기때문에저희가정확한말씀은못드리지만이게예산이확보된다고하면위원님들의견도분명들어야될것같고주민들의견그리고문화예술단체,여러관계기관의견을들어서공간도조성하고이제할겁니다."
+          ],
+          "confidence": 0.8
+        }
+      ]
+    },
+    {
+      "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-3",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-4",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-5",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-6",
+      "predictions": [],
+      "raw_signals": []
+    }
+  ]
+}

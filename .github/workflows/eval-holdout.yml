@@ -46,12 +46,49 @@ jobs:
           enable-cache: true
           cache-dependency-glob: apps/api/uv.lock
       - run: uv sync --frozen
+      - name: Check the API key (never printed)
+        if: inputs.extractor != 'heuristic'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          APP_ANTHROPIC_API_KEY: ${{ secrets.APP_ANTHROPIC_API_KEY }}
+        # Which secret is set, its shape, whether the key is accepted (model list, free) and what a
+        # one-token Haiku call answers. Only lengths, booleans, status codes and the provider's
+        # error type and message are printed.
+        run: |
+          python3 - <<'PY2'
+          import json, os, urllib.error, urllib.request
+          for name in ("ANTHROPIC_API_KEY", "APP_ANTHROPIC_API_KEY"):
+              key = os.environ.get(name, "")
+              print(f"{name}: {'set' if key else 'not set'}", end="")
+              if not key:
+                  print(); continue
+              print(f", {len(key)} chars, {len(key.strip())} without outer whitespace,"
+                    f" starts like an API key: {key.strip().startswith('sk-ant-api')}")
+              headers = {"x-api-key": key.strip(), "anthropic-version": "2023-06-01",
+                         "content-type": "application/json"}
+              def call(url, body=None):
+                  req = urllib.request.Request(url, data=body, headers=headers)
+                  try:
+                      with urllib.request.urlopen(req, timeout=60) as r:
+                          return r.status, json.loads(r.read() or b"{}")
+                  except urllib.error.HTTPError as e:
+                      return e.code, json.loads(e.read() or b"{}")
+              status, _ = call("https://api.anthropic.com/v1/models?limit=1")
+              print(f"  model list: HTTP {status}")
+              body = json.dumps({"model": "claude-haiku-4-5", "max_tokens": 1,
+                                 "messages": [{"role": "user", "content": "hi"}]}).encode()
+              status, out = call("https://api.anthropic.com/v1/messages", body)
+              err = out.get("error") or {}
+              print(f"  one-token message: HTTP {status} {err.get('type', 'ok')} {err.get('message', '')}")
+          PY2
       - name: Run
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          # The app's own name for the key wins when both secrets exist.
+          APP_ANTHROPIC_API_KEY: ${{ secrets.APP_ANTHROPIC_API_KEY }}
         run: |
           if [ "$EXTRACTOR" != "heuristic" ]; then
-            test -n "$ANTHROPIC_API_KEY" || { echo "::error::Add the ANTHROPIC_API_KEY repository secret first"; exit 1; }
+            test -n "$ANTHROPIC_API_KEY$APP_ANTHROPIC_API_KEY" || { echo "::error::Add the ANTHROPIC_API_KEY repository secret first"; exit 1; }
           fi
           dir="$(dirname "$GITHUB_WORKSPACE/$MANIFEST")"
           name="result-$(echo "$EXTRACTOR" | tr ':/' '--')-run${GITHUB_RUN_NUMBER}.json"
