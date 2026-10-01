@@ -128,3 +128,77 @@ async def test_enumerated_projects_keep_distinct_commitment_and_budget() -> None
     assert len(signals) == 3
     assert [s.commitment for s in signals] == ["committed", "planned", "reviewing"]
     assert [s.budget_krw for s in signals] == [100_000_000, None, None]
+
+
+@pytest.mark.parametrize(
+    "statement",
+    [
+        "CCTV는 내년에 계속 가동할 계획입니다.",
+        "CCTV는 내년에 예산을 세우지 않을 계획입니다.",
+    ],
+)
+async def test_named_asset_is_not_enough_to_establish_new_purchase(statement: str) -> None:
+    assert await extract("○정보화과장 김서준  " + statement) == []
+
+
+async def test_past_review_does_not_erase_future_project() -> None:
+    signals = await extract(
+        "○정보화과장 김서준  작년에 검토한 통합관제시스템 구축을 내년에 추진할 계획입니다."
+    )
+    assert len(signals) == 1
+    assert signals[0].expected_year == 2027
+
+
+@pytest.mark.parametrize("reason", ["유지보수 예산이 부족해", "작년 검토 결과"])
+async def test_filtering_background_must_preserve_explicit_denial(reason: str) -> None:
+    signals = await extract(
+        "○정보화과장 김서준  통합관제시스템 구축을 내년에 추진하겠습니다. "
+        f"{reason} 추진하지 않겠습니다."
+    )
+    assert all(s.commitment not in {"committed", "planned"} for s in signals)
+
+
+@pytest.mark.parametrize("title", ["챗봇 구축", "버스 도입"])
+async def test_short_named_assets_remain_valid_projects(title: str) -> None:
+    signals = await extract(f"○정보화과장 김서준  {title}을 내년에 추진하겠습니다.")
+    assert len(signals) == 1
+    assert signals[0].title == title
+
+
+async def test_funding_year_does_not_replace_explicit_order_year() -> None:
+    signals = await extract(
+        "○정보화과장 김서준  민원 플랫폼 구축은 올해 예산을 확보했습니다. 실제 발주는 2028년입니다."
+    )
+    assert len(signals) == 1
+    assert signals[0].expected_year == 2028
+
+
+async def test_named_cancelled_project_does_not_remove_separate_live_project() -> None:
+    signals = await extract(
+        "○정보화과장 김서준  민원처리 통합 플랫폼 구축을 내년에 추진하겠습니다. "
+        "CCTV 설치는 취소되었습니다."
+    )
+    assert len(signals) == 1
+    assert "민원처리 통합 플랫폼" in signals[0].title
+
+
+async def test_named_cancellation_removes_earlier_intent_for_same_project() -> None:
+    assert (
+        await extract(
+            "○정보화과장 김서준  CCTV 설치를 내년에 추진하겠습니다. CCTV 설치는 취소되었습니다."
+        )
+        == []
+    )
+
+
+@pytest.mark.parametrize(
+    ("title", "category"),
+    [
+        ("회의실 CCTV 설치", "safety_cctv"),
+        ("어르신 돌봄 인공지능 스피커 도입", "welfare_care"),
+    ],
+)
+async def test_purchase_category_preserves_clear_target_purpose(title: str, category: str) -> None:
+    signals = await extract(f"○정보화과장 김서준  {title}을 내년에 추진할 계획입니다.")
+    assert len(signals) == 1
+    assert signals[0].category == category

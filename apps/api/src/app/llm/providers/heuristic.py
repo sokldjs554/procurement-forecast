@@ -228,6 +228,12 @@ def _guess_title(answer: str, question: str) -> str | None:
             if len(candidate) >= 2 and conf > 0:
                 return candidate
         for m in _NAMED_SUBJECT_RE.finditer(source):
+            if (
+                not _NEW_PURCHASE_RE.search(source)
+                and not re.search(r"발주|임차|착수|조달|확충|적용|개편", source)
+                and _answer_commitment(source) not in {"reviewing", "declined"}
+            ):
+                continue
             candidate = _clean_title(m.group(1))
             _, conf = classify_category(candidate)
             if len(candidate) >= 3 and conf > 0 and _meaningful_title(candidate):
@@ -268,7 +274,7 @@ def _meaningful_title(title: str) -> bool:
         "",
         title,
     )
-    return len(re.sub(r"[\s\d,.]", "", words)) >= 3
+    return len(re.sub(r"[\s\d,.]", "", words)) >= 2
 
 
 def _answer_commitment(text: str) -> str | None:
@@ -430,10 +436,11 @@ def _extract_exchange(ctx: ChunkContext, *, split: bool = True) -> list[Extracte
 
 
 _COMPLETED_PROJECT = re.compile(
-    r"(?:지난해|작년|기집행)|"
+    r"기집행|"
     r"(?:구축|설치|구입|구매|교체|준공)(?:했|하였|을\s*완료|가\s*완료)|"
     r"(?:설치|구축|공사)\s*완료"
 )
+_EXPLICIT_FUTURE = re.compile(r"내년|내후년|향후|앞으로|할\s*(?:계획입니다|예정)|하겠습니다")
 _CANCELLED_PROJECT = re.compile(r"(?:사업[은을이]?\s*.*)?(?:취소|철회)(?:되|했|하였)|전액\s*삭감")
 _NONPURCHASE = re.compile(
     r"(?:설치비|구입비|비용)[를을]?\s*(?:일부\s*)?지원|"
@@ -448,16 +455,34 @@ def _project_answers(answer: str) -> list[str]:
     follow-up timing sentence stays with its project. Denial remains in scope;
     cancellation of an unnamed '해당 사업' makes the whole answer unsafe.
     """
-    if _CANCELLED_PROJECT.search(answer):
-        return []
-    sentences = [
-        sentence
-        for sentence in _sentences(answer)
-        if not _COMPLETED_PROJECT.search(sentence)
-        and not _NONPURCHASE.search(sentence)
-        and not re.search(r"확보되면.*(?:계상|편성|구입|구매)", sentence)
-        and not (_MAINTENANCE_RE.search(sentence) and not _NEW_PURCHASE_RE.search(sentence))
-    ]
+    cancelled_titles = []
+    for sentence in _sentences(answer):
+        if _CANCELLED_PROJECT.search(sentence):
+            title = _guess_project_title(sentence, "")
+            if not title or re.search(r"(?:해당|이|그)\s*사업", title):
+                return []
+            cancelled_titles.append(re.sub(r"\s+", "", title))
+    sentences = []
+    for sentence in _sentences(answer):
+        if any(title in re.sub(r"\s+", "", sentence) for title in cancelled_titles):
+            continue
+        # Negative evidence must survive background filtering so it reaches the
+        # commitment decision and the production grounding verifier unchanged.
+        if _answer_commitment(sentence) == "declined":
+            sentences.append(sentence)
+            continue
+        historical = bool(re.search(r"지난해|작년", sentence)) and not _EXPLICIT_FUTURE.search(
+            sentence
+        )
+        if (
+            historical
+            or _COMPLETED_PROJECT.search(sentence)
+            or _NONPURCHASE.search(sentence)
+            or re.search(r"확보되면.*(?:계상|편성|구입|구매)", sentence)
+            or (_MAINTENANCE_RE.search(sentence) and not _NEW_PURCHASE_RE.search(sentence))
+        ):
+            continue
+        sentences.append(sentence)
     if not sentences:
         return []
     starts: list[int] = []
@@ -517,7 +542,7 @@ def _extract_project(ctx: ChunkContext, question: str, answer: str) -> list[Extr
     # drifts to other programmes (a parking question that mentions 어르신 이동 편의).
     category, cat_conf = classify_category(title)
     purchase_cat = purchase_category(title)
-    if purchase_cat is not Category.OTHER:
+    if purchase_cat is not Category.OTHER and (category is Category.OTHER or cat_conf < 0.5):
         category, cat_conf = purchase_cat, max(cat_conf, 0.65)
     if cat_conf < 0.5:
         category, cat_conf = classify_category(question + " " + answer)
@@ -556,9 +581,7 @@ def _extract_project(ctx: ChunkContext, question: str, answer: str) -> list[Extr
         evidence.append(amount_sentence)
     timing = None
     if level in ("committed", "planned"):
-        timing = resolve_timing(" ".join(evidence), ctx.document_date) or resolve_timing(
-            answer, ctx.document_date
-        )
+        timing = resolve_timing(answer, ctx.document_date)
         # A building's opening or a previous implementation year is not a new
         # procurement date. Unresolved timing remains unknown for review.
         if timing and timing.year < ctx.document_date.year:
