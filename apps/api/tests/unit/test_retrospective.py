@@ -10,6 +10,8 @@ import pytest
 from app.eval.retrospective import (
     Judgment,
     candidate_pairs,
+    judgments_for_pairs,
+    load_title_judgments,
     overlap,
     report,
     squash,
@@ -124,6 +126,50 @@ def test_hits_tenders_already_out_and_open_cases_are_kept_apart() -> None:
     # 12-month rate: the already-tendered one is not a forecast, the young one is not eligible
     assert mentions["hit_within_12m"] == {"hit": 1, "eligible": 3}
     assert [h["notice"] for h in result["hits"]] == ["A-000"]
+
+
+def test_a_yearly_contract_let_again_is_counted_apart_from_forecasts() -> None:
+    signals = [
+        _signal("yearly", "도로 덧씌우기 공사", "2024-12-31", stage="budget_line"),
+        _signal("project", "수내교 전면개축 공사", "2024-12-31", stage="budget_line"),
+    ]
+    notices = [
+        _notice("Y", "2025년 중원구 도로 덧씌우기공사(1구역)", "2025-03-01"),
+        _notice("P", "수내교 전면개축 공사", "2025-06-01"),
+    ]
+    judgments = [
+        Judgment("yearly", "Y-000", "same", "연례", "해마다 하는 구역별 덧씌우기"),
+        Judgment("project", "P-000", "same", "공사", "같은 다리의 개축"),
+    ]
+    budget = next(iter(_run(judgments, notices, signals)["strata"].values()))
+    assert budget["hit"] == 2 and budget["hit_recurring"] == 1
+    assert budget["lead_excluding_recurring"]["n"] == 1
+    assert budget["hit_within_12m"] == {"hit": 2, "eligible": 2}
+    assert budget["hit_within_12m_excluding_recurring"] == {"hit": 1, "eligible": 1}
+
+
+def test_a_judgment_written_by_name_covers_every_pair_with_those_names(tmp_path: Any) -> None:
+    signals = [
+        _signal("a", "수내교 전면개축 공사", "2024-12-31"),
+        _signal("b", "수내교  전면개축공사", "2025-09-12"),
+        _signal("c", "정자교 보수", "2025-09-12"),
+    ]
+    notices = [_notice("P", "수내교 전면개축 공사", "2025-06-01")]
+    path = tmp_path / "titles.jsonl"
+    path.write_text(
+        '{"signal_title": "수내교 전면개축 공사", "notice_title": "수내교 전면개축 공사",'
+        ' "verdict": "same", "stage": "공사", "reason": "같은 다리"}\n',
+        encoding="utf-8",
+    )
+    proposed = [
+        {"signal_key": c.signal_key, "notice": c.notice, "notice_title": c.notice_title}
+        for c in candidate_pairs(signals, notices, "성남시")
+    ]
+    proposed.append({"signal_key": "c", "notice": "P-000", "notice_title": "정자교 보수공사"})
+    judged, unjudged = judgments_for_pairs(load_title_judgments(path), proposed, signals)
+    assert sorted(j.signal_key for j in judged) == ["a", "b"]  # spacing does not split a name
+    assert {j.stage for j in judged} == {"공사"}
+    assert [u["signal_key"] for u in unjudged] == ["c"]
 
 
 def test_a_judgment_on_a_pair_the_method_never_proposed_is_refused() -> None:

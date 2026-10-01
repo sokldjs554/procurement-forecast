@@ -27,6 +27,7 @@ manage openapi > openapi.json     # schema for the web app's generated types
 from __future__ import annotations
 
 import asyncio
+import gzip
 import json
 import subprocess
 import sys
@@ -636,6 +637,9 @@ def eval_retrospective(
     institution: str = typer.Option(..., help="지자체 a notice's 수요기관 names, e.g. 성남시"),
     candidates: Path = typer.Option(..., help="Proposed pairs (JSONL); written if absent"),
     judgments: Path | None = typer.Option(None, exists=True, dir_okay=False),
+    title_judgments: Path | None = typer.Option(
+        None, exists=True, dir_okay=False, help="Judgments by (signal name, notice name) instead"
+    ),
     observed_through: str = typer.Option(None, help="Last day the census covers, YYYY-MM-DD"),
     out: Path | None = typer.Option(None, help="Write the report (JSON) here"),
 ) -> None:
@@ -644,9 +648,11 @@ def eval_retrospective(
 
     from app.eval.retrospective import (
         candidate_pairs,
+        judgments_for_pairs,
         load_judgments,
         load_notices,
         load_signals,
+        load_title_judgments,
         report,
     )
 
@@ -654,24 +660,39 @@ def eval_retrospective(
     census = load_notices(notices)
     if not candidates.exists():
         proposed = candidate_pairs(rows, census, institution)
-        candidates.write_text(
-            "".join(json.dumps(asdict(c), ensure_ascii=False) + "\n" for c in proposed),
-            encoding="utf-8",
-        )
+        text = "".join(json.dumps(asdict(c), ensure_ascii=False) + "\n" for c in proposed)
+        if candidates.suffix == ".gz":
+            candidates.write_bytes(gzip.compress(text.encode("utf-8"), mtime=0))
+        else:
+            candidates.write_text(text, encoding="utf-8")
         typer.echo(f"{len(proposed)} pairs proposed for {len(rows)} signals → {candidates}")
-    if judgments is None:
+    if judgments is None and title_judgments is None:
         return
+    if judgments is not None and title_judgments is not None:
+        raise typer.BadParameter("give --judgments or --title-judgments, not both")
     if not observed_through:
-        raise typer.BadParameter("--observed-through is required with --judgments")
-    pairs = {
-        (row["signal_key"], row["notice"])
-        for row in map(json.loads, candidates.read_text(encoding="utf-8").splitlines())
-    }
+        raise typer.BadParameter("--observed-through is required with judgments")
+    raw = candidates.read_bytes()
+    raw = gzip.decompress(raw) if candidates.suffix == ".gz" else raw
+    offered = [json.loads(line) for line in raw.decode("utf-8").splitlines()]
+    pairs = {(row["signal_key"], row["notice"]) for row in offered}
     try:
+        if title_judgments is not None:
+            reviewed, unjudged = judgments_for_pairs(
+                load_title_judgments(title_judgments), offered, rows
+            )
+            if unjudged:
+                raise ValueError(
+                    f"{len(unjudged)} proposed pairs have no judgment, e.g. "
+                    f"{unjudged[0]['signal_key']} {unjudged[0]['notice_title']}"
+                )
+        else:
+            assert judgments is not None
+            reviewed = load_judgments(judgments)
         result = report(
             rows,
             census,
-            load_judgments(judgments),
+            reviewed,
             observed_through=date.fromisoformat(observed_through),
             proposed=pairs,
         )
