@@ -20,6 +20,8 @@ import re
 from dataclasses import dataclass, field
 
 MAX_CHUNK_CHARS = 2400
+# A chair turn this short inside an exchange hands the floor over; it does not end the exchange.
+_CHAIR_HANDOVER_CHARS = 80
 
 _SPEAKER_RE = re.compile(
     r"^[○◯◎]\s*(?P<role>[가-힣A-Za-z·]{1,20}?)\s+(?P<name>[가-힣]{2,4})(?:\s{1,}|$)(?P<speech>.*)$"
@@ -74,7 +76,69 @@ class Turn:
         return self.role in _CHAIR_ROLES
 
 
+# Some councils print no ○ at all (CLIK, 2026-09): 곡성군의회 writes "위원장 김홍순" alone on a
+# line, 서초구의회 the role and the name on lines of their own ("위원장" / "신정태",
+# "김해바른" / "위원"). These are read only when the ○ forms find (almost) nothing, so a document
+# that uses ○ is split exactly as before.
+_ROLE = (
+    r"(?:위원장|부위원장|위원|의원|의장|부의장|전문위원|"
+    r"[가-힣]{1,14}?(?:국장|과장|소장|팀장|실장|단장|본부장|센터장|담당관|원장|청장|직무대리))"
+)
+_BARE_SPEAKER_RE = re.compile(rf"^(?P<role>{_ROLE})\s+(?P<name>[가-힣]{{2,4}})$")
+_BARE_ROLE_RE = re.compile(rf"^(?P<role>{_ROLE})$")
+_BARE_NAME_RE = re.compile(r"^(?P<name>[가-힣]{2,4})$")
+_BARE_MEMBER_RE = re.compile(r"^(?P<role>위원|의원)$")
+
+
+def _bare_turns(text: str) -> list[Turn]:
+    lines: list[tuple[int, int, str]] = []
+    offset = 0
+    for line in text.splitlines(keepends=True):
+        stripped = line.strip()
+        lines.append(
+            (
+                offset + line.find(stripped[0]) if stripped else offset,
+                offset + len(line.rstrip("\r\n")),
+                stripped,
+            )
+        )
+        offset += len(line)
+    turns: list[Turn] = []
+    i = 0
+    while i < len(lines):
+        start, end, stripped = lines[i]
+        nxt = lines[i + 1][2] if i + 1 < len(lines) else ""
+        m = _BARE_SPEAKER_RE.match(stripped)
+        if m:
+            turns.append(Turn(m.group("role"), m.group("name"), start, end))
+            i += 1
+            continue
+        role, name = _BARE_ROLE_RE.match(stripped), _BARE_NAME_RE.match(nxt)
+        if role and name:  # "위원장" / "신정태"
+            turns.append(Turn(role.group("role"), name.group("name"), start, lines[i + 1][1]))
+            i += 2
+            continue
+        name, role = _BARE_NAME_RE.match(stripped), _BARE_MEMBER_RE.match(nxt)
+        if name and role:  # "김해바른" / "위원"
+            turns.append(Turn(role.group("role"), name.group("name"), start, lines[i + 1][1]))
+            i += 2
+            continue
+        if turns and stripped and not stripped.startswith("("):
+            turns[-1].end = end
+        i += 1
+    return turns
+
+
 def split_turns(text: str) -> list[Turn]:
+    turns = _marked_turns(text)
+    if len(turns) < 3:
+        bare = _bare_turns(text)
+        if len(bare) > len(turns):
+            return bare
+    return turns
+
+
+def _marked_turns(text: str) -> list[Turn]:
     turns: list[Turn] = []
     offset = 0
     for line in text.splitlines(keepends=True):
@@ -89,6 +153,16 @@ def split_turns(text: str) -> list[Turn]:
             turns[-1].end = line_end  # continuation of the previous speaker
         offset += len(line)
     return turns
+
+
+def _hands_over(turns: list[Turn], j: int) -> bool:
+    after = turns[j + 1] if j + 1 < len(turns) else None
+    return (
+        turns[j].end - turns[j].start <= _CHAIR_HANDOVER_CHARS
+        and after is not None
+        and not after.is_member
+        and not after.is_chair
+    )
 
 
 def chunk_minutes(text: str) -> list[Chunk]:
@@ -115,7 +189,12 @@ def chunk_minutes(text: str) -> list[Chunk]:
         if turn.is_member:
             group = [turn]
             j = i + 1
-            while j < len(turns) and not turns[j].is_member and not turns[j].is_chair:
+            while j < len(turns) and not turns[j].is_member:
+                # The chair handing the floor over ("과장님 답변하여 주시기 바랍니다") sits between
+                # the question and its answer: a short chair turn followed by an official's
+                # answer stays in the exchange. Any other chair turn ends it.
+                if turns[j].is_chair and not _hands_over(turns, j):
+                    break
                 group.append(turns[j])
                 j += 1
             emit(group, "exchange")
