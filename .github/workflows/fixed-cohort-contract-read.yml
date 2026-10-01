@@ -1,0 +1,66 @@
+name: Fixed cohort official-contract read
+on:
+  push:
+    branches: [eval/2026-10-01-final-source-proof]
+    paths: [.github/workflows/fixed-cohort-contract-read.yml]
+permissions:
+  contents: read
+jobs:
+  read:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 8
+    steps:
+      - name: Bounded read of official contracts and one new-source index
+        shell: python
+        run: |
+          import datetime,hashlib,html,json,pathlib,re,time,urllib.request,urllib.parse,urllib.error,urllib.robotparser
+          out=pathlib.Path('evidence');out.mkdir();agent='ProcurementForecastResearch/1.0';policies={};records=[]
+          def get(name,url):
+            d={'id':name,'url':url,'retrieved_at':datetime.datetime.now(datetime.timezone.utc).isoformat()}
+            try:
+              root='https://'+urllib.parse.urlsplit(url).netloc
+              if root not in policies:
+                try:
+                  with urllib.request.urlopen(urllib.request.Request(root+'/robots.txt',headers={'User-Agent':agent}),timeout=12) as r:robot=r.read()
+                  (out/(urllib.parse.urlsplit(root).netloc+'-robots.txt')).write_bytes(robot);p=urllib.robotparser.RobotFileParser();p.parse(robot.decode('utf-8',errors='replace').splitlines())
+                except urllib.error.HTTPError as e:
+                  if e.code!=404:raise
+                  p=None
+                policies[root]=p
+              p=policies[root]
+              if p is not None and not p.can_fetch(agent,url):raise RuntimeError('robots excludes selected page')
+              time.sleep(max(2,(p.crawl_delay(agent) or 0) if p else 0))
+              with urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':agent}),timeout=25) as r:
+                b=r.read(4000001)
+                if len(b)>4000000:raise RuntimeError('bounded size exceeded')
+                d.update(status=r.status,final_url=r.url,content_type=r.headers.get('Content-Type'))
+              (out/(name+'.html')).write_bytes(b);d.update(size=len(b),sha256=hashlib.sha256(b).hexdigest());return b.decode('utf-8',errors='replace')
+            except Exception as e:d['error']=type(e).__name__+': '+str(e);return ''
+            finally:
+              records.append(d);(out/(name+'.json')).write_text(json.dumps(d,ensure_ascii=False,indent=2),encoding='utf-8')
+          terms=['망연계','백신서버','해킹메일','무정전','광전송','행정망','인터넷전화기','영상회의','컴퓨터']
+          found={};rows=[]
+          for i,term in enumerate(terms,1):
+            for mode in ['N','Y']:
+              q=urllib.parse.urlencode({'q_optionalYn':mode,'q_ctrtNm':term,'q_ctrtGovNm':'본청','q_rowPerPage':50,'q_currPage':1})
+              text=get('search-%02d-%s'%(i,mode),'https://www.gm.go.kr/pt/disclosure/bidContractInfo/contractInfo/contractList.do?'+q)
+              for tr in re.findall(r'<tr\b[^>]*>.*?</tr>',text,re.S|re.I):
+                ids=re.findall(r"opView\('([0-9]+)'\)",tr)
+                clean=html.unescape(re.sub('<[^>]+>',' ',tr));clean=' '.join(clean.split())
+                if ids and re.search(r'2025-\d\d-\d\d',clean):
+                  rows.append({'keyword':term,'contract_id':ids[0],'official_list_row':clean})
+                  found.setdefault(ids[0],mode)
+          # Preserve all candidates, but cap detail requests; a missing record is not a negative.
+          for k,mode in list(found.items())[:24]:
+            get('contract-'+k,'https://www.gm.go.kr/pt/disclosure/bidContractInfo/contractInfo/contractView.do?'+urllib.parse.urlencode({'q_optionalYn':mode,'ctrtAcctBookMngNo':k}))
+          get('ddc-2025-index','https://www.ddc.go.kr/ddc/contents.do?key=2257')
+          (out/'candidate-rows.json').write_text(json.dumps({'cohort_selection':'Nine named capital rows frozen before outcome search; original cohort retained','rows':rows,'detail_limit':24,'all_detail_count':len(found),'page_limit_per_query':1,'search_absence_is_negative':False},ensure_ascii=False,indent=2),encoding='utf-8')
+          (out/'manifest.json').write_text(json.dumps(records,ensure_ascii=False,indent=2),encoding='utf-8')
+          print(json.dumps(rows,ensure_ascii=False))
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        if: always()
+        with:
+          name: fixed-cohort-contract-read
+          path: evidence/
+          retention-days: 7
+          if-no-files-found: error
