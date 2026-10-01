@@ -199,11 +199,14 @@ class Judgment:
     signal_key: str
     notice: str
     verdict: str  # same | different | ambiguous
-    stage: str | None = None  # 설계 · 공사 · 감리 · 구매 · 용역 · 기타
+    # 설계 · 공사 · 감리 · 구매 · 용역 · 기타, or 연례: the same yearly contract (road resurfacing,
+    # pest control, vaccine purchase) let again every year, which no one needs a forecast to see.
+    stage: str | None = None
     reason: str = ""
 
 
 VERDICTS = {"same", "different", "ambiguous"}
+RECURRING = "연례"
 
 
 def load_judgments(path: Path) -> list[Judgment]:
@@ -224,6 +227,56 @@ def load_judgments(path: Path) -> list[Judgment]:
             )
         )
     return out
+
+
+def load_title_judgments(path: Path) -> dict[tuple[str, str], Judgment]:
+    """Judgments written once per (signal name, notice name), keyed by both names ``squash``-ed.
+
+    The same project name recurs across budget books and meetings, and whether two names are one
+    project does not depend on which book or meeting said it. Writing them by name also keeps the
+    reviewer blind to dates: a name pair carries no signal date, so it cannot lean toward a hit."""
+    out: dict[tuple[str, str], Judgment] = {}
+    for n, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1):
+        if not line.strip():
+            continue
+        raw = json.loads(line)
+        if raw.get("verdict") not in VERDICTS:
+            raise ValueError(f"{path}:{n}: verdict must be one of {sorted(VERDICTS)}")
+        key = (squash(raw["signal_title"]), squash(raw["notice_title"]))
+        if key in out:
+            raise ValueError(
+                f"{path}:{n}: judged twice: {raw['signal_title']} / {raw['notice_title']}"
+            )
+        out[key] = Judgment("", "", raw["verdict"], raw.get("stage"), raw.get("reason", ""))
+    return out
+
+
+def judgments_for_pairs(
+    by_title: dict[tuple[str, str], Judgment],
+    proposed: Iterable[dict[str, Any]],
+    signals: Iterable[dict[str, Any]],
+) -> tuple[list[Judgment], list[dict[str, Any]]]:
+    """One judgment per proposed pair from the name-level ones, and the pairs no name-level
+    judgment covers (a report needs none of those)."""
+    title_of = {str(s["key"]): str(s.get("title") or "") for s in signals}
+    out: list[Judgment] = []
+    unjudged: list[dict[str, Any]] = []
+    for pair in proposed:
+        key = (squash(title_of[str(pair["signal_key"])]), squash(str(pair["notice_title"])))
+        found = by_title.get(key)
+        if found is None:
+            unjudged.append(pair)
+            continue
+        out.append(
+            Judgment(
+                str(pair["signal_key"]),
+                str(pair["notice"]),
+                found.verdict,
+                found.stage,
+                found.reason,
+            )
+        )
+    return out, unjudged
 
 
 def months_between(start: date, end: date) -> float:
@@ -253,6 +306,7 @@ def report(
 
     strata: dict[str, Counter[str]] = defaultdict(Counter)
     leads: dict[str, list[int]] = defaultdict(list)
+    leads_project: dict[str, list[int]] = defaultdict(list)
     within: dict[str, Counter[str]] = defaultdict(Counter)
     hits: list[dict[str, Any]] = []
     for signal in signals:
@@ -270,18 +324,27 @@ def report(
         counts = strata[name]
         counts["signals"] += 1
         followed = months_between(seen, observed_through)
+        recurring = bool(same) and same[0][1].stage == RECURRING
         if same and same[0][0] <= seen:
             counts["already_tendered"] += 1  # not a forecast: out of every denominator below
+            counts["already_tendered_recurring"] += recurring
             continue
         if followed >= window_months:
             within[name]["eligible"] += 1
+            if not recurring:
+                within[name]["eligible_project"] += 1
         if same:
             first_date, first = same[0]
             lead = (first_date - seen).days
             counts["hit"] += 1
+            counts["hit_recurring"] += recurring
             leads[name].append(lead)
+            if not recurring:
+                leads_project[name].append(lead)
             if followed >= window_months and months_between(seen, first_date) <= window_months:
                 within[name]["hit"] += 1
+                if not recurring:
+                    within[name]["hit_project"] += 1
             notice = by_notice[first.notice]
             hits.append(
                 {
@@ -295,6 +358,7 @@ def report(
                     "notice_date": first_date.isoformat(),
                     "institution": demand_institution(notice),
                     "stage": first.stage,
+                    "recurring": recurring,
                     "lead_days": lead,
                     "reason": first.reason,
                 }
@@ -324,9 +388,15 @@ def report(
             name: dict(counts)
             | {
                 "lead": lead_summary(leads[name]),
+                "lead_excluding_recurring": lead_summary(leads_project[name]),
                 f"hit_within_{window_months}m": {
                     "hit": within[name]["hit"],
                     "eligible": within[name]["eligible"],
+                },
+                # A yearly contract let again is no forecast; it leaves numerator and denominator.
+                f"hit_within_{window_months}m_excluding_recurring": {
+                    "hit": within[name]["hit_project"],
+                    "eligible": within[name]["eligible_project"],
                 },
             }
             for name, counts in sorted(strata.items())
