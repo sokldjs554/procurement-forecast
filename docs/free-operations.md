@@ -55,7 +55,8 @@
    | `APP_LOFIN_API_KEY` | 선택 | 지방재정365 예산서 |
    | `APP_BILLING_KEY_ENCRYPTION_KEY`, `APP_JWT_SECRET` | 선택 | 나중에 같은 DB로 API를 운영할 때만 그쪽과 같은 값을 넣습니다. 없으면 실행마다 임시값을 씁니다(이 실행은 토큰·결제키를 쓰지 않음) |
 3. **저장소 Variables 등록**(같은 화면의 *Variables*).
-   - `OPS_ENABLED` = `true`: 이 값이 있어야 예약 실행이 돕니다. 지우면 멈춥니다.
+   - `OPS_ENABLED` = `true`: 이 값이 있어야 매시간 예약 실행이 돕니다. 지우면 멈춥니다. *Repository variables*에 넣어야 하고, Secrets나 Environment 변수로 넣으면 워크플로가 읽지 못합니다.
+     수동 실행(*Run workflow*)은 이 값과 관계없이 돌고, 값이 없으면 실행 화면에 경고를 남깁니다.
    - `OPS_DB_LIMIT_MB` = 요금제 저장 한도(MB). 예: 512
 4. **첫 실행.** Actions 탭 → *Scheduled operations (free tier)* → *Run workflow*. 실행 요약에서 수집·처리 수와 DB 크기를 확인합니다. 그다음부터는 매시간 저절로 돕니다.
 

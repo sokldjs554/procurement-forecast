@@ -3,8 +3,8 @@ name: Scheduled operations (free tier)
 # The free deployment's worker (docs/free-operations.md). Every hour a runner starts, migrates the
 # hosted PostgreSQL, and runs one pass of the worker's own schedule (`manage ops tick`): the crons
 # that came due since the previous pass and everything they enqueue — fetch, process, link,
-# recommend. Then it exits. No paid model is called. Off until the repository variable
-# OPS_ENABLED is 'true'.
+# recommend. Then it exits. No paid model is called. The hourly schedule is off until the
+# repository variable OPS_ENABLED is 'true'; a manual run (Run workflow) always runs.
 on:
   schedule:
     - cron: "23 * * * *"
@@ -24,7 +24,7 @@ concurrency:
 jobs:
   tick:
     name: One scheduled pass
-    if: vars.OPS_ENABLED == 'true'
+    if: github.event_name == 'workflow_dispatch' || vars.OPS_ENABLED == 'true'
     runs-on: ubuntu-24.04
     timeout-minutes: 90
     env:
@@ -39,6 +39,12 @@ jobs:
       APP_CLIK_API_KEY: ${{ secrets.APP_CLIK_API_KEY }}
       APP_LOFIN_API_KEY: ${{ secrets.APP_LOFIN_API_KEY }}
     steps:
+      - name: Is the hourly schedule on?
+        if: vars.OPS_ENABLED != 'true'
+        run: >-
+          echo "::warning::This manual run goes ahead, but the hourly schedule stays off:
+          the repository variable OPS_ENABLED is not 'true'. Add it under Settings → Secrets and
+          variables → Actions → Variables → Repository variables (not Secrets, not an environment)."
       - uses: actions/checkout@v7
       - name: OCR engine and Korean fonts (scanned budget books)
         run: sudo apt-get update && sudo apt-get install -y --no-install-recommends tesseract-ocr tesseract-ocr-kor fonts-nanum
