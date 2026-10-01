@@ -57,13 +57,20 @@ jobs:
         run: |
           python3 - <<'PY2'
           import json, os, urllib.error, urllib.request
+          failed = False
           for name in ("ANTHROPIC_API_KEY", "APP_ANTHROPIC_API_KEY"):
               key = os.environ.get(name, "")
               print(f"{name}: {'set' if key else 'not set'}", end="")
               if not key:
                   print(); continue
-              print(f", {len(key)} chars, {len(key.strip())} without outer whitespace,"
-                    f" starts like an API key: {key.strip().startswith('sk-ant-api')}")
+              k = key.strip()
+              kind = next((label for prefix, label in (
+                  ("sk-ant-api", "Console API key (sk-ant-api…)"),
+                  ("sk-ant-oat", "Claude subscription OAuth token (sk-ant-oat…), not an API key"),
+                  ("sk-ant-admin", "Admin API key (sk-ant-admin…)"),
+                  ("sk-ant-", "another sk-ant- key"),
+              ) if k.startswith(prefix)), "not an Anthropic key format")
+              print(f", {len(key)} chars, {len(k)} without outer whitespace, kind: {kind}")
               headers = {"x-api-key": key.strip(), "anthropic-version": "2023-06-01",
                          "content-type": "application/json"}
               def call(url, body=None):
@@ -80,6 +87,9 @@ jobs:
               status, out = call("https://api.anthropic.com/v1/messages", body)
               err = out.get("error") or {}
               print(f"  one-token message: HTTP {status} {err.get('type', 'ok')} {err.get('message', '')}")
+              if status != 200:
+                  failed = True
+          raise SystemExit(1 if failed else 0)
           PY2
       - name: Run
         env:
