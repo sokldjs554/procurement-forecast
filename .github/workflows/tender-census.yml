@@ -1,0 +1,100 @@
+name: Tender census (retrospective check)
+
+# The outcome side of docs/retrospective-validation.md: every official 나라장터 입찰공고 registered
+# in a past period, kept for a few institutions (`manage eval tenders`). The census lands on the
+# data/tender-census branch, so a run that stops at the daily quota or the time limit is resumed
+# by the next one. Reads public notices only; no database, no paid model.
+on:
+  workflow_dispatch:
+    inputs:
+      since:
+        description: First 공고 registration date (YYYY-MM-DD)
+        default: "2024-01-01"
+      until:
+        description: Last 공고 registration date (YYYY-MM-DD)
+        default: "2026-09-30"
+      institutions:
+        description: Comma-separated names a kept notice's 공고기관 or 수요기관 contains
+        default: "성남시,서산시,강남구,금천구,원주시,동두천시,충청북도,고양시"
+      name:
+        description: Directory under docs/data on the data branch (same name resumes)
+        default: "tender-census-2024-01-01-2026-09-30"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tender-census
+  cancel-in-progress: false
+
+jobs:
+  census:
+    name: Read the period's notices
+    runs-on: ubuntu-24.04
+    timeout-minutes: 340
+    env:
+      BRANCH: data/tender-census
+      DIR: docs/data/${{ inputs.name }}
+      SINCE: ${{ inputs.since }}
+      UNTIL: ${{ inputs.until }}
+      INSTITUTIONS: ${{ inputs.institutions }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.8.17"
+          python-version: "3.11"
+          enable-cache: true
+          cache-dependency-glob: apps/api/uv.lock
+      - name: Install
+        working-directory: apps/api
+        run: uv sync --frozen
+      - name: Check out the data branch next to the code
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null; then
+            git fetch --depth 1 origin "$BRANCH"
+            git worktree add --detach census FETCH_HEAD
+          else
+            git worktree add --detach census HEAD
+          fi
+      - name: Census
+        working-directory: apps/api
+        env:
+          APP_DATA_GO_KR_SERVICE_KEY: ${{ secrets.APP_DATA_GO_KR_SERVICE_KEY }}
+        run: |
+          args=()
+          IFS=',' read -ra names <<< "$INSTITUTIONS"
+          for name in "${names[@]}"; do
+            name="$(echo "$name" | xargs)"
+            [ -n "$name" ] && args+=(-i "$name")
+          done
+          uv run manage eval tenders "$GITHUB_WORKSPACE/census/$DIR" \
+            --since "$SINCE" --until "$UNTIL" "${args[@]}" --max-minutes 300
+      - name: Keep what was read on the data branch
+        if: always()
+        run: |
+          manifest="census/$DIR/manifest.json"
+          [ -f "$manifest" ] || exit 0
+          done=$(jq -r '"\(.summary.slices_complete)/\(.summary.slices_expected)"' "$manifest")
+          git -C census add "$DIR"
+          git -C census diff --cached --quiet && exit 0
+          git -C census commit -q -m "data(eval): 나라장터 입찰공고 census $(basename "$DIR") — slices $done"
+          git -C census push origin "HEAD:refs/heads/$BRANCH"
+      - name: Summary
+        if: always()
+        run: |
+          manifest="census/$DIR/manifest.json"
+          [ -f "$manifest" ] || exit 0
+          jq -r '
+            "### Tender census \(.since) → \(.until)\n",
+            "| | |", "|---|---|",
+            "| Institutions | \(.institutions | join(", ")) |",
+            "| Slices complete | \(.summary.slices_complete) / \(.summary.slices_expected) |",
+            "| Rows read | \(.summary.rows_read) |",
+            "| Notices kept | \(.summary.notices_kept) |",
+            "| Calls (all runs) | \(.calls) |",
+            "| Stopped | \(.stopped // "no — finished") |",
+            "| Incomplete slices | \(.summary.incomplete | length) |"
+          ' "$manifest" >> "$GITHUB_STEP_SUMMARY"
