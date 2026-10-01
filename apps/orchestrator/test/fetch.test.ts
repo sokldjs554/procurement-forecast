@@ -139,7 +139,11 @@ describe("media.fetch", () => {
     const kept = `${cfg.MEDIA_STORAGE_DIR}/org${org}/job${id}.part`;
     expect(existsSync(kept)).toBe(true);
     const have = readFileSync(kept).length;
-    expect(have).toBeGreaterThanOrEqual(1024 * 1024);
+    // The fake server drops the connection once it has written 1 MiB, but writes still buffered
+    // in its socket go with it, so the client may hold less (960 KiB in one CI run). What matters
+    // is that part of the file was kept and the next attempt asks for the rest from there.
+    expect(have).toBeGreaterThan(0);
+    expect(have).toBeLessThan(VIDEO.length);
 
     await pool.query("UPDATE jobs SET run_after = now() WHERE id = $1", [id]);
     expect(await workOne(pool, handlers, cfg, never)).toBe("succeeded");
