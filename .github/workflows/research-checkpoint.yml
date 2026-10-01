@@ -17,37 +17,35 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: ${{ github.event.pull_request.head.sha }}
-          path: code
           persist-credentials: false
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      - uses: astral-sh/setup-uv@v7
         with:
-          ref: 2a82dabc8f28b4494439bff148078522f4a44fe9
-          path: evidence
-          persist-credentials: false
-      - name: Archive tracked research inputs and code only
+          version: "0.8.17"
+          python-version: "3.11"
+      - name: Preserve locked offline verification runtime
         shell: bash
         run: |
           set -euo pipefail
           mkdir checkpoint
-          git -C code rev-parse HEAD > checkpoint/code-sha.txt
-          git -C evidence rev-parse HEAD > checkpoint/evidence-sha.txt
-          git -C code archive --format=tar.gz HEAD apps/api scripts docs/data docs/local-llm.md AGENTS.md .github > checkpoint/code.tar.gz
-          git -C evidence archive --format=tar.gz HEAD docs/data > checkpoint/evidence.tar.gz
-          (cd checkpoint && sha256sum code.tar.gz evidence.tar.gz > SHA256SUMS)
-      - name: Portable supplementary research dependencies
-        run: |
-          python -m pip download --dest checkpoint/wheels --only-binary=:all: --python-version 3.13 --platform manylinux2014_x86_64 aiosmtplib olefile alembic sentry-sdk
-      - name: Archive new official sources before any model evaluation
+          git rev-parse HEAD > checkpoint/code-sha.txt
+          uv sync --project apps/api --frozen
+          PYTHON_ROOT=$(dirname "$(dirname "$(readlink -f apps/api/.venv/bin/python)")")
+          tar -czf checkpoint/python311.tar.gz -C "$PYTHON_ROOT" .
+          tar -czf checkpoint/locked-site-packages.tar.gz -C apps/api/.venv/lib/python3.11/site-packages .
+          cp apps/api/uv.lock checkpoint/uv.lock
+          (cd checkpoint && sha256sum *.tar.gz uv.lock > SHA256SUMS)
+      - name: Archive new official sources before evaluation
         shell: python
         run: |
           import datetime, hashlib, json, pathlib, time, urllib.error, urllib.parse, urllib.request, urllib.robotparser
-          out = pathlib.Path('checkpoint/fresh-sources')
+          out = pathlib.Path('checkpoint/fresh-v5-sources')
           out.mkdir()
           agent = 'ProcurementForecastResearch/1.0'
           targets = [
-              ('gyeyang-7364', 'https://council.gyeyang.go.kr/viewer/minutes/7364.do'),
-              ('gyeyang-7336', 'https://council.gyeyang.go.kr/viewer/minutes/7336.do'),
-              ('yesan-6005', 'https://www.councilyesan.go.kr/council/viewer/minutes/6005.do'),
+              ('mungyeong-3433', 'https://council.gbmg.go.kr/viewer/minutes/3433.do'),
+              ('incheon-dong-2058', 'https://council.icdonggu.go.kr/viewer/minutes/2058.do'),
+              ('okcheon-15645', 'https://council.oc.go.kr/viewer/minutes/15645.do'),
+              ('yangyang-7348', 'https://council.yangyang.go.kr/viewer/minutes/7348.do'),
           ]
           robots = {}
           for name, url in targets:
@@ -66,6 +64,7 @@ jobs:
                           if exc.code != 404:
                               raise
                           policy = None
+                          record['robots_status'] = 404
                       robots[host] = policy
                   policy = robots[host]
                   if policy is not None and not policy.can_fetch(agent, url):
@@ -86,4 +85,4 @@ jobs:
           name: research-checkpoint
           path: checkpoint/
           if-no-files-found: error
-          retention-days: 1
+          retention-days: 7
