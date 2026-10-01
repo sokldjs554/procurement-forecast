@@ -185,3 +185,124 @@ def test_speaker_context_comes_from_hashed_source_never_gold_role(tmp_path: Path
     _, cases = load_holdout(manifest)
     assert cases[0]["_source_labels"] == ["정보과장 이민호"]
     assert cases[0]["_source_text"][cases[0]["_char_start"] :] == case["text"]
+
+
+def _two_case_manifest(tmp_path: Path) -> Path:
+    source = "○정보과장 이민호  내년 본예산에 홈페이지 전면 개편 2억 원을 반영하겠습니다.\n○위원 김유진  수당 30만 원은 그대로입니까?"
+    (tmp_path / "source.txt").write_text(source)
+    turns = source.split("\n")
+    cases = [
+        {
+            "id": f"c{n}",
+            "source_id": "doc",
+            "institution": "기관",
+            "doc_type": "council_minutes",
+            "date": "2026-09-10",
+            "date_basis": "meeting_date",
+            "text": text,
+            "expected": expected,
+        }
+        for n, (text, expected) in enumerate(
+            [
+                (turns[0], [{"title_keywords": ["홈페이지"], "budget_krw": 200_000_000}]),
+                (turns[1], []),
+            ]
+        )
+    ]
+    content = "".join(json.dumps(c, ensure_ascii=False) + "\n" for c in cases).encode()
+    (tmp_path / "cases.jsonl").write_bytes(content)
+    manifest = {
+        "schema_version": "source-holdout-v1",
+        "cases_path": "cases.jsonl",
+        "cases_sha256": hashlib.sha256(content).hexdigest(),
+        "label_origin": "test",
+        "frozen_before_scoring": True,
+        "sources": [
+            {
+                "id": "doc",
+                "path": "source.txt",
+                "sha256": hashlib.sha256(source.encode()).hexdigest(),
+            }
+        ],
+    }
+    path = tmp_path / "manifest.json"
+    path.write_text(json.dumps(manifest))
+    return path
+
+
+class _Claude:
+    """Stands in for the Anthropic provider: one signal per call, a fixed token bill."""
+
+    name = "anthropic"
+    extract_model = "claude-opus-5"
+    extract_effort = "low"
+
+    def __init__(self) -> None:
+        self.calls = 0
+
+    async def extract(self, ctx):  # type: ignore[no-untyped-def]
+        from app.llm.schemas import ExtractedSignal, ExtractionOutput
+        from app.llm.types import LLMResult, Usage
+
+        self.calls += 1
+        signal = ExtractedSignal(
+            title="홈페이지 전면 개편",
+            summary="홈페이지를 개편한다",
+            category="public_sw",
+            institution_mention=None,
+            department="정보과",
+            budget_text="2억 원",
+            budget_krw=200_000_000,
+            timing_text="내년 본예산에",
+            expected_year=2027,
+            expected_half=None,
+            commitment="committed",
+            procurement_type="service",
+            keywords=["홈페이지"],
+            evidence=["홈페이지 전면 개편 2억 원을 반영하겠습니다"],
+            confidence=0.9,
+        )
+        usage = Usage(input_tokens=2_000, output_tokens=800)  # $0.03 at $5 / $25 per Mtok
+        return LLMResult(
+            ExtractionOutput(signals=[signal]), "anthropic", self.extract_model, "t", usage
+        )
+
+
+async def test_a_claude_run_stops_at_its_cap_and_never_scores_uncalled_cases(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from app.eval.holdout import evaluate_holdout
+
+    fake = _Claude()
+    monkeypatch.setattr("app.eval.llm_compare.build_provider", lambda *a, **k: fake)
+    manifest = _two_case_manifest(tmp_path)
+    result = await evaluate_holdout(
+        manifest, code_revision="t", extractor="claude-opus-5:low", max_usd=0.05
+    )
+    assert fake.calls == 1  # the second call's estimate would pass $0.05
+    assert result["extractor"] == "claude-opus-5 · low"
+    assert result["api_cost_usd"] == pytest.approx(0.03)
+    assert result["skipped_cases"] == [{"case": "c1", "why": "spend cap $0.05 reached"}]
+    assert result["raw"]["cases"] == 1  # the skipped case is not an empty "correct negative"
+    assert result["after_verifier"]["matched"] == 1
+
+
+async def test_a_saved_run_is_scored_again_for_free(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from app.eval.holdout import evaluate_holdout
+
+    fake = _Claude()
+    monkeypatch.setattr("app.eval.llm_compare.build_provider", lambda *a, **k: fake)
+    manifest = _two_case_manifest(tmp_path)
+    first = await evaluate_holdout(
+        manifest, code_revision="t", extractor="claude-opus-5:low", max_usd=1
+    )
+    saved = tmp_path / "run.json"
+    saved.write_text(json.dumps(first, ensure_ascii=False))
+    again = await evaluate_holdout(manifest, code_revision="t", replay=saved)
+    assert fake.calls == 2  # only the first run called the model
+    assert again["api_cost_usd"] == 0
+    assert again["extractor"] == "replay of claude-opus-5 · low"
+    assert again["after_verifier"] == first["after_verifier"]
+    assert again["raw"] == first["raw"]

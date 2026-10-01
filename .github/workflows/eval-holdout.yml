@@ -1,0 +1,85 @@
+name: Holdout eval (Claude extractor)
+
+# `manage eval holdout` with a Claude extractor on a frozen holdout (docs/fresh-holdout.md). It
+# spends real money, never past `max_usd`, so it runs only when someone with write access starts
+# it. Every case's raw model output is kept in the result, so verifier changes can be scored
+# again later with `--replay` for free. The result goes to an eval/holdout-<run> branch.
+on:
+  workflow_dispatch:
+    inputs:
+      manifest:
+        description: Holdout manifest path in the repository
+        required: true
+      extractor:
+        description: "heuristic | <model> | <model>:<effort>"
+        default: "claude-opus-5:low"
+      max_usd:
+        description: Stop calling the API once this much (USD) is spent
+        default: "1.5"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: eval-holdout
+  cancel-in-progress: false
+
+jobs:
+  eval:
+    name: Score the extractor
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: apps/api
+    env:
+      APP_LOG_JSON: "false"
+      MANIFEST: ${{ inputs.manifest }}
+      EXTRACTOR: ${{ inputs.extractor }}
+      MAX_USD: ${{ inputs.max_usd }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.8.17"
+          python-version: "3.11"
+          enable-cache: true
+          cache-dependency-glob: apps/api/uv.lock
+      - run: uv sync --frozen
+      - name: Run
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ "$EXTRACTOR" != "heuristic" ]; then
+            test -n "$ANTHROPIC_API_KEY" || { echo "::error::Add the ANTHROPIC_API_KEY repository secret first"; exit 1; }
+          fi
+          dir="$(dirname "$GITHUB_WORKSPACE/$MANIFEST")"
+          name="result-$(echo "$EXTRACTOR" | tr ':/' '--')-run${GITHUB_RUN_NUMBER}.json"
+          echo "RESULT=$dir/$name" >> "$GITHUB_ENV"
+          uv run manage eval holdout "$GITHUB_WORKSPACE/$MANIFEST" \
+            --code-revision "$GITHUB_SHA" --extractor "$EXTRACTOR" --max-usd "$MAX_USD" \
+            --out "$dir/$name" > /dev/null
+      - name: Summary
+        if: always()
+        run: |
+          [ -f "$RESULT" ] || exit 0
+          jq -r '
+            "### Holdout: \(.extractor)\n",
+            "| | raw | after verifier |", "|---|---:|---:|",
+            "| cases | \(.raw.cases) | \(.after_verifier.cases) |",
+            "| expected · predicted · matched | \(.raw.expected) · \(.raw.predicted) · \(.raw.matched) | \(.after_verifier.expected) · \(.after_verifier.predicted) · \(.after_verifier.matched) |",
+            "| precision | \(.raw.precision) | \(.after_verifier.precision) |",
+            "| recall | \(.raw.recall) | \(.after_verifier.recall) |",
+            "| negative cases with predictions | \(.raw.negative_cases_with_predictions) / \(.raw.negative_cases) | \(.after_verifier.negative_cases_with_predictions) / \(.after_verifier.negative_cases) |",
+            "\nSpent $\(.api_cost_usd) of $\(.max_usd). Skipped cases: \(.skipped_cases | length)."
+          ' "$RESULT" >> "$GITHUB_STEP_SUMMARY"
+      - name: Push the result to a branch
+        run: |
+          [ -f "$RESULT" ] || exit 0
+          branch="eval/holdout-${GITHUB_RUN_NUMBER}.${GITHUB_RUN_ATTEMPT}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          git switch -c "$branch"
+          git add "$RESULT"
+          git commit -q -m "eval: holdout $(basename "$RESULT")"
+          git push origin "$branch"

@@ -1,9 +1,9 @@
 """No-network evaluation of frozen, source-grounded excerpts, with explicit label provenance.
 
 This measures extraction on selected parsed text, not OCR, linking or forecasting. The free
-heuristic is the only provider: running this command cannot spend API credits. Labels and
-source text are verified before extraction. Never tune the extractor against this holdout
-and continue calling it unseen data.
+heuristic is the default; a Claude extractor runs only when named, under an explicit spend cap.
+Labels and source text are verified before extraction. Never tune the extractor against this
+holdout and continue calling it unseen data.
 """
 
 from __future__ import annotations
@@ -21,7 +21,6 @@ from app.clock import now_utc
 from app.domain.krw import amounts_agree, detect_table_unit
 from app.eval.realistic import Prediction, load_realistic
 from app.llm.prompts import ChunkContext
-from app.llm.providers.heuristic import HeuristicProvider
 from app.parsing.chunking import split_turns
 from app.pipeline.process import check_signal
 
@@ -236,12 +235,54 @@ def score_cases(rows: list[tuple[dict[str, Any], list[Prediction]]]) -> dict[str
     }
 
 
-async def evaluate_holdout(path: Path, *, code_revision: str) -> dict[str, Any]:
+async def evaluate_holdout(
+    path: Path,
+    *,
+    code_revision: str,
+    extractor: str = "heuristic",
+    api_key: str | None = None,
+    max_usd: float = 0.0,
+    replay: Path | None = None,
+) -> dict[str, Any]:
+    """Score one extractor on a frozen holdout.
+
+    ``extractor`` is ``heuristic`` (free) or a Claude ``model[:effort]``; Claude calls stop once
+    ``max_usd`` is spent, and cases left uncalled are listed as skipped, never scored as empty.
+    The raw signals of every case are kept in the result, so ``replay`` can score a previous
+    run's model output again through the current verifier without calling anything.
+    """
+    from app.eval.llm_compare import Candidate, build_provider
+    from app.llm.budget import MemorySpendGuard
+    from app.llm.prompts import extract_user_message
+    from app.llm.schemas import ExtractedSignal
+    from app.llm.service import estimate_extract_cost
+    from app.llm.types import LLMBudgetExceededError, LLMConfigError, LLMError
+
     if not code_revision.strip():
         raise ValueError("code revision required")
     manifest, cases = await asyncio.to_thread(load_holdout, path)
     manifest_hash = _sha(await asyncio.to_thread(path.read_bytes))
-    provider = HeuristicProvider()
+    saved: dict[str, list[ExtractedSignal]] | None = None
+    if replay is not None:
+        previous = json.loads(await asyncio.to_thread(replay.read_text, encoding="utf-8"))
+        if previous.get("cases_sha256") != manifest["cases_sha256"]:
+            raise ValueError("replay is of another holdout (cases hash differs)")
+        if any("raw_signals" not in p for p in previous["predictions"]):
+            raise ValueError("replay has no raw signals to score")
+        saved = {
+            p["case"]: [ExtractedSignal.model_validate(s) for s in p["raw_signals"]]
+            for p in previous["predictions"]
+        }
+        label = f"replay of {previous['extractor']}"
+        candidate = Candidate("heuristic")
+    else:
+        candidate = Candidate.parse(extractor)
+    provider = build_provider(candidate, api_key=api_key, max_retries=2)
+    if saved is None:
+        label = provider.extract_model if not candidate.is_llm else candidate.label
+    guard = MemorySpendGuard(max_usd)
+    spent = 0.0
+    skipped: list[dict[str, str]] = []
     raw_rows, stored_rows = [], []
     predictions = []
     for case in cases:
@@ -254,11 +295,38 @@ async def evaluate_holdout(path: Path, *, code_revision: str) -> dict[str, Any]:
             case["text"],
             case.get("fiscal_year"),
         )
-        result = await provider.extract(ctx)
-        raw = [Prediction.of(sig) for sig in result.value.signals]
+        signals: list[ExtractedSignal]
+        if saved is not None:
+            if case["id"] not in saved:
+                skipped.append({"case": case["id"], "why": "not in the replayed run"})
+                continue
+            signals = saved[case["id"]]
+        elif candidate.is_llm:
+            try:
+                await guard.check(
+                    estimate_extract_cost(
+                        candidate.model, extract_user_message(ctx), output_tokens=900
+                    )
+                )
+                result = await provider.extract(ctx)
+            except LLMBudgetExceededError:
+                skipped.append({"case": case["id"], "why": f"spend cap ${max_usd:.2f} reached"})
+                continue
+            except LLMConfigError:
+                raise  # a wrong key or model fails every case the same way
+            except LLMError as exc:
+                skipped.append({"case": case["id"], "why": f"{type(exc).__name__}: {exc}"[:300]})
+                continue
+            cost = result.usage.cost_usd(candidate.model)
+            await guard.record(cost)
+            spent += float(cost)
+            signals = list(result.value.signals)
+        else:
+            signals = list((await provider.extract(ctx)).value.signals)
+        raw = [Prediction.of(sig) for sig in signals]
         kept = []
         details = []
-        for sig in result.value.signals:
+        for sig in signals:
             checked = check_signal(
                 sig,
                 text=case["text"],
@@ -281,13 +349,21 @@ async def evaluate_holdout(path: Path, *, code_revision: str) -> dict[str, Any]:
                 kept.append(Prediction.of(sig, checked))
         raw_rows.append((case, raw))
         stored_rows.append((case, kept))
-        predictions.append({"case": case["id"], "predictions": details})
+        predictions.append(
+            {
+                "case": case["id"],
+                "predictions": details,
+                "raw_signals": [sig.model_dump(mode="json") for sig in signals],
+            }
+        )
     return {
         "schema_version": "source-holdout-result-v1",
         "evaluated_at": now_utc().isoformat(),
         "code_revision": code_revision,
-        "extractor": provider.extract_model,
-        "api_cost_usd": 0,
+        "extractor": label,
+        "api_cost_usd": round(spent, 4),
+        "max_usd": max_usd if candidate.is_llm and saved is None else 0,
+        "skipped_cases": skipped,
         "manifest_sha256": manifest_hash,
         "cases_sha256": manifest["cases_sha256"],
         "label_origin": manifest["label_origin"],

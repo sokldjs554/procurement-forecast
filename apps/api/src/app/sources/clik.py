@@ -170,10 +170,7 @@ class ClikMinutesAdapter:
             list_window = FetchWindow(
                 min(window.since, window.until - timedelta(days=lookback_days)), window.until
             )
-        meetings: dict[MeetingKey, list[dict[str, Any]]] = {}
-        for council in self._councils:
-            async for row in self._list(council, list_window):
-                meetings.setdefault(meeting_key(row), []).append(row)
+        meetings = await self.list_meetings(list_window)
         self.stats["meetings"] = len(meetings)
         self.stats["revisions"] = sum(len(rows) - 1 for rows in meetings.values())
         ids = {external_id(k): k for k in meetings}
@@ -221,6 +218,15 @@ class ClikMinutesAdapter:
                 if revisions is not None and ext in revisions:
                     self.stats["revised"] += 1
                 yield rec
+
+    async def list_meetings(self, window: FetchWindow) -> dict[MeetingKey, list[dict[str, Any]]]:
+        """The list rows of every meeting held in ``window``, revisions grouped by meeting
+        (list calls only; no detail is read)."""
+        meetings: dict[MeetingKey, list[dict[str, Any]]] = {}
+        for council in self._councils:
+            async for row in self._list(council, window):
+                meetings.setdefault(meeting_key(row), []).append(row)
+        return meetings
 
     async def _list(self, council: str, window: FetchWindow) -> AsyncIterator[dict[str, Any]]:
         size = int(self._cfg["page_size"])

@@ -6,6 +6,8 @@ manage demo run                   # full pipeline over the synthetic world, in-p
 manage eval all --record          # extraction / linking / OCR / realistic-set evals
 manage eval llm --dry-run         # Claude model × effort comparison on the hand-written set
 manage eval tenders DIR --since … --until … -i 성남시   # every official 입찰공고 of a period, kept by institution
+manage eval fresh-minutes DIR --since … --until … -x 성남   # rule-chosen CLIK minutes for a new holdout
+manage eval fresh-cases DIR · fresh-freeze DIR --split dev   # excerpts to label, then hash them
 manage bench --report ../../docs/performance.md   # hot-query plans at volume
 manage sources check              # first real call to each 조달청 operation (needs the data.go.kr key)
 manage sources check -s clik_minutes   # CLIK minutes list + one detail (needs the CLIK key)
@@ -554,12 +556,33 @@ def eval_holdout(
     manifest: Path = typer.Argument(..., exists=True, dir_okay=False),
     code_revision: str = typer.Option(..., help="Evaluated code revision"),
     out: Path = typer.Option(None, help="Write full predictions and metrics as JSON"),
+    extractor: str = typer.Option(
+        "heuristic", help="heuristic (free) or a Claude model[:effort], e.g. claude-opus-5:low"
+    ),
+    max_usd: float = typer.Option(0.0, min=0, help="Stop calling Claude once this much is spent"),
+    replay: Path | None = typer.Option(
+        None, exists=True, dir_okay=False, help="Score a saved run's model output again, free"
+    ),
 ) -> None:
-    """Free, no-network extraction audit on hash-verified real-document excerpts."""
+    """Extraction audit on hash-verified real-document excerpts (free unless a Claude extractor
+    is named, and then never past --max-usd)."""
     from app.eval.holdout import evaluate_holdout
 
+    if extractor != "heuristic" and replay is None and max_usd <= 0:
+        raise typer.BadParameter("a Claude extractor needs --max-usd above 0")
+    settings = get_settings()
+    key = settings.anthropic_api_key.get_secret_value() if settings.anthropic_api_key else None
     try:
-        result = _run(lambda: evaluate_holdout(manifest, code_revision=code_revision))
+        result = _run(
+            lambda: evaluate_holdout(
+                manifest,
+                code_revision=code_revision,
+                extractor=extractor,
+                api_key=key,
+                max_usd=max_usd,
+                replay=replay,
+            )
+        )
     except ValueError as exc:
         raise typer.BadParameter(str(exc)) from exc
     payload = json.dumps(result, ensure_ascii=False, indent=2)
@@ -695,6 +718,94 @@ def eval_tenders(
         raise typer.BadParameter(str(exc)) from exc
     report["incomplete"] = report["incomplete"][:20]
     typer.echo(json.dumps(report, ensure_ascii=False, indent=2))
+
+
+@eval_app.command("fresh-minutes")
+def eval_fresh_minutes(
+    out_dir: Path = typer.Argument(..., file_okay=False, help="New directory for the sample"),
+    since: str = typer.Option(..., help="First meeting date, YYYY-MM-DD"),
+    until: str = typer.Option(..., help="Last meeting date, YYYY-MM-DD"),
+    meeting_pattern: str = typer.Option("위원회", help="Regex the meeting name must match"),
+    exclude: list[str] = typer.Option([], "--exclude", "-x", help="Skip councils containing this"),
+    exclude_file: Path = typer.Option(
+        None, exists=True, dir_okay=False, help="More names to skip, one per line (# comments)"
+    ),
+    meetings: int = typer.Option(8, min=1, max=50),
+    per_council: int = typer.Option(1, min=1),
+) -> None:
+    """Archive a rule-chosen sample of CLIK minutes for a new extraction holdout."""
+    from app.eval.fresh_minutes import Rule, sample_minutes
+    from app.sources import clik
+    from app.sources.http import ResilientClient
+    from app.sources.resilience import MemoryBreaker, MemoryLimiter
+
+    configure_logging(json=False, level="WARNING", stream=sys.stderr)
+    settings = get_settings()
+    if not settings.clik_api_key:
+        raise typer.BadParameter("APP_CLIK_API_KEY is not configured")
+    if out_dir.exists():
+        raise typer.BadParameter(f"{out_dir} exists; a sample is archived once")
+    if exclude_file:
+        for line in exclude_file.read_text(encoding="utf-8").splitlines():
+            if line.strip() and not line.lstrip().startswith("#"):
+                exclude.append(line.strip())
+    rule = Rule(since, until, meeting_pattern, tuple(exclude), meetings, per_council)
+    key = settings.clik_api_key.get_secret_value()
+
+    async def go() -> dict[str, Any]:
+        client = ResilientClient(
+            "clik_minutes",
+            base_url=clik.BASE_URL,
+            limiter=MemoryLimiter(),
+            breaker=MemoryBreaker(),
+            timeout=max(settings.source_http_timeout_seconds, 60.0),
+            max_attempts=settings.source_max_attempts,
+        )
+        adapter = clik.ClikMinutesAdapter(client, key)
+        try:
+            return await sample_minutes(adapter, out_dir, rule)
+        finally:
+            await adapter.aclose()
+
+    manifest = _run(go)
+    typer.echo(
+        json.dumps(
+            {k: manifest[k] for k in ("listed_meetings", "eligible_meetings")}
+            | {"archived": [s.get("id") or s["status"] for s in manifest["sources"]]},
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
+
+
+@eval_app.command("fresh-cases")
+def eval_fresh_cases(
+    sample_dir: Path = typer.Argument(..., exists=True, file_okay=False),
+    per_source: int = typer.Option(6, min=1),
+    development: int = typer.Option(5, min=0, help="Meetings, in hash order, for development"),
+) -> None:
+    """Draft excerpts to label from an archived fresh sample (dev and held-out test)."""
+    from app.eval.fresh_minutes import draft_cases
+
+    typer.echo(json.dumps(draft_cases(sample_dir, per_source=per_source, development=development)))
+
+
+@eval_app.command("fresh-freeze")
+def eval_fresh_freeze(
+    sample_dir: Path = typer.Argument(..., exists=True, file_okay=False),
+    split: str = typer.Option(..., help="dev or test"),
+    label_origin: str = typer.Option(..., help="Who wrote the labels, and how"),
+) -> None:
+    """Hash the labelled excerpts into a holdout manifest; refuses to rewrite one."""
+    from app.eval.fresh_minutes import freeze
+    from app.eval.holdout import load_holdout
+
+    try:
+        path = freeze(sample_dir, split, label_origin=label_origin)
+        _, cases = load_holdout(path)
+    except ValueError as exc:
+        raise typer.BadParameter(str(exc)) from exc
+    typer.echo(json.dumps({"manifest": str(path), "cases": len(cases)}))
 
 
 class LinkReplayOrder(StrEnum):
