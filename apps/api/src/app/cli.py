@@ -555,12 +555,33 @@ def eval_holdout(
     manifest: Path = typer.Argument(..., exists=True, dir_okay=False),
     code_revision: str = typer.Option(..., help="Evaluated code revision"),
     out: Path = typer.Option(None, help="Write full predictions and metrics as JSON"),
+    extractor: str = typer.Option(
+        "heuristic", help="heuristic (free) or a Claude model[:effort], e.g. claude-opus-5:low"
+    ),
+    max_usd: float = typer.Option(0.0, min=0, help="Stop calling Claude once this much is spent"),
+    replay: Path | None = typer.Option(
+        None, exists=True, dir_okay=False, help="Score a saved run's model output again, free"
+    ),
 ) -> None:
-    """Free, no-network extraction audit on hash-verified real-document excerpts."""
+    """Extraction audit on hash-verified real-document excerpts (free unless a Claude extractor
+    is named, and then never past --max-usd)."""
     from app.eval.holdout import evaluate_holdout
 
+    if extractor != "heuristic" and replay is None and max_usd <= 0:
+        raise typer.BadParameter("a Claude extractor needs --max-usd above 0")
+    settings = get_settings()
+    key = settings.anthropic_api_key.get_secret_value() if settings.anthropic_api_key else None
     try:
-        result = _run(lambda: evaluate_holdout(manifest, code_revision=code_revision))
+        result = _run(
+            lambda: evaluate_holdout(
+                manifest,
+                code_revision=code_revision,
+                extractor=extractor,
+                api_key=key,
+                max_usd=max_usd,
+                replay=replay,
+            )
+        )
     except ValueError as exc:
         raise typer.BadParameter(str(exc)) from exc
     payload = json.dumps(result, ensure_ascii=False, indent=2)
