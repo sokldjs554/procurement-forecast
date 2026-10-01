@@ -26,6 +26,7 @@ from arq import Retry
 from arq.cron import CronJob, next_cron
 from sqlalchemy import func, select, text
 from sqlalchemy.dialects.postgresql import insert
+from sqlalchemy.exc import DBAPIError
 
 from app.clock import KST, today_kst
 from app.db.models import Document, JobRun, Source
@@ -357,6 +358,16 @@ async def bootstrap(settings: Settings) -> dict[str, Any]:
     return {"institutions": institutions, "enabled_sources": enabled}
 
 
+async def _unlock(lock: Any) -> None:
+    """Release the pass lock. A session lock dies with its connection, so if the server
+    already closed that connection there is nothing left to release: say so, don't fail a
+    pass whose work is done and recorded."""
+    try:
+        await lock.execute(text("SELECT pg_advisory_unlock(:k)"), {"k": TICK_LOCK})
+    except DBAPIError as exc:
+        log.warning("ops.tick.lock_connection_lost", error=f"{type(exc).__name__}: {exc}"[:300])
+
+
 async def tick(
     settings: Settings,
     *,
@@ -372,7 +383,11 @@ async def tick(
     result says where the next pass starts."""
     from app.db.session import get_engine
 
-    async with get_engine().connect() as lock:
+    async with get_engine().connect() as conn:
+        # Autocommit: the lock is held by the session, and a pass is long. In a transaction the
+        # connection would sit "idle in transaction" for the whole pass, which hosted databases
+        # end (the first Neon pass lost its lock connection after an hour and then failed).
+        lock = await conn.execution_options(isolation_level="AUTOCOMMIT")
         if not await lock.scalar(text("SELECT pg_try_advisory_lock(:k)"), {"k": TICK_LOCK}):
             now = datetime.now(UTC).isoformat()
             return TickReport(since=now, until=now, locked_out=True)
@@ -414,4 +429,4 @@ async def tick(
                         row.finished_at = datetime.now(UTC)
                         row.result = report.as_dict() if report is not None else {}
         finally:
-            await lock.execute(text("SELECT pg_advisory_unlock(:k)"), {"k": TICK_LOCK})
+            await _unlock(lock)
