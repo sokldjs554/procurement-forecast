@@ -34,9 +34,52 @@ jobs:
           git -C code archive --format=tar.gz HEAD apps/api scripts docs/data docs/local-llm.md AGENTS.md .github > checkpoint/code.tar.gz
           git -C evidence archive --format=tar.gz HEAD docs/data > checkpoint/evidence.tar.gz
           (cd checkpoint && sha256sum code.tar.gz evidence.tar.gz > SHA256SUMS)
-      - name: Portable research dependencies for offline verification
+      - name: Portable supplementary research dependencies
         run: |
-          python -m pip download --dest checkpoint/wheels --only-binary=:all: --python-version 3.13 --platform manylinux2014_x86_64 arq structlog asyncpg pgvector anthropic redis tenacity respx ruff mypy
+          python -m pip download --dest checkpoint/wheels --only-binary=:all: --python-version 3.13 --platform manylinux2014_x86_64 aiosmtplib olefile alembic sentry-sdk
+      - name: Archive new official sources before any model evaluation
+        shell: python
+        run: |
+          import datetime, hashlib, json, pathlib, time, urllib.error, urllib.parse, urllib.request, urllib.robotparser
+          out = pathlib.Path('checkpoint/fresh-sources')
+          out.mkdir()
+          agent = 'ProcurementForecastResearch/1.0'
+          targets = [
+              ('gyeyang-7364', 'https://council.gyeyang.go.kr/viewer/minutes/7364.do'),
+              ('gyeyang-7336', 'https://council.gyeyang.go.kr/viewer/minutes/7336.do'),
+              ('yesan-6005', 'https://www.councilyesan.go.kr/council/viewer/minutes/6005.do'),
+          ]
+          robots = {}
+          for name, url in targets:
+              record = {'id': name, 'url': url, 'retrieved_at': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'model_executed': False}
+              try:
+                  host = urllib.parse.urlsplit(url).netloc
+                  if host not in robots:
+                      robots_url = 'https://' + host + '/robots.txt'
+                      try:
+                          with urllib.request.urlopen(urllib.request.Request(robots_url, headers={'User-Agent': agent}), timeout=30) as r:
+                              raw = r.read()
+                          (out / (host + '-robots.txt')).write_bytes(raw)
+                          policy = urllib.robotparser.RobotFileParser()
+                          policy.parse(raw.decode('utf-8', errors='replace').splitlines())
+                      except urllib.error.HTTPError as exc:
+                          if exc.code != 404:
+                              raise
+                          policy = None
+                      robots[host] = policy
+                  policy = robots[host]
+                  if policy is not None and not policy.can_fetch(agent, url):
+                      raise RuntimeError('robots.txt disallows this source')
+                  time.sleep(max(2, (policy.crawl_delay(agent) or 0) if policy else 0))
+                  with urllib.request.urlopen(urllib.request.Request(url, headers={'User-Agent': agent}), timeout=40) as r:
+                      raw = r.read()
+                      record.update(status=r.status, final_url=r.url, headers={k: r.headers.get(k) for k in ('Content-Type', 'Last-Modified', 'ETag')})
+                  (out / (name + '.html')).write_bytes(raw)
+                  record.update(sha256=hashlib.sha256(raw).hexdigest(), size=len(raw))
+              except Exception as exc:
+                  record['error'] = str(exc)
+              (out / (name + '.json')).write_text(json.dumps(record, ensure_ascii=False, indent=2), encoding='utf-8')
+              print(json.dumps(record, ensure_ascii=False))
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
         if: always()
         with:
