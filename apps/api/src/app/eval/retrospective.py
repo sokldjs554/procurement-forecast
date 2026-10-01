@@ -35,7 +35,7 @@ GENERIC = frozenset(
     시설물 개보수 리모델링 보강 재정비 확장 이전 신설 계획 기본계획 수립 연구 조사 점검 진단
     정밀안전진단 안전점검 물품 장비 시스템 노후 긴급 일반 기타 추가 신규 내 의 연간 단가
     전면 부분 소규모 년 년도 년도분 차 1차 2차 3차 일원 일대 외 개소 식 대 회 건 종합 기반
-    성남시 성남 시 구 동 공공 지역 시민 행정
+    시 구 동 공공 지역 시민 행정
     """.split()  # noqa: SIM905 - a word list reads better as words
 )
 _TOKEN = re.compile(r"[가-힣A-Za-z0-9]+")
@@ -60,6 +60,19 @@ def tokens(title: str) -> list[str]:
 
 def squash(title: str) -> str:
     return re.sub(r"\s+", "", title)
+
+
+_PLACE_SUFFIX = re.compile(r"(특별자치시|특별자치도|특별시|광역시|시|군|구|도)$")
+
+
+def without_place(title: str, institution: str) -> str:
+    """``title`` without the 지자체's own name ("서산시", "서산"): every notice of that 지자체
+    may carry it, so it says nothing about which project a notice is."""
+    stem = _PLACE_SUFFIX.sub("", institution)
+    for name in sorted({institution, stem} - {""}, key=len, reverse=True):
+        if len(name) >= 2:
+            title = title.replace(name, " ")
+    return title
 
 
 def overlap(parts: list[str], haystack: str) -> tuple[float, list[str]]:
@@ -151,13 +164,14 @@ def candidate_pairs(
     """Notices of ``institution`` sharing at least half of a signal's distinctive characters
     (and at least ``min_shared_chars`` of them), best first, at most ``per_signal`` each."""
     own = [
-        (n, str(n.get("bidNtceNm") or ""), squash(str(n.get("bidNtceNm") or "")))
+        (n, title, squash(without_place(title, institution)))
         for n in notices
         if institution in demand_institution(n)
+        for title in [str(n.get("bidNtceNm") or "")]
     ]
     out: list[Candidate] = []
     for signal in signals:
-        parts = tokens(str(signal.get("title") or ""))
+        parts = tokens(without_place(str(signal.get("title") or ""), institution))
         found: list[Candidate] = []
         for notice, title, haystack in own:
             score, shared = overlap(parts, haystack)

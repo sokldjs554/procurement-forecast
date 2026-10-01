@@ -14,6 +14,7 @@ from app.eval.retrospective import (
     report,
     squash,
     tokens,
+    without_place,
 )
 
 
@@ -75,6 +76,22 @@ def _run(judgments: list[Judgment], notices: list[dict[str, Any]], signals: list
         observed_through=date(2026, 9, 30),
         proposed=proposed,
     )
+
+
+def test_the_city_name_is_not_a_project_name() -> None:
+    assert without_place("성남시 성남종합운동장 리모델링", "성남시").split() == [
+        "종합운동장",
+        "리모델링",
+    ]
+
+
+def test_the_city_name_alone_proposes_nothing() -> None:
+    signals = [_signal("s1", "서산시 도서관 건립", "2025-03-01")]
+    notices = [
+        _notice("1", "서산시 하수관로 정비공사", "2025-06-01", "충청남도 서산시"),
+        _notice("2", "서산 도서관 건립공사 설계용역", "2025-09-01", "충청남도 서산시"),
+    ]
+    assert [c.notice for c in candidate_pairs(signals, notices, "서산시")] == ["2-000"]
 
 
 def test_hits_tenders_already_out_and_open_cases_are_kept_apart() -> None:
