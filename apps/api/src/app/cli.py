@@ -629,6 +629,60 @@ def eval_longitudinal(
     typer.echo(payload)
 
 
+@eval_app.command("retrospective")
+def eval_retrospective(
+    signals: Path = typer.Argument(..., exists=True, dir_okay=False, help="Signal export (.gz)"),
+    notices: Path = typer.Argument(..., exists=True, dir_okay=False, help="Census notices (.gz)"),
+    institution: str = typer.Option(..., help="지자체 a notice's 수요기관 names, e.g. 성남시"),
+    candidates: Path = typer.Option(..., help="Proposed pairs (JSONL); written if absent"),
+    judgments: Path | None = typer.Option(None, exists=True, dir_okay=False),
+    observed_through: str = typer.Option(None, help="Last day the census covers, YYYY-MM-DD"),
+    out: Path | None = typer.Option(None, help="Write the report (JSON) here"),
+) -> None:
+    """Did past signals reach an official 입찰공고? Proposes pairs; counts reviewed ones."""
+    from dataclasses import asdict
+
+    from app.eval.retrospective import (
+        candidate_pairs,
+        load_judgments,
+        load_notices,
+        load_signals,
+        report,
+    )
+
+    rows = load_signals(signals)
+    census = load_notices(notices)
+    if not candidates.exists():
+        proposed = candidate_pairs(rows, census, institution)
+        candidates.write_text(
+            "".join(json.dumps(asdict(c), ensure_ascii=False) + "\n" for c in proposed),
+            encoding="utf-8",
+        )
+        typer.echo(f"{len(proposed)} pairs proposed for {len(rows)} signals → {candidates}")
+    if judgments is None:
+        return
+    if not observed_through:
+        raise typer.BadParameter("--observed-through is required with --judgments")
+    pairs = {
+        (row["signal_key"], row["notice"])
+        for row in map(json.loads, candidates.read_text(encoding="utf-8").splitlines())
+    }
+    try:
+        result = report(
+            rows,
+            census,
+            load_judgments(judgments),
+            observed_through=date.fromisoformat(observed_through),
+            proposed=pairs,
+        )
+    except ValueError as exc:
+        raise typer.BadParameter(str(exc)) from exc
+    payload = json.dumps(result, ensure_ascii=False, indent=2)
+    if out:
+        out.write_text(payload + "\n", encoding="utf-8")
+    typer.echo(payload)
+
+
 @eval_app.command("freeze")
 def eval_freeze(
     out: Path = typer.Option(..., help="Atomically write the current observation snapshot"),
