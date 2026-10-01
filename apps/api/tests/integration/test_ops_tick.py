@@ -12,7 +12,7 @@ from sqlalchemy import select, text
 from app.clock import KST
 from app.db.models import Document, JobRun, Source
 from app.db.session import get_engine, session_scope
-from app.ops import TICK_JOB, TICK_LOCK, bootstrap, tick
+from app.ops import TICK_JOB, TICK_LOCK, TickReport, bootstrap, tick
 from app.pipeline.ingest import upsert_record
 from app.settings import get_settings
 from app.sources.base import RawRecord
@@ -103,3 +103,54 @@ async def test_a_pass_that_overlaps_another_does_nothing(demo_world) -> None:  #
 async def test_bootstrap_refuses_a_database_seeded_for_the_demo(demo_world) -> None:  # type: ignore[no-untyped-def]
     with pytest.raises(RuntimeError, match="fixture"):
         await bootstrap(get_settings())
+
+
+async def _lock_backend(other) -> tuple[int, str]:  # type: ignore[no-untyped-def]
+    row = (
+        await other.execute(
+            text(
+                "SELECT a.pid, a.state FROM pg_locks l JOIN pg_stat_activity a USING (pid) "
+                "WHERE l.locktype = 'advisory' AND l.objid = :k AND l.granted"
+            ),
+            {"k": TICK_LOCK},
+        )
+    ).one()
+    return row.pid, row.state
+
+
+async def test_the_lock_connection_holds_no_transaction_through_a_long_pass(  # type: ignore[no-untyped-def]
+    demo_world, monkeypatch
+) -> None:
+    seen: list[str] = []
+
+    async def pass_(*args: Any, **kwargs: Any) -> TickReport:
+        async with get_engine().connect() as other:
+            seen.append((await _lock_backend(other))[1])
+        return TickReport(since="s", until="u")
+
+    monkeypatch.setattr("app.ops.run_pass", pass_)
+    await tick(get_settings(), channels=CHANNELS)
+    # "idle in transaction" for an hour is what a hosted database ends.
+    assert seen == ["idle"]
+
+
+async def test_a_pass_whose_lock_connection_the_server_closed_still_finishes(  # type: ignore[no-untyped-def]
+    demo_world, monkeypatch
+) -> None:
+    async def pass_(*args: Any, **kwargs: Any) -> TickReport:
+        async with get_engine().connect() as other:
+            pid, _ = await _lock_backend(other)
+            await other.execute(text("SELECT pg_terminate_backend(:p)"), {"p": pid})
+        return TickReport(since="s", until="u", jobs={"process_document": 3})
+
+    monkeypatch.setattr("app.ops.run_pass", pass_)
+    report = await tick(get_settings(), channels=CHANNELS)
+    assert report.jobs == {"process_document": 3}
+    async with session_scope() as s:
+        run = await s.scalar(
+            select(JobRun).where(JobRun.job == TICK_JOB).order_by(JobRun.id.desc()).limit(1)
+        )
+    assert run is not None and run.status == "succeeded"
+    async with get_engine().connect() as other:  # the server released the lock with the session
+        assert await other.scalar(text("SELECT pg_try_advisory_lock(:k)"), {"k": TICK_LOCK})
+        await other.execute(text("SELECT pg_advisory_unlock(:k)"), {"k": TICK_LOCK})
