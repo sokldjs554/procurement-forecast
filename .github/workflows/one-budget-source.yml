@@ -1,0 +1,39 @@
+name: One unscored department budget
+on:
+  push:
+    branches: [eval/2026-10-01-final-source-proof]
+    paths: [.github/workflows/one-budget-source.yml]
+permissions:
+  contents: read
+jobs:
+  source:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 3
+    steps:
+      - name: Read one linked public PDF with TLS and robots checks
+        shell: python
+        run: |
+          import datetime,hashlib,json,pathlib,time,urllib.request,urllib.error,urllib.robotparser,urllib.parse
+          root='https://www.ddc.go.kr';url=root+urllib.parse.quote('/site/ddc/download/file_2025/4-5.정보통신과.pdf')
+          out=pathlib.Path('source');out.mkdir();agent='ProcurementForecastResearch/1.0'
+          d={'url':url,'id':'ddc-2025-ict','link_source':'https://www.ddc.go.kr/ddc/contents.do?key=2257','retrieved_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'model_executed':False}
+          try:
+            try:
+              with urllib.request.urlopen(urllib.request.Request(root+'/robots.txt',headers={'User-Agent':agent}),timeout=15) as r:b=r.read()
+              (out/'robots.txt').write_bytes(b);p=urllib.robotparser.RobotFileParser();p.parse(b.decode().splitlines())
+              if not p.can_fetch(agent,url):raise RuntimeError('robots disallows source')
+              time.sleep(max(2,p.crawl_delay(agent) or 0))
+            except urllib.error.HTTPError as exc:
+              if exc.code!=404:raise
+            with urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':agent}),timeout=35) as r:b=r.read(10000001);d.update(status=r.status,final_url=r.url)
+            if len(b)>10000000 or not b.startswith(b'%PDF-'):raise RuntimeError('not a bounded PDF')
+            (out/'budget.pdf').write_bytes(b);d.update(sha256=hashlib.sha256(b).hexdigest(),size=len(b))
+          except Exception as exc:d['error']=type(exc).__name__+': '+str(exc)
+          (out/'retrieval.json').write_text(json.dumps(d,ensure_ascii=False,indent=2),encoding='utf-8');print(d)
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        if: always()
+        with:
+          name: one-budget-source
+          path: source/
+          retention-days: 7
+          if-no-files-found: error
