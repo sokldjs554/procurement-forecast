@@ -1,0 +1,48 @@
+name: Read official historical tender records
+on:
+  push:
+    branches: [eval/2026-10-01-final-source-proof]
+    paths: [.github/workflows/official-tender-read.yml]
+permissions:
+  contents: read
+jobs:
+  read:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Five bounded read-only title searches and original detail pages
+        shell: python
+        run: |
+          import datetime,hashlib,html,json,pathlib,re,time,urllib.request,urllib.parse,urllib.robotparser
+          root='https://www.gm.go.kr';out=pathlib.Path('records');out.mkdir();agent='ProcurementForecastResearch/1.0'
+          with urllib.request.urlopen(urllib.request.Request(root+'/robots.txt',headers={'User-Agent':agent}),timeout=20) as r: robot=r.read()
+          (out/'robots.txt').write_bytes(robot);policy=urllib.robotparser.RobotFileParser();policy.parse(robot.decode('utf-8',errors='replace').splitlines())
+          def fetch(name,url,data=None):
+            info={'url':url,'retrieved_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'post_fields':data}
+            try:
+              if not policy.can_fetch(agent,url):raise RuntimeError('robots disallows page')
+              time.sleep(max(2,policy.crawl_delay(agent) or 0))
+              req=urllib.request.Request(url,data=urllib.parse.urlencode(data).encode() if data else None,headers={'User-Agent':agent})
+              with urllib.request.urlopen(req,timeout=25) as r:b=r.read(4000001);info.update(status=r.status,final_url=r.url)
+              if len(b)>4000000:raise RuntimeError('bounded size exceeded')
+              (out/(name+'.html')).write_bytes(b);info.update(size=len(b),sha256=hashlib.sha256(b).hexdigest());return b.decode('utf-8',errors='replace')
+            except Exception as exc:info['error']=str(exc);return ''
+            finally:(out/(name+'.json')).write_text(json.dumps(info,ensure_ascii=False,indent=2),encoding='utf-8')
+          for i,term in enumerate(['광전송','행정망','망연계','해킹','백신'],1):
+            params={'q_nftcBbsCode':'1003','q_searchKeyTy':'1001','q_searchVal':term,'q_rowPerPage':'30','q_currPage':'1'}
+            text=fetch('search-%s'%i,root+'/pt/user/nftcBbs/BD_selectNftcBbsList.do',params)
+            # Preserve source HTML and exact linked details, without guessing identifiers.
+            links=re.findall(r'''(?:href|onclick)=["']([^"']*BD_selectNftcBbs[^"']*)["']''',text)
+            ids=re.findall(r'''(?:opView|jsView|fn_view|fnView)\(['"]?(\d+)''',text)
+            (out/('links-%s.json'%i)).write_text(json.dumps({'term':term,'links':links,'ids':ids},ensure_ascii=False,indent=2),encoding='utf-8')
+            for j,link in enumerate(links[:8]):
+              if 'BD_selectNftcBbsList' in link or 'javascript:' in link:continue
+              url=urllib.parse.urljoin(root+'/pt/user/nftcBbs/',html.unescape(link))
+              if urllib.parse.urlsplit(url).netloc=='www.gm.go.kr':fetch('detail-%s-%s'%(i,j),url)
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        if: always()
+        with:
+          name: official-tender-read
+          path: records/
+          retention-days: 7
+          if-no-files-found: error
