@@ -10,7 +10,7 @@ from __future__ import annotations
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import Field, SecretStr, model_validator
+from pydantic import Field, SecretStr, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 Effort = Literal["low", "medium", "high", "xhigh", "max"]
@@ -121,6 +121,24 @@ class Settings(BaseSettings):
     @property
     def is_test(self) -> bool:
         return self.env == "test"
+
+    @field_validator(
+        "anthropic_api_key",
+        "voyage_api_key",
+        "clik_api_key",
+        "data_go_kr_service_key",
+        "lofin_api_key",
+        mode="before",
+    )
+    @classmethod
+    def _trim_pasted_key(cls, value: object) -> object:
+        """Keys pasted into a secrets form often carry a newline, spaces or quotes; a provider
+        then rejects the key as invalid (CLIK answers ERROR01) and nothing says why."""
+        if isinstance(value, str):
+            value = value.strip()
+            if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
+                value = value[1:-1].strip()
+        return value
 
     @model_validator(mode="after")
     def _refuse_dev_secrets_outside_local(self) -> Settings:

@@ -65,6 +65,9 @@ jobs:
           APP_CLIK_API_KEY: ${{ secrets.APP_CLIK_API_KEY }}
         run: |
           test -n "$APP_CLIK_API_KEY" || { echo "::error::Add the APP_CLIK_API_KEY repository secret first"; exit 1; }
+          # Never the key itself: only its shape, to tell a stray newline or a wrong value apart.
+          trimmed="$(printf '%s' "$APP_CLIK_API_KEY" | tr -d '[:space:]')"
+          echo "CLIK key: ${#APP_CLIK_API_KEY} characters, ${#trimmed} without whitespace"
           uv run manage eval fresh-minutes "$GITHUB_WORKSPACE/data/$DIR" \
             --since "$SINCE" --until "$UNTIL" --meetings "$MEETINGS" \
             --exclude-file "$GITHUB_WORKSPACE/docs/data/fresh-minutes-exclude.txt"
