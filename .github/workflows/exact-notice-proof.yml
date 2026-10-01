@@ -1,0 +1,31 @@
+name: Exact official notice proof
+on:
+  push:
+    branches: [eval/2026-10-01-final-source-proof]
+    paths: [.github/workflows/exact-notice-proof.yml]
+permissions:
+  contents: read
+jobs:
+  read:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 2
+    steps:
+      - name: Read the single original notice identified by the official title search
+        shell: python
+        run: |
+          import datetime,hashlib,json,pathlib,time,urllib.request,urllib.robotparser
+          root='https://www.gm.go.kr';url=root+'/pt/user/nftcBbs/BD_selectNftcBbsDetail.do?q_nftcBbsCode=1003&q_nftcBbsMgtno=60629&q_currPage=1'
+          out=pathlib.Path('notice');out.mkdir();agent='ProcurementForecastResearch/1.0'
+          with urllib.request.urlopen(urllib.request.Request(root+'/robots.txt',headers={'User-Agent':agent}),timeout=15) as r:b=r.read()
+          (out/'robots.txt').write_bytes(b);p=urllib.robotparser.RobotFileParser();p.parse(b.decode('utf-8',errors='replace').splitlines())
+          if not p.can_fetch(agent,url):raise RuntimeError('robots excludes page')
+          time.sleep(max(2,p.crawl_delay(agent) or 0))
+          with urllib.request.urlopen(urllib.request.Request(url,headers={'User-Agent':agent}),timeout=30) as r:b=r.read();status=r.status;final=r.url
+          (out/'original-2025-553.html').write_bytes(b)
+          (out/'retrieval.json').write_text(json.dumps({'url':url,'final_url':final,'status':status,'retrieved_at':datetime.datetime.now(datetime.timezone.utc).isoformat(),'sha256':hashlib.sha256(b).hexdigest(),'size':len(b),'purpose':'Original notice reached from an observed official list link, not an inferred number.'},ensure_ascii=False,indent=2),encoding='utf-8')
+      - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a
+        with:
+          name: exact-notice-proof
+          path: notice/
+          retention-days: 7
+          if-no-files-found: error
