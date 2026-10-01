@@ -1,0 +1,19 @@
+{
+  "schema_version": "source-holdout-v1",
+  "name": "goyang-small-source-check-20261001",
+  "frozen_before_scoring": true,
+  "frozen_at": "2026-10-01T00:11:25.235510+00:00",
+  "label_origin": "Same implementation agent authored labels on new source BEFORE any model outputs; not independently authored, not human-reviewed, convenience sample of 2 procurement and 2 operating-budget excerpts. No nationwide/generalization claim. Do not modify labels after scoring.",
+  "cases_path": "fresh-cases.jsonl",
+  "cases_sha256": "6ff9f77355c2a0dbad54b9d5162b82dfb7018fca4e966fd9624546d8439c70df",
+  "sources": [
+    {
+      "id": "goyang-13924",
+      "path": "goyang-13924.txt",
+      "sha256": "9c767ff79fc7f0511dacb4c78418e1030da6e6694a1b0062719c14919c15ec5c",
+      "url": "https://www.goyangcouncil.go.kr/viewer/minutes.do?mem_sch=09050&schwrd=&uid=13924",
+      "original_path": "goyang-13924.html",
+      "original_sha256": "5c8b656227fcf30b0e17c889548dd38f5ceb4cfac69d6fbd61b80716974b602f"
+    }
+  ]
+}

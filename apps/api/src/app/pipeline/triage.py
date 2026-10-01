@@ -24,7 +24,12 @@ from app.domain.taxonomy import (
 
 _FUTURE_MARKERS = ("내년", "내후년", "예정", "계획", "하반기", "상반기", "본예산", "추경", "년도")
 _KEYWORDS = tuple({kw for info in CATEGORIES.values() for kw in info.keywords})
-_COMMITMENT = tuple(p for phrases in COMMITMENT_LADDER.values() for p in phrases)
+_COMMITMENT = (
+    *(p for phrases in COMMITMENT_LADDER.values() for p in phrases),
+    "계상하였",
+    "계상했",
+    "계상하겠",
+)
 
 # Weights hand-set, then checked against the synthetic gold set; see docs/evaluation.md.
 _WEIGHTS = {
@@ -62,7 +67,7 @@ def triage_chunk(text: str, *, kind: str, threshold: float) -> TriageResult:
         "amount": 1.0 if find_amounts(text) or re.search(r"\d{1,3}(?:,\d{3}){1,}", text) else 0.0,
         "future": _count(text, _FUTURE_MARKERS, cap=2),
         "noise": _count(text, NOISE_MARKERS, cap=2),
-        "budget_line": 1.0 if kind == "budget_line" else 0.0,
+        "budget_line": 1.0 if kind in ("budget_line", "budget_plan", "budget_review") else 0.0,
     }
     z = _WEIGHTS["bias"] + sum(_WEIGHTS[k] * v for k, v in features.items())
     score = 1 / (1 + math.exp(-z))

@@ -46,7 +46,9 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
 
     # --- LLM -------------------------------------------------------------------------------
-    llm_provider: Literal["anthropic", "heuristic"] = "heuristic"
+    llm_provider: Literal["anthropic", "heuristic", "local_llama"] = "heuristic"
+    llm_local_base_url: str = "http://127.0.0.1:18080"
+    llm_local_timeout_seconds: float = Field(default=480.0, gt=0, le=900)
     anthropic_api_key: SecretStr | None = None
     llm_extract_model: str = "claude-opus-5"
     llm_extract_effort: Effort = "low"

@@ -253,6 +253,10 @@ def check_signal(
     document_text: str | None = None,
     char_start: int = 0,
 ) -> CheckedSignal:
+    if doc_type == "budget_book":
+        # A document can contain tables denominated in different units. Prefer
+        # the preserved chunk-local header over the document's first table unit.
+        table_unit = detect_table_unit(text) or table_unit
     expected_year = sig.expected_year
     if doc_type == "budget_book" and fiscal_year:
         expected_year = expected_year or fiscal_year
@@ -274,8 +278,10 @@ def check_signal(
         commitment=sig.commitment,
     )
     budget = sig.budget_krw
-    if report.budget_grounded is False and report.budget_parsed:
-        budget = report.budget_parsed  # the parser, not the model, has the last word on numbers
+    if report.budget_grounded is False:
+        # Only an unambiguous literal amount can correct a conversion. Unsupported claims
+        # stay in report.budget_claimed for review, not in the operational budget field.
+        budget = report.budget_parsed
     return CheckedSignal(budget, expected_year, report)
 
 
@@ -313,6 +319,10 @@ def _text_signal(
         report.issues.append("institution_unresolved")
     if degraded_reason:
         report.issues.append(f"degraded:{degraded_reason}")
+    if extractor.startswith("local_llama:"):
+        report.issues.append("local_model_requires_review")
+        if report.verdict == "accepted":
+            report.verdict = "needs_review"
     verdict = report.verdict
     if verdict == "accepted" and report.issues:
         verdict = "needs_review"

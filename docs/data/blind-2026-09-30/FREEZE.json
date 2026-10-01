@@ -1,0 +1,10 @@
+{
+  "frozen_at": "2026-09-30T11:59:04.117061+00:00",
+  "manifest_sha256": "5bdc528a9d8c611f8dd561829e80c6b2984994809423cc39e4742cefb4e58849",
+  "cases_sha256": "f08ad0e646aa465d4d00c783c54a5c59cca5d1980e446f959e0565cfb62069c7",
+  "scoring_performed": false,
+  "source_count": 6,
+  "institution_count": 3,
+  "case_count": 33,
+  "rule": "Never modify these bytes in response to model outputs. Any post-scoring adjudication must create a new version."
+}

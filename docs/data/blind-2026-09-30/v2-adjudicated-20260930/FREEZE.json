@@ -1,0 +1,12 @@
+{
+  "frozen_at": "2026-09-30T12:07:45.689279+00:00",
+  "manifest_sha256": "a6a1a5eb9e0492d3f9e0917feaca78c607df03471bf43d89d9a9344c5afcb6cc",
+  "cases_sha256": "ae30844ced512e861cae416f15215af9057e8def64a715a5e27ee9c6ec40d919",
+  "review_changes_sha256": "bdee190aa0aef5352380b230683eaebfe0c37c86a300750837ab0c794daa1c64",
+  "scoring_performed": false,
+  "source_count": 6,
+  "institution_count": 3,
+  "case_count": 33,
+  "original_manifest_sha256": "5bdc528a9d8c611f8dd561829e80c6b2984994809423cc39e4742cefb4e58849",
+  "rule": "Version 2 is a pre-score source-only adjudication. Never modify in response to model outputs; further corrections require a new version."
+}

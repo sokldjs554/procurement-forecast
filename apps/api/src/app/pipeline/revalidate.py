@@ -155,6 +155,8 @@ def validate_stored_signal(
             issues.append("fiscal_year_mismatch")
     if signal.institution_code is None:
         issues.append("institution_unresolved")
+    if (signal.extractor or "").startswith("local_llama:"):
+        issues.append("local_model_requires_review")
     if signal.stage != (
         "council_mention" if document.doc_type == "council_minutes" else "budget_line"
     ):

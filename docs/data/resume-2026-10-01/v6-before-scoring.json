@@ -1,0 +1,17 @@
+{
+  "frozen_at": "2026-10-01T07:12:19.703903+00:00",
+  "stage": "before any v6 baseline or candidate provider execution",
+  "authorities": ["남양주시", "청주시"],
+  "documents": 3,
+  "cases": 36,
+  "expected_signals": 36,
+  "negative_cases": 14,
+  "cases_sha256": "cae207315870609ffd181fc9a44e19935bd6e4c2cd40d7f9f1874f14ac65e184",
+  "manifest_sha256": "53ff1ce2c2ca5206af9af2c51aa986d0d15ff5aef2a1e066ce7c0fc0a572a6ce",
+  "candidate_freeze_sha256": "ef6623dc37be16a77e25a55a8876b5f684f9fddc36512a8e52cda51cbc64851d",
+  "original_source_artifact_id": 11145678388,
+  "original_source_run_id": 36827788397,
+  "original_source_artifact_sha256": "c221fc5507b44bb1f739560d050f886750fb2b924fe82f6cf4c91b3e5bd641e7",
+  "pre_scoring_review": "Same implementation assistant authored and source-reviewed labels. Publicly funded capital repair at a private-owned facility retained; ownership is not private funding. Loader rejected CRLF-normalized offsets before provider execution; offsets corrected against exact bytes with excerpts/gold unchanged. Original versions preserved locally.",
+  "limits": "Purposive new-authority source sample, not independent expert annotation or a national population estimate. Budget labels are explicit appropriations/increments, not certified total contract costs. Meeting dates are not claimed historical publication timestamps. No paid model, deployment, or product-code publication."
+}

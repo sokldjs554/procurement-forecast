@@ -1,0 +1,24 @@
+{
+  "frozen_at": "2026-10-01T02:43:49.635963+00:00",
+  "stage": "before either baseline or candidate model execution",
+  "manifest_sha256": "08f6b8c2e2ebef378581652f9a94d1897c21a21f7d6eb8af55d16936e5b5014b",
+  "cases_sha256": "ad83882b082797de53ba0ae5e3d9642661ac1087ffce94da0f9302cc1a3a012c",
+  "cases": 9,
+  "expected_signals": 15,
+  "negative_cases": 4,
+  "authorities": ["계양구", "예산군"],
+  "original_source_artifact": {"run_id": 36806873729, "artifact_id": 11138156613, "sha256": "9aa37f1ea79181d67f3b2a73eec6a5008418b6a8ed7938d06d328a15f1f2ebaa"},
+  "original_source_sha256": {
+    "https://council.gyeyang.go.kr/viewer/minutes/7364.do": "1e60f7510932867a2e2605150f7fe80cab25a211d1af5f0f4520693981a82ce8",
+    "https://council.gyeyang.go.kr/viewer/minutes/7336.do": "40bbae38fba53cb54c00b9a396dc2b4f2b56ae568de42a62c45abaa0d6b49b06",
+    "https://www.councilyesan.go.kr/council/viewer/minutes/6005.do": "2cd7f0f01fa1e6d7dc3061ca5dbc3dff03f41b9e8629fbde53d3d4c1cb9cbc85"
+  },
+  "candidate_files_sha256": {
+    "apps/api/src/app/domain/krw.py": "51a5be73724455d986a07bb50589e08c38b21590e7c38f0f69362b456e016724",
+    "apps/api/src/app/domain/taxonomy.py": "b9747c7e691849e413c287cc05e411283a34ce042ab1bae4632e8d92b6518d50",
+    "apps/api/src/app/parsing/chunking.py": "980cde2dc10090643494e544bc1601e5393f48b1271c41180e9c20a18dd95a3b",
+    "apps/api/src/app/llm/providers/heuristic.py": "411a718b2db18fabbeeb11813712aec69cfa1886af8b1441158d26f988f38acc"
+  },
+  "label_origin": "Same implementation assistant authored from archived source before outputs. No human expert or independent agent review. Selected convenience sample, not population representative.",
+  "policy": "Do not relabel after outputs. Existing v3 remains development. Meeting dates are not historical publication dates. No API spending or deployment."
+}

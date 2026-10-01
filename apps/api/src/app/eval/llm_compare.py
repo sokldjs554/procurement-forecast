@@ -31,6 +31,7 @@ from app.llm.providers.heuristic import HeuristicProvider
 from app.llm.schemas import EXTRACTION_SCHEMA_VERSION, ExtractedSignal
 from app.llm.service import Provider, estimate_extract_cost
 from app.llm.types import (
+    LOCAL_QWEN_MODEL_ID,
     PRICING_PER_MTOK,
     LLMBudgetExceededError,
     LLMConfigError,
@@ -67,6 +68,8 @@ class Candidate:
             raise ValueError(f"unknown model {model!r}; one of {known} (add its price first)")
         if effort and effort not in EFFORTS:
             raise ValueError(f"unknown effort {effort!r} in {spec!r}; one of {', '.join(EFFORTS)}")
+        if model == LOCAL_QWEN_MODEL_ID and effort:
+            raise ValueError("the pinned local model uses a fixed non-thinking profile")
         return cls(model, effort or None)
 
     @property
@@ -81,6 +84,10 @@ class Candidate:
 def build_provider(c: Candidate, *, api_key: str | None, max_retries: int = 4) -> Provider:
     if not c.is_llm:
         return HeuristicProvider()
+    if c.model == LOCAL_QWEN_MODEL_ID:
+        from app.llm.providers.local_llama import LocalLlamaProvider
+
+        return LocalLlamaProvider()
     return AnthropicProvider(
         api_key=api_key,
         extract_model=c.model,
@@ -142,9 +149,11 @@ async def run_candidate(
         ctx = context_for(case)
         if provider.name != "heuristic":
             try:
-                await guard.check(
-                    estimate_extract_cost(model, extract_user_message(ctx), output_tokens=out_guess)
+                projected = estimate_extract_cost(
+                    model, extract_user_message(ctx), output_tokens=out_guess
                 )
+                if projected > 0:
+                    await guard.check(projected)
             except LLMBudgetExceededError as exc:
                 run.error, run.detail = "over_budget", str(exc)
                 return run

@@ -1,0 +1,56 @@
+{
+  "checked_at": "2026-10-01T00:13:20.600610+00:00",
+  "method": "retrospective_source_followup_discovery_v1",
+  "scope": "three already-seen 2025 budget programme cases, not a frozen unseen forecast cohort",
+  "source": "../blind-2026-09-30/v2-adjudicated-20260930/sources/gangnam_budget_2025.pdf",
+  "queries": [
+    "site:gangnam.go.kr 일원1동 스마트보안등 계약",
+    "세곡동복합문화센터 리모델링 공사 2025",
+    "site:gangnam.go.kr 원격제어 고도화 2025",
+    "세곡동복합문화센터 리모델링 공고번호"
+  ],
+  "entries": [
+    {
+      "source_case": "new-blind-029",
+      "source_report_date": "2024-12-17",
+      "source_publication_date": null,
+      "project": "동복합문화센터 리모델링 공사 (신사동·세곡동)",
+      "candidate_notice_id": "R25BK00985683-000",
+      "candidate_notice_title": "세곡동복합문화센터 리모델링 공사 (건축, 기계)",
+      "candidate_url": "https://www.jungi.net/detail_bid/index/bid9440235",
+      "primary_followup_url": "https://library.gangnam.go.kr/sklib/20001/bbsPostDetail.do?postIdx=58938",
+      "primary_followup_publication_date": "2025-08-12",
+      "finding": "Official library notice identifies Se-gok building works scheduled September–November 2025. Tender identifier appears in secondary index only. One site is only a component of original two-site programme.",
+      "status": "partial_scope_candidate_not_verified_tender_match",
+      "lead_days": null
+    },
+    {
+      "source_case": "new-blind-030",
+      "source_report_date": "2024-12-17",
+      "source_publication_date": null,
+      "project": "일원1동 스마트보안등 시스템 구축",
+      "primary_followup_url": "https://www.gangnam.go.kr/board/B_000031/1074583/view.do?mid=ID01_0313",
+      "primary_followup_publication_date": "2025-08-08",
+      "finding": "Official release reports lights installed in Ilwon1 among three areas. It does not establish tender publication date or tender identity.",
+      "status": "implementation_report_only_not_tender",
+      "lead_days": null
+    },
+    {
+      "source_case": "new-blind-031",
+      "source_report_date": "2024-12-17",
+      "source_publication_date": null,
+      "project": "스마트 빗물펌프장 원격제어 고도화",
+      "status": "search_inconclusive_not_negative",
+      "lead_days": null
+    }
+  ],
+  "scorable_forecasts": 0,
+  "precision": null,
+  "recall": null,
+  "limitations": [
+    "Historical public availability of input is unverified; report date is not release date.",
+    "Original tender not obtained from primary official record.",
+    "Search coverage is incomplete, missing results are not negatives.",
+    "Outcome discovery occurred after source and model inspection; do not represent this as a blind forecast test."
+  ]
+}

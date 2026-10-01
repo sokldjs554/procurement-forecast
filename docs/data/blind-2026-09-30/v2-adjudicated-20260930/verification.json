@@ -1,0 +1,17 @@
+{
+  "checked_at": "2026-09-30T12:07:45.689279+00:00",
+  "production_code_imported": false,
+  "extractor_executed": false,
+  "scoring_occurred": false,
+  "source_count": 6,
+  "case_count": 33,
+  "checks": [
+    "original v1 manifest/cases unchanged and original digest verified",
+    "all v2 source original/parsed hashes match v1",
+    "all v2 exact character offsets and title phrases verified",
+    "33 unique IDs/texts",
+    "only the three adjudicated case records differ from v1",
+    "source-only changes; no performance feedback"
+  ],
+  "changed_case_count": 3
+}

@@ -22,6 +22,29 @@ The existing synthetic snapshot captured at `2026-09-30T04:05:52.790079+00:00` i
 smoke check only: 13 opportunities already contain a tender; 3 are eligible but right-censored
 at a 540-day horizon. The evaluator reports `n=0`, `rate=null`, not a 0% conversion rate.
 
+## First real-source freeze (2026-09-30)
+
+[Run 36727719537](https://github.com/sokldjs554/procurement-forecast/actions/runs/36727719537)
+processed two complete official Seosan transcripts in an empty PostgreSQL database with
+zero-cost providers. It stored 10 signals and 9 opportunities, then froze the linked inputs
+and predictions at **2026-09-30T14:15:51.046565Z**. The other source produced no stored signals;
+it was not hidden or replaced. [Original snapshot and receipt](data/real-cohort-2026-09-30/README.md)
+are preserved in the repository, beyond the temporary artifact retention period.
+
+This starts observation of actual model outputs, **not verified accurate procurement forecasts**.
+The sources were ingested late; some titles/scopes/budgets are wrong or ambiguous. Initial
+pre-freeze tender screening is incomplete. All 9 rows are right-censored: `n=0`, `rate=null`,
+540-day horizon ends 2028-03-23. All 9 original bid windows start before capture and are
+excluded from window-accuracy scoring. Probabilities have no frozen calibration target.
+No dates/windows were shifted to manufacture historical or prospective accuracy.
+
+The first attempt ([36714070834](https://github.com/sokldjs554/procurement-forecast/actions/runs/36714070834))
+failed with no stored signals because unmarked standalone speaker headings were not recognized.
+That failure remains public; heuristic-v7 adds conservative speaker boundaries and was rerun.
+The initial searched official planning records do not establish tender identity or exhaustive
+coverage. Follow-up records must retain the original nine candidates and record ambiguity,
+preexisting notices, failed access and coverage gaps without silently discarding failures.
+
 ## Commands
 
 No database, provider key, network request, or paid model is used:

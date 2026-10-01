@@ -1,0 +1,17 @@
+{
+  "version": "github-actions-artifact-receipt-v1",
+  "workflow_run_id": 36727719537,
+  "workflow_run_url": "https://github.com/sokldjs554/procurement-forecast/actions/runs/36727719537",
+  "artifact_id": 11102913035,
+  "artifact_created_at": "2026-09-30T14:15:52Z",
+  "artifact_zip_sha256": "3d3aaecffcea3846bfcc37daf0854763383e5119ae5231774e08da49b3a68ded",
+  "pull_request_head": "fbb6058e2045f0f293749ee4debfdb8beb844534",
+  "evaluated_merge_commit": "8519eb5774634b4d4fc33aca680cf1ea7e5936b6",
+  "files": {
+    "LG-44210-initial-report.json": "87a8820dba889636a682e424b80d128bfa12f708dc924fb2257e5bad677608d2",
+    "LG-44210-observations-initial.json": "b102c45364963b92f53fa80060e4d383ed076a692f6d8114ad4070191e182203",
+    "LG-44210.jsonl": "9084cb38e4b5652e0bbf3e4aced44500067d0eba59d7c802efa882ce20bf511d",
+    "run.json": "c8079a3e3ded7b7d55d58f7c5d95bb615bde3c36c53e35471e00a56ba761d5bf"
+  },
+  "note": "PR workflow uses GitHub temporary merge commit. Downloaded ZIP SHA matched GitHub artifact digest. This receipt does not certify exact model clock or complete outcomes."
+}

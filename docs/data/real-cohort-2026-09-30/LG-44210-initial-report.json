@@ -1,0 +1,102 @@
+{
+  "method_version": "frozen-forecast-followup-v1",
+  "evaluation_scope": "operator_attested_frozen_forecast_followup",
+  "as_of": "2026-09-30",
+  "captured_at": "2026-09-30T14:15:51.046565+00:00",
+  "horizon_days": 540,
+  "horizon_end": "2028-03-23",
+  "observed_through": "2026-09-30",
+  "data_origin": "real",
+  "lineage": {
+    "snapshot_sha256": "9084cb38e4b5652e0bbf3e4aced44500067d0eba59d7c802efa882ce20bf511d",
+    "snapshot_payload_sha256": "16931f6f1e4577c1a6a8ab230837941df0fa0bb401666ea834ef3c84739338eb",
+    "observations_sha256": "b102c45364963b92f53fa80060e4d383ed076a692f6d8114ad4070191e182203",
+    "snapshot_code_revision": "8519eb5774634b4d4fc33aca680cf1ea7e5936b6",
+    "snapshot_incomplete_reasons": {},
+    "capture_time_independently_verified": false,
+    "coverage_and_outcome_matching_independently_verified": false
+  },
+  "frozen_predictions": 9,
+  "cohort_counts": {
+    "eligible": 9,
+    "right_censored": 9
+  },
+  "observed_positives_excluded_from_rates": {},
+  "conversion_within_horizon": {
+    "n": 0,
+    "events": 0,
+    "rate": null
+  },
+  "bid_window_hits": {
+    "n": 0,
+    "hits": 0,
+    "rate": null
+  },
+  "window_exclusions": {
+    "window_not_future_at_freeze": 9
+  },
+  "lead_days_from_freeze": {
+    "n": 0,
+    "median": null
+  },
+  "probability_calibration": {
+    "available": false,
+    "reason": "snapshot_v1_probability_target_and_horizon_not_frozen"
+  },
+  "opportunities": [
+    {
+      "opportunity_id": 1,
+      "observed_positive_within_horizon": false,
+      "status": "right_censored"
+    },
+    {
+      "opportunity_id": 2,
+      "observed_positive_within_horizon": false,
+      "status": "right_censored"
+    },
+    {
+      "opportunity_id": 3,
+      "observed_positive_within_horizon": false,
+      "status": "right_censored"
+    },
+    {
+      "opportunity_id": 4,
+      "observed_positive_within_horizon": false,
+      "status": "right_censored"
+    },
+    {
+      "opportunity_id": 5,
+      "observed_positive_within_horizon": false,
+      "status": "right_censored"
+    },
+    {
+      "opportunity_id": 6,
+      "observed_positive_within_horizon": false,
+      "status": "right_censored"
+    },
+    {
+      "opportunity_id": 7,
+      "observed_positive_within_horizon": false,
+      "status": "right_censored"
+    },
+    {
+      "opportunity_id": 8,
+      "observed_positive_within_horizon": false,
+      "status": "right_censored"
+    },
+    {
+      "opportunity_id": 9,
+      "observed_positive_within_horizon": false,
+      "status": "right_censored"
+    }
+  ],
+  "limitations": [
+    "Digests verify bytes, not trustworthy capture timestamps or independent storage.",
+    "Outcome matching and exhaustive coverage are operator attestations, not verified truth.",
+    "Rates describe the supplied frozen cohort, not nationwide procurement accuracy or recall.",
+    "Capture-day tenders are excluded because date-only publication cannot prove ordering.",
+    "Lead time starts at freeze, not an inferred fiscal-year, meeting or document date.",
+    "Conversion means first tender publication, not an active tender, award or fulfilled contract.",
+    "Snapshot v1 probabilities have no frozen horizon; calibration/Brier metrics are unavailable."
+  ]
+}

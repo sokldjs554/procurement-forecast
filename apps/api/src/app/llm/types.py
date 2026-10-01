@@ -8,9 +8,14 @@ from typing import Generic, TypeVar
 
 T = TypeVar("T")
 
+# A reserved local provider identity, including the measured quantized model's weight hash.
+# Zero is API spend only; host hardware/electricity are not measured here.
+LOCAL_QWEN_MODEL_ID = "local-qwen3-4b-q4_k_m-7485fe6f"
+
 # $ per million tokens (Anthropic first-party list prices). Cache writes (5-minute TTL) bill at
 # 1.25x input, cache reads at 0.1x input. Used for cost accounting and the daily budget guard.
 PRICING_PER_MTOK: dict[str, tuple[Decimal, Decimal]] = {
+    LOCAL_QWEN_MODEL_ID: (Decimal(0), Decimal(0)),
     "claude-opus-5": (Decimal("5.00"), Decimal("25.00")),
     "claude-opus-4-8": (Decimal("5.00"), Decimal("25.00")),
     "claude-sonnet-5": (Decimal("2.00"), Decimal("10.00")),

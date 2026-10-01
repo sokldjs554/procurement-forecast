@@ -1,0 +1,96 @@
+{
+  "recorded_at": "2026-09-30T14:15:51.156496+00:00",
+  "code_revision": "8519eb5774634b4d4fc33aca680cf1ea7e5936b6",
+  "source_manifest_sha256": "5bdc528a9d8c611f8dd561829e80c6b2984994809423cc39e4742cefb4e58849",
+  "selection": {
+    "min_fiscal_year": 2026,
+    "rule": "all full source documents meeting fiscal-year cutoff; labels never read"
+  },
+  "data_origin": "real",
+  "api_cost_usd": 0,
+  "horizon_days": 540,
+  "scope": "selected archived official documents processed now; late ingestion; not historical forecasts",
+  "initial_tender_screening": "not completed; later-discovered pre-freeze tenders excluded by evaluator",
+  "source_documents": [
+    {
+      "id": "seosan_admin_20251204",
+      "url": "https://lib.scc.go.kr/minutes/mnts/cnts/mnt/mntsViewer.php?params=WHpzSlk3WVdlU0JsMDAvc0FEdkM0dz09",
+      "retrieved_at": "2026-09-30T11:49:23.171165+00:00",
+      "http_status": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "original_path": "sources/seosan_admin_20251204.html",
+      "original_sha256": "5343c89a52c716d93399f5c3433f81c51fb36b4f1f9eaded82c700393625fc5a",
+      "bytes": 412151,
+      "path": "sources/seosan_admin_20251204.txt",
+      "sha256": "eeef6dd61d3f63748612bfc44b2c485e1ec76d7b5c0783bf1f5a2e7471a28006",
+      "institution": "서산시",
+      "doc_type": "council_minutes",
+      "title": "제310회 서산시의회 (제2차 정례회) 행정문화복지위원회회의록 제5차",
+      "publication_date": null,
+      "publication_date_basis": "No online publication date verified; search-engine published dates not treated as authoritative.",
+      "meeting_date": "2025-12-04",
+      "report_date": null,
+      "fiscal_year": 2026,
+      "representation": "Full minutes root text from archived HTTP HTML; HTMLParser entity decoding, block/line boundaries and whitespace normalization; no semantic edits.",
+      "original_available": true
+    },
+    {
+      "id": "seosan_industry_20251205",
+      "url": "https://lib.scc.go.kr/minutes/mnts/cnts/mnt/mntsViewer.php?params=RkdwQ1drS3J4L2E1amJvd2w0R3pOUT09",
+      "retrieved_at": "2026-09-30T11:49:23.463446+00:00",
+      "http_status": 200,
+      "content_type": "text/html; charset=UTF-8",
+      "original_path": "sources/seosan_industry_20251205.html",
+      "original_sha256": "ae02b843c2f387f64076ade030077effca7edeecf154031211e1d611a55c7317",
+      "bytes": 298323,
+      "path": "sources/seosan_industry_20251205.txt",
+      "sha256": "c0dd7edf40e3e504c848dfa8a25bace202ea12f0b817398ea76ef2e02c649532",
+      "institution": "서산시",
+      "doc_type": "council_minutes",
+      "title": "제310회 서산시의회 제2차 정례회 산업건설위원회회의록 제6차",
+      "publication_date": null,
+      "publication_date_basis": "No online publication date verified; search-engine published dates not treated as authoritative.",
+      "meeting_date": "2025-12-05",
+      "report_date": null,
+      "fiscal_year": 2026,
+      "representation": "Full minutes root text from archived HTTP HTML; HTMLParser entity decoding, block/line boundaries and whitespace normalization; no semantic edits.",
+      "original_available": true
+    }
+  ],
+  "processing": [
+    {
+      "source_id": "seosan_admin_20251204",
+      "document_id": 1,
+      "chunks": 478,
+      "triaged": 93,
+      "signals": 10
+    },
+    {
+      "source_id": "seosan_industry_20251205",
+      "document_id": 2,
+      "chunks": 331,
+      "triaged": 52,
+      "signals": 0
+    }
+  ],
+  "snapshots": [
+    {
+      "version": "forecast-snapshot-v1",
+      "captured_at": "2026-09-30T14:15:51.046565+00:00",
+      "institution_code": "LG-44210",
+      "code_revision": "8519eb5774634b4d4fc33aca680cf1ea7e5936b6",
+      "digest": "16931f6f1e4577c1a6a8ab230837941df0fa0bb401666ea834ef3c84739338eb",
+      "counts": {
+        "chunk": 478,
+        "configuration": 1,
+        "document": 1,
+        "institution": 2,
+        "link": 10,
+        "opportunity": 9,
+        "signal": 10,
+        "source": 1
+      },
+      "incomplete_reasons": {}
+    }
+  ]
+}
