@@ -1,0 +1,89 @@
+name: Fresh minutes sample (extraction holdout)
+
+# Archives a rule-chosen sample of council minutes nobody has looked at (`manage eval
+# fresh-minutes`, docs/data/fresh-minutes-exclude.txt) on the data/fresh-minutes branch. Labels
+# are written and frozen there before any extractor reads the text. Public minutes only; no
+# database, no paid model.
+on:
+  workflow_dispatch:
+    inputs:
+      since:
+        description: First meeting date (YYYY-MM-DD)
+        default: "2026-08-16"
+      until:
+        description: Last meeting date (YYYY-MM-DD)
+        default: "2026-09-25"
+      meetings:
+        description: Meetings to archive
+        default: "10"
+      name:
+        description: Directory under docs/data on the data branch (new each time)
+        default: "fresh-minutes-2026-10-01"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: fresh-minutes
+  cancel-in-progress: false
+
+jobs:
+  sample:
+    name: Archive the sample
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    env:
+      BRANCH: data/fresh-minutes
+      DIR: docs/data/${{ inputs.name }}
+      SINCE: ${{ inputs.since }}
+      UNTIL: ${{ inputs.until }}
+      MEETINGS: ${{ inputs.meetings }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.8.17"
+          python-version: "3.11"
+          enable-cache: true
+          cache-dependency-glob: apps/api/uv.lock
+      - name: Install
+        working-directory: apps/api
+        run: uv sync --frozen
+      - name: Check out the data branch next to the code
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null; then
+            git fetch --depth 1 origin "$BRANCH"
+            git worktree add --detach data FETCH_HEAD
+          else
+            git worktree add --detach data HEAD
+          fi
+      - name: Sample
+        working-directory: apps/api
+        env:
+          APP_CLIK_API_KEY: ${{ secrets.APP_CLIK_API_KEY }}
+        run: |
+          test -n "$APP_CLIK_API_KEY" || { echo "::error::Add the APP_CLIK_API_KEY repository secret first"; exit 1; }
+          uv run manage eval fresh-minutes "$GITHUB_WORKSPACE/data/$DIR" \
+            --since "$SINCE" --until "$UNTIL" --meetings "$MEETINGS" \
+            --exclude-file "$GITHUB_WORKSPACE/docs/data/fresh-minutes-exclude.txt"
+      - name: Keep the sample on the data branch
+        run: |
+          git -C data add "$DIR"
+          git -C data diff --cached --quiet && exit 0
+          git -C data commit -q -m "data(eval): fresh CLIK minutes sample $(basename "$DIR")"
+          git -C data push origin "HEAD:refs/heads/$BRANCH"
+      - name: Summary
+        if: always()
+        run: |
+          sample="data/$DIR/sample.json"
+          [ -f "$sample" ] || exit 0
+          jq -r '
+            "### Fresh minutes sample\n",
+            "| | |", "|---|---|",
+            "| Window | \(.rule.since) → \(.rule.until) |",
+            "| Meetings listed · eligible | \(.listed_meetings) · \(.eligible_meetings) |",
+            "| Archived | \([.sources[] | select(.status == "archived")] | length) |",
+            "| Councils | \([.sources[] | .council] | join(", ")) |"
+          ' "$sample" >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,57 @@
+# Councils whose real documents an evaluation or the development set already used (any agent,
+# any branch), or whose names the hand-written development excerpts carry. A fresh holdout
+# draws from every other council. Matched as a substring of CLIK's RASMBLY_NM.
+경기도 성남시
+충청남도 서산시
+서울특별시 강남구
+서울특별시 금천구
+강원특별자치도 원주시
+경기도 동두천시
+충청북도의회
+경기도 고양시
+경기도 과천시
+경기도 김포시
+세종특별자치시
+경기도 광명시
+경기도 수원시
+제주특별자치도
+부산광역시 해운대구
+대전광역시 유성구
+전라남도 순천시
+인천광역시 연수구
+경상북도 포항시
+충청북도 청주시
+광주광역시 북구
+대구광역시 수성구
+경기도 화성시
+서울특별시 마포구
+강원특별자치도 춘천시
+경상남도 창원시
+전북특별자치도 전주시
+서울특별시 성동구
+경기도 용인시
+인천광역시 서구
+대전광역시 서구
+경상북도 경주시
+충청남도 천안시
+서울특별시 노원구
+경기도 부천시
+울산광역시 남구
+경기도 안산시
+서울특별시 은평구
+전라남도 여수시
+경기도 남양주시
+광주광역시 광산구
+서울특별시 송파구
+경상남도 김해시
+충청남도 아산시
+대전광역시 중구
+경기도 파주시
+서울특별시 관악구
+강원특별자치도 강릉시
+전북특별자치도 익산시
+서울특별시 영등포구
+부산광역시 사하구
+충청북도 충주시
+경기도 의정부시
+경상남도 진주시
