@@ -1,0 +1,15 @@
+{
+  "frozen_at": "2026-10-01T08:34:43.471017+00:00",
+  "stage": "before baseline-v13 and candidate-v16 execution on fresh7",
+  "cases": 22,
+  "expected_signals": 29,
+  "negative_cases": 7,
+  "authorities": ["과천시", "김포시", "세종시", "동두천시"],
+  "cases_sha256": "faea60e74f56eef8dccb60e7d862547fb393842b7343128b7a8a15fbac65b71c",
+  "manifest_sha256": "e44ecf2c891038aea3664e6eeb8a6560b0f3e4f69dddb0ade943223503e0f2e6",
+  "full_code_and_label_freeze_sha256": "fb1247ddcf224ac8aabc2a458e12efe17506dfce668597c8e2d001aac6a3056e",
+  "selection": "All 401/405 capital accounts of a new department budget, three complete operational negatives, and nine topical exchanges in three new council sources. Source-only annotation before either extractor output.",
+  "limits": "Same implementation assistant annotations, not independent human gold or a national representative sample. Parsed-excerpt metrics and actual raw-PDF replay will be reported separately. No relabeling after scoring. Raw-source metadata and code hashes are retained in the local evidence bundle; this receipt does not publish product code.",
+  "budget_source_artifact_id": 11149596772,
+  "budget_source_artifact_sha256": "d04c2e3ef8602a1c362ed94a03159de603b47bbf1c24dd1cce965a046ab1fa1d"
+}
