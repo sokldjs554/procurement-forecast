@@ -1,0 +1,4090 @@
+{
+ "schema": "tender-census-v1",
+ "source": "조달청 나라장터 입찰공고정보서비스 (apis.data.go.kr/1230000/ad/BidPublicInfoService)",
+ "query": "inqryDiv=1 (공고 등록일시), every row read; kept if 공고기관·수요기관 name contains an institution",
+ "since": "2024-01-01",
+ "until": "2026-09-30",
+ "institutions": [
+  "성남시",
+  "서산시",
+  "강남구",
+  "금천구",
+  "원주시",
+  "동두천시",
+  "충청북도",
+  "고양시"
+ ],
+ "updated_at": "2026-10-01T15:04:28+00:00",
+ "stopped": "time limit",
+ "calls": 1533,
+ "seconds": 18031.6,
+ "summary": {
+  "slices_expected": 432,
+  "slices_complete": 406,
+  "rows_read": 1319773,
+  "notices_kept": 71834,
+  "incomplete": []
+ },
+ "slices": [
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-01-01",
+   "end": "2024-01-07",
+   "total": 2431,
+   "read": 2431,
+   "kept": 85,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-01-01",
+   "end": "2024-01-07",
+   "total": 1194,
+   "read": 1194,
+   "kept": 51,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-01-01",
+   "end": "2024-01-07",
+   "total": 1451,
+   "read": 1451,
+   "kept": 61,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-01-08",
+   "end": "2024-01-14",
+   "total": 4140,
+   "read": 4140,
+   "kept": 191,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-01-08",
+   "end": "2024-01-14",
+   "total": 1952,
+   "read": 1952,
+   "kept": 44,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-01-08",
+   "end": "2024-01-14",
+   "total": 2012,
+   "read": 2012,
+   "kept": 104,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-01-15",
+   "end": "2024-01-21",
+   "total": 5093,
+   "read": 5093,
+   "kept": 300,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-01-15",
+   "end": "2024-01-21",
+   "total": 2117,
+   "read": 2117,
+   "kept": 60,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-01-15",
+   "end": "2024-01-21",
+   "total": 2050,
+   "read": 2050,
+   "kept": 119,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-01-22",
+   "end": "2024-01-28",
+   "total": 5618,
+   "read": 5618,
+   "kept": 320,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-01-22",
+   "end": "2024-01-28",
+   "total": 2245,
+   "read": 2245,
+   "kept": 63,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-01-22",
+   "end": "2024-01-28",
+   "total": 2026,
+   "read": 2026,
+   "kept": 125,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-01-29",
+   "end": "2024-02-04",
+   "total": 5881,
+   "read": 5881,
+   "kept": 253,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-01-29",
+   "end": "2024-02-04",
+   "total": 2478,
+   "read": 2478,
+   "kept": 100,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-01-29",
+   "end": "2024-02-04",
+   "total": 2362,
+   "read": 2362,
+   "kept": 210,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-02-05",
+   "end": "2024-02-11",
+   "total": 5091,
+   "read": 5091,
+   "kept": 203,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-02-05",
+   "end": "2024-02-11",
+   "total": 2265,
+   "read": 2265,
+   "kept": 165,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-02-05",
+   "end": "2024-02-11",
+   "total": 2099,
+   "read": 2099,
+   "kept": 238,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-02-12",
+   "end": "2024-02-18",
+   "total": 5077,
+   "read": 5077,
+   "kept": 246,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-02-12",
+   "end": "2024-02-18",
+   "total": 2949,
+   "read": 2949,
+   "kept": 343,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-02-12",
+   "end": "2024-02-18",
+   "total": 2651,
+   "read": 2651,
+   "kept": 204,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-02-19",
+   "end": "2024-02-25",
+   "total": 5334,
+   "read": 5334,
+   "kept": 289,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-02-19",
+   "end": "2024-02-25",
+   "total": 2788,
+   "read": 2788,
+   "kept": 188,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-02-19",
+   "end": "2024-02-25",
+   "total": 3240,
+   "read": 3240,
+   "kept": 278,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-02-26",
+   "end": "2024-03-03",
+   "total": 4476,
+   "read": 4476,
+   "kept": 208,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-02-26",
+   "end": "2024-03-03",
+   "total": 1822,
+   "read": 1822,
+   "kept": 81,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-02-26",
+   "end": "2024-03-03",
+   "total": 3360,
+   "read": 3360,
+   "kept": 310,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-03-04",
+   "end": "2024-03-10",
+   "total": 5291,
+   "read": 5291,
+   "kept": 256,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-03-04",
+   "end": "2024-03-10",
+   "total": 2681,
+   "read": 2681,
+   "kept": 123,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-03-04",
+   "end": "2024-03-10",
+   "total": 4542,
+   "read": 4542,
+   "kept": 500,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-03-11",
+   "end": "2024-03-17",
+   "total": 6204,
+   "read": 6204,
+   "kept": 247,
+   "pages": 7,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-03-11",
+   "end": "2024-03-17",
+   "total": 3084,
+   "read": 3084,
+   "kept": 227,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-03-11",
+   "end": "2024-03-17",
+   "total": 5191,
+   "read": 5191,
+   "kept": 442,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-03-18",
+   "end": "2024-03-24",
+   "total": 5633,
+   "read": 5633,
+   "kept": 239,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-03-18",
+   "end": "2024-03-24",
+   "total": 3288,
+   "read": 3288,
+   "kept": 198,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-03-18",
+   "end": "2024-03-24",
+   "total": 5049,
+   "read": 5049,
+   "kept": 419,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-03-25",
+   "end": "2024-03-31",
+   "total": 5004,
+   "read": 5004,
+   "kept": 184,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-03-25",
+   "end": "2024-03-31",
+   "total": 2396,
+   "read": 2396,
+   "kept": 86,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-03-25",
+   "end": "2024-03-31",
+   "total": 3716,
+   "read": 3716,
+   "kept": 332,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-04-01",
+   "end": "2024-04-07",
+   "total": 5278,
+   "read": 5278,
+   "kept": 214,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-04-01",
+   "end": "2024-04-07",
+   "total": 2550,
+   "read": 2550,
+   "kept": 76,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-04-01",
+   "end": "2024-04-07",
+   "total": 4596,
+   "read": 4596,
+   "kept": 404,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-04-08",
+   "end": "2024-04-14",
+   "total": 4509,
+   "read": 4509,
+   "kept": 135,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-04-08",
+   "end": "2024-04-14",
+   "total": 2339,
+   "read": 2339,
+   "kept": 99,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-04-08",
+   "end": "2024-04-14",
+   "total": 3414,
+   "read": 3414,
+   "kept": 273,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-04-15",
+   "end": "2024-04-21",
+   "total": 4974,
+   "read": 4974,
+   "kept": 175,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-04-15",
+   "end": "2024-04-21",
+   "total": 3301,
+   "read": 3301,
+   "kept": 330,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-04-15",
+   "end": "2024-04-21",
+   "total": 3814,
+   "read": 3814,
+   "kept": 314,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-04-22",
+   "end": "2024-04-28",
+   "total": 4594,
+   "read": 4594,
+   "kept": 152,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-04-22",
+   "end": "2024-04-28",
+   "total": 2591,
+   "read": 2591,
+   "kept": 121,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-04-22",
+   "end": "2024-04-28",
+   "total": 3815,
+   "read": 3815,
+   "kept": 290,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-04-29",
+   "end": "2024-05-05",
+   "total": 4172,
+   "read": 4172,
+   "kept": 183,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-04-29",
+   "end": "2024-05-05",
+   "total": 2327,
+   "read": 2327,
+   "kept": 101,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-04-29",
+   "end": "2024-05-05",
+   "total": 3643,
+   "read": 3643,
+   "kept": 287,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-05-06",
+   "end": "2024-05-12",
+   "total": 3528,
+   "read": 3528,
+   "kept": 128,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-05-06",
+   "end": "2024-05-12",
+   "total": 2158,
+   "read": 2158,
+   "kept": 80,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-05-06",
+   "end": "2024-05-12",
+   "total": 2996,
+   "read": 2996,
+   "kept": 208,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-05-13",
+   "end": "2024-05-19",
+   "total": 3445,
+   "read": 3445,
+   "kept": 174,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-05-13",
+   "end": "2024-05-19",
+   "total": 2606,
+   "read": 2606,
+   "kept": 281,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-05-13",
+   "end": "2024-05-19",
+   "total": 2881,
+   "read": 2881,
+   "kept": 234,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-05-20",
+   "end": "2024-05-26",
+   "total": 4136,
+   "read": 4136,
+   "kept": 215,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-05-20",
+   "end": "2024-05-26",
+   "total": 2721,
+   "read": 2721,
+   "kept": 126,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-05-20",
+   "end": "2024-05-26",
+   "total": 3601,
+   "read": 3601,
+   "kept": 286,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-05-27",
+   "end": "2024-06-02",
+   "total": 4031,
+   "read": 4031,
+   "kept": 175,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-05-27",
+   "end": "2024-06-02",
+   "total": 2568,
+   "read": 2568,
+   "kept": 102,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-05-27",
+   "end": "2024-06-02",
+   "total": 3953,
+   "read": 3953,
+   "kept": 228,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-06-03",
+   "end": "2024-06-09",
+   "total": 3329,
+   "read": 3329,
+   "kept": 147,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-06-03",
+   "end": "2024-06-09",
+   "total": 2256,
+   "read": 2256,
+   "kept": 73,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-06-03",
+   "end": "2024-06-09",
+   "total": 3425,
+   "read": 3425,
+   "kept": 185,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-06-10",
+   "end": "2024-06-16",
+   "total": 4100,
+   "read": 4100,
+   "kept": 194,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-06-10",
+   "end": "2024-06-16",
+   "total": 3090,
+   "read": 3090,
+   "kept": 213,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-06-10",
+   "end": "2024-06-16",
+   "total": 4501,
+   "read": 4501,
+   "kept": 266,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-06-17",
+   "end": "2024-06-23",
+   "total": 3862,
+   "read": 3862,
+   "kept": 174,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-06-17",
+   "end": "2024-06-23",
+   "total": 3305,
+   "read": 3305,
+   "kept": 220,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-06-17",
+   "end": "2024-06-23",
+   "total": 4462,
+   "read": 4462,
+   "kept": 261,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-06-24",
+   "end": "2024-06-30",
+   "total": 3225,
+   "read": 3225,
+   "kept": 115,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-06-24",
+   "end": "2024-06-30",
+   "total": 2158,
+   "read": 2158,
+   "kept": 65,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-06-24",
+   "end": "2024-06-30",
+   "total": 3205,
+   "read": 3205,
+   "kept": 211,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-07-01",
+   "end": "2024-07-07",
+   "total": 3191,
+   "read": 3191,
+   "kept": 135,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-07-01",
+   "end": "2024-07-07",
+   "total": 2011,
+   "read": 2011,
+   "kept": 61,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-07-01",
+   "end": "2024-07-07",
+   "total": 3706,
+   "read": 3706,
+   "kept": 220,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-07-08",
+   "end": "2024-07-14",
+   "total": 3281,
+   "read": 3281,
+   "kept": 137,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-07-08",
+   "end": "2024-07-14",
+   "total": 2224,
+   "read": 2224,
+   "kept": 73,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-07-08",
+   "end": "2024-07-14",
+   "total": 3524,
+   "read": 3524,
+   "kept": 208,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-07-15",
+   "end": "2024-07-21",
+   "total": 3341,
+   "read": 3341,
+   "kept": 110,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-07-15",
+   "end": "2024-07-21",
+   "total": 2570,
+   "read": 2570,
+   "kept": 96,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-07-15",
+   "end": "2024-07-21",
+   "total": 2959,
+   "read": 2959,
+   "kept": 170,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-07-22",
+   "end": "2024-07-28",
+   "total": 3172,
+   "read": 3172,
+   "kept": 124,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-07-22",
+   "end": "2024-07-28",
+   "total": 2396,
+   "read": 2396,
+   "kept": 79,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-07-22",
+   "end": "2024-07-28",
+   "total": 2804,
+   "read": 2804,
+   "kept": 152,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-07-29",
+   "end": "2024-08-04",
+   "total": 2867,
+   "read": 2867,
+   "kept": 113,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-07-29",
+   "end": "2024-08-04",
+   "total": 2557,
+   "read": 2557,
+   "kept": 119,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-07-29",
+   "end": "2024-08-04",
+   "total": 2448,
+   "read": 2448,
+   "kept": 162,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-08-05",
+   "end": "2024-08-11",
+   "total": 2805,
+   "read": 2805,
+   "kept": 111,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-08-05",
+   "end": "2024-08-11",
+   "total": 2667,
+   "read": 2667,
+   "kept": 112,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-08-05",
+   "end": "2024-08-11",
+   "total": 2460,
+   "read": 2460,
+   "kept": 182,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-08-12",
+   "end": "2024-08-18",
+   "total": 2341,
+   "read": 2341,
+   "kept": 111,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-08-12",
+   "end": "2024-08-18",
+   "total": 2379,
+   "read": 2379,
+   "kept": 263,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-08-12",
+   "end": "2024-08-18",
+   "total": 1903,
+   "read": 1903,
+   "kept": 135,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-08-19",
+   "end": "2024-08-25",
+   "total": 2729,
+   "read": 2729,
+   "kept": 111,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-08-19",
+   "end": "2024-08-25",
+   "total": 2701,
+   "read": 2701,
+   "kept": 142,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-08-19",
+   "end": "2024-08-25",
+   "total": 2525,
+   "read": 2525,
+   "kept": 189,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-08-26",
+   "end": "2024-09-01",
+   "total": 2728,
+   "read": 2728,
+   "kept": 111,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-08-26",
+   "end": "2024-09-01",
+   "total": 2210,
+   "read": 2210,
+   "kept": 63,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-08-26",
+   "end": "2024-09-01",
+   "total": 2824,
+   "read": 2824,
+   "kept": 162,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-09-02",
+   "end": "2024-09-08",
+   "total": 2669,
+   "read": 2669,
+   "kept": 128,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-09-02",
+   "end": "2024-09-08",
+   "total": 2354,
+   "read": 2354,
+   "kept": 65,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-09-02",
+   "end": "2024-09-08",
+   "total": 2574,
+   "read": 2574,
+   "kept": 132,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-09-09",
+   "end": "2024-09-15",
+   "total": 2792,
+   "read": 2792,
+   "kept": 118,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-09-09",
+   "end": "2024-09-15",
+   "total": 3073,
+   "read": 3073,
+   "kept": 261,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-09-09",
+   "end": "2024-09-15",
+   "total": 2293,
+   "read": 2293,
+   "kept": 128,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-09-16",
+   "end": "2024-09-22",
+   "total": 1429,
+   "read": 1429,
+   "kept": 65,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-09-16",
+   "end": "2024-09-22",
+   "total": 1324,
+   "read": 1324,
+   "kept": 71,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-09-16",
+   "end": "2024-09-22",
+   "total": 1363,
+   "read": 1363,
+   "kept": 87,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-09-23",
+   "end": "2024-09-29",
+   "total": 2630,
+   "read": 2630,
+   "kept": 117,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-09-23",
+   "end": "2024-09-29",
+   "total": 2287,
+   "read": 2287,
+   "kept": 59,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-09-23",
+   "end": "2024-09-29",
+   "total": 2926,
+   "read": 2926,
+   "kept": 184,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-09-30",
+   "end": "2024-10-06",
+   "total": 1941,
+   "read": 1941,
+   "kept": 103,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-09-30",
+   "end": "2024-10-06",
+   "total": 1638,
+   "read": 1638,
+   "kept": 37,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-09-30",
+   "end": "2024-10-06",
+   "total": 2048,
+   "read": 2048,
+   "kept": 156,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-10-07",
+   "end": "2024-10-13",
+   "total": 2412,
+   "read": 2412,
+   "kept": 83,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-10-07",
+   "end": "2024-10-13",
+   "total": 2303,
+   "read": 2303,
+   "kept": 77,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-10-07",
+   "end": "2024-10-13",
+   "total": 2763,
+   "read": 2763,
+   "kept": 221,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-10-14",
+   "end": "2024-10-20",
+   "total": 3081,
+   "read": 3081,
+   "kept": 145,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-10-14",
+   "end": "2024-10-20",
+   "total": 3332,
+   "read": 3332,
+   "kept": 273,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-10-14",
+   "end": "2024-10-20",
+   "total": 3768,
+   "read": 3768,
+   "kept": 235,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-10-21",
+   "end": "2024-10-27",
+   "total": 3329,
+   "read": 3329,
+   "kept": 148,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-10-21",
+   "end": "2024-10-27",
+   "total": 2903,
+   "read": 2903,
+   "kept": 118,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-10-21",
+   "end": "2024-10-27",
+   "total": 3462,
+   "read": 3462,
+   "kept": 286,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-10-28",
+   "end": "2024-11-03",
+   "total": 3429,
+   "read": 3429,
+   "kept": 134,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-10-28",
+   "end": "2024-11-03",
+   "total": 2634,
+   "read": 2634,
+   "kept": 73,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-10-28",
+   "end": "2024-11-03",
+   "total": 3488,
+   "read": 3488,
+   "kept": 246,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-11-04",
+   "end": "2024-11-10",
+   "total": 3584,
+   "read": 3584,
+   "kept": 151,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-11-04",
+   "end": "2024-11-10",
+   "total": 2852,
+   "read": 2852,
+   "kept": 55,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-11-04",
+   "end": "2024-11-10",
+   "total": 3913,
+   "read": 3913,
+   "kept": 173,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-11-11",
+   "end": "2024-11-17",
+   "total": 4095,
+   "read": 4095,
+   "kept": 155,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-11-11",
+   "end": "2024-11-17",
+   "total": 3262,
+   "read": 3262,
+   "kept": 244,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-11-11",
+   "end": "2024-11-17",
+   "total": 3794,
+   "read": 3794,
+   "kept": 226,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-11-18",
+   "end": "2024-11-24",
+   "total": 4321,
+   "read": 4321,
+   "kept": 177,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-11-18",
+   "end": "2024-11-24",
+   "total": 3461,
+   "read": 3461,
+   "kept": 167,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-11-18",
+   "end": "2024-11-24",
+   "total": 4161,
+   "read": 4161,
+   "kept": 259,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-11-25",
+   "end": "2024-12-01",
+   "total": 4625,
+   "read": 4625,
+   "kept": 178,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-11-25",
+   "end": "2024-12-01",
+   "total": 3046,
+   "read": 3046,
+   "kept": 92,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-11-25",
+   "end": "2024-12-01",
+   "total": 4235,
+   "read": 4235,
+   "kept": 241,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-12-02",
+   "end": "2024-12-08",
+   "total": 5570,
+   "read": 5570,
+   "kept": 260,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-12-02",
+   "end": "2024-12-08",
+   "total": 3213,
+   "read": 3213,
+   "kept": 106,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-12-02",
+   "end": "2024-12-08",
+   "total": 5059,
+   "read": 5059,
+   "kept": 214,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-12-09",
+   "end": "2024-12-15",
+   "total": 6135,
+   "read": 6135,
+   "kept": 407,
+   "pages": 7,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-12-09",
+   "end": "2024-12-15",
+   "total": 3191,
+   "read": 3191,
+   "kept": 94,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-12-09",
+   "end": "2024-12-15",
+   "total": 5006,
+   "read": 5006,
+   "kept": 289,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-12-16",
+   "end": "2024-12-22",
+   "total": 5013,
+   "read": 5013,
+   "kept": 284,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-12-16",
+   "end": "2024-12-22",
+   "total": 2633,
+   "read": 2633,
+   "kept": 91,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-12-16",
+   "end": "2024-12-22",
+   "total": 3979,
+   "read": 3979,
+   "kept": 211,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-12-23",
+   "end": "2024-12-29",
+   "total": 2072,
+   "read": 2072,
+   "kept": 92,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-12-23",
+   "end": "2024-12-29",
+   "total": 971,
+   "read": 971,
+   "kept": 22,
+   "pages": 1,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-12-23",
+   "end": "2024-12-29",
+   "total": 932,
+   "read": 932,
+   "kept": 33,
+   "pages": 1,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2024-12-30",
+   "end": "2025-01-05",
+   "total": 457,
+   "read": 457,
+   "kept": 11,
+   "pages": 1,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2024-12-30",
+   "end": "2025-01-05",
+   "total": 184,
+   "read": 184,
+   "kept": 2,
+   "pages": 1,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2024-12-30",
+   "end": "2025-01-05",
+   "total": 224,
+   "read": 224,
+   "kept": 3,
+   "pages": 1,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-01-06",
+   "end": "2025-01-12",
+   "total": 4529,
+   "read": 4529,
+   "kept": 182,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-01-06",
+   "end": "2025-01-12",
+   "total": 1900,
+   "read": 1900,
+   "kept": 40,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-01-06",
+   "end": "2025-01-12",
+   "total": 1935,
+   "read": 1935,
+   "kept": 55,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-01-13",
+   "end": "2025-01-19",
+   "total": 6491,
+   "read": 6491,
+   "kept": 335,
+   "pages": 7,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-01-13",
+   "end": "2025-01-19",
+   "total": 2151,
+   "read": 2151,
+   "kept": 67,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-01-13",
+   "end": "2025-01-19",
+   "total": 2322,
+   "read": 2322,
+   "kept": 119,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-01-20",
+   "end": "2025-01-26",
+   "total": 6203,
+   "read": 6203,
+   "kept": 295,
+   "pages": 7,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-01-20",
+   "end": "2025-01-26",
+   "total": 2032,
+   "read": 2032,
+   "kept": 69,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-01-20",
+   "end": "2025-01-26",
+   "total": 1936,
+   "read": 1936,
+   "kept": 130,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-01-27",
+   "end": "2025-02-02",
+   "total": 1367,
+   "read": 1367,
+   "kept": 55,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-01-27",
+   "end": "2025-02-02",
+   "total": 425,
+   "read": 425,
+   "kept": 15,
+   "pages": 1,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-01-27",
+   "end": "2025-02-02",
+   "total": 431,
+   "read": 431,
+   "kept": 19,
+   "pages": 1,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-02-03",
+   "end": "2025-02-09",
+   "total": 6905,
+   "read": 6905,
+   "kept": 314,
+   "pages": 7,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-02-03",
+   "end": "2025-02-09",
+   "total": 2654,
+   "read": 2654,
+   "kept": 127,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-02-03",
+   "end": "2025-02-09",
+   "total": 2379,
+   "read": 2379,
+   "kept": 175,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-02-10",
+   "end": "2025-02-16",
+   "total": 6616,
+   "read": 6616,
+   "kept": 353,
+   "pages": 7,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-02-10",
+   "end": "2025-02-16",
+   "total": 3351,
+   "read": 3351,
+   "kept": 397,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-02-10",
+   "end": "2025-02-16",
+   "total": 2888,
+   "read": 2888,
+   "kept": 247,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-02-17",
+   "end": "2025-02-23",
+   "total": 6383,
+   "read": 6383,
+   "kept": 312,
+   "pages": 7,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-02-17",
+   "end": "2025-02-23",
+   "total": 3212,
+   "read": 3212,
+   "kept": 296,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-02-17",
+   "end": "2025-02-23",
+   "total": 3372,
+   "read": 3372,
+   "kept": 287,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-02-24",
+   "end": "2025-03-02",
+   "total": 5904,
+   "read": 5904,
+   "kept": 284,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-02-24",
+   "end": "2025-03-02",
+   "total": 2250,
+   "read": 2250,
+   "kept": 125,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-02-24",
+   "end": "2025-03-02",
+   "total": 3750,
+   "read": 3750,
+   "kept": 323,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-03-03",
+   "end": "2025-03-09",
+   "total": 4984,
+   "read": 4984,
+   "kept": 205,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-03-03",
+   "end": "2025-03-09",
+   "total": 2070,
+   "read": 2070,
+   "kept": 85,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-03-03",
+   "end": "2025-03-09",
+   "total": 3736,
+   "read": 3736,
+   "kept": 381,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-03-10",
+   "end": "2025-03-16",
+   "total": 5994,
+   "read": 5994,
+   "kept": 248,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-03-10",
+   "end": "2025-03-16",
+   "total": 3130,
+   "read": 3130,
+   "kept": 191,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-03-10",
+   "end": "2025-03-16",
+   "total": 5560,
+   "read": 5560,
+   "kept": 518,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-03-17",
+   "end": "2025-03-23",
+   "total": 6300,
+   "read": 6300,
+   "kept": 307,
+   "pages": 7,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-03-17",
+   "end": "2025-03-23",
+   "total": 3226,
+   "read": 3226,
+   "kept": 264,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-03-17",
+   "end": "2025-03-23",
+   "total": 5123,
+   "read": 5123,
+   "kept": 457,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-03-24",
+   "end": "2025-03-30",
+   "total": 5497,
+   "read": 5497,
+   "kept": 222,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-03-24",
+   "end": "2025-03-30",
+   "total": 2620,
+   "read": 2620,
+   "kept": 94,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-03-24",
+   "end": "2025-03-30",
+   "total": 3789,
+   "read": 3789,
+   "kept": 320,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-03-31",
+   "end": "2025-04-06",
+   "total": 5365,
+   "read": 5365,
+   "kept": 187,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-03-31",
+   "end": "2025-04-06",
+   "total": 2411,
+   "read": 2411,
+   "kept": 95,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-03-31",
+   "end": "2025-04-06",
+   "total": 3967,
+   "read": 3967,
+   "kept": 337,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-04-07",
+   "end": "2025-04-13",
+   "total": 5092,
+   "read": 5092,
+   "kept": 198,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-04-07",
+   "end": "2025-04-13",
+   "total": 2743,
+   "read": 2743,
+   "kept": 158,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-04-07",
+   "end": "2025-04-13",
+   "total": 3746,
+   "read": 3746,
+   "kept": 290,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-04-14",
+   "end": "2025-04-20",
+   "total": 5142,
+   "read": 5142,
+   "kept": 188,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-04-14",
+   "end": "2025-04-20",
+   "total": 3260,
+   "read": 3260,
+   "kept": 277,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-04-14",
+   "end": "2025-04-20",
+   "total": 3796,
+   "read": 3796,
+   "kept": 267,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-04-21",
+   "end": "2025-04-27",
+   "total": 4541,
+   "read": 4541,
+   "kept": 174,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-04-21",
+   "end": "2025-04-27",
+   "total": 2721,
+   "read": 2721,
+   "kept": 133,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-04-21",
+   "end": "2025-04-27",
+   "total": 3473,
+   "read": 3473,
+   "kept": 221,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-04-28",
+   "end": "2025-05-04",
+   "total": 4036,
+   "read": 4036,
+   "kept": 154,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-04-28",
+   "end": "2025-05-04",
+   "total": 2124,
+   "read": 2124,
+   "kept": 81,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-04-28",
+   "end": "2025-05-04",
+   "total": 3644,
+   "read": 3644,
+   "kept": 269,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-05-05",
+   "end": "2025-05-11",
+   "total": 2804,
+   "read": 2804,
+   "kept": 109,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-05-05",
+   "end": "2025-05-11",
+   "total": 1603,
+   "read": 1603,
+   "kept": 71,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-05-05",
+   "end": "2025-05-11",
+   "total": 2578,
+   "read": 2578,
+   "kept": 203,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-05-12",
+   "end": "2025-05-18",
+   "total": 3888,
+   "read": 3888,
+   "kept": 157,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-05-12",
+   "end": "2025-05-18",
+   "total": 2889,
+   "read": 2889,
+   "kept": 294,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-05-12",
+   "end": "2025-05-18",
+   "total": 3747,
+   "read": 3747,
+   "kept": 265,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-05-19",
+   "end": "2025-05-25",
+   "total": 4041,
+   "read": 4041,
+   "kept": 184,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-05-19",
+   "end": "2025-05-25",
+   "total": 2738,
+   "read": 2738,
+   "kept": 151,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-05-19",
+   "end": "2025-05-25",
+   "total": 3639,
+   "read": 3639,
+   "kept": 259,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-05-26",
+   "end": "2025-06-01",
+   "total": 4025,
+   "read": 4025,
+   "kept": 183,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-05-26",
+   "end": "2025-06-01",
+   "total": 2484,
+   "read": 2484,
+   "kept": 89,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-05-26",
+   "end": "2025-06-01",
+   "total": 3674,
+   "read": 3674,
+   "kept": 277,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-06-02",
+   "end": "2025-06-08",
+   "total": 2697,
+   "read": 2697,
+   "kept": 114,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-06-02",
+   "end": "2025-06-08",
+   "total": 1748,
+   "read": 1748,
+   "kept": 59,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-06-02",
+   "end": "2025-06-08",
+   "total": 2633,
+   "read": 2633,
+   "kept": 156,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-06-09",
+   "end": "2025-06-15",
+   "total": 4036,
+   "read": 4036,
+   "kept": 190,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-06-09",
+   "end": "2025-06-15",
+   "total": 2934,
+   "read": 2934,
+   "kept": 184,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-06-09",
+   "end": "2025-06-15",
+   "total": 4699,
+   "read": 4699,
+   "kept": 339,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-06-16",
+   "end": "2025-06-22",
+   "total": 3814,
+   "read": 3814,
+   "kept": 169,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-06-16",
+   "end": "2025-06-22",
+   "total": 3076,
+   "read": 3076,
+   "kept": 278,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-06-16",
+   "end": "2025-06-22",
+   "total": 4408,
+   "read": 4408,
+   "kept": 392,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-06-23",
+   "end": "2025-06-29",
+   "total": 3318,
+   "read": 3318,
+   "kept": 99,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-06-23",
+   "end": "2025-06-29",
+   "total": 2285,
+   "read": 2285,
+   "kept": 77,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-06-23",
+   "end": "2025-06-29",
+   "total": 3314,
+   "read": 3314,
+   "kept": 269,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-06-30",
+   "end": "2025-07-06",
+   "total": 3174,
+   "read": 3174,
+   "kept": 124,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-06-30",
+   "end": "2025-07-06",
+   "total": 2036,
+   "read": 2036,
+   "kept": 76,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-06-30",
+   "end": "2025-07-06",
+   "total": 3173,
+   "read": 3173,
+   "kept": 271,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-07-07",
+   "end": "2025-07-13",
+   "total": 3366,
+   "read": 3366,
+   "kept": 124,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-07-07",
+   "end": "2025-07-13",
+   "total": 2318,
+   "read": 2318,
+   "kept": 75,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-07-07",
+   "end": "2025-07-13",
+   "total": 3335,
+   "read": 3335,
+   "kept": 323,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-07-14",
+   "end": "2025-07-20",
+   "total": 3307,
+   "read": 3307,
+   "kept": 151,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-07-14",
+   "end": "2025-07-20",
+   "total": 2553,
+   "read": 2553,
+   "kept": 98,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-07-14",
+   "end": "2025-07-20",
+   "total": 2855,
+   "read": 2855,
+   "kept": 237,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-07-21",
+   "end": "2025-07-27",
+   "total": 3113,
+   "read": 3113,
+   "kept": 128,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-07-21",
+   "end": "2025-07-27",
+   "total": 2530,
+   "read": 2530,
+   "kept": 105,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-07-21",
+   "end": "2025-07-27",
+   "total": 2683,
+   "read": 2683,
+   "kept": 194,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-07-28",
+   "end": "2025-08-03",
+   "total": 2967,
+   "read": 2967,
+   "kept": 131,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-07-28",
+   "end": "2025-08-03",
+   "total": 2458,
+   "read": 2458,
+   "kept": 135,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-07-28",
+   "end": "2025-08-03",
+   "total": 2393,
+   "read": 2393,
+   "kept": 207,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-08-04",
+   "end": "2025-08-10",
+   "total": 2998,
+   "read": 2998,
+   "kept": 119,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-08-04",
+   "end": "2025-08-10",
+   "total": 2558,
+   "read": 2558,
+   "kept": 120,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-08-04",
+   "end": "2025-08-10",
+   "total": 2563,
+   "read": 2563,
+   "kept": 209,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-08-11",
+   "end": "2025-08-17",
+   "total": 2380,
+   "read": 2380,
+   "kept": 85,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-08-11",
+   "end": "2025-08-17",
+   "total": 2489,
+   "read": 2489,
+   "kept": 233,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-08-11",
+   "end": "2025-08-17",
+   "total": 1885,
+   "read": 1885,
+   "kept": 146,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-08-18",
+   "end": "2025-08-24",
+   "total": 2939,
+   "read": 2939,
+   "kept": 139,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-08-18",
+   "end": "2025-08-24",
+   "total": 2940,
+   "read": 2940,
+   "kept": 168,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-08-18",
+   "end": "2025-08-24",
+   "total": 2362,
+   "read": 2362,
+   "kept": 181,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-08-25",
+   "end": "2025-08-31",
+   "total": 2956,
+   "read": 2956,
+   "kept": 120,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-08-25",
+   "end": "2025-08-31",
+   "total": 2340,
+   "read": 2340,
+   "kept": 77,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-08-25",
+   "end": "2025-08-31",
+   "total": 2406,
+   "read": 2406,
+   "kept": 148,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-09-01",
+   "end": "2025-09-07",
+   "total": 2905,
+   "read": 2905,
+   "kept": 119,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-09-01",
+   "end": "2025-09-07",
+   "total": 2455,
+   "read": 2455,
+   "kept": 63,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-09-01",
+   "end": "2025-09-07",
+   "total": 2279,
+   "read": 2279,
+   "kept": 135,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-09-08",
+   "end": "2025-09-14",
+   "total": 2863,
+   "read": 2863,
+   "kept": 122,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-09-08",
+   "end": "2025-09-14",
+   "total": 2797,
+   "read": 2797,
+   "kept": 129,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-09-08",
+   "end": "2025-09-14",
+   "total": 2542,
+   "read": 2542,
+   "kept": 141,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-09-15",
+   "end": "2025-09-21",
+   "total": 2890,
+   "read": 2890,
+   "kept": 114,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-09-15",
+   "end": "2025-09-21",
+   "total": 3096,
+   "read": 3096,
+   "kept": 249,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-09-15",
+   "end": "2025-09-21",
+   "total": 2827,
+   "read": 2827,
+   "kept": 185,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-09-22",
+   "end": "2025-09-28",
+   "total": 2716,
+   "read": 2716,
+   "kept": 111,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-09-22",
+   "end": "2025-09-28",
+   "total": 2570,
+   "read": 2570,
+   "kept": 69,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-09-22",
+   "end": "2025-09-28",
+   "total": 3094,
+   "read": 3094,
+   "kept": 201,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-09-29",
+   "end": "2025-10-05",
+   "total": 0,
+   "read": 0,
+   "kept": 0,
+   "pages": 1,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-09-29",
+   "end": "2025-10-05",
+   "total": 0,
+   "read": 0,
+   "kept": 0,
+   "pages": 1,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-09-29",
+   "end": "2025-10-05",
+   "total": 0,
+   "read": 0,
+   "kept": 0,
+   "pages": 1,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-10-06",
+   "end": "2025-10-12",
+   "total": 567,
+   "read": 567,
+   "kept": 30,
+   "pages": 1,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-10-06",
+   "end": "2025-10-12",
+   "total": 389,
+   "read": 389,
+   "kept": 13,
+   "pages": 1,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-10-06",
+   "end": "2025-10-12",
+   "total": 358,
+   "read": 358,
+   "kept": 46,
+   "pages": 1,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-10-13",
+   "end": "2025-10-19",
+   "total": 3955,
+   "read": 3955,
+   "kept": 160,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-10-13",
+   "end": "2025-10-19",
+   "total": 3743,
+   "read": 3743,
+   "kept": 300,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-10-13",
+   "end": "2025-10-19",
+   "total": 4684,
+   "read": 4684,
+   "kept": 373,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-10-20",
+   "end": "2025-10-26",
+   "total": 3865,
+   "read": 3865,
+   "kept": 154,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-10-20",
+   "end": "2025-10-26",
+   "total": 3252,
+   "read": 3252,
+   "kept": 112,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-10-20",
+   "end": "2025-10-26",
+   "total": 3565,
+   "read": 3565,
+   "kept": 268,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-10-27",
+   "end": "2025-11-02",
+   "total": 3546,
+   "read": 3546,
+   "kept": 144,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-10-27",
+   "end": "2025-11-02",
+   "total": 2790,
+   "read": 2790,
+   "kept": 68,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-10-27",
+   "end": "2025-11-02",
+   "total": 3512,
+   "read": 3512,
+   "kept": 232,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-11-03",
+   "end": "2025-11-09",
+   "total": 3885,
+   "read": 3885,
+   "kept": 162,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-11-03",
+   "end": "2025-11-09",
+   "total": 2814,
+   "read": 2814,
+   "kept": 80,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-11-03",
+   "end": "2025-11-09",
+   "total": 3694,
+   "read": 3694,
+   "kept": 281,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-11-10",
+   "end": "2025-11-16",
+   "total": 4108,
+   "read": 4108,
+   "kept": 169,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-11-10",
+   "end": "2025-11-16",
+   "total": 3197,
+   "read": 3197,
+   "kept": 195,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-11-10",
+   "end": "2025-11-16",
+   "total": 3641,
+   "read": 3641,
+   "kept": 299,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-11-17",
+   "end": "2025-11-23",
+   "total": 4690,
+   "read": 4690,
+   "kept": 155,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-11-17",
+   "end": "2025-11-23",
+   "total": 3572,
+   "read": 3572,
+   "kept": 221,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-11-17",
+   "end": "2025-11-23",
+   "total": 4242,
+   "read": 4242,
+   "kept": 293,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-11-24",
+   "end": "2025-11-30",
+   "total": 5306,
+   "read": 5306,
+   "kept": 237,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-11-24",
+   "end": "2025-11-30",
+   "total": 3104,
+   "read": 3104,
+   "kept": 107,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-11-24",
+   "end": "2025-11-30",
+   "total": 4229,
+   "read": 4229,
+   "kept": 276,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-12-01",
+   "end": "2025-12-07",
+   "total": 5811,
+   "read": 5811,
+   "kept": 257,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-12-01",
+   "end": "2025-12-07",
+   "total": 3473,
+   "read": 3473,
+   "kept": 82,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-12-01",
+   "end": "2025-12-07",
+   "total": 5278,
+   "read": 5278,
+   "kept": 208,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-12-08",
+   "end": "2025-12-14",
+   "total": 6453,
+   "read": 6453,
+   "kept": 339,
+   "pages": 7,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-12-08",
+   "end": "2025-12-14",
+   "total": 3486,
+   "read": 3486,
+   "kept": 92,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-12-08",
+   "end": "2025-12-14",
+   "total": 4903,
+   "read": 4903,
+   "kept": 326,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-12-15",
+   "end": "2025-12-21",
+   "total": 5467,
+   "read": 5467,
+   "kept": 198,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-12-15",
+   "end": "2025-12-21",
+   "total": 2852,
+   "read": 2852,
+   "kept": 114,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-12-15",
+   "end": "2025-12-21",
+   "total": 3613,
+   "read": 3613,
+   "kept": 186,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-12-22",
+   "end": "2025-12-28",
+   "total": 3329,
+   "read": 3329,
+   "kept": 152,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-12-22",
+   "end": "2025-12-28",
+   "total": 1662,
+   "read": 1662,
+   "kept": 46,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-12-22",
+   "end": "2025-12-28",
+   "total": 1452,
+   "read": 1452,
+   "kept": 62,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2025-12-29",
+   "end": "2026-01-04",
+   "total": 2633,
+   "read": 2633,
+   "kept": 97,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2025-12-29",
+   "end": "2026-01-04",
+   "total": 1056,
+   "read": 1056,
+   "kept": 27,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2025-12-29",
+   "end": "2026-01-04",
+   "total": 1025,
+   "read": 1025,
+   "kept": 68,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-01-05",
+   "end": "2026-01-11",
+   "total": 3537,
+   "read": 3537,
+   "kept": 148,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-01-05",
+   "end": "2026-01-11",
+   "total": 1612,
+   "read": 1612,
+   "kept": 31,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-01-05",
+   "end": "2026-01-11",
+   "total": 1455,
+   "read": 1455,
+   "kept": 99,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-01-12",
+   "end": "2026-01-18",
+   "total": 4791,
+   "read": 4791,
+   "kept": 246,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-01-12",
+   "end": "2026-01-18",
+   "total": 1984,
+   "read": 1984,
+   "kept": 61,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-01-12",
+   "end": "2026-01-18",
+   "total": 1738,
+   "read": 1738,
+   "kept": 122,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-01-19",
+   "end": "2026-01-25",
+   "total": 5565,
+   "read": 5565,
+   "kept": 284,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-01-19",
+   "end": "2026-01-25",
+   "total": 2066,
+   "read": 2066,
+   "kept": 85,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-01-19",
+   "end": "2026-01-25",
+   "total": 2107,
+   "read": 2107,
+   "kept": 181,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-01-26",
+   "end": "2026-02-01",
+   "total": 6163,
+   "read": 6163,
+   "kept": 277,
+   "pages": 7,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-01-26",
+   "end": "2026-02-01",
+   "total": 2144,
+   "read": 2144,
+   "kept": 88,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-01-26",
+   "end": "2026-02-01",
+   "total": 2267,
+   "read": 2267,
+   "kept": 145,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-02-02",
+   "end": "2026-02-08",
+   "total": 6283,
+   "read": 6283,
+   "kept": 285,
+   "pages": 7,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-02-02",
+   "end": "2026-02-08",
+   "total": 2567,
+   "read": 2567,
+   "kept": 164,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-02-02",
+   "end": "2026-02-08",
+   "total": 2585,
+   "read": 2585,
+   "kept": 168,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-02-09",
+   "end": "2026-02-15",
+   "total": 6436,
+   "read": 6436,
+   "kept": 281,
+   "pages": 7,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-02-09",
+   "end": "2026-02-15",
+   "total": 3122,
+   "read": 3122,
+   "kept": 349,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-02-09",
+   "end": "2026-02-15",
+   "total": 2790,
+   "read": 2790,
+   "kept": 284,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-02-16",
+   "end": "2026-02-22",
+   "total": 2931,
+   "read": 2931,
+   "kept": 133,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-02-16",
+   "end": "2026-02-22",
+   "total": 1413,
+   "read": 1413,
+   "kept": 123,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-02-16",
+   "end": "2026-02-22",
+   "total": 1609,
+   "read": 1609,
+   "kept": 149,
+   "pages": 2,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-02-23",
+   "end": "2026-03-01",
+   "total": 5544,
+   "read": 5544,
+   "kept": 226,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-02-23",
+   "end": "2026-03-01",
+   "total": 2370,
+   "read": 2370,
+   "kept": 147,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-02-23",
+   "end": "2026-03-01",
+   "total": 3750,
+   "read": 3750,
+   "kept": 350,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-03-02",
+   "end": "2026-03-08",
+   "total": 4998,
+   "read": 4998,
+   "kept": 229,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-03-02",
+   "end": "2026-03-08",
+   "total": 2291,
+   "read": 2291,
+   "kept": 73,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-03-02",
+   "end": "2026-03-08",
+   "total": 3356,
+   "read": 3356,
+   "kept": 347,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-03-09",
+   "end": "2026-03-15",
+   "total": 6088,
+   "read": 6088,
+   "kept": 238,
+   "pages": 7,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-03-09",
+   "end": "2026-03-15",
+   "total": 3068,
+   "read": 3068,
+   "kept": 178,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-03-09",
+   "end": "2026-03-15",
+   "total": 5320,
+   "read": 5320,
+   "kept": 513,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-03-16",
+   "end": "2026-03-22",
+   "total": 6011,
+   "read": 6011,
+   "kept": 245,
+   "pages": 7,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-03-16",
+   "end": "2026-03-22",
+   "total": 3269,
+   "read": 3269,
+   "kept": 268,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-03-16",
+   "end": "2026-03-22",
+   "total": 4609,
+   "read": 4609,
+   "kept": 448,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-03-23",
+   "end": "2026-03-29",
+   "total": 5538,
+   "read": 5538,
+   "kept": 190,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-03-23",
+   "end": "2026-03-29",
+   "total": 2586,
+   "read": 2586,
+   "kept": 100,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-03-23",
+   "end": "2026-03-29",
+   "total": 4196,
+   "read": 4196,
+   "kept": 405,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-03-30",
+   "end": "2026-04-05",
+   "total": 5299,
+   "read": 5299,
+   "kept": 159,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-03-30",
+   "end": "2026-04-05",
+   "total": 2620,
+   "read": 2620,
+   "kept": 94,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-03-30",
+   "end": "2026-04-05",
+   "total": 3897,
+   "read": 3897,
+   "kept": 364,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-04-06",
+   "end": "2026-04-12",
+   "total": 5363,
+   "read": 5363,
+   "kept": 215,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-04-06",
+   "end": "2026-04-12",
+   "total": 2745,
+   "read": 2745,
+   "kept": 139,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-04-06",
+   "end": "2026-04-12",
+   "total": 4307,
+   "read": 4307,
+   "kept": 347,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-04-13",
+   "end": "2026-04-19",
+   "total": 5320,
+   "read": 5320,
+   "kept": 168,
+   "pages": 6,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-04-13",
+   "end": "2026-04-19",
+   "total": 3390,
+   "read": 3390,
+   "kept": 320,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-04-13",
+   "end": "2026-04-19",
+   "total": 3432,
+   "read": 3432,
+   "kept": 282,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-04-20",
+   "end": "2026-04-26",
+   "total": 4886,
+   "read": 4886,
+   "kept": 175,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-04-20",
+   "end": "2026-04-26",
+   "total": 3002,
+   "read": 3002,
+   "kept": 129,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-04-20",
+   "end": "2026-04-26",
+   "total": 3630,
+   "read": 3630,
+   "kept": 295,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-04-27",
+   "end": "2026-05-03",
+   "total": 4241,
+   "read": 4241,
+   "kept": 116,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-04-27",
+   "end": "2026-05-03",
+   "total": 2174,
+   "read": 2174,
+   "kept": 93,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-04-27",
+   "end": "2026-05-03",
+   "total": 2849,
+   "read": 2849,
+   "kept": 188,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-05-04",
+   "end": "2026-05-10",
+   "total": 3778,
+   "read": 3778,
+   "kept": 140,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-05-04",
+   "end": "2026-05-10",
+   "total": 2203,
+   "read": 2203,
+   "kept": 92,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-05-04",
+   "end": "2026-05-10",
+   "total": 2595,
+   "read": 2595,
+   "kept": 193,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-05-11",
+   "end": "2026-05-17",
+   "total": 4565,
+   "read": 4565,
+   "kept": 152,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-05-11",
+   "end": "2026-05-17",
+   "total": 3165,
+   "read": 3165,
+   "kept": 259,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-05-11",
+   "end": "2026-05-17",
+   "total": 3274,
+   "read": 3274,
+   "kept": 274,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-05-18",
+   "end": "2026-05-24",
+   "total": 4474,
+   "read": 4474,
+   "kept": 150,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-05-18",
+   "end": "2026-05-24",
+   "total": 2973,
+   "read": 2973,
+   "kept": 148,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-05-18",
+   "end": "2026-05-24",
+   "total": 3435,
+   "read": 3435,
+   "kept": 270,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-05-25",
+   "end": "2026-05-31",
+   "total": 3747,
+   "read": 3747,
+   "kept": 110,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-05-25",
+   "end": "2026-05-31",
+   "total": 2354,
+   "read": 2354,
+   "kept": 75,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-05-25",
+   "end": "2026-05-31",
+   "total": 2788,
+   "read": 2788,
+   "kept": 218,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-06-01",
+   "end": "2026-06-07",
+   "total": 3554,
+   "read": 3554,
+   "kept": 88,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-06-01",
+   "end": "2026-06-07",
+   "total": 2388,
+   "read": 2388,
+   "kept": 73,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-06-01",
+   "end": "2026-06-07",
+   "total": 2821,
+   "read": 2821,
+   "kept": 229,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-06-08",
+   "end": "2026-06-14",
+   "total": 4238,
+   "read": 4238,
+   "kept": 123,
+   "pages": 5,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-06-08",
+   "end": "2026-06-14",
+   "total": 3086,
+   "read": 3086,
+   "kept": 123,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-06-08",
+   "end": "2026-06-14",
+   "total": 3722,
+   "read": 3722,
+   "kept": 243,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-06-15",
+   "end": "2026-06-21",
+   "total": 3931,
+   "read": 3931,
+   "kept": 135,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-06-15",
+   "end": "2026-06-21",
+   "total": 3539,
+   "read": 3539,
+   "kept": 284,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-06-15",
+   "end": "2026-06-21",
+   "total": 3687,
+   "read": 3687,
+   "kept": 232,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-06-22",
+   "end": "2026-06-28",
+   "total": 3577,
+   "read": 3577,
+   "kept": 135,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-06-22",
+   "end": "2026-06-28",
+   "total": 2502,
+   "read": 2502,
+   "kept": 96,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-06-22",
+   "end": "2026-06-28",
+   "total": 2939,
+   "read": 2939,
+   "kept": 160,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-06-29",
+   "end": "2026-07-05",
+   "total": 3352,
+   "read": 3352,
+   "kept": 93,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-06-29",
+   "end": "2026-07-05",
+   "total": 2329,
+   "read": 2329,
+   "kept": 99,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-06-29",
+   "end": "2026-07-05",
+   "total": 2723,
+   "read": 2723,
+   "kept": 168,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-07-06",
+   "end": "2026-07-12",
+   "total": 3256,
+   "read": 3256,
+   "kept": 111,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-07-06",
+   "end": "2026-07-12",
+   "total": 2392,
+   "read": 2392,
+   "kept": 88,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-07-06",
+   "end": "2026-07-12",
+   "total": 2997,
+   "read": 2997,
+   "kept": 187,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-07-13",
+   "end": "2026-07-19",
+   "total": 2814,
+   "read": 2814,
+   "kept": 104,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-07-13",
+   "end": "2026-07-19",
+   "total": 2263,
+   "read": 2263,
+   "kept": 78,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-07-13",
+   "end": "2026-07-19",
+   "total": 2235,
+   "read": 2235,
+   "kept": 183,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-07-20",
+   "end": "2026-07-26",
+   "total": 3309,
+   "read": 3309,
+   "kept": 117,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-07-20",
+   "end": "2026-07-26",
+   "total": 2890,
+   "read": 2890,
+   "kept": 101,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-07-20",
+   "end": "2026-07-26",
+   "total": 2264,
+   "read": 2264,
+   "kept": 170,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-07-27",
+   "end": "2026-08-02",
+   "total": 3023,
+   "read": 3023,
+   "kept": 97,
+   "pages": 4,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoThng",
+   "start": "2026-07-27",
+   "end": "2026-08-02",
+   "total": 2868,
+   "read": 2868,
+   "kept": 113,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoCnstwk",
+   "start": "2026-07-27",
+   "end": "2026-08-02",
+   "total": 2109,
+   "read": 2109,
+   "kept": 108,
+   "pages": 3,
+   "error": null
+  },
+  {
+   "path": "/ad/BidPublicInfoService/getBidPblancListInfoServc",
+   "start": "2026-08-03",
+   "end": "2026-08-09",
+   "total": 3144,
+   "read": 3144,
+   "kept": 125,
+   "pages": 4,
+   "error": null
+  }
+ ]
+}
