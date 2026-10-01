@@ -1,0 +1,282 @@
+{
+  "conditions": {
+    "anchor": "2026-09-25",
+    "seed": 7,
+    "scale": 1.0,
+    "scanned_ratio": null,
+    "extractor_mode": "heuristic"
+  },
+  "extraction": {
+    "gold": 106,
+    "predicted": 106,
+    "precision": 1.0,
+    "recall": 1.0,
+    "field_accuracy": {
+      "budget": 1.0,
+      "expected_year": 1.0,
+      "commitment": 1.0,
+      "category": 0.972,
+      "institution": 1.0
+    },
+    "verdicts": {
+      "accepted": 103,
+      "needs_review": 3
+    },
+    "triage": {
+      "chunks": 888,
+      "passed": 328,
+      "skipped_rate": 0.631,
+      "gold_recall_after_triage": 0.991
+    }
+  },
+  "linking": {
+    "labeled_signals": 190,
+    "pairwise": {
+      "precision": 1.0,
+      "recall": 0.985,
+      "f1": 0.992
+    },
+    "truths_in_single_opportunity": 0.986,
+    "pure_opportunities": 1.0
+  },
+  "ocr": {
+    "scanned_documents": 6,
+    "cer_raw": 0.0113,
+    "cer_corrected": 0.0099,
+    "amount_token_accuracy_raw": 1.0,
+    "amount_token_accuracy_corrected": 1.0
+  },
+  "realistic": {
+    "cases": 54,
+    "extractor": "heuristic-v9",
+    "expected": 50,
+    "predicted": 29,
+    "matched": 27,
+    "precision": 0.931,
+    "recall": 0.54,
+    "f1": 0.684,
+    "field_accuracy": {
+      "category": 0.926,
+      "commitment": 0.852,
+      "budget": 0.889,
+      "expected_year": 0.926
+    },
+    "after_verifier": {
+      "expected": 50,
+      "predicted": 29,
+      "matched": 27,
+      "precision": 0.931,
+      "recall": 0.54,
+      "f1": 0.684,
+      "field_accuracy": {
+        "category": 0.926,
+        "commitment": 0.852,
+        "budget": 0.889,
+        "expected_year": 0.926
+      },
+      "rejected": 0
+    },
+    "failures": [
+      {
+        "case": "r01",
+        "missing": "수요응답"
+      },
+      {
+        "case": "r01",
+        "unexpected": "차량 임차와 플랫폼 구축"
+      },
+      {
+        "case": "r02",
+        "missing": "지하차도"
+      },
+      {
+        "case": "r03",
+        "title": "다만 행안부 공통기반 전환",
+        "wrong": {
+          "commitment": {
+            "got": "committed",
+            "expected": "declined"
+          },
+          "expected_year": {
+            "got": 2025,
+            "expected": null
+          }
+        }
+      },
+      {
+        "case": "r05",
+        "missing": "메타버스"
+      },
+      {
+        "case": "r06",
+        "title": "독거어르신 돌봄 스피커 사업",
+        "wrong": {
+          "commitment": {
+            "got": "planned",
+            "expected": "committed"
+          }
+        }
+      },
+      {
+        "case": "r07",
+        "title": "송도 쪽 스마트폴 설치",
+        "wrong": {
+          "commitment": {
+            "got": "committed",
+            "expected": "reviewing"
+          },
+          "expected_year": {
+            "got": 2025,
+            "expected": null
+          },
+          "budget": {
+            "got": 950000000,
+            "expected": null
+          }
+        }
+      },
+      {
+        "case": "r07",
+        "missing": "선별관제"
+      },
+      {
+        "case": "r09",
+        "title": "지난달 정부 AI 공모사업",
+        "wrong": {
+          "category": {
+            "got": "ai_data",
+            "expected": "public_sw"
+          }
+        }
+      },
+      {
+        "case": "r10",
+        "missing": "태양광"
+      },
+      {
+        "case": "r16",
+        "missing": "횡단보도"
+      },
+      {
+        "case": "r16",
+        "title": "전 구간에 비상벨을 추가하는 사업",
+        "wrong": {
+          "budget": {
+            "got": 120000000,
+            "expected": null
+          }
+        }
+      },
+      {
+        "case": "r16",
+        "missing": "보행자"
+      },
+      {
+        "case": "r21",
+        "missing": "통합관제"
+      },
+      {
+        "case": "r24",
+        "missing": "종량기"
+      },
+      {
+        "case": "r25",
+        "missing": "킥보드"
+      },
+      {
+        "case": "r26",
+        "title": "생태 보호구역이 포함돼 있어서 설치",
+        "wrong": {
+          "category": {
+            "got": "smart_city",
+            "expected": "safety_cctv"
+          },
+          "commitment": {
+            "got": "planned",
+            "expected": "committed"
+          }
+        }
+      },
+      {
+        "case": "r26",
+        "missing": "가로등"
+      },
+      {
+        "case": "r28",
+        "missing": "데이터"
+      },
+      {
+        "case": "r29",
+        "missing": "키오스크"
+      }
+    ]
+  },
+  "backtest": {
+    "as_of": "2026-09-25",
+    "calibration": {
+      "budget_line:committed": 0.778,
+      "council_mention:committed": 0.818,
+      "council_mention:reviewing": 0.222
+    },
+    "limitations": [
+      "Current link groups are used; this is not a historical prediction replay.",
+      "Missing tenders can reflect incomplete source coverage, not non-procurement."
+    ],
+    "horizon_days": 540,
+    "lead_time_days": {
+      "n": 34,
+      "p25": 192.75,
+      "p75": 347.75,
+      "median": 273.5,
+      "by_first_stage": {
+        "budget_line": {
+          "n": 15,
+          "median": 192
+        },
+        "council_mention": {
+          "n": 19,
+          "median": 330
+        }
+      }
+    },
+    "method_version": "public-date-cohort-v2",
+    "evaluation_scope": "retrospective_linked_signals",
+    "tender_early_coverage": {
+      "rate": 0.447,
+      "tenders": 76,
+      "with_early_signal": 34
+    },
+    "censored_opportunities": 35,
+    "excluded_uncertain_dates": 0,
+    "conversion_by_first_signal": {
+      "budget_line:*": {
+        "n": 9,
+        "rate": 0.778
+      },
+      "council_mention:*": {
+        "n": 25,
+        "rate": 0.56
+      },
+      "budget_line:committed": {
+        "n": 9,
+        "rate": 0.778
+      },
+      "council_mention:planned": {
+        "n": 3,
+        "rate": 1.0
+      },
+      "council_mention:declined": {
+        "n": 2,
+        "rate": 0.0
+      },
+      "council_mention:committed": {
+        "n": 11,
+        "rate": 0.818
+      },
+      "council_mention:reviewing": {
+        "n": 9,
+        "rate": 0.222
+      }
+    }
+  }
+}

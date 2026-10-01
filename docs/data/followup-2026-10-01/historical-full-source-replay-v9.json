@@ -1,0 +1,1035 @@
+{
+  "executed_at": "2026-10-01T00:26:13.629930+00:00",
+  "code_revision": "77c9de61a5a9e9eaeed63cca33e0622b00fdfa71",
+  "extractor": "heuristic-v9",
+  "source_path": "../../docs/data/blind-2026-09-30/v2-adjudicated-20260930/sources/gangnam_budget_2025.txt",
+  "source_sha256": "62717606686014286f91f41920349a6ba6f897923feaf93b6f3afb9492d7411c",
+  "input_report_date": "2024-12-17",
+  "public_availability_date": null,
+  "method": "offline_full_parsed_document_replay_with_production_chunking_triage_extraction_verifier",
+  "future_outcome_data_passed_to_extractor": false,
+  "limitations": [
+    "Current code replay on archived old document, not an actual prediction made in 2024.",
+    "Report date does not prove public availability; no verified lead-time claim.",
+    "No OCR, DB linking or complete outcome coverage tested."
+  ],
+  "chunks": 420,
+  "triage_passed": 420,
+  "signals": [
+    {
+      "chunk_start": 39277,
+      "chunk_end": 39972,
+      "signal": {
+        "title": "구정보도 추진 및 대화채널 구축",
+        "summary": "서울특별시 강남구의 구정보도 추진 및 대화채널 구축 (planned)",
+        "category": "other",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "295,114",
+        "budget_krw": 295114000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "구정보도 추진 및 대화채널 구축"
+        ],
+        "evidence": [
+          "1) 구정보도 추진 및 대화채널 구축 (p.41)",
+          "계                295,114"
+        ],
+        "confidence": 0.35
+      },
+      "verdict": "needs_review",
+      "stored_budget_krw": 295114000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 142097,
+      "chunk_end": 142576,
+      "signal": {
+        "title": "일원1동 스마트보안등 시스템 구축공사",
+        "summary": "서울특별시 강남구의 일원1동 스마트보안등 시스템 구축공사 (planned)",
+        "category": "other",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "300,000",
+        "budget_krw": 300000000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "일원1동 스마트보안등 시스템 구축공사"
+        ],
+        "evidence": [
+          "9) 일원1동 스마트보안등 시스템 구축공사(신규)(p.501)",
+          "계         300,000"
+        ],
+        "confidence": 0.35
+      },
+      "verdict": "needs_review",
+      "stored_budget_krw": 300000000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 142576,
+      "chunk_end": 143003,
+      "signal": {
+        "title": "신사동 스마트보안등 시스템 구축공사",
+        "summary": "서울특별시 강남구의 신사동 스마트보안등 시스템 구축공사 (planned)",
+        "category": "other",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "150,000",
+        "budget_krw": 150000000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "신사동 스마트보안등 시스템 구축공사"
+        ],
+        "evidence": [
+          "10) 신사동 스마트보안등 시스템 구축공사(신규)(p.504)",
+          "계         150,000"
+        ],
+        "confidence": 0.35
+      },
+      "verdict": "needs_review",
+      "stored_budget_krw": 150000000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 146659,
+      "chunk_end": 147143,
+      "signal": {
+        "title": "선릉로 및 일원로 도로정비공사",
+        "summary": "서울특별시 강남구의 선릉로 및 일원로 도로정비공사 (planned)",
+        "category": "facility",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "989,609",
+        "budget_krw": 989609000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "선릉로 및 일원로 도로정비공사"
+        ],
+        "evidence": [
+          "18) 선릉로 및 일원로 도로정비공사(신규)(p.530)",
+          "계              989,609"
+        ],
+        "confidence": 0.65
+      },
+      "verdict": "accepted",
+      "stored_budget_krw": 989609000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 147143,
+      "chunk_end": 147670,
+      "signal": {
+        "title": "선릉로86길 외 3개소 도로정비공사",
+        "summary": "서울특별시 강남구의 선릉로86길 외 3개소 도로정비공사 (planned)",
+        "category": "facility",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "915,249",
+        "budget_krw": 915249000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "선릉로86길 외 3개소 도로정비공사"
+        ],
+        "evidence": [
+          "19) 선릉로86길 외 3개소 도로정비공사(신규)(p.533)",
+          "계           915,249"
+        ],
+        "confidence": 0.65
+      },
+      "verdict": "accepted",
+      "stored_budget_krw": 915249000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 147670,
+      "chunk_end": 148152,
+      "signal": {
+        "title": "삼성로112길 외 3개소 도로정비공사",
+        "summary": "서울특별시 강남구의 삼성로112길 외 3개소 도로정비공사 (planned)",
+        "category": "facility",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "873,314",
+        "budget_krw": 873314000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "삼성로112길 외 3개소 도로정비공사"
+        ],
+        "evidence": [
+          "20) 삼성로112길 외 3개소 도로정비공사(신규)(p.537)",
+          "계          873,314"
+        ],
+        "confidence": 0.65
+      },
+      "verdict": "accepted",
+      "stored_budget_krw": 873314000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 149163,
+      "chunk_end": 149704,
+      "signal": {
+        "title": "논현로 213 주변 외 4개소 보도정비공사",
+        "summary": "서울특별시 강남구의 논현로 213 주변 외 4개소 보도정비공사 (planned)",
+        "category": "facility",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "782,818",
+        "budget_krw": 782818000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "논현로 213 주변 외 4개소 보도정비공사"
+        ],
+        "evidence": [
+          "23) 논현로 213 주변 외 4개소 보도정비공사(신규)(p.548)",
+          "계            782,818"
+        ],
+        "confidence": 0.65
+      },
+      "verdict": "accepted",
+      "stored_budget_krw": 782818000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 149704,
+      "chunk_end": 150243,
+      "signal": {
+        "title": "광평로(일원역) 주변 외 2개소 보도정비공사",
+        "summary": "서울특별시 강남구의 광평로(일원역) 주변 외 2개소 보도정비공사 (planned)",
+        "category": "facility",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "1,362,583",
+        "budget_krw": 1362583000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "광평로(일원역) 주변 외 2개소 보도정비공사"
+        ],
+        "evidence": [
+          "24) 광평로(일원역) 주변 외 2개소 보도정비공사(신규)(p.551)",
+          "계          1,362,583"
+        ],
+        "confidence": 0.65
+      },
+      "verdict": "accepted",
+      "stored_budget_krw": 1362583000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 151831,
+      "chunk_end": 152367,
+      "signal": {
+        "title": "말죽거리보도육교 캐노피 설치사업",
+        "summary": "서울특별시 강남구의 말죽거리보도육교 캐노피 설치사업 (planned)",
+        "category": "other",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "150,000",
+        "budget_krw": 150000000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "말죽거리보도육교 캐노피 설치사업"
+        ],
+        "evidence": [
+          "28) 말죽거리보도육교 캐노피 설치사업(신규)(p.564)",
+          "계            150,000"
+        ],
+        "confidence": 0.35
+      },
+      "verdict": "needs_review",
+      "stored_budget_krw": 150000000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 152367,
+      "chunk_end": 152929,
+      "signal": {
+        "title": "도곡역 4번출입구 E/S 연장설치 실시설계용역",
+        "summary": "서울특별시 강남구의 도곡역 4번출입구 E/S 연장설치 실시설계용역 (planned)",
+        "category": "other",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "300,000",
+        "budget_krw": 300000000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "도곡역 4번출입구 E/S 연장설치 실시설계용역"
+        ],
+        "evidence": [
+          "29) 도곡역 4번출입구 E/S 연장설치 실시설계용역(신규)(p.567)",
+          "계          300,000"
+        ],
+        "confidence": 0.35
+      },
+      "verdict": "needs_review",
+      "stored_budget_krw": 300000000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 162280,
+      "chunk_end": 162788,
+      "signal": {
+        "title": "스마트 수방 알리미 구축 사업",
+        "summary": "서울특별시 강남구의 스마트 수방 알리미 구축 사업 (planned)",
+        "category": "other",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "55,000",
+        "budget_krw": 55000000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "스마트 수방 알리미 구축 사업"
+        ],
+        "evidence": [
+          "15) 스마트 수방 알리미 구축 사업(신규)(p.614)",
+          "계              55,000"
+        ],
+        "confidence": 0.35
+      },
+      "verdict": "needs_review",
+      "stored_budget_krw": 55000000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 162788,
+      "chunk_end": 163310,
+      "signal": {
+        "title": "스마트 빗물펌프장 원격제어 고도화 사업",
+        "summary": "서울특별시 강남구의 스마트 빗물펌프장 원격제어 고도화 사업 (planned)",
+        "category": "other",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "145,000",
+        "budget_krw": 145000000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "스마트 빗물펌프장 원격제어 고도화 사업"
+        ],
+        "evidence": [
+          "16) 스마트 빗물펌프장 원격제어 고도화 사업(신규)(p.616)",
+          "계             145,000"
+        ],
+        "confidence": 0.35
+      },
+      "verdict": "needs_review",
+      "stored_budget_krw": 145000000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 168002,
+      "chunk_end": 168622,
+      "signal": {
+        "title": "세곡동 교수마을 우·오수 분류화 공사",
+        "summary": "서울특별시 강남구의 세곡동 교수마을 우·오수 분류화 공사 (planned)",
+        "category": "other",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "3,500,000",
+        "budget_krw": 3500000000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "세곡동 교수마을 우·오수 분류화 공사"
+        ],
+        "evidence": [
+          "25) 세곡동 교수마을 우·오수 분류화 공사(신규)(p.634)",
+          "계           3,500,000"
+        ],
+        "confidence": 0.35
+      },
+      "verdict": "needs_review",
+      "stored_budget_krw": 3500000000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 168622,
+      "chunk_end": 169213,
+      "signal": {
+        "title": "봉은사로 403 주변 외 4개소 원형관로 보수공사",
+        "summary": "서울특별시 강남구의 봉은사로 403 주변 외 4개소 원형관로 보수공사 (planned)",
+        "category": "facility",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "1,092,000",
+        "budget_krw": 1092000000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "봉은사로 403 주변 외 4개소 원형관로 보수공사"
+        ],
+        "evidence": [
+          "26) 봉은사로 403 주변 외 4개소 원형관로 보수공사(신규)(p.636)",
+          "계         1,092,000"
+        ],
+        "confidence": 0.65
+      },
+      "verdict": "accepted",
+      "stored_budget_krw": 1092000000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 170371,
+      "chunk_end": 170940,
+      "signal": {
+        "title": "학동로 143 주변 외 6개소 원형관로 보수공사",
+        "summary": "서울특별시 강남구의 학동로 143 주변 외 6개소 원형관로 보수공사 (planned)",
+        "category": "facility",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "900,000",
+        "budget_krw": 900000000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "학동로 143 주변 외 6개소 원형관로 보수공사"
+        ],
+        "evidence": [
+          "29) 학동로 143 주변 외 6개소 원형관로 보수공사(신규)(p.645)",
+          "계          900,000"
+        ],
+        "confidence": 0.65
+      },
+      "verdict": "accepted",
+      "stored_budget_krw": 900000000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 172035,
+      "chunk_end": 172638,
+      "signal": {
+        "title": "빗물받이 거름망 설치(주민참여예산)",
+        "summary": "서울특별시 강남구의 빗물받이 거름망 설치(주민참여예산) (planned)",
+        "category": "other",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "51,000",
+        "budget_krw": 51000000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "빗물받이 거름망 설치(주민참여예산)"
+        ],
+        "evidence": [
+          "32) 빗물받이 거름망 설치(주민참여예산)(p.653)",
+          "계            51,000"
+        ],
+        "confidence": 0.35
+      },
+      "verdict": "needs_review",
+      "stored_budget_krw": 51000000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 175000,
+      "chunk_end": 175576,
+      "signal": {
+        "title": "탄천·양재천 산책로 정비공사",
+        "summary": "서울특별시 강남구의 탄천·양재천 산책로 정비공사 (planned)",
+        "category": "facility",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "400,000",
+        "budget_krw": 400000000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "탄천·양재천 산책로 정비공사"
+        ],
+        "evidence": [
+          "37) 탄천·양재천 산책로 정비공사(신규)(p.664)",
+          "계          400,000"
+        ],
+        "confidence": 0.65
+      },
+      "verdict": "accepted",
+      "stored_budget_krw": 400000000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 176040,
+      "chunk_end": 176605,
+      "signal": {
+        "title": "양재천 수변문화공간 인테리어 공사",
+        "summary": "서울특별시 강남구의 양재천 수변문화공간 인테리어 공사 (planned)",
+        "category": "other",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "200,000",
+        "budget_krw": 200000000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "양재천 수변문화공간 인테리어 공사"
+        ],
+        "evidence": [
+          "39) 양재천 수변문화공간 인테리어 공사(신규)(p.668)",
+          "계          200,000"
+        ],
+        "confidence": 0.35
+      },
+      "verdict": "needs_review",
+      "stored_budget_krw": 200000000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 177142,
+      "chunk_end": 177821,
+      "signal": {
+        "title": "도로하부 공동(空洞) 복구공사",
+        "summary": "서울특별시 강남구의 도로하부 공동(空洞) 복구공사 (planned)",
+        "category": "other",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "300,000",
+        "budget_krw": 300000000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "도로하부 공동(空洞) 복구공사"
+        ],
+        "evidence": [
+          "41) 도로하부 공동(空洞) 복구공사(p.672)",
+          "계           300,000"
+        ],
+        "confidence": 0.35
+      },
+      "verdict": "needs_review",
+      "stored_budget_krw": 300000000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 346444,
+      "chunk_end": 347056,
+      "signal": {
+        "title": "탄천 ‧ 양재천 방문자센터 리모델링",
+        "summary": "서울특별시 강남구의 탄천 ‧ 양재천 방문자센터 리모델링 (planned)",
+        "category": "facility",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "98,475",
+        "budget_krw": 98475000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "탄천 ‧ 양재천 방문자센터 리모델링"
+        ],
+        "evidence": [
+          "54) 탄천 ‧ 양재천 방문자센터 리모델링(신규)(p.416)",
+          "계            98,475"
+        ],
+        "confidence": 0.65
+      },
+      "verdict": "accepted",
+      "stored_budget_krw": 98475000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 365958,
+      "chunk_end": 367172,
+      "signal": {
+        "title": "개포3동 복합문화센터 건립",
+        "summary": "서울특별시 강남구의 개포3동 복합문화센터 건립 (planned)",
+        "category": "facility",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "6,824,677",
+        "budget_krw": 6824677000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "개포3동 복합문화센터 건립"
+        ],
+        "evidence": [
+          "4) 개포3동 복합문화센터 건립(p.468)",
+          "계                    6,824,677"
+        ],
+        "confidence": 0.65
+      },
+      "verdict": "accepted",
+      "stored_budget_krw": 6824677000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 367172,
+      "chunk_end": 368511,
+      "signal": {
+        "title": "일원1동 복합문화센터 건립",
+        "summary": "서울특별시 강남구의 일원1동 복합문화센터 건립 (planned)",
+        "category": "facility",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "7,569,094",
+        "budget_krw": 7569094000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "일원1동 복합문화센터 건립"
+        ],
+        "evidence": [
+          "5) 일원1동 복합문화센터 건립(p.470)",
+          "계                      7,569,094"
+        ],
+        "confidence": 0.65
+      },
+      "verdict": "accepted",
+      "stored_budget_krw": 7569094000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 503995,
+      "chunk_end": 506217,
+      "signal": {
+        "title": "도곡1경로당 신축",
+        "summary": "서울특별시 강남구의 도곡1경로당 신축 (planned)",
+        "category": "facility",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "747,892",
+        "budget_krw": 747892000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "도곡1경로당 신축"
+        ],
+        "evidence": [
+          "1) 도곡1경로당 신축(p.109)",
+          "계                          747,892"
+        ],
+        "confidence": 0.65
+      },
+      "verdict": "accepted",
+      "stored_budget_krw": 747892000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 506217,
+      "chunk_end": 507971,
+      "signal": {
+        "title": "선정경로당 신축",
+        "summary": "서울특별시 강남구의 선정경로당 신축 (planned)",
+        "category": "facility",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "1,554,968",
+        "budget_krw": 1554968000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "선정경로당 신축"
+        ],
+        "evidence": [
+          "2) 선정경로당 신축(p.111)",
+          "계                       1,554,968"
+        ],
+        "confidence": 0.65
+      },
+      "verdict": "accepted",
+      "stored_budget_krw": 1554968000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 580093,
+      "chunk_end": 581156,
+      "signal": {
+        "title": "여성 안전 클러스터 구축",
+        "summary": "서울특별시 강남구의 여성 안전 클러스터 구축 (planned)",
+        "category": "other",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "281,249",
+        "budget_krw": 281249000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "여성 안전 클러스터 구축"
+        ],
+        "evidence": [
+          "5) 여성 안전 클러스터 구축(p.456)",
+          "계             281,249"
+        ],
+        "confidence": 0.35
+      },
+      "verdict": "needs_review",
+      "stored_budget_krw": 281249000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 601065,
+      "chunk_end": 602134,
+      "signal": {
+        "title": "폐식용유 스마트수거함 설치 및 운영(주민참여예산)",
+        "summary": "서울특별시 강남구의 폐식용유 스마트수거함 설치 및 운영(주민참여예산) (planned)",
+        "category": "other",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "50,000",
+        "budget_krw": 50000000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "폐식용유 스마트수거함 설치 및 운영(주민참여예산)"
+        ],
+        "evidence": [
+          "3) 폐식용유 스마트수거함 설치 및 운영(주민참여예산)(p.562)",
+          "계                  50,000"
+        ],
+        "confidence": 0.35
+      },
+      "verdict": "needs_review",
+      "stored_budget_krw": 50000000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 602134,
+      "chunk_end": 602989,
+      "signal": {
+        "title": "세계일보, “폐식용유 버리고 포인트 적립”…관악구, 전국 첫 스마트수거함 도입, 2024. 6. 23.",
+        "summary": "서울특별시 강남구의 세계일보, “폐식용유 버리고 포인트 적립”…관악구, 전국 첫 스마트수거함 도입, 2024. 6. 23. (planned)",
+        "category": "other",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "40,300,956",
+        "budget_krw": 40300956000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "세계일보, “폐식용유 버리고 포인트 적립”…관악구, 전국 첫 스마트수거함 도입, 2024. 6. 23."
+        ],
+        "evidence": [
+          "19) 세계일보, “폐식용유 버리고 포인트 적립”…관악구, 전국 첫 스마트수거함 도입, 2024. 6. 23.",
+          "계           40,300,956"
+        ],
+        "confidence": 0.35
+      },
+      "verdict": "needs_review",
+      "stored_budget_krw": 40300956000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 624413,
+      "chunk_end": 624956,
+      "signal": {
+        "title": "사무용 소프트웨어 도입",
+        "summary": "서울특별시 강남구의 사무용 소프트웨어 도입 (planned)",
+        "category": "other",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "208,040",
+        "budget_krw": 208040000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "사무용 소프트웨어 도입"
+        ],
+        "evidence": [
+          "6) 사무용 소프트웨어 도입(p.656)",
+          "계             208,040"
+        ],
+        "confidence": 0.35
+      },
+      "verdict": "needs_review",
+      "stored_budget_krw": 208040000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 643659,
+      "chunk_end": 644187,
+      "signal": {
+        "title": "구립도서관 도서 구입",
+        "summary": "서울특별시 강남구의 구립도서관 도서 구입 (planned)",
+        "category": "education",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "676,287",
+        "budget_krw": 676287000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "구립도서관 도서 구입"
+        ],
+        "evidence": [
+          "18) 구립도서관 도서 구입(p.765)",
+          "계               676,287"
+        ],
+        "confidence": 0.65
+      },
+      "verdict": "accepted",
+      "stored_budget_krw": 676287000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 646480,
+      "chunk_end": 647359,
+      "signal": {
+        "title": "도산공원 복합건물 건립에 따른 도산안창호 기념관 임시 이전(신",
+        "summary": "서울특별시 강남구의 도산공원 복합건물 건립에 따른 도산안창호 기념관 임시 이전(신 (planned)",
+        "category": "facility",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "539,693",
+        "budget_krw": 539693000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "도산공원 복합건물 건립에 따른 도산안창호 기념관 임시 이전(신"
+        ],
+        "evidence": [
+          "22) 도산공원 복합건물 건립에 따른 도산안창호 기념관 임시 이전(신",
+          "계                  539,693"
+        ],
+        "confidence": 0.65
+      },
+      "verdict": "accepted",
+      "stored_budget_krw": 539693000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 648717,
+      "chunk_end": 649753,
+      "signal": {
+        "title": "봉은사 AI 안내판 및 키오스크 설치",
+        "summary": "서울특별시 강남구의 봉은사 AI 안내판 및 키오스크 설치 (planned)",
+        "category": "other",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "200,000",
+        "budget_krw": 200000000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "봉은사 AI 안내판 및 키오스크 설치"
+        ],
+        "evidence": [
+          "25) 봉은사 AI 안내판 및 키오스크 설치(신규)(p.791)",
+          "계            200,000"
+        ],
+        "confidence": 0.35
+      },
+      "verdict": "needs_review",
+      "stored_budget_krw": 200000000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 675936,
+      "chunk_end": 676602,
+      "signal": {
+        "title": "불법주정차 단속용 CCTV 신규설치 및 성능개선",
+        "summary": "서울특별시 강남구의 불법주정차 단속용 CCTV 신규설치 및 성능개선 (planned)",
+        "category": "safety_cctv",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "2,491,000",
+        "budget_krw": 2491000000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "불법주정차 단속용 CCTV 신규설치 및 성능개선"
+        ],
+        "evidence": [
+          "2) 불법주정차 단속용 CCTV 신규설치 및 성능개선(p.688)",
+          "계           2,491,000"
+        ],
+        "confidence": 0.65
+      },
+      "verdict": "accepted",
+      "stored_budget_krw": 2491000000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 678854,
+      "chunk_end": 680268,
+      "signal": {
+        "title": "내집주차장 조성 공사",
+        "summary": "서울특별시 강남구의 내집주차장 조성 공사 (planned)",
+        "category": "mobility",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "164,670",
+        "budget_krw": 164670000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "내집주차장 조성 공사"
+        ],
+        "evidence": [
+          "5) 내집주차장 조성 공사(p.709)",
+          "계                 164,670"
+        ],
+        "confidence": 0.65
+      },
+      "verdict": "accepted",
+      "stored_budget_krw": 164670000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 688103,
+      "chunk_end": 689804,
+      "signal": {
+        "title": "건축물 및 건축공사장 안전관리",
+        "summary": "서울특별시 강남구의 건축물 및 건축공사장 안전관리 (planned)",
+        "category": "other",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "601,138",
+        "budget_krw": 601138000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "건축물 및 건축공사장 안전관리"
+        ],
+        "evidence": [
+          "2) 건축물 및 건축공사장 안전관리(p.707)",
+          "계                601,138"
+        ],
+        "confidence": 0.35
+      },
+      "verdict": "needs_review",
+      "stored_budget_krw": 601138000,
+      "stored_expected_year": 2025
+    },
+    {
+      "chunk_start": 689804,
+      "chunk_end": 690518,
+      "signal": {
+        "title": "발전소주변지역 지원사업(공공사회복지)",
+        "summary": "서울특별시 강남구의 발전소주변지역 지원사업(공공사회복지) (planned)",
+        "category": "welfare_care",
+        "institution_mention": "서울특별시 강남구",
+        "department": null,
+        "budget_text": "22,800",
+        "budget_krw": 22800000,
+        "timing_text": null,
+        "expected_year": 2025,
+        "expected_half": null,
+        "commitment": "planned",
+        "procurement_type": "unknown",
+        "keywords": [
+          "발전소주변지역 지원사업(공공사회복지)"
+        ],
+        "evidence": [
+          "1) 발전소주변지역 지원사업(공공사회복지)(p.713)",
+          "계               22,800"
+        ],
+        "confidence": 0.65
+      },
+      "verdict": "accepted",
+      "stored_budget_krw": 22800000,
+      "stored_expected_year": 2025
+    }
+  ]
+}
