@@ -278,8 +278,10 @@ def check_signal(
         commitment=sig.commitment,
     )
     budget = sig.budget_krw
-    if report.budget_grounded is False and report.budget_parsed:
-        budget = report.budget_parsed  # the parser, not the model, has the last word on numbers
+    if report.budget_grounded is False:
+        # Only an unambiguous literal amount can correct a conversion. Unsupported claims
+        # stay in report.budget_claimed for review, not in the operational budget field.
+        budget = report.budget_parsed
     return CheckedSignal(budget, expected_year, report)
 
 
@@ -317,6 +319,10 @@ def _text_signal(
         report.issues.append("institution_unresolved")
     if degraded_reason:
         report.issues.append(f"degraded:{degraded_reason}")
+    if extractor.startswith("local_llama:"):
+        report.issues.append("local_model_requires_review")
+        if report.verdict == "accepted":
+            report.verdict = "needs_review"
     verdict = report.verdict
     if verdict == "accepted" and report.issues:
         verdict = "needs_review"

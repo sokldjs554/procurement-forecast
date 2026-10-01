@@ -211,7 +211,9 @@ class LLMService:
                 )
 
         try:
-            await self.guard.check(estimate_extract_cost(model, user_message))
+            projected = estimate_extract_cost(model, user_message)
+            if projected > 0:
+                await self.guard.check(projected)
             result = await primary.extract(ctx)
         except LLMBudgetExceededError as exc:
             await self._record(

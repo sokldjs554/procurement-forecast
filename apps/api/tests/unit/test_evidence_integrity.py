@@ -131,7 +131,7 @@ def test_fuzzy_timing_reads_the_actual_source_year():
     assert report.year_resolved == 2026
 
 
-def test_fuzzy_budget_reads_the_actual_source_amount():
+def test_fuzzy_budget_cannot_select_a_different_source_amount():
     from app.domain.grounding import verify_extraction
 
     report = verify_extraction(
@@ -145,7 +145,9 @@ def test_fuzzy_budget_reads_the_actual_source_amount():
         confidence=0.95,
     )
     assert report.verdict == "needs_review"
-    assert report.budget_parsed == 300_000_000
+    assert report.budget_parsed is None
+    assert report.budget_claimed == 400_000_000
+    assert "budget_unsupported" in report.issues
 
 
 def test_unrecognized_speaker_header_ends_official_attribution():

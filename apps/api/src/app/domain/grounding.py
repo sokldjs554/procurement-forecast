@@ -27,7 +27,7 @@ from typing import Any, Literal
 
 from rapidfuzz import fuzz
 
-from app.domain.krw import amounts_agree, find_amounts
+from app.domain.krw import amounts_agree, detect_table_unit, find_amounts
 from app.domain.speakers import OFFICIAL_ENDINGS
 from app.domain.text import collapse_ws, normalize_with_map
 from app.domain.timing import resolve_timing
@@ -163,10 +163,12 @@ class EvidenceCheck:
     method: Literal["exact", "fuzzy", "missing"]
 
 
-def locate_quote(source: str, quote: str, *, min_score: float = 88.0) -> EvidenceCheck:
+def locate_quote(
+    source: str, quote: str, *, min_score: float = 88.0, min_quote_chars: int = 4
+) -> EvidenceCheck:
     norm_src, index_map = normalize_with_map(source)
     norm_q = collapse_ws(quote).strip(" \"'“”‘’…")
-    if len(norm_q) < 4 or not norm_src:
+    if not norm_q or len(norm_q) < min_quote_chars or not norm_src:
         return EvidenceCheck(quote, False, 0.0, None, None, "missing")
     pos = norm_src.find(norm_q)
     if pos >= 0:
@@ -245,25 +247,44 @@ def verify_extraction(
             report.issues.append(issue)
 
     if budget_krw is not None:
-        candidates: list[int] = []
-        table = default_unit != 1  # budget-book context: bare "352,000" cells are amounts
-        for span in found_spans:
-            candidates += [
-                a.value for a in find_amounts(span, default_unit=default_unit, bare_numbers=table)
-            ]
-        budget_match = (
-            locate_quote(source, budget_text, min_score=min_score) if budget_text else None
-        )
-        if budget_match and budget_match.found:
-            candidates += [
-                a.value
-                for a in find_amounts(
-                    source[budget_match.start : budget_match.end],
-                    default_unit=default_unit,
-                    bare_numbers=table,
+        # Explicit 원 tables also contain bare cells, despite their multiplier being 1.
+        table = default_unit != 1 or detect_table_unit(source) is not None
+        money_spans = []
+        if budget_text is not None:
+            # A money quote selects its own amount, never another project's or year's.
+            # Short literal amounts such as "2억원" are valid; fuzzy digit changes are not.
+            budget_match = locate_quote(source, budget_text, min_quote_chars=1)
+            if (
+                budget_match.method == "exact"
+                and budget_match.start is not None
+                and budget_match.end is not None
+            ):
+                start, end = budget_match.start, budget_match.end
+                # "2억원" inside "12억원", or "2억" inside "2억5천만원", is not
+                # a complete literal amount despite an exact substring match.
+                cuts_amount = any(
+                    amount.start < start < amount.end
+                    or amount.start < end < amount.end - len(amount.raw) + len(amount.raw.rstrip())
+                    for amount in find_amounts(
+                        source, default_unit=default_unit, bare_numbers=table
+                    )
                 )
+                if not cuts_amount:
+                    money_spans.append(source[start:end])
+        else:
+            money_spans = [
+                source[check.start : check.end] for check in checks if check.method == "exact"
             ]
-        report.budget_parsed = max(candidates) if candidates else None
+        candidates = {
+            amount.value
+            for span in money_spans
+            for amount in find_amounts(span, default_unit=default_unit, bare_numbers=table)
+        }
+        # Without an explicit amount quote, multiple values have no project attribution.
+        # Even inside an exact quote, ambiguity cannot justify a largest-value correction.
+        if budget_text is None and len(candidates) != 1:
+            candidates.clear()
+        report.budget_parsed = next(iter(candidates)) if len(candidates) == 1 else None
         report.budget_grounded = any(amounts_agree(budget_krw, c) for c in candidates)
         if not report.budget_grounded:
             report.issues.append("budget_mismatch" if candidates else "budget_unsupported")

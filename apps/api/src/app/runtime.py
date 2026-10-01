@@ -53,6 +53,13 @@ class Runtime:
 
 def build_llm(settings: Settings, guard: SpendGuard) -> LLMService:
     primary: Provider | None = None
+    if settings.llm_provider == "local_llama":
+        from app.llm.providers.local_llama import LocalLlamaProvider
+
+        primary = LocalLlamaProvider(
+            base_url=settings.llm_local_base_url,
+            timeout=settings.llm_local_timeout_seconds,
+        )
     if settings.llm_provider == "anthropic":
         from app.llm.providers.anthropic_provider import AnthropicProvider
 
