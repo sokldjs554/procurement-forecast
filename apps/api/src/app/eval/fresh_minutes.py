@@ -145,3 +145,79 @@ def select_excerpts(
         {"source_id": source_id, "text_char_start": start, "text": body}
         for _, start, body in sorted(picked[:per_source], key=lambda p: p[1])
     ]
+
+
+def draft_cases(sample_dir: Path, *, per_source: int = 6, development: int = 5) -> dict[str, int]:
+    """``cases-dev.draft.jsonl`` and ``cases-test.draft.jsonl``: the selected excerpts with an
+    empty ``expected`` for the labeller. The first ``development`` archived meetings in the
+    sample's hash order are for development; the rest are held out."""
+    manifest = json.loads((sample_dir / "sample.json").read_text(encoding="utf-8"))
+    archived = [s for s in manifest["sources"] if s["status"] == "archived"]
+    counts: dict[str, int] = {}
+    for split, sources in (("dev", archived[:development]), ("test", archived[development:])):
+        rows = []
+        for source in sources:
+            text = (sample_dir / source["path"]).read_text(encoding="utf-8")
+            for n, excerpt in enumerate(
+                select_excerpts(source["id"], text, per_source=per_source), 1
+            ):
+                rows.append(
+                    {
+                        "id": f"{split}-{source['id']}-{n}",
+                        "source_id": source["id"],
+                        "institution": source["institution"],
+                        "doc_type": "council_minutes",
+                        "date": source["meeting_date"],
+                        "date_basis": "meeting_date",
+                        "fiscal_year": None,
+                        "locator": {"text_char_start": excerpt["text_char_start"]},
+                        "text": excerpt["text"],
+                        "expected": None,
+                        "notes": "",
+                    }
+                )
+        path = sample_dir / f"cases-{split}.draft.jsonl"
+        path.write_text(
+            "".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows), encoding="utf-8"
+        )
+        counts[split] = len(rows)
+    return counts
+
+
+def freeze(sample_dir: Path, split: str, *, label_origin: str) -> Path:
+    """Write ``manifest-<split>.json`` (``source-holdout-v1``) over ``cases-<split>.jsonl``, once
+    every excerpt has a label list. The hashes are what later runs are checked against."""
+    cases_path = sample_dir / f"cases-{split}.jsonl"
+    data = cases_path.read_bytes()
+    cases = [json.loads(line) for line in data.splitlines() if line.strip()]
+    if not cases or any(not isinstance(c.get("expected"), list) for c in cases):
+        raise ValueError(f"{cases_path.name}: every excerpt needs an expected list, even []")
+    sample = json.loads((sample_dir / "sample.json").read_text(encoding="utf-8"))
+    used = {c["source_id"] for c in cases}
+    out = sample_dir / f"manifest-{split}.json"
+    if out.exists():
+        raise ValueError(f"{out.name} exists; a frozen holdout is never rewritten")
+    manifest = {
+        "schema_version": "source-holdout-v1",
+        "name": f"{sample_dir.name}-{split}",
+        "frozen_before_scoring": True,
+        "frozen_at": datetime.now(UTC).isoformat(timespec="seconds"),
+        "label_origin": label_origin,
+        "cases_path": cases_path.name,
+        "cases_sha256": hashlib.sha256(data).hexdigest(),
+        "sources": [
+            {
+                "id": s["id"],
+                "path": s["path"],
+                "sha256": s["sha256"],
+                "url": s["url"],
+                "institution": s["institution"],
+                "title": s["title"],
+                "meeting_date": s["meeting_date"],
+            }
+            for s in sample["sources"]
+            if s.get("id") in used
+        ],
+    }
+    out.write_text(json.dumps(manifest, ensure_ascii=False, indent=1) + "\n", encoding="utf-8")
+    return out

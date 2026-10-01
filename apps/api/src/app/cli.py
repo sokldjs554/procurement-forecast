@@ -7,6 +7,7 @@ manage eval all --record          # extraction / linking / OCR / realistic-set e
 manage eval llm --dry-run         # Claude model × effort comparison on the hand-written set
 manage eval tenders DIR --since … --until … -i 성남시   # every official 입찰공고 of a period, kept by institution
 manage eval fresh-minutes DIR --since … --until … -x 성남   # rule-chosen CLIK minutes for a new holdout
+manage eval fresh-cases DIR · fresh-freeze DIR --split dev   # excerpts to label, then hash them
 manage bench --report ../../docs/performance.md   # hot-query plans at volume
 manage sources check              # first real call to each 조달청 operation (needs the data.go.kr key)
 manage sources check -s clik_minutes   # CLIK minutes list + one detail (needs the CLIK key)
@@ -775,6 +776,36 @@ def eval_fresh_minutes(
             indent=2,
         )
     )
+
+
+@eval_app.command("fresh-cases")
+def eval_fresh_cases(
+    sample_dir: Path = typer.Argument(..., exists=True, file_okay=False),
+    per_source: int = typer.Option(6, min=1),
+    development: int = typer.Option(5, min=0, help="Meetings, in hash order, for development"),
+) -> None:
+    """Draft excerpts to label from an archived fresh sample (dev and held-out test)."""
+    from app.eval.fresh_minutes import draft_cases
+
+    typer.echo(json.dumps(draft_cases(sample_dir, per_source=per_source, development=development)))
+
+
+@eval_app.command("fresh-freeze")
+def eval_fresh_freeze(
+    sample_dir: Path = typer.Argument(..., exists=True, file_okay=False),
+    split: str = typer.Option(..., help="dev or test"),
+    label_origin: str = typer.Option(..., help="Who wrote the labels, and how"),
+) -> None:
+    """Hash the labelled excerpts into a holdout manifest; refuses to rewrite one."""
+    from app.eval.fresh_minutes import freeze
+    from app.eval.holdout import load_holdout
+
+    try:
+        path = freeze(sample_dir, split, label_origin=label_origin)
+        _, cases = load_holdout(path)
+    except ValueError as exc:
+        raise typer.BadParameter(str(exc)) from exc
+    typer.echo(json.dumps({"manifest": str(path), "cases": len(cases)}))
 
 
 class LinkReplayOrder(StrEnum):

@@ -46,7 +46,7 @@ ROWS = [
 MINUTES = (
     "○위원 김하늘  스마트 버스정류장 쉘터 몇 개소를 더 설치하실 계획입니까?\n"
     "○교통과장 박서준  내년 본예산에 12개소, 사업비 4억 8천만 원을 반영하겠습니다. "
-    "상반기에 설계를 마치고 하반기에 발주하려고 합니다.\n"
+    "상반기에 설계를 마치고 하반기에 발주하려고 합니다. 정류장별 이용객 수를 검토해 우선순위를 정하겠습니다.\n"
 )
 
 
@@ -123,3 +123,32 @@ def test_excerpts_are_the_turns_with_money_or_a_purchase_whoever_labels_them() -
     for p in picked:
         assert text[p["text_char_start"] :].startswith(p["text"])
     assert len(select_excerpts("s1", text, per_source=1, min_chars=30)) == 1
+
+
+async def test_drafted_excerpts_freeze_into_a_holdout_the_evaluator_accepts(tmp_path: Path) -> None:
+    import pytest
+
+    from app.eval.fresh_minutes import draft_cases, freeze
+    from app.eval.holdout import load_holdout
+
+    client, _ = _client()
+    rule = Rule("2026-09-01", "2026-09-07", "위원회", ("성남시",), meetings=5, per_council=1)
+    await sample_minutes(ClikMinutesAdapter(client, "k"), tmp_path, rule)
+    counts = draft_cases(tmp_path, per_source=6, development=1)
+    assert counts == {"dev": 1, "test": 1}  # one priced turn in each archived meeting
+
+    for split in ("dev", "test"):
+        draft = (tmp_path / f"cases-{split}.draft.jsonl").read_text(encoding="utf-8")
+        with pytest.raises(FileNotFoundError):
+            freeze(tmp_path, split, label_origin="test")  # nothing labelled yet
+        rows = [json.loads(line) for line in draft.splitlines()]
+        assert rows[0]["expected"] is None
+        rows[0]["expected"] = [{"title_keywords": ["쉘터"], "budget_krw": 480_000_000}]
+        (tmp_path / f"cases-{split}.jsonl").write_text(
+            "".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows), encoding="utf-8"
+        )
+        manifest = freeze(tmp_path, split, label_origin="test")
+        _, cases = load_holdout(manifest)
+        assert len(cases) == 1 and cases[0]["_source_labels"] == ["교통과장 박서준"]
+        with pytest.raises(ValueError, match="never rewritten"):
+            freeze(tmp_path, split, label_origin="test")
