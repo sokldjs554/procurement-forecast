@@ -61,6 +61,15 @@ scheduled operations' concurrency group, so no pass writes while it reads. The A
 the pushed commit are the record of when the files existed; they are GitHub's, not a trusted
 timestamping authority (gap 2 below). The directory is refused if it already exists.
 
+### First real freeze, 2026-10-02
+
+- [Run 36966829701](https://github.com/sokldjs554/procurement-forecast/actions/runs/36966829701) at code `e95699d`, 04:58 UTC, right after a successful operations pass. Data: `data/forecast-freeze` branch `a68d23d`, `docs/data/forecast-freeze-2026-10-02/`.
+  - `manifest.json` SHA-256 `20a7c92f7323f0ff996afb6e76048d2b56cd79332980093fa2f9a3f21060cad8`
+  - `open-forecasts.jsonl` (uncompressed) SHA-256 `65b0c67d456889d8a13e3ac986674dfca4f4e1fa05dba5348288651cb9f5cb02`
+- 290 open forecasts in 185 institutions, all 185 snapshotted: 139 from 발주계획, 127 from 사전규격, 24 from council mentions. The deployment then held 1,592 opportunities (open 290, bid_open 1,246, closed 55, dormant 1).
+- The 24 council-mention forecasts come from the rule-based extractor and are mostly sentence fragments; they are frozen as they stood, not cleaned.
+- No outcome has been observed yet. A first look a week later can only list notices that followed; it is not a conversion rate (see the denominators below).
+
 ## Observation file contract
 
 The following is a **synthetic schema example, not real observations**. Unit tests create their
