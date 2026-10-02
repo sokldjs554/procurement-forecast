@@ -1,0 +1,102 @@
+name: Council minutes archive (retrospective check)
+
+# Archives every 본회의·예결특위 meeting of named councils from CLIK (`manage eval council-minutes`)
+# on the data/council-minutes branch, for the retrospective check beyond 성남시
+# (docs/retrospective-validation.md). The CLIK key allows 1,000 calls a day, shared with the
+# scheduled operations, so a run reads at most max_details meetings; running it again with the
+# same name goes on where the last run stopped. Public minutes only; no database, no paid model.
+on:
+  workflow_dispatch:
+    inputs:
+      councils:
+        description: Comma-separated parts of CLIK council names
+        default: "서산시의회,강남구의회,금천구의회,원주시의회,동두천시의회,충청북도의회,고양시의회"
+      since:
+        description: First meeting date (YYYY-MM-DD)
+        default: "2024-10-01"
+      until:
+        description: Last meeting date (YYYY-MM-DD)
+        default: "2026-09-28"
+      meeting_pattern:
+        description: Regex the meeting name matches
+        default: "본회의|예산결산"
+      max_details:
+        description: Meetings read this run at most (leave room in the daily quota)
+        default: "600"
+      name:
+        description: Directory under docs/data on the data branch (same name resumes)
+        default: "council-minutes-2024-10-01-2026-09-28"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: council-minutes
+  cancel-in-progress: false
+
+jobs:
+  archive:
+    name: Archive the minutes
+    runs-on: ubuntu-24.04
+    timeout-minutes: 120
+    env:
+      BRANCH: data/council-minutes
+      DIR: docs/data/${{ inputs.name }}
+      COUNCILS: ${{ inputs.councils }}
+      SINCE: ${{ inputs.since }}
+      UNTIL: ${{ inputs.until }}
+      PATTERN: ${{ inputs.meeting_pattern }}
+      MAX_DETAILS: ${{ inputs.max_details }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.8.17"
+          python-version: "3.11"
+          enable-cache: true
+          cache-dependency-glob: apps/api/uv.lock
+      - name: Install
+        working-directory: apps/api
+        run: uv sync --frozen
+      - name: Check out the data branch next to the code
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null; then
+            git fetch --depth 1 origin "$BRANCH"
+            git worktree add --detach data FETCH_HEAD
+          else
+            git worktree add --detach data HEAD
+          fi
+      - name: Archive
+        working-directory: apps/api
+        env:
+          APP_CLIK_API_KEY: ${{ secrets.APP_CLIK_API_KEY }}
+        run: |
+          test -n "$APP_CLIK_API_KEY" || { echo "::error::Add the APP_CLIK_API_KEY repository secret first"; exit 1; }
+          args=()
+          IFS=',' read -ra names <<< "$COUNCILS"
+          for n in "${names[@]}"; do args+=(--council "$(echo "$n" | xargs)"); done
+          uv run manage eval council-minutes "$GITHUB_WORKSPACE/data/$DIR" "${args[@]}" \
+            --since "$SINCE" --until "$UNTIL" --meeting-pattern "$PATTERN" --max-details "$MAX_DETAILS" \
+            | tee "$RUNNER_TEMP/archive.json"
+      - name: Keep the archive on the data branch
+        if: always()
+        run: |
+          [ -d "data/$DIR" ] || exit 0
+          git -C data add "$DIR"
+          git -C data diff --cached --quiet && exit 0
+          git -C data commit -q -m "data(eval): CLIK minutes archive $(basename "$DIR")"
+          git -C data push origin "HEAD:refs/heads/$BRANCH"
+      - name: Summary
+        if: always()
+        run: |
+          m="data/$DIR/manifest.json"
+          [ -f "$m" ] || exit 0
+          jq -r '
+            "### Council minutes archive\n",
+            "| Council | CLIK id | Meetings listed |", "|---|---|---:|",
+            (.councils | to_entries[] | "| \(.value.council) | \(.value.id) | \(.value.listed_meetings // "-") |"),
+            "\nLast run: \(.runs[-1].detail_calls) meetings read, stopped: \(.runs[-1].stopped // "no"). Complete: \(.complete)."
+          ' "$m" >> "$GITHUB_STEP_SUMMARY"
+          jq -r '"\nArchived: " + ([.meetings[] | select(.status == "archived") | .council] | group_by(.) | map("\(.[0]) \(length)") | join(", "))' "$m" >> "$GITHUB_STEP_SUMMARY"
