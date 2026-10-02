@@ -7,6 +7,7 @@ manage eval all --record          # extraction / linking / OCR / realistic-set e
 manage eval llm --dry-run         # Claude model × effort comparison on the hand-written set
 manage eval tenders DIR --since … --until … -i 성남시   # every official 입찰공고 of a period, kept by institution
 manage eval fresh-minutes DIR --since … --until … -x 성남   # rule-chosen CLIK minutes for a new holdout
+manage eval council-minutes DIR -c 서산시의회 --since … --until …  # every meeting of named councils (resumable)
 manage eval fresh-cases DIR · fresh-freeze DIR --split dev   # excerpts to label, then hash them
 manage bench --report ../../docs/performance.md   # hot-query plans at volume
 manage sources check              # first real call to each 조달청 operation (needs the data.go.kr key)
@@ -851,6 +852,95 @@ def eval_fresh_minutes(
             indent=2,
         )
     )
+
+
+@eval_app.command("council-minutes")
+def eval_council_minutes(
+    out_dir: Path = typer.Argument(..., file_okay=False, help="Archive directory (resumed)"),
+    council: list[str] = typer.Option(
+        ..., "--council", "-c", help="Part of the council's CLIK name, e.g. 서산시의회"
+    ),
+    since: str = typer.Option(..., help="First meeting date, YYYY-MM-DD"),
+    until: str = typer.Option(..., help="Last meeting date, YYYY-MM-DD"),
+    meeting_pattern: str = typer.Option("본회의|예산결산", help="Regex the meeting name matches"),
+    max_details: int = typer.Option(None, min=1, help="Read at most this many meetings this run"),
+) -> None:
+    """Archive every matching CLIK meeting of named councils for the retrospective check. A run
+    the daily quota stops is finished by running the same command again."""
+    from app.eval.council_minutes import archive
+    from app.sources import clik
+    from app.sources.http import ResilientClient
+    from app.sources.resilience import MemoryBreaker, MemoryLimiter
+
+    configure_logging(json=False, level="WARNING", stream=sys.stderr)
+    settings = get_settings()
+    if not settings.clik_api_key:
+        raise typer.BadParameter("APP_CLIK_API_KEY is not configured")
+    key = settings.clik_api_key.get_secret_value()
+
+    async def go() -> dict[str, Any]:
+        client = ResilientClient(
+            "clik_minutes",
+            base_url=clik.BASE_URL,
+            limiter=MemoryLimiter(),
+            breaker=MemoryBreaker(),
+            timeout=max(settings.source_http_timeout_seconds, 60.0),
+            max_attempts=settings.source_max_attempts,
+        )
+        adapter = clik.ClikMinutesAdapter(client, key)
+        try:
+            return await archive(
+                adapter,
+                out_dir,
+                council,
+                since=date.fromisoformat(since),
+                until=date.fromisoformat(until),
+                meeting_pattern=meeting_pattern,
+                max_details=max_details,
+            )
+        finally:
+            await adapter.aclose()
+
+    manifest = _run(go)
+    by_council: dict[str, int] = {}
+    for entry in manifest["meetings"].values():
+        if entry["status"] == "archived":
+            by_council[entry["council"]] = by_council.get(entry["council"], 0) + 1
+    typer.echo(
+        json.dumps(
+            {
+                "councils": manifest["councils"],
+                "archived": by_council,
+                "last_run": manifest["runs"][-1],
+                "complete": manifest["complete"],
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
+
+
+@eval_app.command("council-minutes-load")
+def eval_council_minutes_load(
+    archive_dir: Path = typer.Argument(..., exists=True, file_okay=False),
+) -> None:
+    """Store an archive's meetings as clik_minutes documents, as `sources ingest` would have;
+    then `manage pipeline run` processes them."""
+    from app.eval.council_minutes import ArchivedMinutes
+    from app.pipeline.backfill import resolve_source_keys
+    from app.pipeline.ingest import run_ingest
+    from app.sources.base import FetchWindow
+
+    configure_logging(json=False, level="WARNING", stream=sys.stderr)
+
+    async def go(session: Any, runtime: Any) -> dict[str, int]:
+        (source,) = await resolve_source_keys(session, ["clik_minutes"])
+        window = FetchWindow(date(2000, 1, 1), date(2100, 1, 1))
+        stats = await run_ingest(session, source, ArchivedMinutes(archive_dir), runtime, window)
+        await session.commit()
+        return {k: getattr(stats, k) for k in ("fetched", "created", "updated", "skipped")}
+
+    typer.echo(json.dumps(_run(lambda: _with_session(go)), ensure_ascii=False))
 
 
 @eval_app.command("fresh-cases")
