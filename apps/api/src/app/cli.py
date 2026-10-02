@@ -864,6 +864,11 @@ def eval_council_minutes(
     until: str = typer.Option(..., help="Last meeting date, YYYY-MM-DD"),
     meeting_pattern: str = typer.Option("본회의|예산결산", help="Regex the meeting name matches"),
     max_details: int = typer.Option(None, min=1, help="Read at most this many meetings this run"),
+    council_id: list[str] = typer.Option(
+        [],
+        "--council-id",
+        help="CLIK ids to try for a council the national list misses, e.g. 서산시의회=041009,041008",
+    ),
 ) -> None:
     """Archive every matching CLIK meeting of named councils for the retrospective check. A run
     the daily quota stops is finished by running the same command again."""
@@ -877,6 +882,14 @@ def eval_council_minutes(
     if not settings.clik_api_key:
         raise typer.BadParameter("APP_CLIK_API_KEY is not configured")
     key = settings.clik_api_key.get_secret_value()
+    ids: dict[str, list[str]] = {}
+    for given in council_id:
+        name, sep, values = given.partition("=")
+        if not sep or name.strip() not in council or not values.strip():
+            raise typer.BadParameter(
+                f"--council-id {given!r}: expected <one of --council>=<id>[,<id>]"
+            )
+        ids[name.strip()] = [v.strip() for v in values.split(",") if v.strip()]
 
     async def go() -> dict[str, Any]:
         client = ResilientClient(
@@ -897,6 +910,7 @@ def eval_council_minutes(
                 until=date.fromisoformat(until),
                 meeting_pattern=meeting_pattern,
                 max_details=max_details,
+                ids=ids,
             )
         finally:
             await adapter.aclose()

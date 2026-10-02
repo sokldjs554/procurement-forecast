@@ -2,7 +2,9 @@ name: Council minutes archive (retrospective check)
 
 # Archives every 본회의·예결특위 meeting of named councils from CLIK (`manage eval council-minutes`)
 # on the data/council-minutes branch, for the retrospective check beyond 성남시
-# (docs/retrospective-validation.md). The CLIK key allows 1,000 calls a day, shared with the
+# (docs/retrospective-validation.md). A council that has posted nothing lately is missing from
+# the national list's newest rows; council_ids gives ids to try for it (each checked against the
+# council name its own rows carry). The CLIK key allows 1,000 calls a day, shared with the
 # scheduled operations, so a run reads at most max_details meetings; running it again with the
 # same name goes on where the last run stopped. Public minutes only; no database, no paid model.
 on:
@@ -11,6 +13,9 @@ on:
       councils:
         description: Comma-separated parts of CLIK council names
         default: "서산시의회,강남구의회,금천구의회,원주시의회,동두천시의회,충청북도의회,고양시의회"
+      council_ids:
+        description: "CLIK ids to try for councils the national list misses: name=id,id;name=id"
+        default: "서산시의회=041009,041008,041010,041007,041011;강남구의회=002002,002001,002003;원주시의회=033010,033009,033011"
       since:
         description: First meeting date (YYYY-MM-DD)
         default: "2024-10-01"
@@ -43,6 +48,7 @@ jobs:
       BRANCH: data/council-minutes
       DIR: docs/data/${{ inputs.name }}
       COUNCILS: ${{ inputs.councils }}
+      COUNCIL_IDS: ${{ inputs.council_ids }}
       SINCE: ${{ inputs.since }}
       UNTIL: ${{ inputs.until }}
       PATTERN: ${{ inputs.meeting_pattern }}
@@ -78,6 +84,11 @@ jobs:
           args=()
           IFS=',' read -ra names <<< "$COUNCILS"
           for n in "${names[@]}"; do args+=(--council "$(echo "$n" | xargs)"); done
+          IFS=';' read -ra given <<< "$COUNCIL_IDS"
+          for g in "${given[@]}"; do
+            g="$(echo "$g" | xargs)"
+            if [ -n "$g" ]; then args+=(--council-id "$g"); fi
+          done
           uv run manage eval council-minutes "$GITHUB_WORKSPACE/data/$DIR" "${args[@]}" \
             --since "$SINCE" --until "$UNTIL" --meeting-pattern "$PATTERN" --max-details "$MAX_DETAILS" \
             | tee "$RUNNER_TEMP/archive.json"

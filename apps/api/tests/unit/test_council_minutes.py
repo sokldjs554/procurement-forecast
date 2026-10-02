@@ -54,12 +54,16 @@ ROWS = [
 MINUTES = "○위원 김하늘  쉼터를 더 설치합니까?\n○교통과장 박서준  내년 본예산에 4억 원을 반영하겠습니다.\n"
 
 
-def _client(quota_after: int | None = None) -> tuple[ResilientClient, list[str]]:
+def _client(
+    quota_after: int | None = None, lists: list[str] | None = None
+) -> tuple[ResilientClient, list[str]]:
     details: list[str] = []
 
     def handler(request: httpx.Request) -> httpx.Response:
         q = {k: v[0] for k, v in parse_qs(urlsplit(str(request.url)).query).items()}
         if q["displayType"] == "list":
+            if lists is not None:
+                lists.append(q.get("rasmblyId", ""))
             rows = [r for r in ROWS if not q.get("rasmblyId") or r["RASMBLY_ID"] == q["rasmblyId"]]
             start = int(q["startCount"])
             page = rows[start : start + int(q["listCount"])]
@@ -119,6 +123,41 @@ async def test_only_the_named_councils_matching_meetings_in_the_window_are_read(
     archived = [m for m in manifest["meetings"].values() if m["status"] == "archived"]
     assert len(archived) == 4
     assert all((tmp_path / m["path"]).read_text(encoding="utf-8") for m in archived)
+
+
+async def test_given_ids_are_checked_against_the_council_name_their_rows_carry(
+    tmp_path: Path,
+) -> None:
+    lists: list[str] = []
+    client, details = _client(lists=lists)
+    ids = {"서산시의회": ["031099", "777777", "041099"]}  # 고양, nobody, then 서산
+    manifest = await archive(_adapter(client), tmp_path, ["서산시의회"], **KW, ids=ids)
+
+    assert manifest["councils"] == {
+        "서산시의회": {"id": "041099", "council": "충청남도 서산시의회", "listed_meetings": 2}
+    }
+    assert manifest["runs"][-1]["tried_ids"] == {
+        "서산시의회": {
+            "031099": "경기도 고양시의회",
+            "777777": None,
+            "041099": "충청남도 서산시의회",
+        }
+    }
+    assert manifest["runs"][-1]["not_found"] == []
+    assert "" not in lists  # the national list was not read
+    assert sorted(details) == ["S1", "S3"]
+    assert manifest["complete"] is True
+
+
+async def test_a_name_no_given_id_carries_is_not_found(tmp_path: Path) -> None:
+    client, details = _client()
+    manifest = await archive(
+        _adapter(client), tmp_path, ["서산시의회"], **KW, ids={"서산시의회": ["031099"]}
+    )
+    assert manifest["councils"] == {}
+    assert manifest["runs"][-1]["not_found"] == ["서산시의회"]
+    assert details == []
+    assert manifest["complete"] is False
 
 
 async def test_a_run_the_quota_stops_is_finished_by_the_next_run(tmp_path: Path) -> None:
