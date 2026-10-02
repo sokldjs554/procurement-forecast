@@ -1,0 +1,3724 @@
+{
+ "schema": "forecast-freeze-v1",
+ "started_at": "2026-10-02T04:58:00+00:00",
+ "open_forecasts_listed_at": "2026-10-02T04:58:00+00:00",
+ "finished_at": "2026-10-02T04:58:41+00:00",
+ "code_revision": "e95699d97607d1ae395feede6c1d7eb45a26f24e",
+ "open_rule": "status = 'open' and bid_published_at is null",
+ "opportunities_by_status": {
+  "open": 290,
+  "closed": 55,
+  "dormant": 1,
+  "bid_open": 1246
+ },
+ "open_forecasts": {
+  "path": "open-forecasts.jsonl",
+  "count": 290,
+  "institutions": 185,
+  "sha256": "65b0c67d456889d8a13e3ac986674dfca4f4e1fa05dba5348288651cb9f5cb02"
+ },
+ "institutions": [
+  {
+   "code": "LG-41220",
+   "name": "경기도 평택시",
+   "open": 23,
+   "status": "frozen",
+   "path": "snapshots/LG-41220.jsonl",
+   "sha256": "7074c09628bb2559c8cbe1568ba068d29e09c1c9db5ec1b654cda550f4fad711",
+   "bytes": 3040858,
+   "captured_at": "2026-10-02T04:58:00.978470+00:00",
+   "counts": {
+    "chunk": 1689,
+    "configuration": 1,
+    "document": 8,
+    "institution": 2,
+    "link": 23,
+    "opportunity": 23,
+    "review": 2,
+    "signal": 30,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-B552555",
+   "name": "한국토지주택공사",
+   "open": 10,
+   "status": "frozen",
+   "path": "snapshots/G2B-B552555.jsonl",
+   "sha256": "285dd45b2ccbf64ecbc24edd5ad3026ed41a95053867be8e2fe395d5893e3525",
+   "bytes": 139797,
+   "captured_at": "2026-10-02T04:58:01.624716+00:00",
+   "counts": {
+    "chunk": 15,
+    "configuration": 1,
+    "document": 15,
+    "institution": 1,
+    "link": 15,
+    "opportunity": 15,
+    "signal": 15,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-1742016",
+   "name": "행정안전부 중대범죄수사청개청준비단",
+   "open": 6,
+   "status": "frozen",
+   "path": "snapshots/G2B-1742016.jsonl",
+   "sha256": "6043d6c4418c9b32ddd34cf10e146f59a655ba429e867eb973db2420dd81a3e6",
+   "bytes": 218731,
+   "captured_at": "2026-10-02T04:58:01.928222+00:00",
+   "counts": {
+    "chunk": 23,
+    "configuration": 1,
+    "document": 23,
+    "institution": 1,
+    "link": 23,
+    "opportunity": 22,
+    "signal": 23,
+    "source": 3
+   }
+  },
+  {
+   "code": "G2B-ZD00291",
+   "name": "해군군수사령부",
+   "open": 6,
+   "status": "frozen",
+   "path": "snapshots/G2B-ZD00291.jsonl",
+   "sha256": "992e094f543f02c5fa932dc5e2121ab2abd4c0444345c7e21e7479abe9d463b7",
+   "bytes": 51708,
+   "captured_at": "2026-10-02T04:58:02.256939+00:00",
+   "counts": {
+    "chunk": 6,
+    "configuration": 1,
+    "document": 6,
+    "institution": 1,
+    "link": 6,
+    "opportunity": 6,
+    "signal": 6,
+    "source": 1
+   }
+  },
+  {
+   "code": "LG-52210",
+   "name": "전북특별자치도 김제시",
+   "open": 5,
+   "status": "frozen",
+   "path": "snapshots/LG-52210.jsonl",
+   "sha256": "35eac3ed352aa4939be474aadeef55f40fb39bb7cb172ae5716d8cc317d528a3",
+   "bytes": 107138,
+   "captured_at": "2026-10-02T04:58:02.548593+00:00",
+   "counts": {
+    "chunk": 13,
+    "configuration": 1,
+    "document": 13,
+    "institution": 2,
+    "link": 9,
+    "opportunity": 9,
+    "signal": 13,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-1360000",
+   "name": "기상청",
+   "open": 4,
+   "status": "frozen",
+   "path": "snapshots/G2B-1360000.jsonl",
+   "sha256": "46a64c21a2f5cd91a2ce2c792b81fc8c3c425ed9e056811483c74b9459aa2157",
+   "bytes": 44369,
+   "captured_at": "2026-10-02T04:58:02.849934+00:00",
+   "counts": {
+    "chunk": 5,
+    "configuration": 1,
+    "document": 5,
+    "institution": 1,
+    "link": 4,
+    "opportunity": 4,
+    "signal": 5,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-Z004651",
+   "name": "한전KDN(주)",
+   "open": 4,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z004651.jsonl",
+   "sha256": "75ad6aac6b5fa75bae7d43027ad41b6aae331221b88460a336696cf3b1421d8c",
+   "bytes": 47182,
+   "captured_at": "2026-10-02T04:58:03.128092+00:00",
+   "counts": {
+    "chunk": 6,
+    "configuration": 1,
+    "document": 6,
+    "institution": 1,
+    "link": 4,
+    "opportunity": 4,
+    "signal": 6,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-Z023696",
+   "name": "정화원",
+   "open": 4,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z023696.jsonl",
+   "sha256": "3885c6145e70d94a6f684440932389222858108b2f35c17cc9f671911eb1268c",
+   "bytes": 38542,
+   "captured_at": "2026-10-02T04:58:03.338159+00:00",
+   "counts": {
+    "chunk": 4,
+    "configuration": 1,
+    "document": 4,
+    "institution": 1,
+    "link": 4,
+    "opportunity": 4,
+    "signal": 4,
+    "source": 1
+   }
+  },
+  {
+   "code": "LG-36110",
+   "name": "세종특별자치시",
+   "open": 4,
+   "status": "frozen",
+   "path": "snapshots/LG-36110.jsonl",
+   "sha256": "1cbe2babbda71feeb2d2cb7f1403aa973e64aecebab1409fe4e88d21846f2aed",
+   "bytes": 540890,
+   "captured_at": "2026-10-02T04:58:03.578964+00:00",
+   "counts": {
+    "chunk": 254,
+    "configuration": 1,
+    "document": 14,
+    "institution": 2,
+    "link": 11,
+    "opportunity": 7,
+    "review": 3,
+    "signal": 17,
+    "source": 4
+   }
+  },
+  {
+   "code": "LG-41270",
+   "name": "경기도 안산시",
+   "open": 4,
+   "status": "frozen",
+   "path": "snapshots/LG-41270.jsonl",
+   "sha256": "13b206ae8cbc927f56258111f54208fb5636cbd7e28102fa72e61cd651556df3",
+   "bytes": 50135,
+   "captured_at": "2026-10-02T04:58:03.912601+00:00",
+   "counts": {
+    "chunk": 6,
+    "configuration": 1,
+    "document": 6,
+    "institution": 2,
+    "link": 4,
+    "opportunity": 4,
+    "signal": 6,
+    "source": 3
+   }
+  },
+  {
+   "code": "LG-43740",
+   "name": "충청북도 영동군",
+   "open": 4,
+   "status": "frozen",
+   "path": "snapshots/LG-43740.jsonl",
+   "sha256": "9b7d8a080ac9c2ad6039b7f1091e162a01c0ed2c36cbdf5145fe27086da34740",
+   "bytes": 40965,
+   "captured_at": "2026-10-02T04:58:04.123987+00:00",
+   "counts": {
+    "chunk": 4,
+    "configuration": 1,
+    "document": 4,
+    "institution": 2,
+    "link": 4,
+    "opportunity": 4,
+    "signal": 4,
+    "source": 1
+   }
+  },
+  {
+   "code": "LG-47150",
+   "name": "경상북도 김천시",
+   "open": 4,
+   "status": "frozen",
+   "path": "snapshots/LG-47150.jsonl",
+   "sha256": "cdad522df06bd9025093724412d995d5f2d386cbe2756489de34e5f5fb01c165",
+   "bytes": 110415,
+   "captured_at": "2026-10-02T04:58:04.326259+00:00",
+   "counts": {
+    "chunk": 13,
+    "configuration": 1,
+    "document": 13,
+    "institution": 2,
+    "link": 11,
+    "opportunity": 11,
+    "signal": 13,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-Z001321",
+   "name": "서울특별시 여성가족재단",
+   "open": 3,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z001321.jsonl",
+   "sha256": "faef75ecf3d81c62004ee42df0b14f7f7efa44e817e5cd1f9123741a00b4ec76",
+   "bytes": 46575,
+   "captured_at": "2026-10-02T04:58:04.576662+00:00",
+   "counts": {
+    "chunk": 5,
+    "configuration": 1,
+    "document": 5,
+    "institution": 1,
+    "link": 5,
+    "opportunity": 4,
+    "signal": 5,
+    "source": 3
+   }
+  },
+  {
+   "code": "G2B-Z003669",
+   "name": "충청북도청주의료원",
+   "open": 3,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z003669.jsonl",
+   "sha256": "a64a82eaeb5ca67763adf3ec9d4b53b10dcb58dbac6e079a0d79c9e8253d1c29",
+   "bytes": 27866,
+   "captured_at": "2026-10-02T04:58:04.777822+00:00",
+   "counts": {
+    "chunk": 3,
+    "configuration": 1,
+    "document": 3,
+    "institution": 1,
+    "link": 3,
+    "opportunity": 3,
+    "signal": 3,
+    "source": 1
+   }
+  },
+  {
+   "code": "LG-11000",
+   "name": "서울특별시",
+   "open": 3,
+   "status": "frozen",
+   "path": "snapshots/LG-11000.jsonl",
+   "sha256": "04c14198fab028da71515f14cf81fe98c48a99c033044cc4a26cdf5e9886d4ca",
+   "bytes": 462236,
+   "captured_at": "2026-10-02T04:58:05.052895+00:00",
+   "counts": {
+    "chunk": 66,
+    "configuration": 1,
+    "document": 66,
+    "institution": 2,
+    "link": 35,
+    "opportunity": 26,
+    "signal": 66,
+    "source": 3
+   }
+  },
+  {
+   "code": "LG-12000",
+   "name": "전남광주통합특별시",
+   "open": 3,
+   "status": "frozen",
+   "path": "snapshots/LG-12000.jsonl",
+   "sha256": "475c3c8d7423c1a80914c194d1d0a9f8041e6e60a346f85348b296241624e49f",
+   "bytes": 223830,
+   "captured_at": "2026-10-02T04:58:05.471894+00:00",
+   "counts": {
+    "chunk": 31,
+    "configuration": 1,
+    "document": 31,
+    "institution": 2,
+    "link": 16,
+    "opportunity": 11,
+    "signal": 31,
+    "source": 3
+   }
+  },
+  {
+   "code": "LG-27720",
+   "name": "대구광역시 군위군",
+   "open": 3,
+   "status": "frozen",
+   "path": "snapshots/LG-27720.jsonl",
+   "sha256": "65b6997b703c7957479b276880045bbbc18c8272f5ec231f7ebc885687c25dba",
+   "bytes": 58952,
+   "captured_at": "2026-10-02T04:58:05.805720+00:00",
+   "counts": {
+    "chunk": 7,
+    "configuration": 1,
+    "document": 7,
+    "institution": 2,
+    "link": 6,
+    "opportunity": 5,
+    "signal": 7,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-44800",
+   "name": "충청남도 홍성군",
+   "open": 3,
+   "status": "frozen",
+   "path": "snapshots/LG-44800.jsonl",
+   "sha256": "3970d1cfad3c9be53f3f3e938b6d8f9a8b1aa90526bdc8f0f2933d31510ac843",
+   "bytes": 55687,
+   "captured_at": "2026-10-02T04:58:06.082601+00:00",
+   "counts": {
+    "chunk": 7,
+    "configuration": 1,
+    "document": 7,
+    "institution": 2,
+    "link": 5,
+    "opportunity": 4,
+    "signal": 7,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-47760",
+   "name": "경상북도 영양군",
+   "open": 3,
+   "status": "frozen",
+   "path": "snapshots/LG-47760.jsonl",
+   "sha256": "ea7215a59a744ee1cea0107af8826b0f70d3aaf5893744dc58b428666fc34c98",
+   "bytes": 47250,
+   "captured_at": "2026-10-02T04:58:06.286166+00:00",
+   "counts": {
+    "chunk": 5,
+    "configuration": 1,
+    "document": 5,
+    "institution": 2,
+    "link": 5,
+    "opportunity": 5,
+    "signal": 5,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-52110",
+   "name": "전북특별자치도 전주시",
+   "open": 3,
+   "status": "frozen",
+   "path": "snapshots/LG-52110.jsonl",
+   "sha256": "b18c6c0822860933c78dda5cf53a4fd39eeea551232194127ba6ce6e46bc6b0f",
+   "bytes": 129388,
+   "captured_at": "2026-10-02T04:58:06.492991+00:00",
+   "counts": {
+    "chunk": 15,
+    "configuration": 1,
+    "document": 15,
+    "institution": 2,
+    "link": 10,
+    "opportunity": 10,
+    "signal": 15,
+    "source": 2
+   }
+  },
+  {
+   "code": "EO-31000",
+   "name": "울산광역시교육청",
+   "open": 2,
+   "status": "frozen",
+   "path": "snapshots/EO-31000.jsonl",
+   "sha256": "0bce1c4dc126473575e7260729a0bee214c25fc09c287e698585426b7b69aba1",
+   "bytes": 63972,
+   "captured_at": "2026-10-02T04:58:06.746192+00:00",
+   "counts": {
+    "chunk": 8,
+    "configuration": 1,
+    "document": 8,
+    "institution": 1,
+    "link": 6,
+    "opportunity": 4,
+    "signal": 8,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-1613234",
+   "name": "국토교통부 대전지방국토관리청 충주국토관리사무소",
+   "open": 2,
+   "status": "frozen",
+   "path": "snapshots/G2B-1613234.jsonl",
+   "sha256": "e7887ea136c3c592334e54d8eaec69354a6a18a3e70d4942b2b195cb7b4bc345",
+   "bytes": 28941,
+   "captured_at": "2026-10-02T04:58:06.967009+00:00",
+   "counts": {
+    "chunk": 3,
+    "configuration": 1,
+    "document": 3,
+    "institution": 1,
+    "link": 3,
+    "opportunity": 2,
+    "signal": 3,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-7003587",
+   "name": "울산과학대학",
+   "open": 2,
+   "status": "frozen",
+   "path": "snapshots/G2B-7003587.jsonl",
+   "sha256": "b58764d4ab1f7806ad09ee8951bfca372a1dc97fb880440ad690703548718da5",
+   "bytes": 53648,
+   "captured_at": "2026-10-02T04:58:07.198670+00:00",
+   "counts": {
+    "chunk": 7,
+    "configuration": 1,
+    "document": 7,
+    "institution": 1,
+    "link": 5,
+    "opportunity": 3,
+    "signal": 7,
+    "source": 3
+   }
+  },
+  {
+   "code": "G2B-7281000",
+   "name": "대구광역시교육청 대구광역시달성교육지원청",
+   "open": 2,
+   "status": "frozen",
+   "path": "snapshots/G2B-7281000.jsonl",
+   "sha256": "0de49899a1a07b7a1abe99c0313dd0499c2773536ecb7e949e71a93211eab2f1",
+   "bytes": 22688,
+   "captured_at": "2026-10-02T04:58:07.403922+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 2,
+    "signal": 2,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-7621000",
+   "name": "경기도교육청 경기도고양교육지원청",
+   "open": 2,
+   "status": "frozen",
+   "path": "snapshots/G2B-7621000.jsonl",
+   "sha256": "0c2b195fed0ae25fb8439d74945b1b805d5cbf8de1014d75d57082c8b6d7e10d",
+   "bytes": 42477,
+   "captured_at": "2026-10-02T04:58:07.643269+00:00",
+   "counts": {
+    "chunk": 5,
+    "configuration": 1,
+    "document": 5,
+    "institution": 1,
+    "link": 3,
+    "opportunity": 3,
+    "signal": 5,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-8140482",
+   "name": "충청남도교육청 연무마이스터고등학교",
+   "open": 2,
+   "status": "frozen",
+   "path": "snapshots/G2B-8140482.jsonl",
+   "sha256": "df967258ba56f9942ef42b63c10b3cfef109b8d499b49e6ca015f8cbb59b4f72",
+   "bytes": 22572,
+   "captured_at": "2026-10-02T04:58:07.848128+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 2,
+    "signal": 2,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-B090032",
+   "name": "한국과학기술연구원",
+   "open": 2,
+   "status": "frozen",
+   "path": "snapshots/G2B-B090032.jsonl",
+   "sha256": "a50fd67e13dc91fc3d6701190b3a272c0769438683e55bc21015655ca4518778",
+   "bytes": 49153,
+   "captured_at": "2026-10-02T04:58:08.048162+00:00",
+   "counts": {
+    "chunk": 6,
+    "configuration": 1,
+    "document": 6,
+    "institution": 1,
+    "link": 4,
+    "opportunity": 4,
+    "signal": 6,
+    "source": 3
+   }
+  },
+  {
+   "code": "G2B-B410001",
+   "name": "대한무역투자진흥공사",
+   "open": 2,
+   "status": "frozen",
+   "path": "snapshots/G2B-B410001.jsonl",
+   "sha256": "68c6c429230bcf8233dd0e6b912204969ecd055e13448abd3b15a6c1e0030855",
+   "bytes": 20629,
+   "captured_at": "2026-10-02T04:58:08.263647+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 2,
+    "signal": 2,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-B551510",
+   "name": "한국문화예술위원회",
+   "open": 2,
+   "status": "frozen",
+   "path": "snapshots/G2B-B551510.jsonl",
+   "sha256": "07bb6188c917f0dda7a4df49a53bf3de59bed4ceb41fd4babdef3f8d0e8f32ff",
+   "bytes": 21229,
+   "captured_at": "2026-10-02T04:58:08.464217+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 2,
+    "signal": 2,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-Z004841",
+   "name": "한국화학연구원",
+   "open": 2,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z004841.jsonl",
+   "sha256": "1edeb0ee06a26d16facbf11e6266489e54a15a66e7c1afb698e2a510fa375a16",
+   "bytes": 70180,
+   "captured_at": "2026-10-02T04:58:08.662118+00:00",
+   "counts": {
+    "chunk": 8,
+    "configuration": 1,
+    "document": 8,
+    "institution": 1,
+    "link": 7,
+    "opportunity": 7,
+    "signal": 8,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-Z007257",
+   "name": "한국해양과학기술원 부설 선박해양플랜트연구소",
+   "open": 2,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z007257.jsonl",
+   "sha256": "bbc45721f297c15f944d7b39840d60ffd2ee29c56236485334f90ee90fe8a6bb",
+   "bytes": 106671,
+   "captured_at": "2026-10-02T04:58:08.875787+00:00",
+   "counts": {
+    "chunk": 12,
+    "configuration": 1,
+    "document": 12,
+    "institution": 1,
+    "link": 9,
+    "opportunity": 9,
+    "signal": 12,
+    "source": 3
+   }
+  },
+  {
+   "code": "G2B-Z047202",
+   "name": "재단법인 진주시상권활성화재단",
+   "open": 2,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z047202.jsonl",
+   "sha256": "903cd560f19650b197fff165f83e46118158d8357efd399c0677de7d08425422",
+   "bytes": 21624,
+   "captured_at": "2026-10-02T04:58:09.144100+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 2,
+    "signal": 2,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-ZT04415",
+   "name": "재단법인 한국-아랍 소사이어티",
+   "open": 2,
+   "status": "frozen",
+   "path": "snapshots/G2B-ZT04415.jsonl",
+   "sha256": "cc59ee1cbc1edb34b6639e01048d8f05c06361345d2a42ee5f2e8bed43758ea7",
+   "bytes": 20942,
+   "captured_at": "2026-10-02T04:58:09.349159+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 2,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-41190",
+   "name": "경기도 부천시",
+   "open": 2,
+   "status": "frozen",
+   "path": "snapshots/LG-41190.jsonl",
+   "sha256": "e119d4e29060a07eeeba3832e51a06b1feb34b1e60824921b45ec5bc6ec5db33",
+   "bytes": 53185,
+   "captured_at": "2026-10-02T04:58:09.544741+00:00",
+   "counts": {
+    "chunk": 7,
+    "configuration": 1,
+    "document": 7,
+    "institution": 2,
+    "link": 4,
+    "opportunity": 3,
+    "signal": 7,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-44180",
+   "name": "충청남도 보령시",
+   "open": 2,
+   "status": "frozen",
+   "path": "snapshots/LG-44180.jsonl",
+   "sha256": "fefe1c89ff4c3a8186546261a1dbcd7effbdd37844db316a6a01b7d70179ff3d",
+   "bytes": 104402,
+   "captured_at": "2026-10-02T04:58:09.755435+00:00",
+   "counts": {
+    "chunk": 13,
+    "configuration": 1,
+    "document": 13,
+    "institution": 2,
+    "link": 9,
+    "opportunity": 9,
+    "signal": 13,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-44810",
+   "name": "충청남도 예산군",
+   "open": 2,
+   "status": "frozen",
+   "path": "snapshots/LG-44810.jsonl",
+   "sha256": "3932b8f1fc0b54a95c1325824723199dadb2d452a14d23610511aaf098474c5a",
+   "bytes": 64367,
+   "captured_at": "2026-10-02T04:58:10.042706+00:00",
+   "counts": {
+    "chunk": 8,
+    "configuration": 1,
+    "document": 8,
+    "institution": 2,
+    "link": 8,
+    "opportunity": 5,
+    "signal": 8,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-48000",
+   "name": "경상남도",
+   "open": 2,
+   "status": "frozen",
+   "path": "snapshots/LG-48000.jsonl",
+   "sha256": "5aee52368f58c22cc9fc25e5ffe8bfcfaa3a52660dac7239152b9a8d56702f9b",
+   "bytes": 151319,
+   "captured_at": "2026-10-02T04:58:10.248357+00:00",
+   "counts": {
+    "chunk": 20,
+    "configuration": 1,
+    "document": 20,
+    "institution": 2,
+    "link": 12,
+    "opportunity": 11,
+    "signal": 20,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-48840",
+   "name": "경상남도 남해군",
+   "open": 2,
+   "status": "frozen",
+   "path": "snapshots/LG-48840.jsonl",
+   "sha256": "a67cb56729190d5b693463a2de0992884b2b74b1a76587e437523213be741d52",
+   "bytes": 37739,
+   "captured_at": "2026-10-02T04:58:10.524115+00:00",
+   "counts": {
+    "chunk": 4,
+    "configuration": 1,
+    "document": 4,
+    "institution": 2,
+    "link": 4,
+    "opportunity": 4,
+    "signal": 4,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-50000",
+   "name": "제주특별자치도",
+   "open": 2,
+   "status": "frozen",
+   "path": "snapshots/LG-50000.jsonl",
+   "sha256": "05da43e88dd724489950d9a11024fa4b916c50f71f51d70c43ddd30e399616d1",
+   "bytes": 142561,
+   "captured_at": "2026-10-02T04:58:10.726093+00:00",
+   "counts": {
+    "chunk": 19,
+    "configuration": 1,
+    "document": 19,
+    "institution": 2,
+    "link": 10,
+    "opportunity": 8,
+    "signal": 19,
+    "source": 3
+   }
+  },
+  {
+   "code": "LG-51150",
+   "name": "강원특별자치도 강릉시",
+   "open": 2,
+   "status": "frozen",
+   "path": "snapshots/LG-51150.jsonl",
+   "sha256": "4126bccb762d7ed2d554b0a582e3232bb6c2ee47abb064d5c6b8255a85650811",
+   "bytes": 70388,
+   "captured_at": "2026-10-02T04:58:11.037429+00:00",
+   "counts": {
+    "chunk": 9,
+    "configuration": 1,
+    "document": 9,
+    "institution": 2,
+    "link": 6,
+    "opportunity": 4,
+    "signal": 9,
+    "source": 3
+   }
+  },
+  {
+   "code": "LG-51190",
+   "name": "강원특별자치도 태백시",
+   "open": 2,
+   "status": "frozen",
+   "path": "snapshots/LG-51190.jsonl",
+   "sha256": "0f1a58b371bf0f66c4a270e1c37c1377c71f8fffc505e1c3e3f2567d57ec6c54",
+   "bytes": 32466,
+   "captured_at": "2026-10-02T04:58:11.293679+00:00",
+   "counts": {
+    "chunk": 4,
+    "configuration": 1,
+    "document": 4,
+    "institution": 2,
+    "link": 2,
+    "opportunity": 2,
+    "signal": 4,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-51830",
+   "name": "강원특별자치도 양양군",
+   "open": 2,
+   "status": "frozen",
+   "path": "snapshots/LG-51830.jsonl",
+   "sha256": "c09da183041fe7f8bb346aa0c1aa489679499f1ea9511c257aeacec8fc305d95",
+   "bytes": 73934,
+   "captured_at": "2026-10-02T04:58:11.495934+00:00",
+   "counts": {
+    "chunk": 9,
+    "configuration": 1,
+    "document": 9,
+    "institution": 2,
+    "link": 8,
+    "opportunity": 5,
+    "signal": 9,
+    "source": 3
+   }
+  },
+  {
+   "code": "LG-52130",
+   "name": "전북특별자치도 군산시",
+   "open": 2,
+   "status": "frozen",
+   "path": "snapshots/LG-52130.jsonl",
+   "sha256": "ccdcf951780559ab9f70edddc5a6a34ea74642f4d1798c25ad9f9ae277c741c4",
+   "bytes": 49035,
+   "captured_at": "2026-10-02T04:58:11.709134+00:00",
+   "counts": {
+    "chunk": 5,
+    "configuration": 1,
+    "document": 5,
+    "institution": 2,
+    "link": 5,
+    "opportunity": 5,
+    "signal": 5,
+    "source": 3
+   }
+  },
+  {
+   "code": "EO-27000",
+   "name": "대구광역시교육청",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/EO-27000.jsonl",
+   "sha256": "3e818350c37167698025f7cf6a82d552cdad776f14c874da0ae6994307405b52",
+   "bytes": 17764,
+   "captured_at": "2026-10-02T04:58:11.916298+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "EO-28000",
+   "name": "인천광역시교육청",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/EO-28000.jsonl",
+   "sha256": "be420f1af1a317210dfc798bafdd2c20c7ad1da44ff8f61add780a6739fa3ba8",
+   "bytes": 26237,
+   "captured_at": "2026-10-02T04:58:12.149457+00:00",
+   "counts": {
+    "chunk": 3,
+    "configuration": 1,
+    "document": 3,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 2,
+    "signal": 3,
+    "source": 2
+   }
+  },
+  {
+   "code": "EO-30000",
+   "name": "대전광역시교육청",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/EO-30000.jsonl",
+   "sha256": "ab6f3a3a468f4a07c8f89c66f9161631eae3b2403d2af84ee924b93028deb081",
+   "bytes": 11972,
+   "captured_at": "2026-10-02T04:58:12.357636+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "EO-41000",
+   "name": "경기도교육청",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/EO-41000.jsonl",
+   "sha256": "471f3aa5d2f0ef1a3c8fb32cb9a8cd792093a090ac08799b4dbc83fa649c63c2",
+   "bytes": 34261,
+   "captured_at": "2026-10-02T04:58:12.595003+00:00",
+   "counts": {
+    "chunk": 4,
+    "configuration": 1,
+    "document": 4,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 2,
+    "signal": 4,
+    "source": 2
+   }
+  },
+  {
+   "code": "EO-50000",
+   "name": "제주특별자치도교육청",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/EO-50000.jsonl",
+   "sha256": "2e9f282b64927b928ac91a075c5eb775d297e6ec111acaa144a517e3551390a5",
+   "bytes": 22287,
+   "captured_at": "2026-10-02T04:58:12.799471+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 2,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "EO-51000",
+   "name": "강원특별자치도교육청",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/EO-51000.jsonl",
+   "sha256": "a06440ba19f91843ae161d693458414ac21c18b501e8db71be63b0830a59411e",
+   "bytes": 32057,
+   "captured_at": "2026-10-02T04:58:13.006512+00:00",
+   "counts": {
+    "chunk": 4,
+    "configuration": 1,
+    "document": 4,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 2,
+    "signal": 4,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-1092000",
+   "name": "국무조정실",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-1092000.jsonl",
+   "sha256": "c21d8f775699cd396bb0e988806390ae02ff847f52dcd6773d25b35052e5acdd",
+   "bytes": 22969,
+   "captured_at": "2026-10-02T04:58:13.208907+00:00",
+   "counts": {
+    "chunk": 3,
+    "configuration": 1,
+    "document": 3,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 1,
+    "signal": 3,
+    "source": 3
+   }
+  },
+  {
+   "code": "G2B-1230000",
+   "name": "조달청",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-1230000.jsonl",
+   "sha256": "1599b4a0e0ae01e17c80a3e917f143259a880a96c60baf58f13e2f03f8d07d8e",
+   "bytes": 33700,
+   "captured_at": "2026-10-02T04:58:13.408684+00:00",
+   "counts": {
+    "chunk": 4,
+    "configuration": 1,
+    "document": 4,
+    "institution": 1,
+    "link": 3,
+    "opportunity": 3,
+    "signal": 4,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-1250114",
+   "name": "통일부 북한이탈주민정착지원사무소",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-1250114.jsonl",
+   "sha256": "e883068d34d4848e3a744907d5db5cdd001f230f3017fa9b0ba8ec7f91da2179",
+   "bytes": 12482,
+   "captured_at": "2026-10-02T04:58:13.612953+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-1270785",
+   "name": "법무부 서울지방교정청 의정부교도소",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-1270785.jsonl",
+   "sha256": "9384b3fbc42bef4252411c245ca448759f72b5eb4dfae3c244f8933ee1e7e7ee",
+   "bytes": 11659,
+   "captured_at": "2026-10-02T04:58:13.807749+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-1451000",
+   "name": "산업통상부",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-1451000.jsonl",
+   "sha256": "226d0a00b5df65f122d29669f85ae732f1501181caae06d56423bb539c5433e4",
+   "bytes": 28304,
+   "captured_at": "2026-10-02T04:58:14.015903+00:00",
+   "counts": {
+    "chunk": 4,
+    "configuration": 1,
+    "document": 4,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 4,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-1471000",
+   "name": "식품의약품안전처",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-1471000.jsonl",
+   "sha256": "5318c49eb7f54c34dc6b7c36eabda0493de5f48e3b1af22640653e759393d7a1",
+   "bytes": 29553,
+   "captured_at": "2026-10-02T04:58:14.217954+00:00",
+   "counts": {
+    "chunk": 4,
+    "configuration": 1,
+    "document": 4,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 4,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-1482026",
+   "name": "기후에너지환경부 한강유역환경청",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-1482026.jsonl",
+   "sha256": "02bef2f46a712fbf4969ed4221f90b7be89c48aa1e11afc910733b1470fb8b2a",
+   "bytes": 12500,
+   "captured_at": "2026-10-02T04:58:14.426725+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-1613208",
+   "name": "국토교통부 원주지방국토관리청 강릉국토관리사무소",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-1613208.jsonl",
+   "sha256": "7271b265ca2e63d3e9cc8136c2b9849973b8405e5d1d11133aeb219cfd3e6d88",
+   "bytes": 24370,
+   "captured_at": "2026-10-02T04:58:14.625842+00:00",
+   "counts": {
+    "chunk": 3,
+    "configuration": 1,
+    "document": 3,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 3,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-1613266",
+   "name": "국토교통부 익산지방국토관리청 남원국토관리사무소",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-1613266.jsonl",
+   "sha256": "b72f79e4ec9a35ad5a4228565b0a7ebae3857f3cafa771afd7bf1ac2c25c251f",
+   "bytes": 26540,
+   "captured_at": "2026-10-02T04:58:14.828288+00:00",
+   "counts": {
+    "chunk": 3,
+    "configuration": 1,
+    "document": 3,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 1,
+    "signal": 3,
+    "source": 3
+   }
+  },
+  {
+   "code": "G2B-1613272",
+   "name": "국토교통부 익산지방국토관리청 순천국토관리사무소",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-1613272.jsonl",
+   "sha256": "f4d5e4029614dc848112663d2b833f551c4f352633b215ad04715e3e3778a794",
+   "bytes": 12695,
+   "captured_at": "2026-10-02T04:58:15.030288+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-1721000",
+   "name": "과학기술정보통신부",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-1721000.jsonl",
+   "sha256": "bcb40dd5adf6858e02f3f8d6578e209ddc8dc77b12db0777d78ef00141c27121",
+   "bytes": 30494,
+   "captured_at": "2026-10-02T04:58:15.227460+00:00",
+   "counts": {
+    "chunk": 3,
+    "configuration": 1,
+    "document": 3,
+    "institution": 1,
+    "link": 3,
+    "opportunity": 3,
+    "signal": 3,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-1721144",
+   "name": "과학기술정보통신부 국립전파연구원 전파시험인증센터",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-1721144.jsonl",
+   "sha256": "13f073235b1b6ed2bf4037492e3c54c1251763756d5e474c49c4ba6c79a62ad6",
+   "bytes": 11976,
+   "captured_at": "2026-10-02T04:58:15.429548+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-1741049",
+   "name": "행정안전부 정부청사관리본부",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-1741049.jsonl",
+   "sha256": "455597de75b3d1ee4e43e41af61d3f11224d56d768358f7aaba42e18a322ed44",
+   "bytes": 21216,
+   "captured_at": "2026-10-02T04:58:15.624501+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 2,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-1741050",
+   "name": "행정안전부 국가기록원",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-1741050.jsonl",
+   "sha256": "701565ed057b1e38950a62ce1824e7f02652c40f36f05be615f34f7cb9c69ddb",
+   "bytes": 19024,
+   "captured_at": "2026-10-02T04:58:15.826168+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-1760000",
+   "name": "인사혁신처",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-1760000.jsonl",
+   "sha256": "fbacda2a26de648db2407c1b0018fb979d8915e1310ee9cc00b2b383ee278e81",
+   "bytes": 50025,
+   "captured_at": "2026-10-02T04:58:16.025491+00:00",
+   "counts": {
+    "chunk": 8,
+    "configuration": 1,
+    "document": 8,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 1,
+    "signal": 8,
+    "source": 3
+   }
+  },
+  {
+   "code": "G2B-1790387",
+   "name": "질병관리청",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-1790387.jsonl",
+   "sha256": "59dd9da9d0b2e34aa3061663680b3bcf270a4cbc13db61524a4c76c30d704425",
+   "bytes": 79497,
+   "captured_at": "2026-10-02T04:58:16.238410+00:00",
+   "counts": {
+    "chunk": 11,
+    "configuration": 1,
+    "document": 11,
+    "institution": 1,
+    "link": 4,
+    "opportunity": 4,
+    "signal": 11,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-1832000",
+   "name": "재외동포청",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-1832000.jsonl",
+   "sha256": "1d164ca42b227f0651ac377e82490bcb244c51e4cd456c96a6e578e61fada347",
+   "bytes": 11459,
+   "captured_at": "2026-10-02T04:58:16.496727+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-1833193",
+   "name": "국가유산청 국립문화유산연구원 국립부여문화유산연구소",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-1833193.jsonl",
+   "sha256": "9d4824331a130132626f8c191ea2e01c93254cb26596123358bad0e4faca3ecc",
+   "bytes": 19373,
+   "captured_at": "2026-10-02T04:58:16.700168+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-7000126",
+   "name": "경북대학교",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-7000126.jsonl",
+   "sha256": "abbf34fd96f054227ee574e13f71b7f15fd776fa9c5cc06985d892e22c1f7c21",
+   "bytes": 12165,
+   "captured_at": "2026-10-02T04:58:16.936521+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-7001481",
+   "name": "계명대학교",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-7001481.jsonl",
+   "sha256": "a01ad6955e57707f943e0701cc0514c4e4f28288625330145d23f69f1347c68f",
+   "bytes": 26222,
+   "captured_at": "2026-10-02T04:58:17.132286+00:00",
+   "counts": {
+    "chunk": 3,
+    "configuration": 1,
+    "document": 3,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 2,
+    "signal": 3,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-7003530",
+   "name": "부산장신대학교",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-7003530.jsonl",
+   "sha256": "b4820835ae44a7f45329d8049c18584d3801d322869bf24bb97d6e9969b65bac",
+   "bytes": 17377,
+   "captured_at": "2026-10-02T04:58:17.335686+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 1,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-7006353",
+   "name": "충남대학교 산학협력단",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-7006353.jsonl",
+   "sha256": "47dc1bd203c6d2a310d9cd36f16c76c398921b0f4ad963467f4ea0e51da0069a",
+   "bytes": 27803,
+   "captured_at": "2026-10-02T04:58:17.532508+00:00",
+   "counts": {
+    "chunk": 3,
+    "configuration": 1,
+    "document": 3,
+    "institution": 1,
+    "link": 3,
+    "opportunity": 2,
+    "signal": 3,
+    "source": 3
+   }
+  },
+  {
+   "code": "G2B-7010190",
+   "name": "서울특별시교육청 선일여자고등학교",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-7010190.jsonl",
+   "sha256": "4376f900bbe5fe257597f2a24eb01c4d53e21dc5d50f17c5ec4bbb63f358eb80",
+   "bytes": 12302,
+   "captured_at": "2026-10-02T04:58:17.733172+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-7010203",
+   "name": "서울특별시교육청 숭실고등학교",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-7010203.jsonl",
+   "sha256": "8adc5e4edca51594bd9f84ca78ca77c4719124a9dbd94f111a723f32049ee7cd",
+   "bytes": 12158,
+   "captured_at": "2026-10-02T04:58:17.930346+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-7010793",
+   "name": "서울특별시교육청 한양대학교사범대학부속고등학교",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-7010793.jsonl",
+   "sha256": "4c28207525e3512661350588a85cd98ab10c9a3b468e2a06b0019a765ee02430",
+   "bytes": 19636,
+   "captured_at": "2026-10-02T04:58:18.127236+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 1,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-7011490",
+   "name": "서울특별시교육청 동명생활경영고등학교",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-7011490.jsonl",
+   "sha256": "3cfaf49215128a69397b5c8d26bc2f6493d89c61175292bfc9584cc1203f6031",
+   "bytes": 11949,
+   "captured_at": "2026-10-02T04:58:18.325121+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-7011540",
+   "name": "서울특별시교육청 솔샘고등학교",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-7011540.jsonl",
+   "sha256": "19ed753fff7dfba128d35fc4024eace8aa3c21304902b470648e56fff4f0ff06",
+   "bytes": 11745,
+   "captured_at": "2026-10-02T04:58:18.522049+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-7051000",
+   "name": "서울특별시교육청 서울특별시북부교육지원청",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-7051000.jsonl",
+   "sha256": "886bba0763040665508fa78c3740e512e4e30e7200652199c6272805318c144b",
+   "bytes": 12035,
+   "captured_at": "2026-10-02T04:58:18.717684+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-7090042",
+   "name": "서울특별시강남교육청 세화여자중학교",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-7090042.jsonl",
+   "sha256": "4ffbdf17a5a924e9c2c2247fdcd2e1ff1dbce2446e694f63e99e283a9fd253f7",
+   "bytes": 19323,
+   "captured_at": "2026-10-02T04:58:18.917451+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 1,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-7140332",
+   "name": "전남광주통합특별시교육청 광주동신고등학교",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-7140332.jsonl",
+   "sha256": "4d2bf5fd525b95fdf4e2b67cc1c667bac38f8c44ed0da45926af1019657b5a7f",
+   "bytes": 12882,
+   "captured_at": "2026-10-02T04:58:19.116841+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-7180033",
+   "name": "부산광역시남부교육청 대연중학교",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-7180033.jsonl",
+   "sha256": "408ec9397c341628cdb8d50bfb3d536b08a27be9d7c9d5c9056952059760d818",
+   "bytes": 18520,
+   "captured_at": "2026-10-02T04:58:19.312695+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 1,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-7181000",
+   "name": "부산광역시교육청 부산광역시남부교육지원청",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-7181000.jsonl",
+   "sha256": "8690996f40c099bbdfd8f238fe655e9e69938e89f222d48aba169bec9416d62a",
+   "bytes": 31810,
+   "captured_at": "2026-10-02T04:58:19.512932+00:00",
+   "counts": {
+    "chunk": 4,
+    "configuration": 1,
+    "document": 4,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 4,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-7530844",
+   "name": "경기도교육청 망포고등학교",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-7530844.jsonl",
+   "sha256": "9fb008f915a32e39c701b666047ab619f5b9d5f712cab73668b079317e12ad98",
+   "bytes": 28774,
+   "captured_at": "2026-10-02T04:58:19.716916+00:00",
+   "counts": {
+    "chunk": 3,
+    "configuration": 1,
+    "document": 3,
+    "institution": 1,
+    "link": 3,
+    "opportunity": 2,
+    "signal": 3,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-7530893",
+   "name": "경기도교육청 오남고등학교",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-7530893.jsonl",
+   "sha256": "2f580f73752069bddc956430c741f4936ff2f1dd31a00a51b30c66ce8b25ebe3",
+   "bytes": 12658,
+   "captured_at": "2026-10-02T04:58:19.923920+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-7531409",
+   "name": "경기도교육청 안양문화고등학교",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-7531409.jsonl",
+   "sha256": "f1e021fa3b5dfa01d116a1df6b4bfb3a641ed6837e309a8b9957873e82fcb298",
+   "bytes": 19509,
+   "captured_at": "2026-10-02T04:58:20.125131+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 1,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-7570120",
+   "name": "경기도안양교육청 성문중학교",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-7570120.jsonl",
+   "sha256": "cfc82ea1050623c124c61d87adc9842e7df4146cf3d37bbf6fc3016f955912b0",
+   "bytes": 13182,
+   "captured_at": "2026-10-02T04:58:20.325243+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-7591000",
+   "name": "경기도교육청 경기도광명교육지원청",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-7591000.jsonl",
+   "sha256": "84c9c0f4538989201630d44fd13d24bd0359307a5f792bba12f297b589802317",
+   "bytes": 18046,
+   "captured_at": "2026-10-02T04:58:20.519192+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-7780105",
+   "name": "경기도교육청 경기도시흥교육청 한국글로벌중학교",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-7780105.jsonl",
+   "sha256": "3e9701591c167cf9ad3f03d57713c967e5239d1a75906907582055ca84bc95e9",
+   "bytes": 13005,
+   "captured_at": "2026-10-02T04:58:20.718394+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-7781166",
+   "name": "경기도교육청 경기도시흥교육지원청 군서미래국제학교",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-7781166.jsonl",
+   "sha256": "0453bbaa82e63bc5f46eb579b314c5dd35721649bd3ffe4a4aee4ba5fa4b7e9a",
+   "bytes": 12870,
+   "captured_at": "2026-10-02T04:58:20.910340+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-7812000",
+   "name": "강원특별자치도교육청 강원특별자치도춘천교육지원청",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-7812000.jsonl",
+   "sha256": "247789c08e5dc64c672e5fe67b5506dea01862383e8c01cb44b14f51f6f0770f",
+   "bytes": 37258,
+   "captured_at": "2026-10-02T04:58:21.106951+00:00",
+   "counts": {
+    "chunk": 4,
+    "configuration": 1,
+    "document": 4,
+    "institution": 1,
+    "link": 3,
+    "opportunity": 3,
+    "signal": 4,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-8092000",
+   "name": "충청북도교육청 충청북도괴산증평교육지원청",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-8092000.jsonl",
+   "sha256": "3bfffaec1473e776648a67fafddbeb141903cb8ebea390bb8a64ba4c2a620b12",
+   "bytes": 43900,
+   "captured_at": "2026-10-02T04:58:21.307968+00:00",
+   "counts": {
+    "chunk": 5,
+    "configuration": 1,
+    "document": 5,
+    "institution": 1,
+    "link": 5,
+    "opportunity": 3,
+    "signal": 5,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-8261000",
+   "name": "충청남도교육청 충청남도홍성교육지원청",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-8261000.jsonl",
+   "sha256": "a09b97fbcce0b5ee697732a1576abdf65bc2476b17969f69a15a36019f278b62",
+   "bytes": 38013,
+   "captured_at": "2026-10-02T04:58:21.508362+00:00",
+   "counts": {
+    "chunk": 4,
+    "configuration": 1,
+    "document": 4,
+    "institution": 1,
+    "link": 4,
+    "opportunity": 3,
+    "signal": 4,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-8352000",
+   "name": "전북특별자치도교육청 전북특별자치도익산교육지원청",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-8352000.jsonl",
+   "sha256": "70f5a44d211db69fe875e0e59b6748bc4a56520c01c44a69986d4dede2e6cebc",
+   "bytes": 18415,
+   "captured_at": "2026-10-02T04:58:21.714472+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-8412000",
+   "name": "전북특별자치도교육청 전북특별자치도무주교육지원청",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-8412000.jsonl",
+   "sha256": "80893f6b16d1e35d452b95b59bbd675fa2470f2c10e90cb30d440ab8c2e89e3f",
+   "bytes": 12585,
+   "captured_at": "2026-10-02T04:58:21.915736+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-9010081",
+   "name": "경상남도교육청 거창대성고등학교",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-9010081.jsonl",
+   "sha256": "75072ebe814027b3969ed3110103f92fd6684e4af0471c25dec8ddc5b26f1785",
+   "bytes": 12621,
+   "captured_at": "2026-10-02T04:58:22.108674+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-9040025",
+   "name": "경상남도마산교육청 마산무학여자중학교",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-9040025.jsonl",
+   "sha256": "d7628be37eea2a81c8f0afc2ca94303780a1c259c1044baf97511c4e36b948bb",
+   "bytes": 13091,
+   "captured_at": "2026-10-02T04:58:22.305634+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-9070011",
+   "name": "경상남도통영교육청 통영여자중학교",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-9070011.jsonl",
+   "sha256": "4352961f5b13cb2ead52493a2fba0dc33ba877321bb6136a514bfeb854ab7528",
+   "bytes": 12149,
+   "captured_at": "2026-10-02T04:58:22.499116+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-9151000",
+   "name": "경상남도교육청 경상남도양산교육지원청",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-9151000.jsonl",
+   "sha256": "53c37a5a58f5cdfe23276f2b01ab3a33e7f0b63b9ef7f17e2da48642a715c4d7",
+   "bytes": 12402,
+   "captured_at": "2026-10-02T04:58:22.695229+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-B350021",
+   "name": "한국과학기술원",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-B350021.jsonl",
+   "sha256": "682de0e8b8137bb736cbddb26fb296cee257b4e78e1e2353aeb2114dacb911a3",
+   "bytes": 160286,
+   "captured_at": "2026-10-02T04:58:22.888797+00:00",
+   "counts": {
+    "chunk": 20,
+    "configuration": 1,
+    "document": 20,
+    "institution": 1,
+    "link": 16,
+    "opportunity": 14,
+    "signal": 20,
+    "source": 3
+   }
+  },
+  {
+   "code": "G2B-B460010",
+   "name": "한국건강관리협회 강남지부",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-B460010.jsonl",
+   "sha256": "b7ce1219caa2a968643ed526fb81451940d58ffd2b411ced7d7c4e34ba27faf0",
+   "bytes": 23138,
+   "captured_at": "2026-10-02T04:58:23.156625+00:00",
+   "counts": {
+    "chunk": 3,
+    "configuration": 1,
+    "document": 3,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 1,
+    "signal": 3,
+    "source": 3
+   }
+  },
+  {
+   "code": "G2B-B550146",
+   "name": "한국한센복지협회",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-B550146.jsonl",
+   "sha256": "72ccccd2a308c89ff88a637c4f19f4268a9fbfdb97e1ff8ec20131b4becba1c6",
+   "bytes": 18045,
+   "captured_at": "2026-10-02T04:58:23.356028+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 1,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-B550234",
+   "name": "국방과학연구소",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-B550234.jsonl",
+   "sha256": "9ddefc425bc232ce9c81c3ca7b68e5ece7fa8fb9974c9d3279c267584a6f75be",
+   "bytes": 130162,
+   "captured_at": "2026-10-02T04:58:23.566798+00:00",
+   "counts": {
+    "chunk": 20,
+    "configuration": 1,
+    "document": 20,
+    "institution": 1,
+    "link": 7,
+    "opportunity": 6,
+    "signal": 20,
+    "source": 3
+   }
+  },
+  {
+   "code": "G2B-B550297",
+   "name": "서울대학교병원",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-B550297.jsonl",
+   "sha256": "78506e094011d39339dcff80785fdd599688ed000257643b4521900f1e959d18",
+   "bytes": 38558,
+   "captured_at": "2026-10-02T04:58:23.806700+00:00",
+   "counts": {
+    "chunk": 4,
+    "configuration": 1,
+    "document": 4,
+    "institution": 1,
+    "link": 4,
+    "opportunity": 4,
+    "signal": 4,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-B551176",
+   "name": "한국지질자원연구원",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-B551176.jsonl",
+   "sha256": "2b31b56c9e3d3b1f965f92b6d2cf37f2eac7d307d44ca6a9b01a310e661e3165",
+   "bytes": 23281,
+   "captured_at": "2026-10-02T04:58:24.009806+00:00",
+   "counts": {
+    "chunk": 3,
+    "configuration": 1,
+    "document": 3,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 1,
+    "signal": 3,
+    "source": 3
+   }
+  },
+  {
+   "code": "G2B-B551178",
+   "name": "한국공항공사",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-B551178.jsonl",
+   "sha256": "c72b848e80225b2a5468978de0ba2fb37a53f1088ba8442d8d4caa6da84d7957",
+   "bytes": 34523,
+   "captured_at": "2026-10-02T04:58:24.209929+00:00",
+   "counts": {
+    "chunk": 5,
+    "configuration": 1,
+    "document": 5,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 1,
+    "signal": 5,
+    "source": 3
+   }
+  },
+  {
+   "code": "G2B-B552519",
+   "name": "대전도시공사",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-B552519.jsonl",
+   "sha256": "964276f88e58652fd169716f51ae5afa9c18ddd1c7ce8f145e811798c998485c",
+   "bytes": 11556,
+   "captured_at": "2026-10-02T04:58:24.416125+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-B553016",
+   "name": "경남개발공사",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-B553016.jsonl",
+   "sha256": "3f254e4e27336f73e07857155c60835da1ec6782f71f87e88286d5980b8a59f1",
+   "bytes": 11795,
+   "captured_at": "2026-10-02T04:58:24.610903+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-B553077",
+   "name": "소상공인시장진흥공단",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-B553077.jsonl",
+   "sha256": "ee274326176d157875bfe4194f88edf38e9da33b18b61900e80f65c7975e4414",
+   "bytes": 33552,
+   "captured_at": "2026-10-02T04:58:24.808933+00:00",
+   "counts": {
+    "chunk": 5,
+    "configuration": 1,
+    "document": 5,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 5,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-B553734",
+   "name": "서울에너지공사",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-B553734.jsonl",
+   "sha256": "431c61b504208d45035a4ea6047db9d004524fb6eb751124cd9725e126a2f267",
+   "bytes": 11535,
+   "captured_at": "2026-10-02T04:58:25.015883+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-B554393",
+   "name": "한국지능정보사회진흥원",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-B554393.jsonl",
+   "sha256": "7e7d16e59e38f12875ad472f4c15f103e76f3d133a0d46f0d1cb629992101c15",
+   "bytes": 62955,
+   "captured_at": "2026-10-02T04:58:25.213559+00:00",
+   "counts": {
+    "chunk": 10,
+    "configuration": 1,
+    "document": 10,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 10,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-B554606",
+   "name": "한국여성과학기술인육성재단",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-B554606.jsonl",
+   "sha256": "a2a3b8bc621bc3b0cf712d45a10de5d4c1eb790bca895cb93137f6efe0debcd3",
+   "bytes": 12591,
+   "captured_at": "2026-10-02T04:58:25.470637+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-D150243",
+   "name": "한국농어촌공사 충남지역본부 보령지사",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-D150243.jsonl",
+   "sha256": "d6b22c071441066750e933da147df39b0b127ca84a617ebcf5eb20ca41d8e7a1",
+   "bytes": 28709,
+   "captured_at": "2026-10-02T04:58:25.665031+00:00",
+   "counts": {
+    "chunk": 3,
+    "configuration": 1,
+    "document": 3,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 2,
+    "signal": 3,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-D150603",
+   "name": "한국농어촌공사 경남지역본부 고성.통영.거제지사",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-D150603.jsonl",
+   "sha256": "605344c900155f9f254d861938f288dd26d6877fad8ae0fadf3aa182cef03651",
+   "bytes": 22338,
+   "captured_at": "2026-10-02T04:58:25.865768+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 2,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-D152078",
+   "name": "한국농어촌공사 충남지역본부 천안지사",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-D152078.jsonl",
+   "sha256": "7092c0fd46cf6d5eb9f4ad99d7d878db64f02425a86eed5b80d5b08c1d560ef7",
+   "bytes": 18627,
+   "captured_at": "2026-10-02T04:58:26.117794+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-D152970",
+   "name": "한국농어촌공사 전남지역본부 목포.무안.신안지사",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-D152970.jsonl",
+   "sha256": "598c3fac4aadc06fb24aaf64a3d0826f5cb09f72e3d7380ef3028701e6910726",
+   "bytes": 19438,
+   "captured_at": "2026-10-02T04:58:26.315814+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 1,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-Z000589",
+   "name": "한국도로공사서산아산건설사업단",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z000589.jsonl",
+   "sha256": "7a3716582ae48ff24a55be0dfc3b0d911f9f087f4fccd0c87acf7f3c95632271",
+   "bytes": 13122,
+   "captured_at": "2026-10-02T04:58:26.512511+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-Z001345",
+   "name": "한국산업기술시험원",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z001345.jsonl",
+   "sha256": "7107cb42344963e9ab3f7e46242fb69dad6c3ad5c0fcd5647d3bb305c4631135",
+   "bytes": 38169,
+   "captured_at": "2026-10-02T04:58:26.707518+00:00",
+   "counts": {
+    "chunk": 5,
+    "configuration": 1,
+    "document": 5,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 2,
+    "signal": 5,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-Z001679",
+   "name": "사단법인 한국정보통신진흥협회",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z001679.jsonl",
+   "sha256": "4986034f88e9b2e37bfc89ccc32f7a0757006ecc7426b5800a1e77d081846492",
+   "bytes": 11855,
+   "captured_at": "2026-10-02T04:58:26.909361+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-Z001788",
+   "name": "한국교육과정평가원",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z001788.jsonl",
+   "sha256": "139173810779162e92cdf0df42c03aefa2804697a679b233383ba33fffe84922",
+   "bytes": 17381,
+   "captured_at": "2026-10-02T04:58:27.104861+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-Z001790",
+   "name": "한국광기술원",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z001790.jsonl",
+   "sha256": "94cecd4d9d64a8da9671bc56ee9ac167342d83caafb9a90692ec15996eff9c53",
+   "bytes": 20588,
+   "captured_at": "2026-10-02T04:58:27.305743+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 2,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-Z003626",
+   "name": "서울시설공단",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z003626.jsonl",
+   "sha256": "66bafb55d085c4fe8692e68e78cc6e677b03fb78aa0280aa6709fa79f02c07a9",
+   "bytes": 31914,
+   "captured_at": "2026-10-02T04:58:27.506000+00:00",
+   "counts": {
+    "chunk": 4,
+    "configuration": 1,
+    "document": 4,
+    "institution": 1,
+    "link": 3,
+    "opportunity": 2,
+    "signal": 4,
+    "source": 3
+   }
+  },
+  {
+   "code": "G2B-Z003657",
+   "name": "경기주택도시공사",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z003657.jsonl",
+   "sha256": "7e8a53b5bb1278224d7affb99322a79814259eb59fb365912e6bcb762abaebca",
+   "bytes": 32830,
+   "captured_at": "2026-10-02T04:58:27.706810+00:00",
+   "counts": {
+    "chunk": 4,
+    "configuration": 1,
+    "document": 4,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 2,
+    "signal": 4,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-Z004831",
+   "name": "한국과학기술정보연구원",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z004831.jsonl",
+   "sha256": "7b50f9ea0f7294b5690e1242c4e12d5386ed5befaaf2c22fa48798cd873fac69",
+   "bytes": 76484,
+   "captured_at": "2026-10-02T04:58:27.920003+00:00",
+   "counts": {
+    "chunk": 11,
+    "configuration": 1,
+    "document": 11,
+    "institution": 1,
+    "link": 3,
+    "opportunity": 3,
+    "signal": 11,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-Z004836",
+   "name": "한국생명공학연구원",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z004836.jsonl",
+   "sha256": "586190db0e6cbbb402dadeaa46a0102c0369440d28bca16d6cfa8d9110221953",
+   "bytes": 119978,
+   "captured_at": "2026-10-02T04:58:28.135708+00:00",
+   "counts": {
+    "chunk": 17,
+    "configuration": 1,
+    "document": 17,
+    "institution": 1,
+    "link": 8,
+    "opportunity": 7,
+    "signal": 17,
+    "source": 3
+   }
+  },
+  {
+   "code": "G2B-Z004898",
+   "name": "인천시설공단",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z004898.jsonl",
+   "sha256": "f6d859b0afd9d0ed1329de01b4ae772adfdc742747e2112348ac7f7eab33e760",
+   "bytes": 28630,
+   "captured_at": "2026-10-02T04:58:28.393621+00:00",
+   "counts": {
+    "chunk": 4,
+    "configuration": 1,
+    "document": 4,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 1,
+    "signal": 4,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-Z004949",
+   "name": "근로복지공단 양산지사",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z004949.jsonl",
+   "sha256": "ad3251bec234006855605382a5d000d7afa07e1152258bf01829d657a4bf7be3",
+   "bytes": 16968,
+   "captured_at": "2026-10-02T04:58:28.597244+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 1,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-Z007981",
+   "name": "분당서울대학교병원",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z007981.jsonl",
+   "sha256": "0ca4e87cd3a164eb8a4132bc8ddb327348bcef3bb14c8093b6da42c53d6af72c",
+   "bytes": 77602,
+   "captured_at": "2026-10-02T04:58:28.795349+00:00",
+   "counts": {
+    "chunk": 10,
+    "configuration": 1,
+    "document": 10,
+    "institution": 1,
+    "link": 7,
+    "opportunity": 6,
+    "signal": 10,
+    "source": 3
+   }
+  },
+  {
+   "code": "G2B-Z010167",
+   "name": "국립박물관문화재단",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z010167.jsonl",
+   "sha256": "3892d867b1fb28b1e210ba20339366e34e6a7e5529b8c5f23743a70cea712099",
+   "bytes": 12192,
+   "captured_at": "2026-10-02T04:58:29.010158+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-Z011399",
+   "name": "한국해양과학기술원 부설 극지연구소",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z011399.jsonl",
+   "sha256": "7baf0d533f8317de816cf3cdab6d3f192875c5a5674b5eaf8ea856b263e71d34",
+   "bytes": 18495,
+   "captured_at": "2026-10-02T04:58:29.206896+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-Z013723",
+   "name": "환경에너지솔루션 주식회사",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z013723.jsonl",
+   "sha256": "8d7951feef113607d454309de93c7f9dde2fcc61cad9bf3649fa5bccd479389d",
+   "bytes": 12275,
+   "captured_at": "2026-10-02T04:58:29.405966+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-Z013741",
+   "name": "한국공항공사 김포공항",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z013741.jsonl",
+   "sha256": "3b73cbb77a6eeb96bbb9dfa6c907f8f560a644abf5f47d221db46a91ba8ddad0",
+   "bytes": 17738,
+   "captured_at": "2026-10-02T04:58:29.610359+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-Z016740",
+   "name": "화성도시공사",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z016740.jsonl",
+   "sha256": "e59b10bb1e6d2ba068b2648288e0e1c74b8e6e70cbdd01e30ad509f5d8ee51f6",
+   "bytes": 17254,
+   "captured_at": "2026-10-02T04:58:29.814022+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 1,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-Z017646",
+   "name": "사복)신애재활원 신애직업재활원",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z017646.jsonl",
+   "sha256": "4389d6b3f45f1912dda30910901055c14cb49683c4451701e13924877781f978",
+   "bytes": 20683,
+   "captured_at": "2026-10-02T04:58:30.009439+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 2,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-Z017929",
+   "name": "재단법인 국립오페라단",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z017929.jsonl",
+   "sha256": "0d9a20b726c3cc502633fe4cd11abab3fb43bbadfe993a70b1e7901ed437f94c",
+   "bytes": 19067,
+   "captured_at": "2026-10-02T04:58:30.213511+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 1,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-Z018169",
+   "name": "사단법인신라문화원",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z018169.jsonl",
+   "sha256": "d10fba6ff8cb0443819e134803d61c2d11208ea607d66a525ec4ba0ff0fb5303",
+   "bytes": 23723,
+   "captured_at": "2026-10-02T04:58:30.407489+00:00",
+   "counts": {
+    "chunk": 3,
+    "configuration": 1,
+    "document": 3,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 1,
+    "signal": 3,
+    "source": 3
+   }
+  },
+  {
+   "code": "G2B-Z018263",
+   "name": "양산부산대학교병원",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z018263.jsonl",
+   "sha256": "86945c6a8972007d8efb77c945f1b952f526f0d6018e4a02cc88b75e88913785",
+   "bytes": 49104,
+   "captured_at": "2026-10-02T04:58:30.605359+00:00",
+   "counts": {
+    "chunk": 6,
+    "configuration": 1,
+    "document": 6,
+    "institution": 1,
+    "link": 5,
+    "opportunity": 4,
+    "signal": 6,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-Z019626",
+   "name": "연성대학교 산학협력단",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z019626.jsonl",
+   "sha256": "89c18aab18279d825ec5c5811a834e7e2246e036c166098dc568223ec37d975b",
+   "bytes": 23652,
+   "captured_at": "2026-10-02T04:58:30.813185+00:00",
+   "counts": {
+    "chunk": 3,
+    "configuration": 1,
+    "document": 3,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 1,
+    "signal": 3,
+    "source": 3
+   }
+  },
+  {
+   "code": "G2B-Z022872",
+   "name": "한국철도공사 회계통합센터",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z022872.jsonl",
+   "sha256": "4d1fe7394772ede0b9fc520e364619c3a77978db408209f39078f9f0044228bb",
+   "bytes": 12245,
+   "captured_at": "2026-10-02T04:58:31.013879+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-Z025850",
+   "name": "재단법인 한국청년기업가정신재단",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z025850.jsonl",
+   "sha256": "7dd459c01181551e4eb55bf8d6b720407c45aaa9a3d230813c445ff0cd0fb98e",
+   "bytes": 34831,
+   "captured_at": "2026-10-02T04:58:31.209506+00:00",
+   "counts": {
+    "chunk": 5,
+    "configuration": 1,
+    "document": 5,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 5,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-Z026951",
+   "name": "사단법인 대한바둑협회",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z026951.jsonl",
+   "sha256": "56243c3d8d0ec8066e34c8faaa2dfa61f8b9fc9f8b5f230c278877715c04e137",
+   "bytes": 12007,
+   "captured_at": "2026-10-02T04:58:31.420109+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-Z030974",
+   "name": "한양대학교 에리카산학협력단",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z030974.jsonl",
+   "sha256": "c29f320bab7d1dee1861ebf09f04138626419417bf8a9454362bf4268c2d3c33",
+   "bytes": 32575,
+   "captured_at": "2026-10-02T04:58:31.617566+00:00",
+   "counts": {
+    "chunk": 4,
+    "configuration": 1,
+    "document": 4,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 2,
+    "signal": 4,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-Z031628",
+   "name": "기아타이거즈 주식회사",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z031628.jsonl",
+   "sha256": "062a657aa4527b0ff8984bdfe8897e73dfa8a695858a480dc5771f00ec8be220",
+   "bytes": 23027,
+   "captured_at": "2026-10-02T04:58:31.824939+00:00",
+   "counts": {
+    "chunk": 3,
+    "configuration": 1,
+    "document": 3,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 1,
+    "signal": 3,
+    "source": 3
+   }
+  },
+  {
+   "code": "G2B-Z040146",
+   "name": "재단법인 경상남도 관광재단",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z040146.jsonl",
+   "sha256": "423fc63acd94f88892a16489bd34381538d9b58c04c56cff7465072f9f8c7b5b",
+   "bytes": 11944,
+   "captured_at": "2026-10-02T04:58:32.027981+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-Z044816",
+   "name": "(주)티에스이",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z044816.jsonl",
+   "sha256": "c9805981fafc635ecbaee3160436e5b78f43385f889a272c80283a15edde78c9",
+   "bytes": 12305,
+   "captured_at": "2026-10-02T04:58:32.233314+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-Z050694",
+   "name": "주식회사 휴데이터스",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z050694.jsonl",
+   "sha256": "2adc27a1d992e9f6542241ea5ff178a1932a771e910fa80124b7b52e27a75e87",
+   "bytes": 19535,
+   "captured_at": "2026-10-02T04:58:32.426181+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 1,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-Z051390",
+   "name": "사단법인 고등기술연구원 충청캠퍼스",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z051390.jsonl",
+   "sha256": "570252db0652a19a405d197c2ca41db51922eb39d1c910a7fc3326549813a0a9",
+   "bytes": 12263,
+   "captured_at": "2026-10-02T04:58:32.621944+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-Z055167",
+   "name": "재단법인 2027 서울 세계청년대회 조직위원회",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z055167.jsonl",
+   "sha256": "fef99fbb92aeb0633b3885a978d7b22e1c8227dce64214e4de359c6c1a298c18",
+   "bytes": 24691,
+   "captured_at": "2026-10-02T04:58:32.817572+00:00",
+   "counts": {
+    "chunk": 3,
+    "configuration": 1,
+    "document": 3,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 1,
+    "signal": 3,
+    "source": 3
+   }
+  },
+  {
+   "code": "G2B-Z055221",
+   "name": "주식회사 렛유인에듀",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z055221.jsonl",
+   "sha256": "1b15a78d4b688a4b5327b842b6c37593db4d8e63915179666a05526ae4b85f28",
+   "bytes": 12591,
+   "captured_at": "2026-10-02T04:58:33.014185+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-Z057573",
+   "name": "(주)하마랩",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z057573.jsonl",
+   "sha256": "5e139049bad9376ffd609991092f160422696e34dc8087d21be5b9b8f6a3058a",
+   "bytes": 24609,
+   "captured_at": "2026-10-02T04:58:33.207827+00:00",
+   "counts": {
+    "chunk": 3,
+    "configuration": 1,
+    "document": 3,
+    "institution": 1,
+    "link": 2,
+    "opportunity": 1,
+    "signal": 3,
+    "source": 3
+   }
+  },
+  {
+   "code": "G2B-Z062771",
+   "name": "진도큰집 농업회사법인 주식회사",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z062771.jsonl",
+   "sha256": "5af364edacc070a99b2c826ef91f353ad1e3453775f6c8c1888935a6b70031e6",
+   "bytes": 29098,
+   "captured_at": "2026-10-02T04:58:33.407239+00:00",
+   "counts": {
+    "chunk": 3,
+    "configuration": 1,
+    "document": 3,
+    "institution": 1,
+    "link": 3,
+    "opportunity": 2,
+    "signal": 3,
+    "source": 2
+   }
+  },
+  {
+   "code": "G2B-Z062834",
+   "name": "나주농장",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z062834.jsonl",
+   "sha256": "6f69c5d533cd0d57e092e187897fcc9fec28c443bf485db19d7ba312b05049c8",
+   "bytes": 11777,
+   "captured_at": "2026-10-02T04:58:33.602732+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "G2B-Z062941",
+   "name": "지은농장",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/G2B-Z062941.jsonl",
+   "sha256": "12bb1fc88fa819c725ed9e4b4edbaa27654dc6d8eccc2a3a1fb0c8de72f41d34",
+   "bytes": 11790,
+   "captured_at": "2026-10-02T04:58:33.793741+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 1,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "LG-11230",
+   "name": "서울특별시 동대문구",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-11230.jsonl",
+   "sha256": "0ce96360cfeff8f8408861bccc95c1b78de8cebe99a6b016e0544c9d20f2d904",
+   "bytes": 35596,
+   "captured_at": "2026-10-02T04:58:33.989261+00:00",
+   "counts": {
+    "chunk": 4,
+    "configuration": 1,
+    "document": 4,
+    "institution": 2,
+    "link": 4,
+    "opportunity": 3,
+    "signal": 4,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-11410",
+   "name": "서울특별시 서대문구",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-11410.jsonl",
+   "sha256": "47bc9369156216bee11a78351977e98468505083d927c611b707618f48456cf2",
+   "bytes": 45388,
+   "captured_at": "2026-10-02T04:58:34.189552+00:00",
+   "counts": {
+    "chunk": 5,
+    "configuration": 1,
+    "document": 5,
+    "institution": 2,
+    "link": 5,
+    "opportunity": 4,
+    "signal": 5,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-11680",
+   "name": "서울특별시 강남구",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-11680.jsonl",
+   "sha256": "36686c18508d7af26c5d6beda5878ad396cee64ab101d9401907eb31935a514f",
+   "bytes": 52410,
+   "captured_at": "2026-10-02T04:58:34.396247+00:00",
+   "counts": {
+    "chunk": 8,
+    "configuration": 1,
+    "document": 8,
+    "institution": 2,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 8,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-26350",
+   "name": "부산광역시 해운대구",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-26350.jsonl",
+   "sha256": "eec666ac4fb177d0cfb43423974dae6fb79fce064a4f5fd801373bcdf91081fe",
+   "bytes": 12481,
+   "captured_at": "2026-10-02T04:58:34.604497+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 2,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "LG-27230",
+   "name": "대구광역시 북구",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-27230.jsonl",
+   "sha256": "81466b554ab0d464c2455fbfd7489e46eaf2728bf33cb25b4c493a5e0cecbe4b",
+   "bytes": 22901,
+   "captured_at": "2026-10-02T04:58:34.794998+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 2,
+    "link": 2,
+    "opportunity": 2,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-27260",
+   "name": "대구광역시 수성구",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-27260.jsonl",
+   "sha256": "6a3a9b622f3e896c3cac32aa97bb4d11f8153e016089ca197062613a1dd5a011",
+   "bytes": 11951,
+   "captured_at": "2026-10-02T04:58:34.993532+00:00",
+   "counts": {
+    "chunk": 1,
+    "configuration": 1,
+    "document": 1,
+    "institution": 2,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 1,
+    "source": 1
+   }
+  },
+  {
+   "code": "LG-28185",
+   "name": "인천광역시 연수구",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-28185.jsonl",
+   "sha256": "d13f0558c33593ba4b79ffac7fadaa2f49dd0046813f6aa4803beee2db48d896",
+   "bytes": 74122,
+   "captured_at": "2026-10-02T04:58:35.186294+00:00",
+   "counts": {
+    "chunk": 11,
+    "configuration": 1,
+    "document": 11,
+    "institution": 2,
+    "link": 4,
+    "opportunity": 3,
+    "signal": 11,
+    "source": 3
+   }
+  },
+  {
+   "code": "LG-29140",
+   "name": "전남광주통합특별시 서구",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-29140.jsonl",
+   "sha256": "f36f6a4b4d8f5c8b49f3d940f04d739d0dbb0637b3b095aa07eca92ddd91c4d7",
+   "bytes": 21400,
+   "captured_at": "2026-10-02T04:58:35.397551+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 2,
+    "link": 2,
+    "opportunity": 2,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-30000",
+   "name": "대전광역시",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-30000.jsonl",
+   "sha256": "3f3d9d44c6a974e118d19955781e37df95799a18280442bcc6358d329557abfc",
+   "bytes": 60962,
+   "captured_at": "2026-10-02T04:58:35.595642+00:00",
+   "counts": {
+    "chunk": 9,
+    "configuration": 1,
+    "document": 9,
+    "institution": 2,
+    "link": 1,
+    "opportunity": 1,
+    "signal": 9,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-30230",
+   "name": "대전광역시 대덕구",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-30230.jsonl",
+   "sha256": "5e13a2ae47f34b3de2cdbb3cb8aed31ba5b9443df73cf5dfc420366a4cdf37c2",
+   "bytes": 20836,
+   "captured_at": "2026-10-02T04:58:35.806175+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 2,
+    "link": 2,
+    "opportunity": 2,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-31000",
+   "name": "울산광역시",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-31000.jsonl",
+   "sha256": "b2198d6581a190bdec7548ec05b0b89d52daef730f5e7207c9c6ebf7e5752a1e",
+   "bytes": 27025,
+   "captured_at": "2026-10-02T04:58:36.006436+00:00",
+   "counts": {
+    "chunk": 3,
+    "configuration": 1,
+    "document": 3,
+    "institution": 2,
+    "link": 2,
+    "opportunity": 2,
+    "signal": 3,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-41250",
+   "name": "경기도 동두천시",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-41250.jsonl",
+   "sha256": "82602e854866436c327ba8f67afb05ce8d6194aabc50025ab37b0800a9656a0c",
+   "bytes": 20835,
+   "captured_at": "2026-10-02T04:58:36.207240+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 2,
+    "link": 2,
+    "opportunity": 2,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-41280",
+   "name": "경기도 고양시",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-41280.jsonl",
+   "sha256": "3971469d410e7af2f2bd3dcd2e09dfeb253ea51d07189561865a47856c3d6af9",
+   "bytes": 38440,
+   "captured_at": "2026-10-02T04:58:36.404490+00:00",
+   "counts": {
+    "chunk": 5,
+    "configuration": 1,
+    "document": 5,
+    "institution": 2,
+    "link": 2,
+    "opportunity": 2,
+    "signal": 5,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-41370",
+   "name": "경기도 오산시",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-41370.jsonl",
+   "sha256": "b94ef632e22360e6605f195d5b3a6f0ee0bc8735d689a00170e383ffcef05b7e",
+   "bytes": 45534,
+   "captured_at": "2026-10-02T04:58:36.613616+00:00",
+   "counts": {
+    "chunk": 5,
+    "configuration": 1,
+    "document": 5,
+    "institution": 2,
+    "link": 4,
+    "opportunity": 4,
+    "signal": 5,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-41450",
+   "name": "경기도 하남시",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-41450.jsonl",
+   "sha256": "d30db4cfafdb9e233954c1ee17bf9b7247126f615e76fa4063c9aa3f73f9eda2",
+   "bytes": 17338,
+   "captured_at": "2026-10-02T04:58:36.817165+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 2,
+    "link": 2,
+    "opportunity": 1,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-41570",
+   "name": "경기도 김포시",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-41570.jsonl",
+   "sha256": "e00f0ac282cc030d4497e51614d1435a9d1aef9cc5d83223d310aff6436986d8",
+   "bytes": 73800,
+   "captured_at": "2026-10-02T04:58:37.015196+00:00",
+   "counts": {
+    "chunk": 9,
+    "configuration": 1,
+    "document": 9,
+    "institution": 2,
+    "link": 8,
+    "opportunity": 6,
+    "signal": 9,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-41820",
+   "name": "경기도 가평군",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-41820.jsonl",
+   "sha256": "e90987ee92420e1289b122e05b016daa87db505510df75c68ec9de0321a74194",
+   "bytes": 21775,
+   "captured_at": "2026-10-02T04:58:37.226713+00:00",
+   "counts": {
+    "chunk": 2,
+    "configuration": 1,
+    "document": 2,
+    "institution": 2,
+    "link": 2,
+    "opportunity": 2,
+    "signal": 2,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-43110",
+   "name": "충청북도 청주시",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-43110.jsonl",
+   "sha256": "56ee5f8742f8dc9bce0ee8daed71961a1cfae9e9a2fa438cabe7a47cd1eb3ddc",
+   "bytes": 208942,
+   "captured_at": "2026-10-02T04:58:37.426869+00:00",
+   "counts": {
+    "chunk": 27,
+    "configuration": 1,
+    "document": 27,
+    "institution": 2,
+    "link": 18,
+    "opportunity": 17,
+    "signal": 27,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-43760",
+   "name": "충청북도 괴산군",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-43760.jsonl",
+   "sha256": "20bc10c83b501968dd161d37cc192e6cc79456fdb57f3e239eacc3284197dbb3",
+   "bytes": 54636,
+   "captured_at": "2026-10-02T04:58:38.260971+00:00",
+   "counts": {
+    "chunk": 6,
+    "configuration": 1,
+    "document": 6,
+    "institution": 2,
+    "link": 5,
+    "opportunity": 5,
+    "signal": 6,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-44000",
+   "name": "충청남도",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-44000.jsonl",
+   "sha256": "c188172ba922c905293b1697b64c62a6948e1a1a3786ce4a0a2a5993ca82e319",
+   "bytes": 91687,
+   "captured_at": "2026-10-02T04:58:38.467868+00:00",
+   "counts": {
+    "chunk": 13,
+    "configuration": 1,
+    "document": 13,
+    "institution": 2,
+    "link": 5,
+    "opportunity": 4,
+    "signal": 13,
+    "source": 3
+   }
+  },
+  {
+   "code": "LG-44130",
+   "name": "충청남도 천안시",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-44130.jsonl",
+   "sha256": "a1362098bc22bad2b37231ecdb146cba4b75ef5645872718205c8e7db8a974c6",
+   "bytes": 100275,
+   "captured_at": "2026-10-02T04:58:38.686436+00:00",
+   "counts": {
+    "chunk": 11,
+    "configuration": 1,
+    "document": 11,
+    "institution": 2,
+    "link": 11,
+    "opportunity": 10,
+    "signal": 11,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-44760",
+   "name": "충청남도 부여군",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-44760.jsonl",
+   "sha256": "87e9551540986907ffc5b52fbcb237c2c936c6f41583937e61dcef269a7b5546",
+   "bytes": 57242,
+   "captured_at": "2026-10-02T04:58:38.938165+00:00",
+   "counts": {
+    "chunk": 6,
+    "configuration": 1,
+    "document": 6,
+    "institution": 2,
+    "link": 6,
+    "opportunity": 6,
+    "signal": 6,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-46130",
+   "name": "전남광주통합특별시 여수시",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-46130.jsonl",
+   "sha256": "109659f32109dbf06c3dfc473aadaf4b6cdd19ea4bbce579eb2ccc70806290be",
+   "bytes": 84691,
+   "captured_at": "2026-10-02T04:58:39.149736+00:00",
+   "counts": {
+    "chunk": 10,
+    "configuration": 1,
+    "document": 10,
+    "institution": 2,
+    "link": 8,
+    "opportunity": 7,
+    "signal": 10,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-47190",
+   "name": "경상북도 구미시",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-47190.jsonl",
+   "sha256": "0dc360d2bfde1170487686ca7034064fff3772986e82801e14e49f742585ff12",
+   "bytes": 58063,
+   "captured_at": "2026-10-02T04:58:39.369548+00:00",
+   "counts": {
+    "chunk": 8,
+    "configuration": 1,
+    "document": 8,
+    "institution": 2,
+    "link": 3,
+    "opportunity": 3,
+    "signal": 8,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-47210",
+   "name": "경상북도 영주시",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-47210.jsonl",
+   "sha256": "551a313606399b82570b24265b120c5362a81e82d22a071e8febc2273e5de6dd",
+   "bytes": 81953,
+   "captured_at": "2026-10-02T04:58:39.576834+00:00",
+   "counts": {
+    "chunk": 11,
+    "configuration": 1,
+    "document": 11,
+    "institution": 2,
+    "link": 5,
+    "opportunity": 5,
+    "signal": 11,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-47230",
+   "name": "경상북도 영천시",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-47230.jsonl",
+   "sha256": "64a35eb45c9889ceb1002906fc25c8ea7bd91965321a917f35297ff892b62c59",
+   "bytes": 89037,
+   "captured_at": "2026-10-02T04:58:39.793907+00:00",
+   "counts": {
+    "chunk": 11,
+    "configuration": 1,
+    "document": 11,
+    "institution": 2,
+    "link": 8,
+    "opportunity": 7,
+    "signal": 11,
+    "source": 3
+   }
+  },
+  {
+   "code": "LG-48120",
+   "name": "경상남도 창원시",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-48120.jsonl",
+   "sha256": "6128d955a29d96caba2bb66913f42ba7237d24a126f25dbb4acc4ad77a429ea6",
+   "bytes": 97521,
+   "captured_at": "2026-10-02T04:58:40.010297+00:00",
+   "counts": {
+    "chunk": 13,
+    "configuration": 1,
+    "document": 13,
+    "institution": 2,
+    "link": 6,
+    "opportunity": 6,
+    "signal": 13,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-48240",
+   "name": "경상남도 사천시",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-48240.jsonl",
+   "sha256": "bfa51e480d87d2eba91b92532a28716231cc1ee8824059ef2c1b04ff7a8acacf",
+   "bytes": 74579,
+   "captured_at": "2026-10-02T04:58:40.226098+00:00",
+   "counts": {
+    "chunk": 8,
+    "configuration": 1,
+    "document": 8,
+    "institution": 2,
+    "link": 8,
+    "opportunity": 7,
+    "signal": 8,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-48820",
+   "name": "경상남도 고성군",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-48820.jsonl",
+   "sha256": "1cbf65833ced906f68a83d5cf7b4f9d1ec2dab3434c205fd31a2e9f7b9be2025",
+   "bytes": 33342,
+   "captured_at": "2026-10-02T04:58:40.434857+00:00",
+   "counts": {
+    "chunk": 4,
+    "configuration": 1,
+    "document": 4,
+    "institution": 2,
+    "link": 2,
+    "opportunity": 2,
+    "signal": 4,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-48880",
+   "name": "경상남도 거창군",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-48880.jsonl",
+   "sha256": "2f4cf9a4bc52133e2daa1ded4a7a6e967366e8dbb401bf04287fc914ef5df8f7",
+   "bytes": 73633,
+   "captured_at": "2026-10-02T04:58:40.636342+00:00",
+   "counts": {
+    "chunk": 10,
+    "configuration": 1,
+    "document": 10,
+    "institution": 2,
+    "link": 7,
+    "opportunity": 4,
+    "signal": 10,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-50130",
+   "name": "제주특별자치도 서귀포시",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-50130.jsonl",
+   "sha256": "6f8b30ddf98feee8a9a1b0a58be703e5647057d87d5331e1672c5d9655999a42",
+   "bytes": 29662,
+   "captured_at": "2026-10-02T04:58:40.848500+00:00",
+   "counts": {
+    "chunk": 3,
+    "configuration": 1,
+    "document": 3,
+    "institution": 1,
+    "link": 3,
+    "opportunity": 3,
+    "signal": 3,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-51000",
+   "name": "강원특별자치도",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-51000.jsonl",
+   "sha256": "c6d03f0f792bef95aa3d883681cb9be6394f596b3df0e27fdb619d46640f2edf",
+   "bytes": 169452,
+   "captured_at": "2026-10-02T04:58:41.047991+00:00",
+   "counts": {
+    "chunk": 23,
+    "configuration": 1,
+    "document": 23,
+    "institution": 2,
+    "link": 10,
+    "opportunity": 9,
+    "signal": 23,
+    "source": 3
+   }
+  },
+  {
+   "code": "LG-51110",
+   "name": "강원특별자치도 춘천시",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-51110.jsonl",
+   "sha256": "7b86df79cc78611569ca78008cb9034dea979197dc809a6c23e75feba9e068cf",
+   "bytes": 56078,
+   "captured_at": "2026-10-02T04:58:41.326721+00:00",
+   "counts": {
+    "chunk": 7,
+    "configuration": 1,
+    "document": 7,
+    "institution": 2,
+    "link": 4,
+    "opportunity": 4,
+    "signal": 7,
+    "source": 2
+   }
+  },
+  {
+   "code": "LG-51130",
+   "name": "강원특별자치도 원주시",
+   "open": 1,
+   "status": "frozen",
+   "path": "snapshots/LG-51130.jsonl",
+   "sha256": "7acbdff3e2f56d029caa189995d8222c123ba9b5c2277e3626da96d57f1fa143",
+   "bytes": 88183,
+   "captured_at": "2026-10-02T04:58:41.595343+00:00",
+   "counts": {
+    "chunk": 11,
+    "configuration": 1,
+    "document": 11,
+    "institution": 2,
+    "link": 6,
+    "opportunity": 6,
+    "signal": 11,
+    "source": 2
+   }
+  }
+ ]
+}
