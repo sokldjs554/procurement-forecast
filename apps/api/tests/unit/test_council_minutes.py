@@ -179,3 +179,45 @@ async def test_a_changed_archived_text_is_refused(tmp_path: Path) -> None:
             )
         ]
     assert json.loads((tmp_path / "manifest.json").read_text(encoding="utf-8"))["complete"] is True
+
+
+async def test_a_run_the_host_stops_answering_keeps_what_it_read(tmp_path: Path) -> None:
+    calls: list[str] = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        q = {k: v[0] for k, v in parse_qs(urlsplit(str(request.url)).query).items()}
+        if q["displayType"] == "detail" and calls:
+            raise httpx.ConnectTimeout("timed out", request=request)
+        if q["displayType"] == "detail":
+            calls.append(q["docid"])
+            row = next(r for r in ROWS if r["DOCID"] == q["docid"])
+            return httpx.Response(
+                200, json=[{"RESULT_CODE": "SUCCESS", **row, "MINTS_HTML": MINUTES}]
+            )
+        rows = [r for r in ROWS if not q.get("rasmblyId") or r["RASMBLY_ID"] == q["rasmblyId"]]
+        start = int(q["startCount"])
+        page = rows[start : start + int(q["listCount"])]
+        return httpx.Response(
+            200,
+            json=[
+                {
+                    "RESULT_CODE": "SUCCESS",
+                    "TOTAL_COUNT": len(rows),
+                    "LIST": [{"ROW": r} for r in page],
+                }
+            ],
+        )
+
+    client = ResilientClient(
+        "clik_minutes",
+        base_url="https://clik.example",
+        limiter=MemoryLimiter(),
+        breaker=MemoryBreaker(),
+        transport=httpx.MockTransport(handler),
+        sleep=_no_sleep,
+    )
+    manifest = await archive(_adapter(client), tmp_path, ["서산시의회"], **KW)
+    assert str(manifest["runs"][-1]["stopped"]).startswith("transient")
+    assert manifest["complete"] is False
+    saved = json.loads((tmp_path / "manifest.json").read_text(encoding="utf-8"))
+    assert [m["status"] for m in saved["meetings"].values()] == ["archived"]

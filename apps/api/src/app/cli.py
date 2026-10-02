@@ -918,6 +918,8 @@ def eval_council_minutes(
             indent=2,
         )
     )
+    if str(manifest["runs"][-1]["stopped"] or "").startswith("transient"):
+        raise typer.Exit(1)  # what was read is kept; run it again
 
 
 @eval_app.command("council-minutes-load")

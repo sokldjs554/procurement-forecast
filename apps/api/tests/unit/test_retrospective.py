@@ -9,6 +9,7 @@ import pytest
 
 from app.eval.retrospective import (
     Judgment,
+    belongs_to,
     candidate_pairs,
     judgments_for_pairs,
     load_title_judgments,
@@ -84,6 +85,25 @@ def test_the_city_name_is_not_a_project_name() -> None:
     assert without_place("성남시 성남종합운동장 리모델링", "성남시").split() == [
         "종합운동장",
         "리모델링",
+    ]
+
+
+def test_a_province_keeps_its_own_offices_but_not_the_cities_under_it() -> None:
+    assert belongs_to("충청북도", "충청북도")
+    assert belongs_to("충청북도 도로관리사업소 북부지소", "충청북도")
+    assert not belongs_to("충청북도 청주시", "충청북도")
+    assert not belongs_to("충청북도 청주시 상당구", "충청북도")
+    assert not belongs_to("충청북도교육청 충청북도청주교육지원청", "충청북도")
+    assert not belongs_to("충청북도충주의료원", "충청북도")
+    assert belongs_to("경기도 고양시 덕양구", "고양시")
+    assert not belongs_to("경기도 성남시", "고양시")
+
+
+def test_a_province_short_name_is_not_a_project_name() -> None:
+    assert without_place("충북 스마트팜 혁신밸리 조성", "충청북도").split() == [
+        "스마트팜",
+        "혁신밸리",
+        "조성",
     ]
 
 
