@@ -70,7 +70,10 @@ async def run(args: list[str], *, max_seconds: float) -> tuple[bytes, bytes]:
         stderr=asyncio.subprocess.PIPE,
     )
     try:
-        out, err = await asyncio.wait_for(proc.communicate(), max_seconds)
+        # Not wait_for: on 3.11 it drops a cancellation that lands as the process ends, and a
+        # worker shutting down would run the job on instead of handing it back.
+        async with asyncio.timeout(max_seconds):
+            out, err = await proc.communicate()
     except TimeoutError:
         raise MediaError(f"{Path(args[0]).name} timed out after {max_seconds:.0f}s") from None
     finally:
