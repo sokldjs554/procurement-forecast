@@ -24,6 +24,7 @@ from typing import Any
 
 from app.sources.base import DocType, FetchWindow, RawRecord, parse_compact_date
 from app.sources.clik import ClikMinutesAdapter, external_id, meeting_key
+from app.sources.http import TransientSourceError
 from app.sources.resilience import QuotaExhaustedError
 
 SCHEMA = "council-minutes-archive-v1"
@@ -153,6 +154,8 @@ async def archive(
                 break
     except QuotaExhaustedError:
         stopped = "quota"
+    except TransientSourceError as exc:  # retries spent (CLIK times out now and then)
+        stopped = f"transient: {exc}"[:300]
     run |= {
         "finished_at": datetime.now(UTC).isoformat(timespec="seconds"),
         "detail_calls": details,

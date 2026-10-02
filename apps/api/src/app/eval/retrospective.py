@@ -65,11 +65,53 @@ def squash(title: str) -> str:
 _PLACE_SUFFIX = re.compile(r"(특별자치시|특별자치도|특별시|광역시|시|군|구|도)$")
 
 
+# How a 도's tenders and speeches shorten its name ("충북 RISE 사업").
+_PROVINCE_SHORT = {
+    "충청북도": "충북",
+    "충청남도": "충남",
+    "전라북도": "전북",
+    "전북특별자치도": "전북",
+    "전라남도": "전남",
+    "경상북도": "경북",
+    "경상남도": "경남",
+    "강원특별자치도": "강원",
+    "강원도": "강원",
+    "경기도": "경기",
+    "제주특별자치도": "제주",
+}
+_PROVINCE = re.compile(r"(도|특별자치도|특별시|광역시|특별자치시)$")
+_LOCAL = re.compile(r"[가-힣]+(시|군|구)$")
+
+
+def is_province(institution: str) -> bool:
+    """A 광역 지자체 (도, 특별시, 광역시): ``충청북도``, not ``서산시``."""
+    return bool(_PROVINCE.search(institution)) and not _LOCAL.fullmatch(institution)
+
+
+def belongs_to(demand: str, institution: str) -> bool:
+    """Whether a notice's 수요기관 is ``institution`` or one of its own offices.
+
+    For a 시·군·구 that is its name anywhere in the 수요기관 ("경기도 고양시 덕양구"). A 도's
+    name is also in every 시·군 under it and in its 교육청, which are other 지자체 or bodies:
+    "충청북도 도로관리사업소" is 충청북도, "충청북도 청주시" and "충청북도교육청" are not."""
+    at = demand.find(institution)
+    if at < 0:
+        return False
+    if not is_province(institution):
+        return True
+    rest = demand[at + len(institution) :]
+    if rest and not rest[0].isspace():  # "충청북도교육청", "충청북도충주의료원": another body
+        return False
+    first = rest.split()[0] if rest.split() else ""
+    return not _LOCAL.fullmatch(first)
+
+
 def without_place(title: str, institution: str) -> str:
-    """``title`` without the 지자체's own name ("서산시", "서산"): every notice of that 지자체
-    may carry it, so it says nothing about which project a notice is."""
+    """``title`` without the 지자체's own name ("서산시", "서산", "충북"): every notice of that
+    지자체 may carry it, so it says nothing about which project a notice is."""
     stem = _PLACE_SUFFIX.sub("", institution)
-    for name in sorted({institution, stem} - {""}, key=len, reverse=True):
+    names = {institution, stem, _PROVINCE_SHORT.get(institution, "")}
+    for name in sorted(names - {""}, key=len, reverse=True):
         if len(name) >= 2:
             title = title.replace(name, " ")
     return title
@@ -166,7 +208,7 @@ def candidate_pairs(
     own = [
         (n, title, squash(without_place(title, institution)))
         for n in notices
-        if institution in demand_institution(n)
+        if belongs_to(demand_institution(n), institution)
         for title in [str(n.get("bidNtceNm") or "")]
     ]
     out: list[Candidate] = []

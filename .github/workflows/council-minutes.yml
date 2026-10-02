@@ -74,6 +74,7 @@ jobs:
           APP_CLIK_API_KEY: ${{ secrets.APP_CLIK_API_KEY }}
         run: |
           test -n "$APP_CLIK_API_KEY" || { echo "::error::Add the APP_CLIK_API_KEY repository secret first"; exit 1; }
+          set -o pipefail  # the archive command's failure, not tee's success
           args=()
           IFS=',' read -ra names <<< "$COUNCILS"
           for n in "${names[@]}"; do args+=(--council "$(echo "$n" | xargs)"); done
