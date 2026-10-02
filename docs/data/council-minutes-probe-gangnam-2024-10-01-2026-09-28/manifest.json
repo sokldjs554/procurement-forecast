@@ -1,0 +1,32 @@
+{
+ "schema": "council-minutes-archive-v1",
+ "councils": {
+  "강남구의회": {
+   "id": "002002",
+   "council": "서울특별시 강남구의회",
+   "listed_meetings": 0
+  }
+ },
+ "meetings": {},
+ "runs": [
+  {
+   "started_at": "2026-10-02T02:25:54+00:00",
+   "tried_ids": {
+    "강남구의회": {
+     "002002": "서울특별시 강남구의회"
+    }
+   },
+   "not_found": [],
+   "finished_at": "2026-10-02T02:25:55+00:00",
+   "detail_calls": 0,
+   "stopped": null
+  }
+ ],
+ "rule": {
+  "since": "2024-10-01",
+  "until": "2026-09-28",
+  "meeting_pattern": ".*"
+ },
+ "source": "국회도서관 지방의정포털(CLIK) Open API, minutes.do list + detail",
+ "complete": true
+}
