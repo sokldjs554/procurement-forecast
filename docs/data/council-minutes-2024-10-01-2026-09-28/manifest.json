@@ -20,6 +20,21 @@
    "id": "031011",
    "council": "경기도 동두천시의회",
    "listed_meetings": 154
+  },
+  "서산시의회": {
+   "id": "041009",
+   "council": "충청남도 서산시의회",
+   "listed_meetings": 70
+  },
+  "강남구의회": {
+   "id": "002002",
+   "council": "서울특별시 강남구의회",
+   "listed_meetings": 0
+  },
+  "원주시의회": {
+   "id": "033010",
+   "council": "강원특별자치도 원주시의회",
+   "listed_meetings": 41
   }
  },
  "meetings": {
@@ -9791,6 +9806,2893 @@
    },
    "path": "sources/031003-10-307-3-20260903-의회본회의.txt",
    "sha256": "9600486b808b30a6733462284eecd293073acc05858aa72455e4df881570f398"
+  },
+  "041009:9:299:0:20241015:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제299회 본회의 (2024-10-15)",
+   "meeting_date": "2024-10-15",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378935744951000",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-10-15",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "299",
+    "sitting": "0",
+    "meeting": "본회의",
+    "docid": "CLIKC1378935744951000",
+    "revision_docids": [
+     "CLIKC1378935744951000"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-299-0-20241015-본회의.txt",
+   "sha256": "acd46c59db63f340d0844af721cca319a7837818b4dc9b2d43e20f6571f176f7"
+  },
+  "041009:9:299:1:20241015:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제299회 본회의 제1차 (2024-10-15)",
+   "meeting_date": "2024-10-15",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378935846006141",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-10-15",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "299",
+    "sitting": "1",
+    "meeting": "본회의",
+    "docid": "CLIKC1378935846006141",
+    "revision_docids": [
+     "CLIKC1378935846006141"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-299-1-20241015-본회의.txt",
+   "sha256": "9e308cfb221c482c67a6072ac24f5d9a7ece91b66c9edd5f6f28d182e08e161f"
+  },
+  "041009:9:299:2:20241021:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제299회 본회의 제2차 (2024-10-21)",
+   "meeting_date": "2024-10-21",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378935441785516",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-10-21",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "299",
+    "sitting": "2",
+    "meeting": "본회의",
+    "docid": "CLIKC1378935441785516",
+    "revision_docids": [
+     "CLIKC1378935441785516"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-299-2-20241021-본회의.txt",
+   "sha256": "b79282633970d3eaafd68e75f09f8f4982cc39c8f716eb83f5a5e156f4020dd5"
+  },
+  "041009:9:299:3:20241022:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제299회 본회의 제3차 (2024-10-22)",
+   "meeting_date": "2024-10-22",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378935340722334",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-10-22",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "299",
+    "sitting": "3",
+    "meeting": "본회의",
+    "docid": "CLIKC1378935340722334",
+    "revision_docids": [
+     "CLIKC1378935340722334"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-299-3-20241022-본회의.txt",
+   "sha256": "4a6c0efb7b587a2ba06901edb864f1161be213a42330a742b0cb5e9d5c64bad1"
+  },
+  "041009:9:299:4:20241023:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제299회 본회의 제4차 (2024-10-23)",
+   "meeting_date": "2024-10-23",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378935239665672",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-10-23",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "299",
+    "sitting": "4",
+    "meeting": "본회의",
+    "docid": "CLIKC1378935239665672",
+    "revision_docids": [
+     "CLIKC1378935239665672"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-299-4-20241023-본회의.txt",
+   "sha256": "cd37e2740595545774f5748b9faa26aeada05831d488dc26831ca0501189eb22"
+  },
+  "041009:9:299:5:20241024:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제299회 본회의 제5차 (2024-10-24)",
+   "meeting_date": "2024-10-24",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378935037506766",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-10-24",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "299",
+    "sitting": "5",
+    "meeting": "본회의",
+    "docid": "CLIKC1378935037506766",
+    "revision_docids": [
+     "CLIKC1378935037506766"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-299-5-20241024-본회의.txt",
+   "sha256": "4fef418e18c42f37f36bc9b6350c1eaa99dc245a890cc20cfcb61634218eed8f"
+  },
+  "041009:9:300:0:20241125:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제300회 본회의 (2024-11-25)",
+   "meeting_date": "2024-11-25",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378934532217342",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-11-25",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "300",
+    "sitting": "0",
+    "meeting": "본회의",
+    "docid": "CLIKC1378934532217342",
+    "revision_docids": [
+     "CLIKC1378934532217342"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-300-0-20241125-본회의.txt",
+   "sha256": "f49985dcac9d8cdfeadb8e0aad8ffa0ff96ced6d20429da05eb29de1852c7675"
+  },
+  "041009:9:300:1:20241125:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제300회 본회의 제1차 (2024-11-25)",
+   "meeting_date": "2024-11-25",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378934633270026",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-11-25",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "300",
+    "sitting": "1",
+    "meeting": "본회의",
+    "docid": "CLIKC1378934633270026",
+    "revision_docids": [
+     "CLIKC1378934633270026"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-300-1-20241125-본회의.txt",
+   "sha256": "21b964337f619ad744ef940022e60348448773db4aec6cebb248cb15461c2456"
+  },
+  "041009:9:300:1:20241129:예산결산특별위원회": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제300회 예산결산특별위원회 제1차 (2024-11-29)",
+   "meeting_date": "2024-11-29",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378933824784738",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-11-29",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "300",
+    "sitting": "1",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1378933824784738",
+    "revision_docids": [
+     "CLIKC1378933824784738"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-300-1-20241129-예산결산특별위원회.txt",
+   "sha256": "aca20e8d37a92f4faa7a36a26f9052c86461b2aad83848d751e9122a56b0418a"
+  },
+  "041009:9:300:2:20241202:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제300회 본회의 제2차 (2024-12-02)",
+   "meeting_date": "2024-12-02",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378933571611600",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-12-02",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "300",
+    "sitting": "2",
+    "meeting": "본회의",
+    "docid": "CLIKC1378933571611600",
+    "revision_docids": [
+     "CLIKC1378933571611600"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-300-2-20241202-본회의.txt",
+   "sha256": "e819c65d9da15e8c71bb76f050c45973d7d46b88e93bc8cc41debcafecbfd240"
+  },
+  "041009:9:300:2:20241211:예산결산특별위원회": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제300회 예산결산특별위원회 제2차 (2024-12-11)",
+   "meeting_date": "2024-12-11",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378932257769111",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-12-11",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "300",
+    "sitting": "2",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1378932257769111",
+    "revision_docids": [
+     "CLIKC1378932257769111"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-300-2-20241211-예산결산특별위원회.txt",
+   "sha256": "260dd19b950d2ec1a6c6051b28be01774fe6ca8cf29b305f09f583d5b4a12853"
+  },
+  "041009:9:300:3:20241212:예산결산특별위원회": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제300회 예산결산특별위원회 제3차 (2024-12-12)",
+   "meeting_date": "2024-12-12",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378932156696675",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-12-12",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "300",
+    "sitting": "3",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1378932156696675",
+    "revision_docids": [
+     "CLIKC1378932156696675"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-300-3-20241212-예산결산특별위원회.txt",
+   "sha256": "d1b95cf28294090ff763044c54a7b42cf1ce533042f24f00011b47bab794a440"
+  },
+  "041009:9:300:4:20241213:예산결산특별위원회": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제300회 예산결산특별위원회 제4차 (2024-12-13)",
+   "meeting_date": "2024-12-13",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378932055627552",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-12-13",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "300",
+    "sitting": "4",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1378932055627552",
+    "revision_docids": [
+     "CLIKC1378932055627552"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-300-4-20241213-예산결산특별위원회.txt",
+   "sha256": "61d721b6abebcb943cb52c4952842bad9416772e624eb097fcea4c3930d9ae5d"
+  },
+  "041009:9:300:5:20241216:예산결산특별위원회": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제300회 예산결산특별위원회 제5차 (2024-12-16)",
+   "meeting_date": "2024-12-16",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378931954563296",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-12-16",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "300",
+    "sitting": "5",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1378931954563296",
+    "revision_docids": [
+     "CLIKC1378931954563296"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-300-5-20241216-예산결산특별위원회.txt",
+   "sha256": "1b5bf2efe0be0ee1a74dba122b0f221a23d8b2c46471e90c0ebd8b1d7cc8804f"
+  },
+  "041009:9:300:3:20241217:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제300회 본회의 제3차 (2024-12-17)",
+   "meeting_date": "2024-12-17",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378931853501797",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-12-17",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "300",
+    "sitting": "3",
+    "meeting": "본회의",
+    "docid": "CLIKC1378931853501797",
+    "revision_docids": [
+     "CLIKC1378931853501797"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-300-3-20241217-본회의.txt",
+   "sha256": "ace203be3fda95bd374d840dcd1dfc95cdf6abcc0e13448b991c6a7f985dc0e2"
+  },
+  "041009:9:301:0:20250120:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제301회 본회의 (2025-01-20)",
+   "meeting_date": "2025-01-20",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378931449228809",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-01-20",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "301",
+    "sitting": "0",
+    "meeting": "본회의",
+    "docid": "CLIKC1378931449228809",
+    "revision_docids": [
+     "CLIKC1378931449228809"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-301-0-20250120-본회의.txt",
+   "sha256": "ba34ee80e9cf8ea835cd62f8951703d4f6285849b9365b12252e997f24cd3c84"
+  },
+  "041009:9:301:1:20250120:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제301회 본회의 제1차 (2025-01-20)",
+   "meeting_date": "2025-01-20",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378931550295721",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-01-20",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "301",
+    "sitting": "1",
+    "meeting": "본회의",
+    "docid": "CLIKC1378931550295721",
+    "revision_docids": [
+     "CLIKC1378931550295721"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-301-1-20250120-본회의.txt",
+   "sha256": "0091bb96acb389b65d6a431aa36a6ae8d501ba7b430ef22300a45faa20f343cd"
+  },
+  "041009:9:301:2:20250121:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제301회 본회의 제2차 (2025-01-21)",
+   "meeting_date": "2025-01-21",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378931348164562",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-01-21",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "301",
+    "sitting": "2",
+    "meeting": "본회의",
+    "docid": "CLIKC1378931348164562",
+    "revision_docids": [
+     "CLIKC1378931348164562"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-301-2-20250121-본회의.txt",
+   "sha256": "7c321c69992f4964127307feaf13a7ce20261e6f247cb09396cc426eb72f179e"
+  },
+  "041009:9:301:3:20250122:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제301회 본회의 제3차 (2025-01-22)",
+   "meeting_date": "2025-01-22",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378931247087507",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-01-22",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "301",
+    "sitting": "3",
+    "meeting": "본회의",
+    "docid": "CLIKC1378931247087507",
+    "revision_docids": [
+     "CLIKC1378931247087507"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-301-3-20250122-본회의.txt",
+   "sha256": "4226bccb4292668fe09f15a934a7d07512b86a70f0307eed2da04da5a2c70590"
+  },
+  "041009:9:301:4:20250124:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제301회 본회의 제4차 (2025-01-24)",
+   "meeting_date": "2025-01-24",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378930943907982",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-01-24",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "301",
+    "sitting": "4",
+    "meeting": "본회의",
+    "docid": "CLIKC1378930943907982",
+    "revision_docids": [
+     "CLIKC1378930943907982"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-301-4-20250124-본회의.txt",
+   "sha256": "542deded0b76a493ada896109fb6ff35d91875f13c70a10bdc653f2f3b435507"
+  },
+  "041009:9:302:0:20250217:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제302회 본회의 (2025-02-17)",
+   "meeting_date": "2025-02-17",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378930539642791",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-02-17",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "302",
+    "sitting": "0",
+    "meeting": "본회의",
+    "docid": "CLIKC1378930539642791",
+    "revision_docids": [
+     "CLIKC1378930539642791"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-302-0-20250217-본회의.txt",
+   "sha256": "ed2d4cd6a975393a8d2b4c317faf4302efcfc04a638b1303a2475fd73e25e9d5"
+  },
+  "041009:9:302:1:20250217:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제302회 본회의 제1차 (2025-02-17)",
+   "meeting_date": "2025-02-17",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378930640699284",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-02-17",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "302",
+    "sitting": "1",
+    "meeting": "본회의",
+    "docid": "CLIKC1378930640699284",
+    "revision_docids": [
+     "CLIKC1378930640699284"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-302-1-20250217-본회의.txt",
+   "sha256": "98cebaa3b382ac45229d6720c43ada6bc7ec3eae9ec911d7ff49ade3d291425f"
+  },
+  "041009:9:302:2:20250218:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제302회 본회의 제2차 (2025-02-18)",
+   "meeting_date": "2025-02-18",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378930337529912",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-02-18",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "302",
+    "sitting": "2",
+    "meeting": "본회의",
+    "docid": "CLIKC1378930337529912",
+    "revision_docids": [
+     "CLIKC1378930337529912"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-302-2-20250218-본회의.txt",
+   "sha256": "4540d5e11bfb5deb45b0676691253bc9970b07d99798103c38ed6cc2095aadd9"
+  },
+  "041009:9:303:0:20250305:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제303회 본회의 (2025-03-05)",
+   "meeting_date": "2025-03-05",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378930034325270",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-03-05",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "303",
+    "sitting": "0",
+    "meeting": "본회의",
+    "docid": "CLIKC1378930034325270",
+    "revision_docids": [
+     "CLIKC1378930034325270"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-303-0-20250305-본회의.txt",
+   "sha256": "6207e676a946232d1086cc7cd695b97fdf9e9b0bce053425f2131b44eea744ab"
+  },
+  "041009:9:303:1:20250305:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제303회 본회의 제1차 (2025-03-05)",
+   "meeting_date": "2025-03-05",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378930135384925",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-03-05",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "303",
+    "sitting": "1",
+    "meeting": "본회의",
+    "docid": "CLIKC1378930135384925",
+    "revision_docids": [
+     "CLIKC1378930135384925"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-303-1-20250305-본회의.txt",
+   "sha256": "46be684e039ac4942579ab263482599eef8f3e0163cfe139bdb6e1396d0f318a"
+  },
+  "041009:9:303:1:20250311:예산결산특별위원회": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제303회 예산결산특별위원회 제1차 (2025-03-11)",
+   "meeting_date": "2025-03-11",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378929326843144",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-03-11",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "303",
+    "sitting": "1",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1378929326843144",
+    "revision_docids": [
+     "CLIKC1378929326843144"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-303-1-20250311-예산결산특별위원회.txt",
+   "sha256": "d4b065efa462c5764e1138ea81f6b7d370305f1c8aedfb9fb157c9e225bbc43e"
+  },
+  "041009:9:303:2:20250312:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제303회 본회의 제2차 (2025-03-12)",
+   "meeting_date": "2025-03-12",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378929225784649",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-03-12",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "303",
+    "sitting": "2",
+    "meeting": "본회의",
+    "docid": "CLIKC1378929225784649",
+    "revision_docids": [
+     "CLIKC1378929225784649"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-303-2-20250312-본회의.txt",
+   "sha256": "acee0e0bfad2dc9238728474c2814e3f799508153d3e4fdf1ce28abd72a5ea37"
+  },
+  "041009:9:304:0:20250415:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제304회 본회의 (2025-04-15)",
+   "meeting_date": "2025-04-15",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378928922596052",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-04-15",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "304",
+    "sitting": "0",
+    "meeting": "본회의",
+    "docid": "CLIKC1378928922596052",
+    "revision_docids": [
+     "CLIKC1378928922596052"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-304-0-20250415-본회의.txt",
+   "sha256": "69952918b77f01de60ff6d878cca0a83ac7fef9b7cbd05ca9b28ee75a33562e2"
+  },
+  "041009:9:304:1:20250415:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제304회 본회의 제1차 (2025-04-15)",
+   "meeting_date": "2025-04-15",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378929023663461",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-04-15",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "304",
+    "sitting": "1",
+    "meeting": "본회의",
+    "docid": "CLIKC1378929023663461",
+    "revision_docids": [
+     "CLIKC1378929023663461"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-304-1-20250415-본회의.txt",
+   "sha256": "a61735190d4494e37343699fe6b3f88999baa6ffc2f77df081b73eb3119f869f"
+  },
+  "041009:9:304:2:20250417:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제304회 본회의 제2차 (2025-04-17)",
+   "meeting_date": "2025-04-17",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378928669403752",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-04-17",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "304",
+    "sitting": "2",
+    "meeting": "본회의",
+    "docid": "CLIKC1378928669403752",
+    "revision_docids": [
+     "CLIKC1378928669403752"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-304-2-20250417-본회의.txt",
+   "sha256": "21b87a239de8c6e85e9814b2280be004b092c128ddf3c655234364f7432c9123"
+  },
+  "041009:9:305:0:20250520:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제305회 본회의 (2025-05-20)",
+   "meeting_date": "2025-05-20",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378928366205570",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-05-20",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "305",
+    "sitting": "0",
+    "meeting": "본회의",
+    "docid": "CLIKC1378928366205570",
+    "revision_docids": [
+     "CLIKC1378928366205570"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-305-0-20250520-본회의.txt",
+   "sha256": "37d8cb26c743b18c1e743fa8997a5d864525f8c9ee052b2530db09f4a44c4232"
+  },
+  "041009:9:305:1:20250520:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제305회 본회의 제1차 (2025-05-20)",
+   "meeting_date": "2025-05-20",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378928467267118",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-05-20",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "305",
+    "sitting": "1",
+    "meeting": "본회의",
+    "docid": "CLIKC1378928467267118",
+    "revision_docids": [
+     "CLIKC1378928467267118"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-305-1-20250520-본회의.txt",
+   "sha256": "a0bdb2865d88a598383efe17a7e912ff23de8a2359523bbcf7457b4a6089e839"
+  },
+  "041009:9:305:2:20250522:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제305회 본회의 제2차 (2025-05-22)",
+   "meeting_date": "2025-05-22",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378928063010900",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-05-22",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "305",
+    "sitting": "2",
+    "meeting": "본회의",
+    "docid": "CLIKC1378928063010900",
+    "revision_docids": [
+     "CLIKC1378928063010900"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-305-2-20250522-본회의.txt",
+   "sha256": "4920ccb9366cbc7848b4a857412966ec01846dd1dac098d71913b24d986cc7ac"
+  },
+  "041009:9:306:0:20250610:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제306회 본회의 (2025-06-10)",
+   "meeting_date": "2025-06-10",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378927557653607",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-06-10",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "306",
+    "sitting": "0",
+    "meeting": "본회의",
+    "docid": "CLIKC1378927557653607",
+    "revision_docids": [
+     "CLIKC1378927557653607"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-306-0-20250610-본회의.txt",
+   "sha256": "ec6cb869ffbbb2c497b7ebe90a8e8a80b46679bf15a3693e69e2cb0316753b6d"
+  },
+  "041009:9:306:1:20250610:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제306회 본회의 제1차 (2025-06-10)",
+   "meeting_date": "2025-06-10",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378927658719382",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-06-10",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "306",
+    "sitting": "1",
+    "meeting": "본회의",
+    "docid": "CLIKC1378927658719382",
+    "revision_docids": [
+     "CLIKC1378927658719382"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-306-1-20250610-본회의.txt",
+   "sha256": "cbb92c292760db00b059a3d52f57df957a5c2db1404c9afc78c98d6f5219ee45"
+  },
+  "041009:9:306:1:20250624:예산결산특별위원회": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제306회 예산결산특별위원회 제1차 (2025-06-24)",
+   "meeting_date": "2025-06-24",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378925637360698",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-06-24",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "306",
+    "sitting": "1",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1378925637360698",
+    "revision_docids": [
+     "CLIKC1378925637360698"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-306-1-20250624-예산결산특별위원회.txt",
+   "sha256": "ae051d8b671f6e0d523cea877fe96e9c3bb07d13a5e24655f855a007fc020e31"
+  },
+  "041009:9:306:2:20250625:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제306회 본회의 제2차 (2025-06-25)",
+   "meeting_date": "2025-06-25",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378925536289995",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-06-25",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "306",
+    "sitting": "2",
+    "meeting": "본회의",
+    "docid": "CLIKC1378925536289995",
+    "revision_docids": [
+     "CLIKC1378925536289995"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-306-2-20250625-본회의.txt",
+   "sha256": "c8db9a80070198726fa9aaf882117fdaf0b05e6bfa7bce83013362f1a83839f1"
+  },
+  "041009:9:307:0:20250715:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제307회 본회의 (2025-07-15)",
+   "meeting_date": "2025-07-15",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378925132021399",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-07-15",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "307",
+    "sitting": "0",
+    "meeting": "본회의",
+    "docid": "CLIKC1378925132021399",
+    "revision_docids": [
+     "CLIKC1378925132021399"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-307-0-20250715-본회의.txt",
+   "sha256": "e98600c618f7117e7e37cb7272aaeba16637dca991d155e32c6f33e734e604fa"
+  },
+  "041009:9:307:1:20250715:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제307회 본회의 제1차 (2025-07-15)",
+   "meeting_date": "2025-07-15",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378925233086733",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-07-15",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "307",
+    "sitting": "1",
+    "meeting": "본회의",
+    "docid": "CLIKC1378925233086733",
+    "revision_docids": [
+     "CLIKC1378925233086733"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-307-1-20250715-본회의.txt",
+   "sha256": "08de5f86eed26e43d0338e2295e442aba0ae15382b1d00a0597a2420ac321775"
+  },
+  "041009:9:307:2:20250716:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제307회 본회의 제2차 (2025-07-16)",
+   "meeting_date": "2025-07-16",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378925030961149",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-07-16",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "307",
+    "sitting": "2",
+    "meeting": "본회의",
+    "docid": "CLIKC1378925030961149",
+    "revision_docids": [
+     "CLIKC1378925030961149"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-307-2-20250716-본회의.txt",
+   "sha256": "2b9fc1093cb6b4b3ec1aec6f15931204ad62fc7a1df14e778713eb4a4cd4e4a0"
+  },
+  "041009:9:307:3:20250717:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제307회 본회의 제3차 (2025-07-17)",
+   "meeting_date": "2025-07-17",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378924929898101",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-07-17",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "307",
+    "sitting": "3",
+    "meeting": "본회의",
+    "docid": "CLIKC1378924929898101",
+    "revision_docids": [
+     "CLIKC1378924929898101"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-307-3-20250717-본회의.txt",
+   "sha256": "518a84ff6bc01a047d26124bf48f3b2bfa072015024d3e99ec8a79a2340dbc61"
+  },
+  "041009:9:307:1:20250724:예산결산특별위원회": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제307회 예산결산특별위원회 제1차 (2025-07-24)",
+   "meeting_date": "2025-07-24",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378924070345540",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-07-24",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "307",
+    "sitting": "1",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1378924070345540",
+    "revision_docids": [
+     "CLIKC1378924070345540"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-307-1-20250724-예산결산특별위원회.txt",
+   "sha256": "64add982cc7740f3913170bfbca34f7767d0b21e0242cdc49aa6886e2d883329"
+  },
+  "041009:9:307:4:20250725:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제307회 본회의 제4차 (2025-07-25)",
+   "meeting_date": "2025-07-25",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378923969259571",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-07-25",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "307",
+    "sitting": "4",
+    "meeting": "본회의",
+    "docid": "CLIKC1378923969259571",
+    "revision_docids": [
+     "CLIKC1378923969259571"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-307-4-20250725-본회의.txt",
+   "sha256": "0e8a6d9e26cef7bc730340f3239b68c29d0a19b98a412383a1fd40c06a13d6fa"
+  },
+  "041009:9:308:0:20250909:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제308회 본회의 (2025-09-09)",
+   "meeting_date": "2025-09-09",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378923666047491",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-09-09",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "308",
+    "sitting": "0",
+    "meeting": "본회의",
+    "docid": "CLIKC1378923666047491",
+    "revision_docids": [
+     "CLIKC1378923666047491"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-308-0-20250909-본회의.txt",
+   "sha256": "5e4cf14db8b483c8e8685abc4c4d73709e8e665cfca76159c1ce503438f35fea"
+  },
+  "041009:9:308:1:20250909:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제308회 본회의 제1차 (2025-09-09)",
+   "meeting_date": "2025-09-09",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378923767117943",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-09-09",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "308",
+    "sitting": "1",
+    "meeting": "본회의",
+    "docid": "CLIKC1378923767117943",
+    "revision_docids": [
+     "CLIKC1378923767117943"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-308-1-20250909-본회의.txt",
+   "sha256": "411a544602e3dec33f762683277628d32e25bb3082504fdf2040400ad03e9bae"
+  },
+  "041009:9:308:1:20250911:예산결산특별위원회": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제308회 예산결산특별위원회 제1차 (2025-09-11)",
+   "meeting_date": "2025-09-11",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378923362830159",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-09-11",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "308",
+    "sitting": "1",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1378923362830159",
+    "revision_docids": [
+     "CLIKC1378923362830159"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-308-1-20250911-예산결산특별위원회.txt",
+   "sha256": "7e7a7de382e1625292d9e2276fa1396e806a60da5be3f8d74eefec151b22014e"
+  },
+  "041009:9:308:2:20250912:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제308회 본회의 제2차 (2025-09-12)",
+   "meeting_date": "2025-09-12",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378923261768496",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-09-12",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "308",
+    "sitting": "2",
+    "meeting": "본회의",
+    "docid": "CLIKC1378923261768496",
+    "revision_docids": [
+     "CLIKC1378923261768496"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-308-2-20250912-본회의.txt",
+   "sha256": "58791c842c155c9baf272e07b756f15da7d365bde6e2d19fb830f9f8aaacd6a1"
+  },
+  "041009:9:309:0:20251021:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제309회 본회의 (2025-10-21)",
+   "meeting_date": "2025-10-21",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378922756277579",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-10-21",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "309",
+    "sitting": "0",
+    "meeting": "본회의",
+    "docid": "CLIKC1378922756277579",
+    "revision_docids": [
+     "CLIKC1378922756277579"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-309-0-20251021-본회의.txt",
+   "sha256": "ee73168c2efa9c920fec07890d1c3cc93b679352e4e040af9f306b8c5ad40eba"
+  },
+  "041009:9:309:1:20251021:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제309회 본회의 제1차 (2025-10-21)",
+   "meeting_date": "2025-10-21",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378922857343129",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-10-21",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "309",
+    "sitting": "1",
+    "meeting": "본회의",
+    "docid": "CLIKC1378922857343129",
+    "revision_docids": [
+     "CLIKC1378922857343129"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-309-1-20251021-본회의.txt",
+   "sha256": "ae3139648bfe3d2aca34587f82927dd84b742ba487a5cd6afb80bb223669efd3"
+  },
+  "041009:9:309:2:20251024:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제309회 본회의 제2차 (2025-10-24)",
+   "meeting_date": "2025-10-24",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378922655206524",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-10-24",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "309",
+    "sitting": "2",
+    "meeting": "본회의",
+    "docid": "CLIKC1378922655206524",
+    "revision_docids": [
+     "CLIKC1378922655206524"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-309-2-20251024-본회의.txt",
+   "sha256": "b13505d9f6d2ee8e60f944b5c27d0bcfba3a4fa548942e31a59ce4419fcf9990"
+  },
+  "041009:9:309:3:20251027:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제309회 본회의 제3차 (2025-10-27)",
+   "meeting_date": "2025-10-27",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378922554110733",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-10-27",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "309",
+    "sitting": "3",
+    "meeting": "본회의",
+    "docid": "CLIKC1378922554110733",
+    "revision_docids": [
+     "CLIKC1378922554110733"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-309-3-20251027-본회의.txt",
+   "sha256": "d044d5089eb680cd21eefb58c6c5f881aaeb8d88e380bcbf92378412959386cc"
+  },
+  "041009:9:309:4:20251028:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제309회 본회의 제4차 (2025-10-28)",
+   "meeting_date": "2025-10-28",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378922453034642",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-10-28",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "309",
+    "sitting": "4",
+    "meeting": "본회의",
+    "docid": "CLIKC1378922453034642",
+    "revision_docids": [
+     "CLIKC1378922453034642"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-309-4-20251028-본회의.txt",
+   "sha256": "144731150bb43772ec4c7f6833a5ea8bf1914ba92a5329c3afccb539a2176d33"
+  },
+  "041009:9:309:5:20251030:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제309회 본회의 제5차 (2025-10-30)",
+   "meeting_date": "2025-10-30",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378922149822098",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-10-30",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "309",
+    "sitting": "5",
+    "meeting": "본회의",
+    "docid": "CLIKC1378922149822098",
+    "revision_docids": [
+     "CLIKC1378922149822098"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-309-5-20251030-본회의.txt",
+   "sha256": "40c6a640f775a5a385329d0cd6c9efd70fefbd72c47cdff0d246b4ea4e962081"
+  },
+  "041009:9:310:0:20251125:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제310회 본회의 (2025-11-25)",
+   "meeting_date": "2025-11-25",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378921745535738",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-11-25",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "310",
+    "sitting": "0",
+    "meeting": "본회의",
+    "docid": "CLIKC1378921745535738",
+    "revision_docids": [
+     "CLIKC1378921745535738"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-310-0-20251125-본회의.txt",
+   "sha256": "f85c42daf8a1089f3adfd08ff3078e29ac851384c0c597a1c0564493a074f896"
+  },
+  "041009:9:310:1:20251125:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제310회 본회의 제1차 (2025-11-25)",
+   "meeting_date": "2025-11-25",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378921846603564",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-11-25",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "310",
+    "sitting": "1",
+    "meeting": "본회의",
+    "docid": "CLIKC1378921846603564",
+    "revision_docids": [
+     "CLIKC1378921846603564"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-310-1-20251125-본회의.txt",
+   "sha256": "f8f8d98f1251a0cb0cce0b7620c63a7bcce028d9eb7a14380c47df4ff38bf8eb"
+  },
+  "041009:9:310:1:20251201:예산결산특별위원회": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제310회 예산결산특별위원회 제1차 (2025-12-01)",
+   "meeting_date": "2025-12-01",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378921037950770",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-12-01",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "310",
+    "sitting": "1",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1378921037950770",
+    "revision_docids": [
+     "CLIKC1378921037950770"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-310-1-20251201-예산결산특별위원회.txt",
+   "sha256": "c789c0f7c44f2fa0cad0681cc4b5773e6a1a5386e37174b1aa7adaa6a17113e1"
+  },
+  "041009:9:310:2:20251202:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제310회 본회의 제2차 (2025-12-02)",
+   "meeting_date": "2025-12-02",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378920936870392",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-12-02",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "310",
+    "sitting": "2",
+    "meeting": "본회의",
+    "docid": "CLIKC1378920936870392",
+    "revision_docids": [
+     "CLIKC1378920936870392"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-310-2-20251202-본회의.txt",
+   "sha256": "f6369c2f6fbfac72a16d53de965270b94db28cba73a644d96a2afb87299c6a3a"
+  },
+  "041009:9:310:2:20251211:예산결산특별위원회": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제310회 예산결산특별위원회 제2차 (2025-12-11)",
+   "meeting_date": "2025-12-11",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378919668959095",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-12-11",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "310",
+    "sitting": "2",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1378919668959095",
+    "revision_docids": [
+     "CLIKC1378919668959095"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-310-2-20251211-예산결산특별위원회.txt",
+   "sha256": "81b53839dc2e373b3575e88f22c03680f94eb2fef62e65cd5ac1ba30110ca80d"
+  },
+  "041009:9:310:3:20251212:예산결산특별위원회": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제310회 예산결산특별위원회 제3차 (2025-12-12)",
+   "meeting_date": "2025-12-12",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378919567873583",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-12-12",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "310",
+    "sitting": "3",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1378919567873583",
+    "revision_docids": [
+     "CLIKC1378919567873583"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-310-3-20251212-예산결산특별위원회.txt",
+   "sha256": "9ce41ddf915dae261517876c2c2ea91b4cc5b31dbeb14d56647d0733990232e2"
+  },
+  "041009:9:310:4:20251215:예산결산특별위원회": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제310회 예산결산특별위원회 제4차 (2025-12-15)",
+   "meeting_date": "2025-12-15",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378919466761757",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-12-15",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "310",
+    "sitting": "4",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1378919466761757",
+    "revision_docids": [
+     "CLIKC1378919466761757"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-310-4-20251215-예산결산특별위원회.txt",
+   "sha256": "dcd256b30be8b4489a436a047d188c4f8e5fe59c87b68865928b30e4e604775c"
+  },
+  "041009:9:310:5:20251216:예산결산특별위원회": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제310회 예산결산특별위원회 제5차 (2025-12-16)",
+   "meeting_date": "2025-12-16",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378919365675441",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-12-16",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "310",
+    "sitting": "5",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1378919365675441",
+    "revision_docids": [
+     "CLIKC1378919365675441"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-310-5-20251216-예산결산특별위원회.txt",
+   "sha256": "33a20b1892dd160b0059c907e0265becee654a9c48ac5d55dd13be182ff47307"
+  },
+  "041009:9:310:3:20251217:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제310회 본회의 제3차 (2025-12-17)",
+   "meeting_date": "2025-12-17",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378919264598404",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-12-17",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "310",
+    "sitting": "3",
+    "meeting": "본회의",
+    "docid": "CLIKC1378919264598404",
+    "revision_docids": [
+     "CLIKC1378919264598404"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-310-3-20251217-본회의.txt",
+   "sha256": "31e8f6210b5194209512d9887e0bce30c5ddb008b773b0a42d93efcbdf8e4f78"
+  },
+  "041009:9:311:0:20260105:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제311회 본회의 (2026-01-05)",
+   "meeting_date": "2026-01-05",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378919062403207",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2026-01-05",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "311",
+    "sitting": "0",
+    "meeting": "본회의",
+    "docid": "CLIKC1378919062403207",
+    "revision_docids": [
+     "CLIKC1378919062403207"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-311-0-20260105-본회의.txt",
+   "sha256": "e37f673717f8248f3d40c4ee25614f6f4260e284bb95c48ae4e6697bbac777ee"
+  },
+  "041009:9:311:1:20260105:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제311회 본회의 제1차 (2026-01-05)",
+   "meeting_date": "2026-01-05",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378919163483683",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2026-01-05",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "311",
+    "sitting": "1",
+    "meeting": "본회의",
+    "docid": "CLIKC1378919163483683",
+    "revision_docids": [
+     "CLIKC1378919163483683"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-311-1-20260105-본회의.txt",
+   "sha256": "828f1900464c139de4a354a284bd26c661948a972c32f42bb4ecb6a4c840c4b3"
+  },
+  "041009:9:311:2:20260106:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제311회 본회의 제2차 (2026-01-06)",
+   "meeting_date": "2026-01-06",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378918961325782",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2026-01-06",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "311",
+    "sitting": "2",
+    "meeting": "본회의",
+    "docid": "CLIKC1378918961325782",
+    "revision_docids": [
+     "CLIKC1378918961325782"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-311-2-20260106-본회의.txt",
+   "sha256": "7a749ce7a238ee0670f1c515fddfcd91dceb6bb1573f8d1cf6900d6d8d67a164"
+  },
+  "041009:9:311:3:20260107:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제311회 본회의 제3차 (2026-01-07)",
+   "meeting_date": "2026-01-07",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378918860247842",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2026-01-07",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "311",
+    "sitting": "3",
+    "meeting": "본회의",
+    "docid": "CLIKC1378918860247842",
+    "revision_docids": [
+     "CLIKC1378918860247842"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-311-3-20260107-본회의.txt",
+   "sha256": "8686b39b99e8e7430fb325bd575cc39a9036ba9a1b812a851aa77ea43b318243"
+  },
+  "041009:9:311:4:20260109:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제311회 본회의 제4차 (2026-01-09)",
+   "meeting_date": "2026-01-09",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378918556960509",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2026-01-09",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "311",
+    "sitting": "4",
+    "meeting": "본회의",
+    "docid": "CLIKC1378918556960509",
+    "revision_docids": [
+     "CLIKC1378918556960509"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-311-4-20260109-본회의.txt",
+   "sha256": "ff5ee5e2ed39af565e5217ed66467cd573676e4d3ed31fa0f5135bdb16369da3"
+  },
+  "041009:9:312:0:20260310:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제312회 본회의 (2026-03-10)",
+   "meeting_date": "2026-03-10",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378918152605054",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2026-03-10",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "312",
+    "sitting": "0",
+    "meeting": "본회의",
+    "docid": "CLIKC1378918152605054",
+    "revision_docids": [
+     "CLIKC1378918152605054"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-312-0-20260310-본회의.txt",
+   "sha256": "e57be573bd2ad0f971281d02b7e516843386e3dfc310975ef8a36af0db244852"
+  },
+  "041009:9:312:1:20260310:본회의": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제312회 본회의 제1차 (2026-03-10)",
+   "meeting_date": "2026-03-10",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378918253712174",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2026-03-10",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "312",
+    "sitting": "1",
+    "meeting": "본회의",
+    "docid": "CLIKC1378918253712174",
+    "revision_docids": [
+     "CLIKC1378918253712174"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-312-1-20260310-본회의.txt",
+   "sha256": "bd11899867344d99bc6f99bbe8353c3dd1cb8ce4c0d2eb72a55c1e4f35a1556d"
+  },
+  "041009:9:312:1:20260312:예산결산특별위원회": {
+   "council": "서산시의회",
+   "status": "archived",
+   "title": "충청남도 서산시의회 제312회 예산결산특별위원회 제1차 (2026-03-12)",
+   "meeting_date": "2026-03-12",
+   "publisher_raw": "충청남도 서산시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1378917950157330",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2026-03-12",
+    "published_from": "meeting_date",
+    "council": "충청남도 서산시의회",
+    "council_id": "041009",
+    "term": "9",
+    "session": "312",
+    "sitting": "1",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1378917950157330",
+    "revision_docids": [
+     "CLIKC1378917950157330"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/041009-9-312-1-20260312-예산결산특별위원회.txt",
+   "sha256": "394b2be4efac0e95d9e3cc61959c1bf6b9e942a63b523c2e6c854a401960ce16"
+  },
+  "033010:9:253:0:20241014:본회의": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제253회 본회의 (2024-10-14)",
+   "meeting_date": "2024-10-14",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1243120404842428",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-10-14",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "253",
+    "sitting": "0",
+    "meeting": "본회의",
+    "docid": "CLIKC1243120404842428",
+    "revision_docids": [
+     "CLIKC1243120404842428"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-253-0-20241014-본회의.txt",
+   "sha256": "65323b775f368cfe3e7e6a0a9c9d67afc73e6d4f4afd685cc990954957423d47"
+  },
+  "033010:9:253:1:20241014:본회의": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제253회 본회의 제1차 (2024-10-14)",
+   "meeting_date": "2024-10-14",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1243120424949232",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-10-14",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "253",
+    "sitting": "1",
+    "meeting": "본회의",
+    "docid": "CLIKC1243120424949232",
+    "revision_docids": [
+     "CLIKC1243120424949232"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-253-1-20241014-본회의.txt",
+   "sha256": "9760529dc8729e7de24c0ba8b65b7b699035465e7fa62dd2d0d1148a73400fdc"
+  },
+  "033010:9:253:2:20241018:본회의": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제253회 본회의 제2차 (2024-10-18)",
+   "meeting_date": "2024-10-18",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1243120244099933",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-10-18",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "253",
+    "sitting": "2",
+    "meeting": "본회의",
+    "docid": "CLIKC1243120244099933",
+    "revision_docids": [
+     "CLIKC1243120244099933"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-253-2-20241018-본회의.txt",
+   "sha256": "01854711d07318de5df60b4229a4188f6530c215340f3a7ae95a19cfaf061463"
+  },
+  "033010:9:254:0:20241120:본회의": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제254회 본회의 (2024-11-20)",
+   "meeting_date": "2024-11-20",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1243120058351689",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-11-20",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "254",
+    "sitting": "0",
+    "meeting": "본회의",
+    "docid": "CLIKC1243120058351689",
+    "revision_docids": [
+     "CLIKC1243120058351689"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-254-0-20241120-본회의.txt",
+   "sha256": "ec6804b236a064db313f93ea55d1ab296a71658a23438815946ee719ddcc8213"
+  },
+  "033010:9:254:1:20241120:본회의": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제254회 본회의 제1차 (2024-11-20)",
+   "meeting_date": "2024-11-20",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1243120098460357",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-11-20",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "254",
+    "sitting": "1",
+    "meeting": "본회의",
+    "docid": "CLIKC1243120098460357",
+    "revision_docids": [
+     "CLIKC1243120098460357"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-254-1-20241120-본회의.txt",
+   "sha256": "6b2576fb9319ca4d47b7aafadfecc680f2c385ff3702f0546fadbf9d68915856"
+  },
+  "033010:9:254:1:20241120:예산결산특별위원회": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제254회 예산결산특별위원회 제1차 (2024-11-20)",
+   "meeting_date": "2024-11-20",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1243120138672021",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-11-20",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "254",
+    "sitting": "1",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1243120138672021",
+    "revision_docids": [
+     "CLIKC1243120138672021"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-254-1-20241120-예산결산특별위원회.txt",
+   "sha256": "9dbb647c55961f1b19ebf5828c5c23f0afe9c3d054d44d5a91d3852759f6a512"
+  },
+  "033010:9:254:2:20241126:예산결산특별위원회": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제254회 예산결산특별위원회 제2차 (2024-11-26)",
+   "meeting_date": "2024-11-26",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1243119977926719",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-11-26",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "254",
+    "sitting": "2",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1243119977926719",
+    "revision_docids": [
+     "CLIKC1243119977926719"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-254-2-20241126-예산결산특별위원회.txt",
+   "sha256": "7ac1767b02b535a26afc92d1137dab90404289e89ed127cf20175adcf3975288"
+  },
+  "033010:9:254:3:20241203:예산결산특별위원회": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제254회 예산결산특별위원회 제3차 (2024-12-03)",
+   "meeting_date": "2024-12-03",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1243119741765877",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-12-03",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "254",
+    "sitting": "3",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1243119741765877",
+    "revision_docids": [
+     "CLIKC1243119741765877"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-254-3-20241203-예산결산특별위원회.txt",
+   "sha256": "898583d1408ed6fe8397a8a7828e7af2bf33d54155f106a285fd169b0598967e"
+  },
+  "033010:9:254:4:20241205:예산결산특별위원회": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제254회 예산결산특별위원회 제4차 (2024-12-05)",
+   "meeting_date": "2024-12-05",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1243119721655421",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-12-05",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "254",
+    "sitting": "4",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1243119721655421",
+    "revision_docids": [
+     "CLIKC1243119721655421"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-254-4-20241205-예산결산특별위원회.txt",
+   "sha256": "d1ae646f9b138c4651cb55d2d008e4b39e2e3fc950579c0030b91c02907f92dd"
+  },
+  "033010:9:254:5:20241206:예산결산특별위원회": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제254회 예산결산특별위원회 제5차 (2024-12-06)",
+   "meeting_date": "2024-12-06",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1243119701550041",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-12-06",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "254",
+    "sitting": "5",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1243119701550041",
+    "revision_docids": [
+     "CLIKC1243119701550041"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-254-5-20241206-예산결산특별위원회.txt",
+   "sha256": "5692a85799f3552f519f9efbc0500617c7785362cb046cb33516298ec750e6bd"
+  },
+  "033010:9:254:6:20241209:예산결산특별위원회": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제254회 예산결산특별위원회 제6차 (2024-12-09)",
+   "meeting_date": "2024-12-09",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1243119681410369",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-12-09",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "254",
+    "sitting": "6",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1243119681410369",
+    "revision_docids": [
+     "CLIKC1243119681410369"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-254-6-20241209-예산결산특별위원회.txt",
+   "sha256": "3dece2d726c5ca0ce3c29001968921793694e0abe5f6059c8dbfbd4f2784a94f"
+  },
+  "033010:9:254:7:20241210:예산결산특별위원회": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제254회 예산결산특별위원회 제7차 (2024-12-10)",
+   "meeting_date": "2024-12-10",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1243119621196135",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-12-10",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "254",
+    "sitting": "7",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1243119621196135",
+    "revision_docids": [
+     "CLIKC1243119621196135"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-254-7-20241210-예산결산특별위원회.txt",
+   "sha256": "3a9cf6a3541c9ccad28a8d924d97453b94ee8334cf62269635635e7466422c64"
+  },
+  "033010:9:254:8:20241211:예산결산특별위원회": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제254회 예산결산특별위원회 제8차 (2024-12-11)",
+   "meeting_date": "2024-12-11",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1243119601089821",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-12-11",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "254",
+    "sitting": "8",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1243119601089821",
+    "revision_docids": [
+     "CLIKC1243119601089821"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-254-8-20241211-예산결산특별위원회.txt",
+   "sha256": "edd1259a81499729a61222ad06d3ae48da36970ce610f9a3aa3ee515da9eb9c0"
+  },
+  "033010:9:254:9:20241212:예산결산특별위원회": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제254회 예산결산특별위원회 제9차 (2024-12-12)",
+   "meeting_date": "2024-12-12",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1243119580983820",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-12-12",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "254",
+    "sitting": "9",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1243119580983820",
+    "revision_docids": [
+     "CLIKC1243119580983820"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-254-9-20241212-예산결산특별위원회.txt",
+   "sha256": "35f298d8242cb7649319cb76358e54b57808fa078d02ae5fd72dde3f3f61920f"
+  },
+  "033010:9:254:2:20241216:본회의": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제254회 본회의 제2차 (2024-12-16)",
+   "meeting_date": "2024-12-16",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1243119560879020",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-12-16",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "254",
+    "sitting": "2",
+    "meeting": "본회의",
+    "docid": "CLIKC1243119560879020",
+    "revision_docids": [
+     "CLIKC1243119560879020"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-254-2-20241216-본회의.txt",
+   "sha256": "b0f757e94461613ee2e4071f7f61bf1f3e87601559f75f22a7d2644b3e128ec8"
+  },
+  "033010:9:254:3:20241217:본회의": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제254회 본회의 제3차 (2024-12-17)",
+   "meeting_date": "2024-12-17",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1243119540772041",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-12-17",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "254",
+    "sitting": "3",
+    "meeting": "본회의",
+    "docid": "CLIKC1243119540772041",
+    "revision_docids": [
+     "CLIKC1243119540772041"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-254-3-20241217-본회의.txt",
+   "sha256": "cd5cf1bbcb748c1f88d5227c661c39e0d4aa397a718dbe30642bbae94e0c08c3"
+  },
+  "033010:9:254:4:20241218:본회의": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제254회 본회의 제4차 (2024-12-18)",
+   "meeting_date": "2024-12-18",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1243119520638290",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2024-12-18",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "254",
+    "sitting": "4",
+    "meeting": "본회의",
+    "docid": "CLIKC1243119520638290",
+    "revision_docids": [
+     "CLIKC1243119520638290"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-254-4-20241218-본회의.txt",
+   "sha256": "660f51260d6694629cc6878d3c4a5257c44d2cc8ec009dc99c74794762957603"
+  },
+  "033010:9:255:0:20250117:본회의": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제255회 본회의 (2025-01-17)",
+   "meeting_date": "2025-01-17",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1243119400105570",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-01-17",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "255",
+    "sitting": "0",
+    "meeting": "본회의",
+    "docid": "CLIKC1243119400105570",
+    "revision_docids": [
+     "CLIKC1243119400105570"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-255-0-20250117-본회의.txt",
+   "sha256": "fd3f640234f55fc823122740e7421ff0236a67ade9ffbd70dff8aa45f3e1ca83"
+  },
+  "033010:9:255:1:20250117:본회의": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제255회 본회의 제1차 (2025-01-17)",
+   "meeting_date": "2025-01-17",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1243119440214747",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-01-17",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "255",
+    "sitting": "1",
+    "meeting": "본회의",
+    "docid": "CLIKC1243119440214747",
+    "revision_docids": [
+     "CLIKC1243119440214747"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-255-1-20250117-본회의.txt",
+   "sha256": "cafdcf8e2335402973a5d2c85f52d8000caaf61684fda57bade127f668e0e773"
+  },
+  "033010:9:255:2:20250124:본회의": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제255회 본회의 제2차 (2025-01-24)",
+   "meeting_date": "2025-01-24",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1243119239162910",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-01-24",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "255",
+    "sitting": "2",
+    "meeting": "본회의",
+    "docid": "CLIKC1243119239162910",
+    "revision_docids": [
+     "CLIKC1243119239162910"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-255-2-20250124-본회의.txt",
+   "sha256": "0deacb5d490878656b13446ec5185e68ec929a9fc0eba50befaef9d11d9ce504"
+  },
+  "033010:9:256:0:20250310:본회의": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제256회 본회의 (2025-03-10)",
+   "meeting_date": "2025-03-10",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1243119138736532",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-03-10",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "256",
+    "sitting": "0",
+    "meeting": "본회의",
+    "docid": "CLIKC1243119138736532",
+    "revision_docids": [
+     "CLIKC1243119138736532"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-256-0-20250310-본회의.txt",
+   "sha256": "b1a09d087961289e589f241b03d8417ecbf197768a4a7a1be7e67f551e4df925"
+  },
+  "033010:9:256:1:20250310:본회의": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제256회 본회의 제1차 (2025-03-10)",
+   "meeting_date": "2025-03-10",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1243119158842145",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-03-10",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "256",
+    "sitting": "1",
+    "meeting": "본회의",
+    "docid": "CLIKC1243119158842145",
+    "revision_docids": [
+     "CLIKC1243119158842145"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-256-1-20250310-본회의.txt",
+   "sha256": "6cdd2833abe02a08bdf2d913ec310a7795a16229b70bf709529b7ea88221c7f0"
+  },
+  "033010:9:256:2:20250314:본회의": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제256회 본회의 제2차 (2025-03-14)",
+   "meeting_date": "2025-03-14",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1243118997998633",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-03-14",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "256",
+    "sitting": "2",
+    "meeting": "본회의",
+    "docid": "CLIKC1243118997998633",
+    "revision_docids": [
+     "CLIKC1243118997998633"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-256-2-20250314-본회의.txt",
+   "sha256": "d4898f7957c99b39fc4313bb62d3bf025864f0490c0e030ca46779cbe22ae32d"
+  },
+  "033010:9:257:0:20250416:본회의": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제257회 본회의 (2025-04-16)",
+   "meeting_date": "2025-04-16",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1257211230473793",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-04-16",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "257",
+    "sitting": "0",
+    "meeting": "본회의",
+    "docid": "CLIKC1257211230473793",
+    "revision_docids": [
+     "CLIKC1257211230473793"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-257-0-20250416-본회의.txt",
+   "sha256": "2d280051160e9235951d4ba562a92a769a998d35f60283600f3afc50b4c146a9"
+  },
+  "033010:9:257:1:20250416:본회의": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제257회 본회의 제1차 (2025-04-16)",
+   "meeting_date": "2025-04-16",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1257211250581495",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-04-16",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "257",
+    "sitting": "1",
+    "meeting": "본회의",
+    "docid": "CLIKC1257211250581495",
+    "revision_docids": [
+     "CLIKC1257211250581495"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-257-1-20250416-본회의.txt",
+   "sha256": "e2863fee27e9ca7de034f9bb593be142aef7d64323267b2f36ed6fab480ef413"
+  },
+  "033010:9:257:1:20250416:예산결산특별위원회": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제257회 예산결산특별위원회 제1차 (2025-04-16)",
+   "meeting_date": "2025-04-16",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1257211270687230",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-04-16",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "257",
+    "sitting": "1",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1257211270687230",
+    "revision_docids": [
+     "CLIKC1257211270687230"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-257-1-20250416-예산결산특별위원회.txt",
+   "sha256": "84bbb41d110dcf56edc83f91cc3fd56c9bd850b1607c56d0e9b193523c5a105b"
+  },
+  "033010:9:257:2:20250423:예산결산특별위원회": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제257회 예산결산특별위원회 제2차 (2025-04-23)",
+   "meeting_date": "2025-04-23",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1263259232342833",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-04-23",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "257",
+    "sitting": "2",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1263259232342833",
+    "revision_docids": [
+     "CLIKC1263259232342833"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-257-2-20250423-예산결산특별위원회.txt",
+   "sha256": "ee50e3d08fbf41ca436ab15eda13ec1d011fd3d71a5cb37c2da35b541968052e"
+  },
+  "033010:9:257:3:20250424:예산결산특별위원회": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제257회 예산결산특별위원회 제3차 (2025-04-24)",
+   "meeting_date": "2025-04-24",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1267579250588820",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-04-24",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "257",
+    "sitting": "3",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1267579250588820",
+    "revision_docids": [
+     "CLIKC1267579250588820"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-257-3-20250424-예산결산특별위원회.txt",
+   "sha256": "4b50c41378c57d3f1217aa05f415c8ba5b80d8f35cc1980c080723f50832ee56"
+  },
+  "033010:9:257:4:20250425:예산결산특별위원회": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제257회 예산결산특별위원회 제4차 (2025-04-25)",
+   "meeting_date": "2025-04-25",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1264987492270870",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-04-25",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "257",
+    "sitting": "4",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1264987492270870",
+    "revision_docids": [
+     "CLIKC1264987492270870"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-257-4-20250425-예산결산특별위원회.txt",
+   "sha256": "98504922b20383827ad34f1856d4f5378e9c0a72c02e01527ea4593eb3073e07"
+  },
+  "033010:9:257:5:20250428:예산결산특별위원회": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제257회 예산결산특별위원회 제5차 (2025-04-28)",
+   "meeting_date": "2025-04-28",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1268443252442955",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-04-28",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "257",
+    "sitting": "5",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1268443252442955",
+    "revision_docids": [
+     "CLIKC1268443252442955"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-257-5-20250428-예산결산특별위원회.txt",
+   "sha256": "166bfe8db4a61aae04257d2906db544c65c6d578291001ce46c70722c4d47d26"
+  },
+  "033010:9:257:2:20250430:본회의": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제257회 본회의 제2차 (2025-04-30)",
+   "meeting_date": "2025-04-30",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1269307500512227",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-04-30",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "257",
+    "sitting": "2",
+    "meeting": "본회의",
+    "docid": "CLIKC1269307500512227",
+    "revision_docids": [
+     "CLIKC1269307500512227"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-257-2-20250430-본회의.txt",
+   "sha256": "48bdb7fc2e0f6ff040b17d48839fa7b5ba0c50f5d436140571835e86e5c4564d"
+  },
+  "033010:9:258:0:20250610:본회의": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제258회 본회의 (2025-06-10)",
+   "meeting_date": "2025-06-10",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1304731232354885",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-06-10",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "258",
+    "sitting": "0",
+    "meeting": "본회의",
+    "docid": "CLIKC1304731232354885",
+    "revision_docids": [
+     "CLIKC1304731232354885"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-258-0-20250610-본회의.txt",
+   "sha256": "0c8c15166acdb881eaca78d5fa917d0f9bcb7bd896e4b9e6d24769086c54bda3"
+  },
+  "033010:9:258:1:20250610:본회의": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제258회 본회의 제1차 (2025-06-10)",
+   "meeting_date": "2025-06-10",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1305595250621791",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-06-10",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "258",
+    "sitting": "1",
+    "meeting": "본회의",
+    "docid": "CLIKC1305595250621791",
+    "revision_docids": [
+     "CLIKC1305595250621791"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-258-1-20250610-본회의.txt",
+   "sha256": "939444660a472e392695ccf3debb6699e68fc0a856b041dca58f93f523163e31"
+  },
+  "033010:9:258:1:20250610:예산결산특별위원회": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제258회 예산결산특별위원회 제1차 (2025-06-10)",
+   "meeting_date": "2025-06-10",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1304731252461760",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-06-10",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "258",
+    "sitting": "1",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1304731252461760",
+    "revision_docids": [
+     "CLIKC1304731252461760"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-258-1-20250610-예산결산특별위원회.txt",
+   "sha256": "5c5b39f5ac426e3a7b8940fa76727aa4eec3c66bd71bb104f28e0dd4b636a423"
+  },
+  "033010:9:258:2:20250619:예산결산특별위원회": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제258회 예산결산특별위원회 제2차 (2025-06-19)",
+   "meeting_date": "2025-06-19",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1312507230573616",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-06-19",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "258",
+    "sitting": "2",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1312507230573616",
+    "revision_docids": [
+     "CLIKC1312507230573616"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-258-2-20250619-예산결산특별위원회.txt",
+   "sha256": "3dfd86e17d2a6d059074014ad674a62d87a22bcd082566e0ca74b0ea1995808a"
+  },
+  "033010:9:258:2:20250620:본회의": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제258회 본회의 제2차 (2025-06-20)",
+   "meeting_date": "2025-06-20",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1317691252916168",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-06-20",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "258",
+    "sitting": "2",
+    "meeting": "본회의",
+    "docid": "CLIKC1317691252916168",
+    "revision_docids": [
+     "CLIKC1317691252916168"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-258-2-20250620-본회의.txt",
+   "sha256": "135a9dd5f12a9320bcd7bcaaa3321e11d366b8cf8f64c57d34eb68531c3b8485"
+  },
+  "033010:9:258:3:20250623:본회의": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제258회 본회의 제3차 (2025-06-23)",
+   "meeting_date": "2025-06-23",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1317691232808714",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-06-23",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "258",
+    "sitting": "3",
+    "meeting": "본회의",
+    "docid": "CLIKC1317691232808714",
+    "revision_docids": [
+     "CLIKC1317691232808714"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-258-3-20250623-본회의.txt",
+   "sha256": "12fccaecdea732821e69c3d29b7e8e4259d95dbdfff3d14de224a985b99825af"
+  },
+  "033010:9:258:4:20250624:본회의": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제258회 본회의 제4차 (2025-06-24)",
+   "meeting_date": "2025-06-24",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1319419237348833",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-06-24",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "258",
+    "sitting": "4",
+    "meeting": "본회의",
+    "docid": "CLIKC1319419237348833",
+    "revision_docids": [
+     "CLIKC1319419237348833",
+     "CLIKC1318555240465535"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-258-4-20250624-본회의.txt",
+   "sha256": "2d34bc07579a2ec14dd835190901cce927fec0a0bc7f3dc27f285a824245ac18"
+  },
+  "033010:9:259:0:20250901:본회의": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제259회 본회의 (2025-09-01)",
+   "meeting_date": "2025-09-01",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1376443232292148",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-09-01",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "259",
+    "sitting": "0",
+    "meeting": "본회의",
+    "docid": "CLIKC1376443232292148",
+    "revision_docids": [
+     "CLIKC1376443232292148"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-259-0-20250901-본회의.txt",
+   "sha256": "ec701ba8a7868cbdfd46b15e794b2e16d1bf65bbd402bb28dcc9be22798878bd"
+  },
+  "033010:9:259:1:20250901:본회의": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제259회 본회의 제1차 (2025-09-01)",
+   "meeting_date": "2025-09-01",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1376443252399560",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-09-01",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "259",
+    "sitting": "1",
+    "meeting": "본회의",
+    "docid": "CLIKC1376443252399560",
+    "revision_docids": [
+     "CLIKC1376443252399560"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-259-1-20250901-본회의.txt",
+   "sha256": "7078c340a6011bdaf1a5969dfb3c1cc2e8dfe91cc6fadb6d3c8d4a64f62ed8ff"
+  },
+  "033010:9:259:1:20250901:예산결산특별위원회": {
+   "council": "원주시의회",
+   "status": "archived",
+   "title": "강원특별자치도 원주시의회 제259회 예산결산특별위원회 제1차 (2025-09-01)",
+   "meeting_date": "2025-09-01",
+   "publisher_raw": "강원특별자치도 원주시의회",
+   "url": "https://clik.nanet.go.kr/potal/search/searchView.do?collection=minutes&DOCID=CLIKC1376443292651084",
+   "mime": "text/plain; charset=utf-8",
+   "structured": {
+    "meeting_date": "2025-09-01",
+    "published_from": "meeting_date",
+    "council": "강원특별자치도 원주시의회",
+    "council_id": "033010",
+    "term": "9",
+    "session": "259",
+    "sitting": "1",
+    "meeting": "예산결산특별위원회",
+    "docid": "CLIKC1376443292651084",
+    "revision_docids": [
+     "CLIKC1376443292651084"
+    ],
+    "original_file_url": null
+   },
+   "path": "sources/033010-9-259-1-20250901-예산결산특별위원회.txt",
+   "sha256": "975b54bfd3f94a84aa28d61ea98467d517819e1fa252ab0daca5749be4ba8206"
   }
  },
  "runs": [
@@ -9804,6 +12706,24 @@
    "finished_at": "2026-10-02T02:13:53+00:00",
    "detail_calls": 373,
    "stopped": null
+  },
+  {
+   "started_at": "2026-10-02T02:24:09+00:00",
+   "tried_ids": {
+    "서산시의회": {
+     "041009": "충청남도 서산시의회"
+    },
+    "강남구의회": {
+     "002002": "서울특별시 강남구의회"
+    },
+    "원주시의회": {
+     "033010": "강원특별자치도 원주시의회"
+    }
+   },
+   "not_found": [],
+   "finished_at": "2026-10-02T02:25:03+00:00",
+   "detail_calls": 111,
+   "stopped": null
   }
  ],
  "rule": {
@@ -9812,5 +12732,5 @@
   "meeting_pattern": "본회의|예산결산"
  },
  "source": "국회도서관 지방의정포털(CLIK) Open API, minutes.do list + detail",
- "complete": false
+ "complete": true
 }
