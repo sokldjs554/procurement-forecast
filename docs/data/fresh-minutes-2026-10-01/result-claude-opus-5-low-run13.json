@@ -1,0 +1,1093 @@
+{
+  "schema_version": "source-holdout-result-v1",
+  "evaluated_at": "2026-10-02T15:55:58.669297+00:00",
+  "code_revision": "30f5c996ec4416dd0a83c3f4c7a9dc501320c62c",
+  "extractor": "claude-opus-5 · low",
+  "api_cost_usd": 0.3426,
+  "max_usd": 1.0,
+  "skipped_cases": [],
+  "manifest_sha256": "ac541e049e66b31121fbd109c1d3a1dd1387a44db2a2b74b1bcd484934d8fd24",
+  "cases_sha256": "0ddd10d87aafd3f081023683af258c71f9468630325e0194981c67bc747a6ad4",
+  "label_origin": "정답: 이 저장소 작업을 맡은 AI(Claude Code)가 2026-10-01 원문만 읽고 작성. 어떤 추출기 출력도 보기 전에 고정. 독립 전문가 정답 아님. 신호 정의는 제품 추출 기준(prompts.py SIGNALS)과 같고, 판단이 갈리는 사업은 ambiguous로 분리(채점에서 제외하고 따로 셈).",
+  "independent_human_gold": false,
+  "scope": "selected_parsed_excerpts_extraction_only_not_ocr_linking_or_forecasting",
+  "matching": "maximum_one_to_one_title_phrase_whitespace_insensitive_budget_2pct",
+  "context_policy": "speaker_labels_and_grounding_offsets_from_verified_full_source_not_gold",
+  "documents": 5,
+  "institutions": [
+    "경기도 안양시",
+    "경기도 양평군",
+    "전북특별자치도 정읍시",
+    "충청남도",
+    "충청북도 영동군"
+  ],
+  "raw": {
+    "cases": 27,
+    "expected": 7,
+    "predicted": 7,
+    "matched": 7,
+    "precision": 1.0,
+    "recall": 1.0,
+    "negative_cases": 21,
+    "negative_cases_with_predictions": 0,
+    "negative_case_false_positive_rate": 0.0,
+    "ambiguous_predictions_set_aside": 5,
+    "fields": {
+      "category": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 0,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": null
+      },
+      "commitment": {
+        "correct": 6,
+        "matched_eligible": 6,
+        "all_expected_eligible": 6,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": 1.0,
+        "end_to_end_recall": 1.0
+      },
+      "budget_krw": {
+        "correct": 7,
+        "matched_eligible": 7,
+        "all_expected_eligible": 7,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": 1.0,
+        "end_to_end_recall": 1.0
+      },
+      "expected_year": {
+        "correct": 3,
+        "matched_eligible": 5,
+        "all_expected_eligible": 5,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": 0.6,
+        "end_to_end_recall": 0.6
+      }
+    },
+    "failures": [
+      {
+        "case": "test-충청북도-영동군의회-행정위원회-2026-09-14-5",
+        "title": "용화 공공하수처리시설 개량 신규 처리시설 부지 취득",
+        "wrong": {
+          "expected_year": {
+            "expected": null,
+            "got": 2026
+          }
+        }
+      },
+      {
+        "case": "test-충청남도의회-예산결산특별위원회-2026-09-10-2",
+        "title": "반려동물 바이오헬스테크 시험평가 인증센터 구축",
+        "wrong": {
+          "expected_year": {
+            "expected": null,
+            "got": 2026
+          }
+        }
+      }
+    ]
+  },
+  "after_verifier": {
+    "cases": 27,
+    "expected": 7,
+    "predicted": 7,
+    "matched": 7,
+    "precision": 1.0,
+    "recall": 1.0,
+    "negative_cases": 21,
+    "negative_cases_with_predictions": 0,
+    "negative_case_false_positive_rate": 0.0,
+    "ambiguous_predictions_set_aside": 5,
+    "fields": {
+      "category": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 0,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": null
+      },
+      "commitment": {
+        "correct": 6,
+        "matched_eligible": 6,
+        "all_expected_eligible": 6,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": 1.0,
+        "end_to_end_recall": 1.0
+      },
+      "budget_krw": {
+        "correct": 7,
+        "matched_eligible": 7,
+        "all_expected_eligible": 7,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": 1.0,
+        "end_to_end_recall": 1.0
+      },
+      "expected_year": {
+        "correct": 3,
+        "matched_eligible": 5,
+        "all_expected_eligible": 5,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": 0.6,
+        "end_to_end_recall": 0.6
+      }
+    },
+    "failures": [
+      {
+        "case": "test-충청북도-영동군의회-행정위원회-2026-09-14-5",
+        "title": "용화 공공하수처리시설 개량 신규 처리시설 부지 취득",
+        "wrong": {
+          "expected_year": {
+            "expected": null,
+            "got": 2026
+          }
+        }
+      },
+      {
+        "case": "test-충청남도의회-예산결산특별위원회-2026-09-10-2",
+        "title": "반려동물 바이오헬스테크 시험평가 인증센터 구축",
+        "wrong": {
+          "expected_year": {
+            "expected": null,
+            "got": 2026
+          }
+        }
+      }
+    ]
+  },
+  "by_institution": {
+    "경기도 안양시": {
+      "cases": 3,
+      "expected": 1,
+      "predicted": 1,
+      "matched": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "negative_cases": 2,
+      "negative_cases_with_predictions": 0,
+      "negative_case_false_positive_rate": 0.0,
+      "ambiguous_predictions_set_aside": 0,
+      "fields": {
+        "category": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        },
+        "commitment": {
+          "correct": 1,
+          "matched_eligible": 1,
+          "all_expected_eligible": 1,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": 1.0,
+          "end_to_end_recall": 1.0
+        },
+        "budget_krw": {
+          "correct": 1,
+          "matched_eligible": 1,
+          "all_expected_eligible": 1,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": 1.0,
+          "end_to_end_recall": 1.0
+        },
+        "expected_year": {
+          "correct": 1,
+          "matched_eligible": 1,
+          "all_expected_eligible": 1,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": 1.0,
+          "end_to_end_recall": 1.0
+        }
+      },
+      "failures": []
+    },
+    "경기도 양평군": {
+      "cases": 6,
+      "expected": 0,
+      "predicted": 0,
+      "matched": 0,
+      "precision": null,
+      "recall": null,
+      "negative_cases": 6,
+      "negative_cases_with_predictions": 0,
+      "negative_case_false_positive_rate": 0.0,
+      "ambiguous_predictions_set_aside": 0,
+      "fields": {
+        "category": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        },
+        "commitment": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        },
+        "budget_krw": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        },
+        "expected_year": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        }
+      },
+      "failures": []
+    },
+    "전북특별자치도 정읍시": {
+      "cases": 6,
+      "expected": 0,
+      "predicted": 0,
+      "matched": 0,
+      "precision": null,
+      "recall": null,
+      "negative_cases": 6,
+      "negative_cases_with_predictions": 0,
+      "negative_case_false_positive_rate": 0.0,
+      "ambiguous_predictions_set_aside": 1,
+      "fields": {
+        "category": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        },
+        "commitment": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        },
+        "budget_krw": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        },
+        "expected_year": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        }
+      },
+      "failures": []
+    },
+    "충청남도": {
+      "cases": 6,
+      "expected": 3,
+      "predicted": 3,
+      "matched": 3,
+      "precision": 1.0,
+      "recall": 1.0,
+      "negative_cases": 4,
+      "negative_cases_with_predictions": 0,
+      "negative_case_false_positive_rate": 0.0,
+      "ambiguous_predictions_set_aside": 2,
+      "fields": {
+        "category": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        },
+        "commitment": {
+          "correct": 2,
+          "matched_eligible": 2,
+          "all_expected_eligible": 2,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": 1.0,
+          "end_to_end_recall": 1.0
+        },
+        "budget_krw": {
+          "correct": 3,
+          "matched_eligible": 3,
+          "all_expected_eligible": 3,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": 1.0,
+          "end_to_end_recall": 1.0
+        },
+        "expected_year": {
+          "correct": 0,
+          "matched_eligible": 1,
+          "all_expected_eligible": 1,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": 0.0,
+          "end_to_end_recall": 0.0
+        }
+      },
+      "failures": [
+        {
+          "case": "test-충청남도의회-예산결산특별위원회-2026-09-10-2",
+          "title": "반려동물 바이오헬스테크 시험평가 인증센터 구축",
+          "wrong": {
+            "expected_year": {
+              "expected": null,
+              "got": 2026
+            }
+          }
+        }
+      ]
+    },
+    "충청북도 영동군": {
+      "cases": 6,
+      "expected": 3,
+      "predicted": 3,
+      "matched": 3,
+      "precision": 1.0,
+      "recall": 1.0,
+      "negative_cases": 3,
+      "negative_cases_with_predictions": 0,
+      "negative_case_false_positive_rate": 0.0,
+      "ambiguous_predictions_set_aside": 2,
+      "fields": {
+        "category": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        },
+        "commitment": {
+          "correct": 3,
+          "matched_eligible": 3,
+          "all_expected_eligible": 3,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": 1.0,
+          "end_to_end_recall": 1.0
+        },
+        "budget_krw": {
+          "correct": 3,
+          "matched_eligible": 3,
+          "all_expected_eligible": 3,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": 1.0,
+          "end_to_end_recall": 1.0
+        },
+        "expected_year": {
+          "correct": 2,
+          "matched_eligible": 3,
+          "all_expected_eligible": 3,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": 0.6667,
+          "end_to_end_recall": 0.6667
+        }
+      },
+      "failures": [
+        {
+          "case": "test-충청북도-영동군의회-행정위원회-2026-09-14-5",
+          "title": "용화 공공하수처리시설 개량 신규 처리시설 부지 취득",
+          "wrong": {
+            "expected_year": {
+              "expected": null,
+              "got": 2026
+            }
+          }
+        }
+      ]
+    }
+  },
+  "predictions": [
+    {
+      "case": "test-경기도-양평군의회-인사청문특별위원회-2026-09-16-1",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "test-경기도-양평군의회-인사청문특별위원회-2026-09-16-2",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "test-경기도-양평군의회-인사청문특별위원회-2026-09-16-3",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "test-경기도-양평군의회-인사청문특별위원회-2026-09-16-4",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "test-경기도-양평군의회-인사청문특별위원회-2026-09-16-5",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "test-경기도-양평군의회-인사청문특별위원회-2026-09-16-6",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "test-충청북도-영동군의회-행정위원회-2026-09-14-1",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "영동군 청년센터 운영관리 민간위탁",
+            "keywords": [
+              "청년센터",
+              "민간위탁",
+              "운영관리",
+              "공개모집",
+              "청년정책"
+            ],
+            "category": "welfare_care",
+            "commitment": "planned",
+            "budget_krw": 1299900000,
+            "expected_year": 2027
+          },
+          "verdict": "accepted",
+          "issues": []
+        }
+      ],
+      "raw_signals": [
+        {
+          "title": "영동군 청년센터 운영관리 민간위탁",
+          "summary": "영동군 미래전략과가 조성 중인 청년센터를 2027년 1월부터 2029년 12월까지 3년간 12억 9990만 원 규모로 민간기관에 위탁 운영하고자 공개모집으로 수탁자를 선정할 계획이다.",
+          "category": "welfare_care",
+          "institution_mention": "영동군",
+          "department": "미래전략과",
+          "budget_text": "3년간 12억 9990만 원",
+          "budget_krw": 1299900000,
+          "timing_text": "2027년 1월부터 29년 12월까지",
+          "expected_year": 2027,
+          "expected_half": "H1",
+          "commitment": "planned",
+          "procurement_type": "service",
+          "keywords": [
+            "청년센터",
+            "민간위탁",
+            "운영관리",
+            "공개모집",
+            "청년정책"
+          ],
+          "evidence": [
+            "위탁 기간은 2027년 1월부터 29년 12월까지이며 3년간 12억 9990만 원으로 연간 4억 3330만 원입니다.",
+            "수탁자는 공개 모집 방식으로 선정할 예정이며 수탁자 선정위원회를 구성하여 사업 수행 역량을 갖춘 청년 지원 관련 법인이나 단체를 대상으로 할 계획입니다."
+          ],
+          "confidence": 0.85
+        }
+      ]
+    },
+    {
+      "case": "test-충청북도-영동군의회-행정위원회-2026-09-14-2",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "영동군 청년센터 운영관리 민간위탁",
+            "keywords": [
+              "청년센터",
+              "민간위탁",
+              "운영관리",
+              "청년정책"
+            ],
+            "category": "welfare_care",
+            "commitment": "planned",
+            "budget_krw": null,
+            "expected_year": 2026
+          },
+          "verdict": "needs_review",
+          "issues": [
+            "year_unverified"
+          ]
+        }
+      ],
+      "raw_signals": [
+        {
+          "title": "영동군 청년센터 운영관리 민간위탁",
+          "summary": "영동군이 조성 중인 청년센터의 효율적 운영을 위해 전문 역량을 갖춘 민간 기관에 운영관리를 위탁하고자 의회 동의를 요청했다.",
+          "category": "welfare_care",
+          "institution_mention": "영동군",
+          "department": "미래전략과",
+          "budget_text": null,
+          "budget_krw": null,
+          "timing_text": null,
+          "expected_year": 2026,
+          "expected_half": null,
+          "commitment": "planned",
+          "procurement_type": "service",
+          "keywords": [
+            "청년센터",
+            "민간위탁",
+            "운영관리",
+            "청년정책"
+          ],
+          "evidence": [
+            "본 동의안은 관내 청년들의 소통과 활동 거점 공간으로 조성 중인 영동군 청년센터의 효율적이고 체계적인 운영을 위하여 전문적인 운영 역량을 갖춘 민간에 위탁하고자 하는 것으로",
+            "지금 구체적인 세부 계획은 저희가 수립 중에 있고요."
+          ],
+          "confidence": 0.62
+        }
+      ]
+    },
+    {
+      "case": "test-충청북도-영동군의회-행정위원회-2026-09-14-3",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "test-충청북도-영동군의회-행정위원회-2026-09-14-4",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "용화 공공하수처리시설 개량 사업",
+            "keywords": [
+              "공공하수처리시설",
+              "하수처리시설 개량",
+              "맨홀펌프장",
+              "시설 설치"
+            ],
+            "category": "facility",
+            "commitment": "planned",
+            "budget_krw": 2556000000,
+            "expected_year": 2027
+          },
+          "verdict": "accepted",
+          "issues": []
+        }
+      ],
+      "raw_signals": [
+        {
+          "title": "용화 공공하수처리시설 개량 사업",
+          "summary": "영동군이 노후화된 용화 공공하수처리시설을 폐쇄하고 하루 50톤 규모 처리시설과 맨홀펌프장 1개소를 신설하기 위해 총사업비 25억 5600만 원을 투입할 계획이다.",
+          "category": "facility",
+          "institution_mention": "영동군",
+          "department": "민원과",
+          "budget_text": "25억 5600만 원",
+          "budget_krw": 2556000000,
+          "timing_text": "2027년 12월에 착공할 예정",
+          "expected_year": 2027,
+          "expected_half": "H2",
+          "commitment": "planned",
+          "procurement_type": "construction",
+          "keywords": [
+            "공공하수처리시설",
+            "하수처리시설 개량",
+            "맨홀펌프장",
+            "시설 설치"
+          ],
+          "evidence": [
+            "기존 처리 시설을 폐쇄하고 하루 50톤 규모의 처리 시설과 맨홀 펌프장 1개소를 설치할 계획입니다.",
+            "총 사업비는 25억 5600만 원으로 국비 기금 도비는 24억 1300만 원이며, 군비는 1억 4300만 원이 투입될 예정입니다.",
+            "2027년 12월에 착공할 예정이며 2029년 12월 준공을 목표로 하고 있습니다."
+          ],
+          "confidence": 0.9
+        }
+      ]
+    },
+    {
+      "case": "test-충청북도-영동군의회-행정위원회-2026-09-14-5",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "용화 공공하수처리시설 개량 신규 처리시설 부지 취득",
+            "keywords": [
+              "공공하수처리시설",
+              "하수처리시설 개량",
+              "부지 취득",
+              "공유재산 관리계획"
+            ],
+            "category": "facility",
+            "commitment": "planned",
+            "budget_krw": null,
+            "expected_year": 2026
+          },
+          "verdict": "needs_review",
+          "issues": [
+            "official_evidence_missing",
+            "year_unverified"
+          ]
+        }
+      ],
+      "raw_signals": [
+        {
+          "title": "용화 공공하수처리시설 개량 신규 처리시설 부지 취득",
+          "summary": "영동군이 하수 침출 문제가 발생한 용화 공공하수처리시설 개량을 위해 신규 처리시설 설치 예정 부지를 취득하는 공유재산 관리계획안을 추진한다.",
+          "category": "facility",
+          "institution_mention": "영동군",
+          "department": "민원과",
+          "budget_text": null,
+          "budget_krw": null,
+          "timing_text": null,
+          "expected_year": 2026,
+          "expected_half": null,
+          "commitment": "planned",
+          "procurement_type": "construction",
+          "keywords": [
+            "공공하수처리시설",
+            "하수처리시설 개량",
+            "부지 취득",
+            "공유재산 관리계획"
+          ],
+          "evidence": [
+            "본 공유재산 관리계획안은 하수 침출 문제가 발생하고 있는 용화 공공하수처리시설 개량을 위해 신규 처리시설 설치 예정 부지를 취득하고자"
+          ],
+          "confidence": 0.75
+        }
+      ]
+    },
+    {
+      "case": "test-충청북도-영동군의회-행정위원회-2026-09-14-6",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "용화공공하수처리시설 개량 사업",
+            "keywords": [
+              "하수처리시설",
+              "개량",
+              "SR 공법",
+              "공공하수도"
+            ],
+            "category": "facility",
+            "commitment": "planned",
+            "budget_krw": null,
+            "expected_year": null
+          },
+          "verdict": "needs_review",
+          "issues": [
+            "official_evidence_missing"
+          ]
+        }
+      ],
+      "raw_signals": [
+        {
+          "title": "용화공공하수처리시설 개량 사업",
+          "summary": "영동군이 용화공공하수처리시설의 SR 공법을 인근 피해가 없는 공법으로 변경하여 개량 추진하며, 공유재산 관리계획안이 가결되었다.",
+          "category": "facility",
+          "institution_mention": "영동군",
+          "department": "환경과 하수도팀",
+          "budget_text": null,
+          "budget_krw": null,
+          "timing_text": null,
+          "expected_year": null,
+          "expected_half": null,
+          "commitment": "planned",
+          "procurement_type": "construction",
+          "keywords": [
+            "하수처리시설",
+            "개량",
+            "SR 공법",
+            "공공하수도"
+          ],
+          "evidence": [
+            "그 인근 밖 경지에 어느 정도 그 피해가 없는 공법을 선정을 해서 추진토록 하겠습니다.",
+            "의사일정 제5항 2026년도 제3차 수시분 공유재산 관리계획안 용화공공하수처리시설 개량 사업에 대하여 이의 없으십니까?"
+          ],
+          "confidence": 0.72
+        }
+      ]
+    },
+    {
+      "case": "test-경기도-안양시의회-의회운영위원회-2026-09-09-1",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "test-경기도-안양시의회-의회운영위원회-2026-09-09-2",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "안양1번가 융복합개발사업 용역",
+            "keywords": [
+              "융복합개발",
+              "안양1번가",
+              "개발용역",
+              "도시개발"
+            ],
+            "category": "facility",
+            "commitment": "planned",
+            "budget_krw": 150000000,
+            "expected_year": null
+          },
+          "verdict": "needs_review",
+          "issues": [
+            "official_evidence_missing"
+          ]
+        }
+      ],
+      "raw_signals": [
+        {
+          "title": "안양1번가 융복합개발사업 용역",
+          "summary": "안양시 만안구 안양1번가 융복합개발사업 추진을 위해 1억5천만원 규모의 용역을 진행하려 하고 있다.",
+          "category": "facility",
+          "institution_mention": "안양시",
+          "department": null,
+          "budget_text": "1억5천",
+          "budget_krw": 150000000,
+          "timing_text": null,
+          "expected_year": null,
+          "expected_half": null,
+          "commitment": "planned",
+          "procurement_type": "service",
+          "keywords": [
+            "융복합개발",
+            "안양1번가",
+            "개발용역",
+            "도시개발"
+          ],
+          "evidence": [
+            "저희만안구에안양1번가융복합개발사업추진하고있어요.1억5천들여서용역을진행하려고하고있습니다."
+          ],
+          "confidence": 0.68
+        }
+      ]
+    },
+    {
+      "case": "test-경기도-안양시의회-의회운영위원회-2026-09-09-3",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "test-충청남도의회-예산결산특별위원회-2026-09-10-1",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "test-충청남도의회-예산결산특별위원회-2026-09-10-2",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "서천특화시장 재건축",
+            "keywords": [
+              "시장 재건축",
+              "서천특화시장",
+              "공사"
+            ],
+            "category": "facility",
+            "commitment": "committed",
+            "budget_krw": 3000000000,
+            "expected_year": 2026
+          },
+          "verdict": "needs_review",
+          "issues": [
+            "official_evidence_missing"
+          ]
+        },
+        {
+          "prediction": {
+            "title": "반려동물 바이오헬스테크 시험평가 인증센터 구축",
+            "keywords": [
+              "인증센터 구축",
+              "반려동물",
+              "바이오헬스"
+            ],
+            "category": "facility",
+            "commitment": "declined",
+            "budget_krw": 665000000,
+            "expected_year": 2026
+          },
+          "verdict": "needs_review",
+          "issues": [
+            "official_evidence_missing"
+          ]
+        }
+      ],
+      "raw_signals": [
+        {
+          "title": "서천특화시장 재건축",
+          "summary": "충청남도가 화재로 전소된 서천특화시장 재건축을 위해 추경에서 30억 원을 증액 편성했다.",
+          "category": "facility",
+          "institution_mention": "충청남도",
+          "department": "경제통상국",
+          "budget_text": "30억 원",
+          "budget_krw": 3000000000,
+          "timing_text": "2026년",
+          "expected_year": 2026,
+          "expected_half": "H2",
+          "commitment": "committed",
+          "procurement_type": "construction",
+          "keywords": [
+            "시장 재건축",
+            "서천특화시장",
+            "공사"
+          ],
+          "evidence": [
+            "서천특화시장 재건축 사업은 기정예산 대비 30억 원이 증액되었는데"
+          ],
+          "confidence": 0.8
+        },
+        {
+          "title": "반려동물 바이오헬스테크 시험평가 인증센터 구축",
+          "summary": "충청남도 AI산업혁신국의 반려동물 바이오헬스테크 시험평가 인증센터 구축 사업비가 투자심사 미완료로 전액 삭감되어 향후 재추진이 검토되고 있다.",
+          "category": "facility",
+          "institution_mention": "충청남도",
+          "department": "AI산업혁신국",
+          "budget_text": "6억 6500만 원",
+          "budget_krw": 665000000,
+          "timing_text": "10월로 예정된",
+          "expected_year": 2026,
+          "expected_half": "H2",
+          "commitment": "declined",
+          "procurement_type": "construction",
+          "keywords": [
+            "인증센터 구축",
+            "반려동물",
+            "바이오헬스"
+          ],
+          "evidence": [
+            "반려동물 바이오헬스테크 시험평가 인증센터 구축 사업비 6억 6500만 원이 전액 삭감되었는데"
+          ],
+          "confidence": 0.6
+        }
+      ]
+    },
+    {
+      "case": "test-충청남도의회-예산결산특별위원회-2026-09-10-3",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "test-충청남도의회-예산결산특별위원회-2026-09-10-4",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "도립요양병원 히트펌프 교체",
+            "keywords": [
+              "히트펌프",
+              "히트펌프 교체",
+              "요양병원",
+              "냉난방"
+            ],
+            "category": "facility",
+            "commitment": "committed",
+            "budget_krw": null,
+            "expected_year": 2026
+          },
+          "verdict": "needs_review",
+          "issues": [
+            "official_evidence_missing"
+          ]
+        }
+      ],
+      "raw_signals": [
+        {
+          "title": "도립요양병원 히트펌프 교체",
+          "summary": "충청남도가 도립요양시설 히트펌프 교체를 위해 예산을 증액해 추경에 반영했다.",
+          "category": "facility",
+          "institution_mention": "충청남도",
+          "department": "AI기본사회보건복지실",
+          "budget_text": null,
+          "budget_krw": null,
+          "timing_text": "추경에 반영한 상황",
+          "expected_year": 2026,
+          "expected_half": "H2",
+          "commitment": "committed",
+          "procurement_type": "construction",
+          "keywords": [
+            "히트펌프",
+            "히트펌프 교체",
+            "요양병원",
+            "냉난방"
+          ],
+          "evidence": [
+            "저희가 히트펌프 교체에 따른 부분으로 예산을 증액하면서 추경에 반영한 상황이긴 합니다만"
+          ],
+          "confidence": 0.62
+        }
+      ]
+    },
+    {
+      "case": "test-충청남도의회-예산결산특별위원회-2026-09-10-5",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "충남형 인공지능(AI) 서비스 도입(챗봇)",
+            "keywords": [
+              "인공지능",
+              "AI 챗봇",
+              "민원 챗봇",
+              "서비스 도입"
+            ],
+            "category": "ai_data",
+            "commitment": "declined",
+            "budget_krw": 300000000,
+            "expected_year": 2027
+          },
+          "verdict": "needs_review",
+          "issues": [
+            "official_evidence_missing"
+          ]
+        },
+        {
+          "prediction": {
+            "title": "올담 데이터 품질관리 체계 개선 및 운영",
+            "keywords": [
+              "데이터 품질관리",
+              "데이터 개방",
+              "올담",
+              "빅데이터"
+            ],
+            "category": "ai_data",
+            "commitment": "declined",
+            "budget_krw": 450000000,
+            "expected_year": null
+          },
+          "verdict": "needs_review",
+          "issues": [
+            "official_evidence_missing"
+          ]
+        }
+      ],
+      "raw_signals": [
+        {
+          "title": "충남형 인공지능(AI) 서비스 도입(챗봇)",
+          "summary": "충청남도가 민원 업무 경감을 위한 챗봇 도입 사업(3억원)을 편성했으나 전액 삭감하고 내년도 재기획을 추진한다.",
+          "category": "ai_data",
+          "institution_mention": "충청남도",
+          "department": "기획조정실",
+          "budget_text": "3억",
+          "budget_krw": 300000000,
+          "timing_text": "내년도에",
+          "expected_year": 2027,
+          "expected_half": null,
+          "commitment": "declined",
+          "procurement_type": "service",
+          "keywords": [
+            "인공지능",
+            "AI 챗봇",
+            "민원 챗봇",
+            "서비스 도입"
+          ],
+          "evidence": [
+            "충남형 인공지능(AI) 서비스 도입 여기에서도 전액 삭감이 3억 이루어졌고",
+            "인공지능(AI) 서비스 도입은 저희가 2026년도 본예산 처음 세울 때 의욕적으로 세웠던 건데 챗봇이라는 걸 도입하려고 했습니다."
+          ],
+          "confidence": 0.6
+        },
+        {
+          "title": "올담 데이터 품질관리 체계 개선 및 운영",
+          "summary": "충청남도가 데이터 개방·품질 개선 사업(4억 5000만원)을 전액 삭감하고 AI 트렌드에 맞춰 재기획할 예정이다.",
+          "category": "ai_data",
+          "institution_mention": "충청남도",
+          "department": "기획조정실",
+          "budget_text": "4억 5000",
+          "budget_krw": 450000000,
+          "timing_text": null,
+          "expected_year": null,
+          "expected_half": null,
+          "commitment": "declined",
+          "procurement_type": "service",
+          "keywords": [
+            "데이터 품질관리",
+            "데이터 개방",
+            "올담",
+            "빅데이터"
+          ],
+          "evidence": [
+            "올담 데이터 품질관리 체계 개선 및 운영에서 4억 5000이 전액 삭감 됐거든요?",
+            "이것도 재기획을 하고자 부득이 삭감을 하게 되었습니다."
+          ],
+          "confidence": 0.58
+        }
+      ]
+    },
+    {
+      "case": "test-충청남도의회-예산결산특별위원회-2026-09-10-6",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "test-전북특별자치도-정읍시의회-예산결산특별위원회-2026-09-11-1",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "test-전북특별자치도-정읍시의회-예산결산특별위원회-2026-09-11-2",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "공영주차장 조성 및 사유지 매입",
+            "keywords": [
+              "공영주차장",
+              "주차장 조성",
+              "임시 공영주차장",
+              "주차난"
+            ],
+            "category": "mobility",
+            "commitment": "planned",
+            "budget_krw": null,
+            "expected_year": 2026
+          },
+          "verdict": "accepted",
+          "issues": []
+        }
+      ],
+      "raw_signals": [
+        {
+          "title": "공영주차장 조성 및 사유지 매입",
+          "summary": "정읍시 교통과가 주차난 해소를 위해 임시 공영주차장 조성 및 주차장 조성·관리 지침에 따른 주차장 확충을 추진하겠다고 밝힘.",
+          "category": "mobility",
+          "institution_mention": "정읍시",
+          "department": "교통과",
+          "budget_text": null,
+          "budget_krw": null,
+          "timing_text": "이번 9월 초",
+          "expected_year": 2026,
+          "expected_half": "H2",
+          "commitment": "planned",
+          "procurement_type": "construction",
+          "keywords": [
+            "공영주차장",
+            "주차장 조성",
+            "임시 공영주차장",
+            "주차난"
+          ],
+          "evidence": [
+            "이런 것들을 가지고 이번 9월 초에 저희가 시장님 그간에 추진했던 민원에 대해서 주차장 조성 관리 지침을 만들었습니다.",
+            "저희가 1차적으로 유료 주차장을 다 그렇게 만들고는 있지만 아까처럼 임시 공영 주차장을 그래도 우선적으로 하고 있는 이유는"
+          ],
+          "confidence": 0.45
+        }
+      ]
+    },
+    {
+      "case": "test-전북특별자치도-정읍시의회-예산결산특별위원회-2026-09-11-3",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "test-전북특별자치도-정읍시의회-예산결산특별위원회-2026-09-11-4",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "test-전북특별자치도-정읍시의회-예산결산특별위원회-2026-09-11-5",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "test-전북특별자치도-정읍시의회-예산결산특별위원회-2026-09-11-6",
+      "predictions": [],
+      "raw_signals": []
+    }
+  ]
+}
