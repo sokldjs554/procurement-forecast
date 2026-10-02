@@ -1,0 +1,123 @@
+name: Freeze open forecasts
+
+# Writes down, with hashes, every forecast the running deployment holds that has no tender yet
+# (`manage eval freeze-open`): a list, one snapshot per institution, and a manifest. Checking them
+# later against the tenders that follow needs them fixed before those tenders exist; this run and
+# the commit it pushes to the data/forecast-freeze branch are that record
+# (docs/longitudinal-validation.md). It shares the scheduled operations' concurrency group, so no
+# pass writes while it reads. Read-only on the database; no paid model.
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: Directory under docs/data on the data branch (default forecast-freeze-<KST date>)
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ops-tick
+  cancel-in-progress: false
+
+jobs:
+  freeze:
+    name: Freeze the open forecasts
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      APP_ENV: production
+      APP_LOG_JSON: "false"
+      APP_LLM_PROVIDER: heuristic
+      APP_EMBEDDING_PROVIDER: hashing
+      BRANCH: data/forecast-freeze
+    steps:
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.8.17"
+          python-version: "3.11"
+          enable-cache: true
+          cache-dependency-glob: apps/api/uv.lock
+      - name: Connect to the hosted database
+        env:
+          OPS_DATABASE_URL: ${{ secrets.OPS_DATABASE_URL }}
+          APP_JWT_SECRET: ${{ secrets.APP_JWT_SECRET }}
+          APP_BILLING_KEY_ENCRYPTION_KEY: ${{ secrets.APP_BILLING_KEY_ENCRYPTION_KEY }}
+        # Hosts hand out libpq URLs (postgresql://…?sslmode=require); asyncpg takes ssl=require.
+        # The derived values are masked before anything could print them. A pass never signs
+        # tokens or reads billing keys; production settings still refuse the development
+        # defaults, so a per-run value stands in when no secret is set.
+        run: |
+          python3 - <<'PY'
+          import base64, os, secrets, sys
+          from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
+
+          raw = os.environ.get("OPS_DATABASE_URL", "").strip()
+          if not raw:
+              sys.exit("Set the OPS_DATABASE_URL repository secret (docs/free-operations.md).")
+          parts = urlsplit(raw)
+          if parts.scheme not in {"postgres", "postgresql", "postgresql+asyncpg"} or not parts.hostname:
+              sys.exit("OPS_DATABASE_URL is not a PostgreSQL connection string.")
+          query = dict(parse_qsl(parts.query))
+          ssl = query.pop("sslmode", None)
+          query.pop("channel_binding", None)
+          if ssl and ssl != "disable":
+              query["ssl"] = "require"
+          values = {
+              "APP_DATABASE_URL": urlunsplit(("postgresql+asyncpg", parts.netloc, parts.path, urlencode(query), "")),
+              "APP_JWT_SECRET": os.environ.get("APP_JWT_SECRET") or secrets.token_urlsafe(48),
+              "APP_BILLING_KEY_ENCRYPTION_KEY": os.environ.get("APP_BILLING_KEY_ENCRYPTION_KEY")
+              or base64.urlsafe_b64encode(secrets.token_bytes(32)).decode(),
+          }
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env:
+              for name, value in values.items():
+                  print(f"::add-mask::{value}")
+                  env.write(f"{name}={value}\n")
+          PY
+      - name: Install
+        working-directory: apps/api
+        run: uv sync --frozen
+      - name: Freeze
+        working-directory: apps/api
+        env:
+          NAME: ${{ inputs.name }}
+        run: |
+          name="${NAME:-forecast-freeze-$(TZ=Asia/Seoul date +%F)}"
+          echo "DIR=docs/data/$name" >> "$GITHUB_ENV"
+          set -o pipefail
+          uv run manage eval freeze-open "$RUNNER_TEMP/freeze" --code-revision "$GITHUB_SHA" \
+            | tee "$RUNNER_TEMP/freeze.json"
+      - name: Keep the freeze on the data branch
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898283+github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin "$BRANCH" >/dev/null; then
+            git fetch --depth 1 origin "$BRANCH"
+            git worktree add --detach data FETCH_HEAD
+          else
+            git worktree add --detach data HEAD
+          fi
+          test ! -e "data/$DIR" || { echo "::error::data/$DIR exists: a freeze is never overwritten"; exit 1; }
+          mkdir -p "data/$DIR"
+          cp -r "$RUNNER_TEMP/freeze/." "data/$DIR/"
+          # The manifest's SHA-256s are of the uncompressed files; gzip -n is byte-stable.
+          find "data/$DIR" -name '*.jsonl' -exec gzip -n -9 {} +
+          git -C data add "$DIR"
+          git -C data commit -q -m "data(eval): freeze open forecasts $(basename "$DIR")" \
+            -m "Run: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID (code $GITHUB_SHA)"
+          git -C data push origin "HEAD:refs/heads/$BRANCH"
+      - name: Summary
+        if: always()
+        run: |
+          m="$RUNNER_TEMP/freeze/manifest.json"
+          [ -f "$m" ] || exit 0
+          jq -r '
+            "### Open forecasts frozen\n",
+            "| | |", "|---|---|",
+            "| Open forecasts | \(.open_forecasts.count) in \(.open_forecasts.institutions) institutions |",
+            "| Opportunities by status | \(.opportunities_by_status | to_entries | map("\(.key) \(.value)") | join(", ")) |",
+            "| Snapshots | \([.institutions[] | select(.status == "frozen")] | length) frozen, \([.institutions[] | select(.status != "frozen")] | length) skipped |",
+            "| Started → finished | \(.started_at) → \(.finished_at) |",
+            "| Code | \(.code_revision) |"
+          ' "$m" >> "$GITHUB_STEP_SUMMARY"

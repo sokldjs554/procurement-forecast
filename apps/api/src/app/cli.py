@@ -9,6 +9,7 @@ manage eval tenders DIR --since … --until … -i 성남시   # every official 
 manage eval fresh-minutes DIR --since … --until … -x 성남   # rule-chosen CLIK minutes for a new holdout
 manage eval council-minutes DIR -c 서산시의회 --since … --until …  # every meeting of named councils (resumable)
 manage eval fresh-cases DIR · fresh-freeze DIR --split dev   # excerpts to label, then hash them
+manage eval freeze-open DIR --code-revision SHA   # every forecast with no tender yet, frozen with hashes
 manage bench --report ../../docs/performance.md   # hot-query plans at volume
 manage sources check              # first real call to each 조달청 operation (needs the data.go.kr key)
 manage sources check -s clik_minutes   # CLIK minutes list + one detail (needs the CLIK key)
@@ -733,6 +734,56 @@ def eval_freeze(
         return report.to_json()
 
     typer.echo(json.dumps(_run(lambda: _with_session(go)), ensure_ascii=False, indent=2))
+
+
+@eval_app.command("freeze-open")
+def eval_freeze_open(
+    out_dir: Path = typer.Argument(..., file_okay=False, help="New, empty directory"),
+    code_revision: str = typer.Option(..., help="Operator-attested deployed Git revision"),
+    max_signals: int = typer.Option(10000, min=1, help="Skip an institution with more signals"),
+    max_institutions: int = typer.Option(None, min=1, help="Only the institutions with most"),
+) -> None:
+    """Freeze every opportunity with no tender yet: a list, one snapshot per institution, and a
+    manifest with SHA-256s, for checking them later against the tenders that follow."""
+    from app.db.session import dispose_engine, get_sessionmaker
+    from app.eval.forecast_freeze import freeze_open
+
+    configure_logging(json=False, level="WARNING", stream=sys.stderr)
+
+    async def go() -> dict[str, Any]:
+        try:
+            return await freeze_open(
+                get_sessionmaker(),
+                out_dir,
+                code_revision=code_revision,
+                settings=get_settings(),
+                max_signals=max_signals,
+                max_institutions=max_institutions,
+            )
+        finally:
+            await dispose_engine()
+
+    try:
+        manifest = _run(go)
+    except ValueError as exc:
+        raise typer.BadParameter(str(exc)) from exc
+    frozen = [i for i in manifest["institutions"] if i["status"] == "frozen"]
+    typer.echo(
+        json.dumps(
+            {
+                "open_forecasts": manifest["open_forecasts"],
+                "opportunities_by_status": manifest["opportunities_by_status"],
+                "institutions_frozen": len(frozen),
+                "institutions_skipped": [
+                    i["code"] for i in manifest["institutions"] if i["status"] != "frozen"
+                ],
+                "started_at": manifest["started_at"],
+                "finished_at": manifest["finished_at"],
+            },
+            ensure_ascii=False,
+            indent=2,
+        )
+    )
 
 
 @eval_app.command("tenders")

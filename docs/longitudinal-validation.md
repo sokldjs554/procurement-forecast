@@ -43,6 +43,24 @@ horizon_days=540, as_of=None)`. `as_of` is an optional `datetime.date` historica
 the default is `app.clock.today_kst()`. Future reporting cutoffs are rejected. The evaluator
 does not create snapshots and has no option to assert a historical capture time.
 
+## Freezing the running deployment
+
+`manage eval freeze-open DIR --code-revision SHA` freezes every opportunity of the hosted
+deployment that has no tender yet (`status = 'open'` and no `bid_published_at`) in one run:
+
+- `open-forecasts.jsonl`: one line per such opportunity (title, stage, window, stored
+  probability, institution), read in one repeatable-read transaction;
+- `snapshots/<institution>.jsonl`: the `eval freeze` snapshot of every institution holding one,
+  the `--snapshot` input above; an institution over `--max-signals` is listed as skipped;
+- `manifest.json`: start and finish times, the code revision, counts by status and each file's
+  SHA-256 (of the uncompressed file).
+
+[`forecast-freeze.yml`](../.github/workflows/forecast-freeze.yml) runs it against the hosted
+database and pushes the result, gzipped, to the `data/forecast-freeze` branch. It shares the
+scheduled operations' concurrency group, so no pass writes while it reads. The Actions run and
+the pushed commit are the record of when the files existed; they are GitHub's, not a trusted
+timestamping authority (gap 2 below). The directory is refused if it already exists.
+
 ## Observation file contract
 
 The following is a **synthetic schema example, not real observations**. Unit tests create their
