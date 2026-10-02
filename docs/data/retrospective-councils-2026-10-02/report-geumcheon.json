@@ -1,0 +1,56 @@
+{
+  "observed_through": "2026-09-30",
+  "window_months": 12,
+  "strata": {
+    "council_mention": {
+      "signals": 58,
+      "no_tender_seen": 27,
+      "hit": 1,
+      "hit_recurring": 0,
+      "already_tendered": 6,
+      "already_tendered_recurring": 1,
+      "observing": 24,
+      "lead": {
+        "n": 1,
+        "median_days": 1,
+        "min_days": 1,
+        "max_days": 1
+      },
+      "lead_excluding_recurring": {
+        "n": 1,
+        "median_days": 1,
+        "min_days": 1,
+        "max_days": 1
+      },
+      "hit_within_12m": {
+        "hit": 1,
+        "eligible": 28
+      },
+      "hit_within_12m_excluding_recurring": {
+        "hit": 1,
+        "eligible": 28
+      }
+    }
+  },
+  "judgments": {
+    "same": 40,
+    "different": 4
+  },
+  "hits": [
+    {
+      "stratum": "council_mention",
+      "signal_key": "db9c53b91aa22ed5df823920f2da73b5b6c3b518e3c95f824d2de1fe7f2d72e4",
+      "signal_title": "그 사업으로는 금나래중앙공원 재조성 사업",
+      "signal_date": "2024-12-03",
+      "budget_krw": null,
+      "notice": "20241207128-000",
+      "notice_title": "금나래중앙공원 재조성사업 전기공사",
+      "notice_date": "2024-12-04",
+      "institution": "서울특별시 금천구",
+      "stage": "공사",
+      "recurring": false,
+      "lead_days": 1,
+      "reason": "같은 금나래중앙공원 재조성의 공사·폐기물 처리"
+    }
+  ]
+}
