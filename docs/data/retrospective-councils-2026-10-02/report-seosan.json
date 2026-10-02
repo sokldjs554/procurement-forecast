@@ -1,0 +1,148 @@
+{
+  "observed_through": "2026-09-30",
+  "window_months": 12,
+  "strata": {
+    "council_mention": {
+      "signals": 264,
+      "no_tender_seen": 107,
+      "already_tendered": 24,
+      "already_tendered_recurring": 1,
+      "ambiguous": 7,
+      "hit": 7,
+      "hit_recurring": 0,
+      "observing": 119,
+      "lead": {
+        "n": 7,
+        "median_days": 93,
+        "min_days": 50,
+        "max_days": 549
+      },
+      "lead_excluding_recurring": {
+        "n": 7,
+        "median_days": 93,
+        "min_days": 50,
+        "max_days": 549
+      },
+      "hit_within_12m": {
+        "hit": 5,
+        "eligible": 116
+      },
+      "hit_within_12m_excluding_recurring": {
+        "hit": 5,
+        "eligible": 116
+      }
+    }
+  },
+  "judgments": {
+    "different": 177,
+    "same": 185,
+    "ambiguous": 21
+  },
+  "hits": [
+    {
+      "stratum": "council_mention",
+      "signal_key": "876acf63ec83d1c0ea4ee0b1ab847c9abd85be4ff9ea6edc3158dd641280aea2",
+      "signal_title": "질문 때 보원사지방문자센터 건립 사업",
+      "signal_date": "2024-10-22",
+      "budget_krw": null,
+      "notice": "R25BK01059715-000",
+      "notice_title": "서산 보원사지 방문자센터 건립사업 건축설계(기본 및 실시설계) 용역",
+      "notice_date": "2025-09-15",
+      "institution": "충청남도 서산시",
+      "stage": "설계",
+      "recurring": false,
+      "lead_days": 328,
+      "reason": "같은 보원사지 방문자센터 건립의 설계"
+    },
+    {
+      "stratum": "council_mention",
+      "signal_key": "a1c6b4c62e317eb379912f531bd736dc50e89947e3fbe1dee1f21c7b08697043",
+      "signal_title": "건립 예정인 공연예술지원센터의 공연장 확충",
+      "signal_date": "2024-10-23",
+      "budget_krw": 1600000000,
+      "notice": "R25BK00583958-000",
+      "notice_title": "내포-서산 공연예술지원센터(복합문화공간) 건립 건축기획업무 용역",
+      "notice_date": "2025-01-15",
+      "institution": "충청남도 서산시",
+      "stage": "용역",
+      "recurring": false,
+      "lead_days": 84,
+      "reason": "같은 공연예술지원센터 건립의 건축기획·설계공모·시굴조사"
+    },
+    {
+      "stratum": "council_mention",
+      "signal_key": "80604cb9a367c6685603c52d8ca7a13e0c7d55ce5237f4365faf12080b5d0a90",
+      "signal_title": "대산 안산공원 조성사업 관련 사업",
+      "signal_date": "2024-10-23",
+      "budget_krw": 67800000000,
+      "notice": "R26BK01298123-000",
+      "notice_title": "건설공사 안전점검 수행기관 지정 공고[ 안산공원 조성사업 토목·조경공사]",
+      "notice_date": "2026-01-27",
+      "institution": "충청남도 서산시",
+      "stage": "용역",
+      "recurring": false,
+      "lead_days": 461,
+      "reason": "같은 안산공원 조성사업의 안전점검 수행기관 지정"
+    },
+    {
+      "stratum": "council_mention",
+      "signal_key": "f71a72733ba3d2a7c55bc6e55ceb43f6c444eea43415b055c8b7a67b0cdbff5e",
+      "signal_title": "의용소방대 청사 환경 개선 사업",
+      "signal_date": "2025-01-21",
+      "budget_krw": 192000000000,
+      "notice": "R25BK00805440-000",
+      "notice_title": "고북면 전담의용소방대 청사 보수공사",
+      "notice_date": "2025-04-22",
+      "institution": "충청남도 서산시",
+      "stage": "공사",
+      "recurring": false,
+      "lead_days": 91,
+      "reason": "1~3은 같은 의용소방대 청사 환경 개선(청사별 보수); 4는 교육 기자재"
+    },
+    {
+      "stratum": "council_mention",
+      "signal_key": "0b9fd74506920772abcc3c5854eca6f9d2dcc5b1b9e7d49d13300f21a1fa806a",
+      "signal_title": "서산시 외국인근로자지원센터 설치",
+      "signal_date": "2025-01-21",
+      "budget_krw": 10000000000,
+      "notice": "R25BK00810192-000",
+      "notice_title": "서산시외국인근로자지원센터 리모델링 공사",
+      "notice_date": "2025-04-24",
+      "institution": "충청남도 서산시",
+      "stage": "공사",
+      "recurring": false,
+      "lead_days": 93,
+      "reason": "같은 외국인근로자지원센터 설치(리모델링)"
+    },
+    {
+      "stratum": "council_mention",
+      "signal_key": "474f5f93d4c72c63747dd32c140003c7bb99b11c48dee546fd1a72277a9a8b85",
+      "signal_title": "및 298쪽 해미국제성지 문화교류센터 조성",
+      "signal_date": "2025-01-21",
+      "budget_krw": 16300000000,
+      "notice": "R26BK01648856-000",
+      "notice_title": "해미국제성지 문화교류센터 신축공사(건축)[대행]",
+      "notice_date": "2026-07-24",
+      "institution": "충청남도 서산시",
+      "stage": "공사",
+      "recurring": false,
+      "lead_days": 549,
+      "reason": "같은 해미국제성지 문화교류센터의 공종별 공사"
+    },
+    {
+      "stratum": "council_mention",
+      "signal_key": "a1c4e716562f72b965eb9df944e8ca48493e360dd03bd7ef8a8b3dd8a4dbc5d3",
+      "signal_title": "삼길포 임시 공영주차장 조성",
+      "signal_date": "2025-01-22",
+      "budget_krw": null,
+      "notice": "R25BK00708496-000",
+      "notice_title": "삼길포 임시공영주차장 조성공사",
+      "notice_date": "2025-03-13",
+      "institution": "충청남도 서산시",
+      "stage": "공사",
+      "recurring": false,
+      "lead_days": 50,
+      "reason": "1·2는 같은 삼길포 임시주차장; 3은 삼길포항 어항시설 보수에 포함되는지 불분명; 4~6은 다른 위치"
+    }
+  ]
+}

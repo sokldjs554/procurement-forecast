@@ -1,0 +1,133 @@
+{
+  "observed_through": "2026-09-30",
+  "window_months": 12,
+  "strata": {
+    "council_mention": {
+      "signals": 284,
+      "no_tender_seen": 112,
+      "already_tendered": 22,
+      "already_tendered_recurring": 5,
+      "hit": 6,
+      "hit_recurring": 0,
+      "observing": 135,
+      "ambiguous": 9,
+      "lead": {
+        "n": 6,
+        "median_days": 58.5,
+        "min_days": 16,
+        "max_days": 285
+      },
+      "lead_excluding_recurring": {
+        "n": 6,
+        "median_days": 58.5,
+        "min_days": 16,
+        "max_days": 285
+      },
+      "hit_within_12m": {
+        "hit": 4,
+        "eligible": 116
+      },
+      "hit_within_12m_excluding_recurring": {
+        "hit": 4,
+        "eligible": 116
+      }
+    }
+  },
+  "judgments": {
+    "different": 102,
+    "same": 109,
+    "ambiguous": 22
+  },
+  "hits": [
+    {
+      "stratum": "council_mention",
+      "signal_key": "2b5a8a95bdb9138b7fe4e4bfd15efa5f89d015afa5bdd97a0b95f9f9bd4d9cf1",
+      "signal_title": "설치사업과 탄현동 산책로 환경개선 사업",
+      "signal_date": "2025-03-26",
+      "budget_krw": 212021101000,
+      "notice": "R25BK00785678-000",
+      "notice_title": "탄현동 산책로 환경개선사업",
+      "notice_date": "2025-04-14",
+      "institution": "고양시 일산서구청",
+      "stage": "공사",
+      "recurring": false,
+      "lead_days": 19,
+      "reason": "같은 탄현동 산책로 환경개선"
+    },
+    {
+      "stratum": "council_mention",
+      "signal_key": "7676b295d5e931d9a65776c8a755b1b08cbc5839793948d12c8736b77281e2ac",
+      "signal_title": "장항동 공장밀집지역 배수개선공사는 특교세 지원사업",
+      "signal_date": "2025-03-26",
+      "budget_krw": 400000000,
+      "notice": "R25BK00893632-000",
+      "notice_title": "장항동 공장밀집지역 배수개선 공사",
+      "notice_date": "2025-06-11",
+      "institution": "경기도 고양시",
+      "stage": "공사",
+      "recurring": false,
+      "lead_days": 77,
+      "reason": "같은 장항동 공장밀집지역 배수개선 공사"
+    },
+    {
+      "stratum": "council_mention",
+      "signal_key": "81890cf8123632d41b4f47dee431fee206e627dd207bfe6da2a35795932c3ff3",
+      "signal_title": "은 지도공원 아이누리 테마파크 조성사업",
+      "signal_date": "2025-09-11",
+      "budget_krw": 67715230000,
+      "notice": "R25BK01103902-000",
+      "notice_title": "지도공원 아이누리 테마파크 조성사업 실시설계용역",
+      "notice_date": "2025-10-21",
+      "institution": "경기도 고양시",
+      "stage": "설계",
+      "recurring": false,
+      "lead_days": 40,
+      "reason": "같은 지도공원 아이누리 테마파크의 설계·공사"
+    },
+    {
+      "stratum": "council_mention",
+      "signal_key": "81c1082dba393c217adcc40aafe566d6d58752a1ede456a745d8115e6b8bb279",
+      "signal_title": "지하차도 침수감지 알람장치 설치사업",
+      "signal_date": "2025-09-11",
+      "budget_krw": 8549983000,
+      "notice": "R26BK01495814-000",
+      "notice_title": "2026년 지하차도 침수감지 알람장치 설치사업",
+      "notice_date": "2026-04-29",
+      "institution": "경기도 고양시",
+      "stage": "공사",
+      "recurring": false,
+      "lead_days": 230,
+      "reason": "1은 같은 지하차도 침수감지 알람장치 설치; 2는 지하차도용인지 반지하주택용인지 불분명"
+    },
+    {
+      "stratum": "council_mention",
+      "signal_key": "cb17b5933bab0b8ef5cf6ac617b15f79892c8f6009b072491f31fec1a9d0c85d",
+      "signal_title": "또 하나는 신청사 건립사업",
+      "signal_date": "2025-12-05",
+      "budget_krw": null,
+      "notice": "R26BK01732863-000",
+      "notice_title": "신청사 건립사업 도시관리계획 결정(변경)을 위한 전략환경영향평가 및 재해영향성 검토 용역",
+      "notice_date": "2026-09-16",
+      "institution": "경기도 고양시",
+      "stage": "용역",
+      "recurring": false,
+      "lead_days": 285,
+      "reason": "1~3은 일산동구보건소 신청사; 4는 같은 신청사 건립사업의 도시관리계획 검토 용역"
+    },
+    {
+      "stratum": "council_mention",
+      "signal_key": "12fb58e2e7b0fa1e46931768da78c8aa136ffe3d743fb5806200c3a5f70346f7",
+      "signal_title": "장항사거리 교통혼잡 개선사업 등 도로유지·개선사업",
+      "signal_date": "2026-09-01",
+      "budget_krw": 3630175000,
+      "notice": "R26BK01733049-000",
+      "notice_title": "장항사거리 교통혼잡 개선사업",
+      "notice_date": "2026-09-17",
+      "institution": "경기도 고양시",
+      "stage": "공사",
+      "recurring": false,
+      "lead_days": 16,
+      "reason": "같은 장항사거리 교통혼잡 개선"
+    }
+  ]
+}

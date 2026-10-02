@@ -1,0 +1,85 @@
+{
+  "observed_through": "2026-09-30",
+  "window_months": 12,
+  "strata": {
+    "council_mention": {
+      "signals": 27,
+      "no_tender_seen": 22,
+      "hit": 3,
+      "hit_recurring": 0,
+      "ambiguous": 2,
+      "lead": {
+        "n": 3,
+        "median_days": 141,
+        "min_days": 117,
+        "max_days": 431
+      },
+      "lead_excluding_recurring": {
+        "n": 3,
+        "median_days": 141,
+        "min_days": 117,
+        "max_days": 431
+      },
+      "hit_within_12m": {
+        "hit": 2,
+        "eligible": 27
+      },
+      "hit_within_12m_excluding_recurring": {
+        "hit": 2,
+        "eligible": 27
+      }
+    }
+  },
+  "judgments": {
+    "same": 12,
+    "different": 2,
+    "ambiguous": 16
+  },
+  "hits": [
+    {
+      "stratum": "council_mention",
+      "signal_key": "0151a9e945df17f81fd605bf13875f83ff2f49c84bbebc89fd73bb25f7ad7ab0",
+      "signal_title": "친환경 스마트농업 연구관 건립 사업",
+      "signal_date": "2024-11-20",
+      "budget_krw": 1667700000000,
+      "notice": "R25BK00779321-000",
+      "notice_title": "친환경 스마트농업 연구관 건립공사(건축) 실시설계용역",
+      "notice_date": "2025-04-10",
+      "institution": "강원특별자치도 원주시 농업기술센터",
+      "stage": "설계",
+      "recurring": false,
+      "lead_days": 141,
+      "reason": "같은 친환경 스마트농업 연구관 건립의 설계·인입·토목 공사"
+    },
+    {
+      "stratum": "council_mention",
+      "signal_key": "8cf85f0444ae0c94f656062d318885309c30691369f6bfce4f8fa64961141d1c",
+      "signal_title": "교육발전특구사업",
+      "signal_date": "2024-12-06",
+      "budget_krw": null,
+      "notice": "R26BK01323611-000",
+      "notice_title": "2026년 원주시 교육발전특구 배움스쿨버스 지원사업 버스 임차 용역",
+      "notice_date": "2026-02-10",
+      "institution": "강원특별자치도 원주시",
+      "stage": "용역",
+      "recurring": false,
+      "lead_days": 431,
+      "reason": "같은 교육발전특구 사업의 용역(고양시 판정과 같은 기준)"
+    },
+    {
+      "stratum": "council_mention",
+      "signal_key": "5880e99f8cbf065d53491fa5fb109f5ec0f41d5f765bf4cecdfaa7f2d998c3a4",
+      "signal_title": "원주천 계절꽃밭 조성사업",
+      "signal_date": "2025-04-23",
+      "budget_krw": null,
+      "notice": "R25BK01014815-000",
+      "notice_title": "원주천(봉평교~원주교 둔치) 계절꽃밭 조성공사",
+      "notice_date": "2025-08-18",
+      "institution": "강원특별자치도 원주시",
+      "stage": "공사",
+      "recurring": false,
+      "lead_days": 117,
+      "reason": "같은 원주천 계절꽃밭 조성(둔치 구간별)"
+    }
+  ]
+}

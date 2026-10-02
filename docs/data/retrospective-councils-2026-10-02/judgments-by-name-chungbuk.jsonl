@@ -1,0 +1,55 @@
+{"signal_title": "유지관리 및 재료구입인데 이 사업", "notice_title": "생산단계 축산물 안전성검사 재료 구입", "verdict": "different", "stage": null, "reason": "신호 사업명이 문장 조각(유지관리·재료구입): 어느 사업인지 없음"}
+{"signal_title": "유지관리 및 재료구입인데 이 사업", "notice_title": "2024년 예방주사 및 전염병검진사업 실시용 재료 구입(본소분)", "verdict": "different", "stage": null, "reason": "신호 사업명이 문장 조각(유지관리·재료구입): 어느 사업인지 없음"}
+{"signal_title": "유지관리 및 재료구입인데 이 사업", "notice_title": "2024년 가축예방주사 및 전염병검진사업 실시용 재료 구입(지소분)", "verdict": "different", "stage": null, "reason": "신호 사업명이 문장 조각(유지관리·재료구입): 어느 사업인지 없음"}
+{"signal_title": "유지관리 및 재료구입인데 이 사업", "notice_title": "음성축산물검사소 축산물 위생검사 재료 구입", "verdict": "different", "stage": null, "reason": "신호 사업명이 문장 조각(유지관리·재료구입): 어느 사업인지 없음"}
+{"signal_title": "유지관리 및 재료구입인데 이 사업", "notice_title": "2025년도 청남대 휴게음식점(카페) 운영 식재료 구입 입찰공고", "verdict": "different", "stage": null, "reason": "신호 사업명이 문장 조각(유지관리·재료구입): 어느 사업인지 없음"}
+{"signal_title": "유지관리 및 재료구입인데 이 사업", "notice_title": "2025년도 청남대 휴게음식점(카페) 운영 식재료 구입 입찰 재공고", "verdict": "different", "stage": null, "reason": "신호 사업명이 문장 조각(유지관리·재료구입): 어느 사업인지 없음"}
+{"signal_title": "산업장려관 문화공간 조성", "notice_title": "청주 구 충북산업장려관 보수보강공사 감리용역 수의견적 제출 공고", "verdict": "ambiguous", "stage": null, "reason": "구 산업장려관 보수보강이 문화공간 조성의 공사인지, 그 전의 별도 보강인지 이름만으로 불분명"}
+{"signal_title": "산업장려관 문화공간 조성", "notice_title": "청주 구 충북산업장려관 보수보강공사(건축)", "verdict": "ambiguous", "stage": null, "reason": "구 산업장려관 보수보강이 문화공간 조성의 공사인지, 그 전의 별도 보강인지 이름만으로 불분명"}
+{"signal_title": "산업장려관 문화공간 조성", "notice_title": "청주 구 충북산업장려관 보수보강공사 감리용역 수의견적 제출 재공고", "verdict": "ambiguous", "stage": null, "reason": "구 산업장려관 보수보강이 문화공간 조성의 공사인지, 그 전의 별도 보강인지 이름만으로 불분명"}
+{"signal_title": "산업장려관 문화공간 조성", "notice_title": "청주 구 충북산업장려관 보수보강 공사(전기)", "verdict": "ambiguous", "stage": null, "reason": "구 산업장려관 보수보강이 문화공간 조성의 공사인지, 그 전의 별도 보강인지 이름만으로 불분명"}
+{"signal_title": "도청 본관 복합문화공간 조성", "notice_title": "충북도청 본관 복합문화공간 조성 건축설계 공모", "verdict": "same", "stage": "설계", "reason": "같은 도청 본관 복합문화공간 조성의 설계공모·건설사업관리·공종별 공사·전시연출"}
+{"signal_title": "도청 본관 복합문화공간 조성", "notice_title": "충북도청 본관 복합문화공간 조성사업 감독권한대행 등 건설사업관리용역", "verdict": "same", "stage": "감리", "reason": "같은 도청 본관 복합문화공간 조성의 설계공모·건설사업관리·공종별 공사·전시연출"}
+{"signal_title": "도청 본관 복합문화공간 조성", "notice_title": "충북도청 본관 복합문화공간 조성사업(건축)", "verdict": "same", "stage": "공사", "reason": "같은 도청 본관 복합문화공간 조성의 설계공모·건설사업관리·공종별 공사·전시연출"}
+{"signal_title": "도청 본관 복합문화공간 조성", "notice_title": "충북도청 본관 복합문화공간 조성사업(통신)", "verdict": "same", "stage": "공사", "reason": "같은 도청 본관 복합문화공간 조성의 설계공모·건설사업관리·공종별 공사·전시연출"}
+{"signal_title": "도청 본관 복합문화공간 조성", "notice_title": "충북도청 본관 복합문화공간 조성사업(전기)", "verdict": "same", "stage": "공사", "reason": "같은 도청 본관 복합문화공간 조성의 설계공모·건설사업관리·공종별 공사·전시연출"}
+{"signal_title": "도청 본관 복합문화공간 조성", "notice_title": "충북도청 본관 복합문화공간 조성사업(소방)", "verdict": "same", "stage": "공사", "reason": "같은 도청 본관 복합문화공간 조성의 설계공모·건설사업관리·공종별 공사·전시연출"}
+{"signal_title": "도청 본관 복합문화공간 조성", "notice_title": "충북도청 본관 복합문화공간 조성사업(기계)", "verdict": "same", "stage": "공사", "reason": "같은 도청 본관 복합문화공간 조성의 설계공모·건설사업관리·공종별 공사·전시연출"}
+{"signal_title": "도청 본관 복합문화공간 조성", "notice_title": "충북도청 본관 복합문화공간 조성사업 전시연출 및 콘텐츠 제작.설치 용역", "verdict": "same", "stage": "용역", "reason": "같은 도청 본관 복합문화공간 조성의 설계공모·건설사업관리·공종별 공사·전시연출"}
+{"signal_title": "바이오 스퀘어 조성", "notice_title": "충청북도 바이오산업 육성 종합계획 수립 연구용역", "verdict": "different", "stage": null, "reason": "바이오 스퀘어 조성과 바이오산업 육성 종합계획 연구는 다른 일"}
+{"signal_title": "붕괴위험지구 정비 및 낙석방지시설 설치", "notice_title": "영동 용화N4지구 낙석방지시설 설치공사", "verdict": "same", "stage": "연례", "reason": "해마다 지구별로 하는 낙석방지·붕괴위험지구 정비(개별 지구 공사)"}
+{"signal_title": "붕괴위험지구 정비 및 낙석방지시설 설치", "notice_title": "영동 용화N4지구 낙석방지시설 설치공사 임목폐기물처리용역", "verdict": "same", "stage": "연례", "reason": "해마다 지구별로 하는 낙석방지·붕괴위험지구 정비(개별 지구 공사)"}
+{"signal_title": "붕괴위험지구 정비 및 낙석방지시설 설치", "notice_title": "보은 오정도로 낙석방지시설 설치공사", "verdict": "same", "stage": "연례", "reason": "해마다 지구별로 하는 낙석방지·붕괴위험지구 정비(개별 지구 공사)"}
+{"signal_title": "붕괴위험지구 정비 및 낙석방지시설 설치", "notice_title": "영동 명천지구 등 3개지구 낙석방지시설 정비사업", "verdict": "same", "stage": "연례", "reason": "해마다 지구별로 하는 낙석방지·붕괴위험지구 정비(개별 지구 공사)"}
+{"signal_title": "이게 또 문화의 바다 핵심사업", "notice_title": "문화의 바다 공간 조성 건축기획 및 설계공모 관리용역", "verdict": "ambiguous", "stage": null, "reason": "'문화의 바다 핵심사업'이 공간 조성을 가리키는지 문장 조각이라 불분명"}
+{"signal_title": "지금 오송역 선하부지 휴게공간 조성사업", "notice_title": "오송역 선하부지 휴게공간 조성사업 기본 및 실시설계용역", "verdict": "same", "stage": "설계", "reason": "같은 오송역 선하부지 휴게공간의 설계·공종별 공사·건설사업관리"}
+{"signal_title": "지금 오송역 선하부지 휴게공간 조성사업", "notice_title": "오송역 선하부지 휴게공간 조성사업 건축공사", "verdict": "same", "stage": "공사", "reason": "같은 오송역 선하부지 휴게공간의 설계·공종별 공사·건설사업관리"}
+{"signal_title": "지금 오송역 선하부지 휴게공간 조성사업", "notice_title": "오송역 선하부지 휴게공간 조성사업 전기공사", "verdict": "same", "stage": "공사", "reason": "같은 오송역 선하부지 휴게공간의 설계·공종별 공사·건설사업관리"}
+{"signal_title": "지금 오송역 선하부지 휴게공간 조성사업", "notice_title": "오송역 선하부지 휴게공간 조성사업 소방공사", "verdict": "same", "stage": "공사", "reason": "같은 오송역 선하부지 휴게공간의 설계·공종별 공사·건설사업관리"}
+{"signal_title": "지금 오송역 선하부지 휴게공간 조성사업", "notice_title": "오송역 선하부지 휴게공간 조성사업 통신공사", "verdict": "same", "stage": "공사", "reason": "같은 오송역 선하부지 휴게공간의 설계·공종별 공사·건설사업관리"}
+{"signal_title": "지금 오송역 선하부지 휴게공간 조성사업", "notice_title": "오송역 선하부지 휴게공간 조성사업 건설사업관리용역 PQ제출안내", "verdict": "same", "stage": "감리", "reason": "같은 오송역 선하부지 휴게공간의 설계·공종별 공사·건설사업관리"}
+{"signal_title": "안전교육 사업", "notice_title": "소방안전교육 기자재 구매", "verdict": "ambiguous", "stage": null, "reason": "1은 안전교육 기자재일 수 있으나 어느 안전교육인지 없음; 나머지는 구급장비"}
+{"signal_title": "안전교육 사업", "notice_title": "2024년 소방안전교부세 구급장비 구매", "verdict": "different", "stage": null, "reason": "1은 안전교육 기자재일 수 있으나 어느 안전교육인지 없음; 나머지는 구급장비"}
+{"signal_title": "안전교육 사업", "notice_title": "2024년 소방안전교부세 구급장비 2차 구매", "verdict": "different", "stage": null, "reason": "1은 안전교육 기자재일 수 있으나 어느 안전교육인지 없음; 나머지는 구급장비"}
+{"signal_title": "안전교육 사업", "notice_title": "2025년 소방안전교부세 구급장비 구매", "verdict": "different", "stage": null, "reason": "1은 안전교육 기자재일 수 있으나 어느 안전교육인지 없음; 나머지는 구급장비"}
+{"signal_title": "안전교육 사업", "notice_title": "2025년 소방안전교부세 전문구급장비 2차 구매", "verdict": "different", "stage": null, "reason": "1은 안전교육 기자재일 수 있으나 어느 안전교육인지 없음; 나머지는 구급장비"}
+{"signal_title": "안전교육 사업", "notice_title": "2026년 소방안전교부세 전문구급장비 구매", "verdict": "different", "stage": null, "reason": "1은 안전교육 기자재일 수 있으나 어느 안전교육인지 없음; 나머지는 구급장비"}
+{"signal_title": "안전교육 사업", "notice_title": "2026년 소방안전교부세 전문구급장비 2차 구매", "verdict": "different", "stage": null, "reason": "1은 안전교육 기자재일 수 있으나 어느 안전교육인지 없음; 나머지는 구급장비"}
+{"signal_title": "시외버스운송사업", "notice_title": "2024년 시외버스 비수익노선 손실액산정 및 벽지노선지정·손실액산정 용역", "verdict": "different", "stage": null, "reason": "운송사업 일반과 비수익노선 손실액 산정 용역은 다른 일"}
+{"signal_title": "시외버스운송사업", "notice_title": "2025년 시외버스 비수익노선 손실액산정 및 벽지노선 지정 손실액산정 용역", "verdict": "different", "stage": null, "reason": "운송사업 일반과 비수익노선 손실액 산정 용역은 다른 일"}
+{"signal_title": "시외버스운송사업", "notice_title": "2026년 시외버스 비수익노선 손실액산정 용역", "verdict": "different", "stage": null, "reason": "운송사업 일반과 비수익노선 손실액 산정 용역은 다른 일"}
+{"signal_title": "미술관·문학관 등 자치연수원 복합문화시설 조성", "notice_title": "자치연수원 복합문화시설 조성사업 기본계획 및 타당성 조사용역", "verdict": "same", "stage": "용역", "reason": "같은 자치연수원 복합문화시설의 기본계획·타당성 조사"}
+{"signal_title": "증액한 것으로 충청북도 복합문화시설 조성", "notice_title": "자치연수원 복합문화시설 조성사업 기본계획 및 타당성 조사용역", "verdict": "ambiguous", "stage": null, "reason": "'충청북도 복합문화시설'이 자치연수원 시설인지 문화예술복합시설인지 불분명"}
+{"signal_title": "그중 충청북도 복합시설 조성사업과 운영사업", "notice_title": "충청북도 문화예술복합시설 조성사업 설계용역", "verdict": "ambiguous", "stage": null, "reason": "'복합시설 조성사업과 운영사업'이 문화예술복합시설인지 불분명"}
+{"signal_title": "원을 계상하였으며 충청북도 문화예술복합시설 조성", "notice_title": "충청북도 문화예술복합시설 조성사업 설계용역", "verdict": "same", "stage": "설계", "reason": "같은 문화예술복합시설 조성의 설계"}
+{"signal_title": "충청북도종합사회복지센터 주차장 조성", "notice_title": "충청북도종합사회복지센터 석면철거공사", "verdict": "different", "stage": null, "reason": "같은 복지센터의 다른 일(석면철거·외벽), 주차장 조성 아님"}
+{"signal_title": "충청북도종합사회복지센터 주차장 조성", "notice_title": "충청북도종합사회복지센터 석면철거공사 석면처리용역", "verdict": "different", "stage": null, "reason": "같은 복지센터의 다른 일(석면철거·외벽), 주차장 조성 아님"}
+{"signal_title": "충청북도종합사회복지센터 주차장 조성", "notice_title": "충청북도종합사회복지센터 외벽공사", "verdict": "different", "stage": null, "reason": "같은 복지센터의 다른 일(석면철거·외벽), 주차장 조성 아님"}
+{"signal_title": "자연재해 대비 비상근무자 대기실 조성", "notice_title": "도로관리사업소 비상근무자 대기실 증축공사 기본 및 실시설계용역", "verdict": "same", "stage": "설계", "reason": "같은 도로관리사업소 비상근무자 대기실 증축의 설계·공종별 공사"}
+{"signal_title": "자연재해 대비 비상근무자 대기실 조성", "notice_title": "충청북도도로관리사업소 비상근무자 대기실 증축공사(건축)", "verdict": "same", "stage": "공사", "reason": "같은 도로관리사업소 비상근무자 대기실 증축의 설계·공종별 공사"}
+{"signal_title": "자연재해 대비 비상근무자 대기실 조성", "notice_title": "충청북도도로관리사업소 비상근무자 대기실 증축공사(기계)", "verdict": "same", "stage": "공사", "reason": "같은 도로관리사업소 비상근무자 대기실 증축의 설계·공종별 공사"}
+{"signal_title": "자연재해 대비 비상근무자 대기실 조성", "notice_title": "충청북도도로관리사업소 비상근무자 대기실 증축공사(통신)", "verdict": "same", "stage": "공사", "reason": "같은 도로관리사업소 비상근무자 대기실 증축의 설계·공종별 공사"}
+{"signal_title": "자연재해 대비 비상근무자 대기실 조성", "notice_title": "충청북도도로관리사업소 비상근무자 대기실 증축공사(전기)", "verdict": "same", "stage": "공사", "reason": "같은 도로관리사업소 비상근무자 대기실 증축의 설계·공종별 공사"}
+{"signal_title": "충청북도지사가 제출한 충청북도 문화예술복합시설 조성사업", "notice_title": "충청북도 문화예술복합시설 조성사업 설계용역", "verdict": "same", "stage": "설계", "reason": "같은 문화예술복합시설 조성의 설계"}
+{"signal_title": ")의 대전환", "notice_title": "충북 인공지능(AI)중심 대전환 전략수립 연구용역", "verdict": "different", "stage": null, "reason": "신호 사업명이 문장 조각(')의 대전환')"}
+{"signal_title": ")의 대전환", "notice_title": "민선9기 충북 대전환 경제성장전략 수립 연구용역", "verdict": "different", "stage": null, "reason": "신호 사업명이 문장 조각(')의 대전환')"}

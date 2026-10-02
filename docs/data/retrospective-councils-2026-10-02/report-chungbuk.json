@@ -1,0 +1,118 @@
+{
+  "observed_through": "2026-09-30",
+  "window_months": 12,
+  "strata": {
+    "council_mention": {
+      "signals": 156,
+      "no_tender_seen": 90,
+      "ambiguous": 5,
+      "hit": 5,
+      "hit_recurring": 1,
+      "already_tendered": 2,
+      "already_tendered_recurring": 0,
+      "observing": 54,
+      "lead": {
+        "n": 5,
+        "median_days": 91,
+        "min_days": 26,
+        "max_days": 166
+      },
+      "lead_excluding_recurring": {
+        "n": 4,
+        "median_days": 64.5,
+        "min_days": 26,
+        "max_days": 98
+      },
+      "hit_within_12m": {
+        "hit": 2,
+        "eligible": 96
+      },
+      "hit_within_12m_excluding_recurring": {
+        "hit": 1,
+        "eligible": 95
+      }
+    }
+  },
+  "judgments": {
+    "different": 29,
+    "ambiguous": 14,
+    "same": 30
+  },
+  "hits": [
+    {
+      "stratum": "council_mention",
+      "signal_key": "bbd8671965f58ec83c7c2bab89778e95da01d5c7564b68785d806f2a2cbfd08f",
+      "signal_title": "도청 본관 복합문화공간 조성",
+      "signal_date": "2024-12-04",
+      "budget_krw": null,
+      "notice": "20241240833-000",
+      "notice_title": "충북도청 본관 복합문화공간 조성 건축설계 공모",
+      "notice_date": "2024-12-30",
+      "institution": "충청북도",
+      "stage": "설계",
+      "recurring": false,
+      "lead_days": 26,
+      "reason": "같은 도청 본관 복합문화공간 조성의 설계공모·건설사업관리·공종별 공사·전시연출"
+    },
+    {
+      "stratum": "council_mention",
+      "signal_key": "214e6c8a00effbf363a84bb1e02d549e647b6b50af34f37345b8fb9eea1e493a",
+      "signal_title": "붕괴위험지구 정비 및 낙석방지시설 설치",
+      "signal_date": "2025-03-19",
+      "budget_krw": 7528100000000,
+      "notice": "R25BK01034520-000",
+      "notice_title": "영동 용화N4지구 낙석방지시설 설치공사",
+      "notice_date": "2025-09-01",
+      "institution": "충청북도 도로관리사업소 남부지소",
+      "stage": "연례",
+      "recurring": true,
+      "lead_days": 166,
+      "reason": "해마다 지구별로 하는 낙석방지·붕괴위험지구 정비(개별 지구 공사)"
+    },
+    {
+      "stratum": "council_mention",
+      "signal_key": "ae72ce9703fdbd57010e7a754f222938bcc413f85dad9ed1483f81822d11838d",
+      "signal_title": "원을 계상하였으며 충청북도 문화예술복합시설 조성",
+      "signal_date": "2025-12-08",
+      "budget_krw": 7670300000000,
+      "notice": "R26BK01397869-000",
+      "notice_title": "충청북도 문화예술복합시설 조성사업 설계용역",
+      "notice_date": "2026-03-16",
+      "institution": "충청북도",
+      "stage": "설계",
+      "recurring": false,
+      "lead_days": 98,
+      "reason": "같은 문화예술복합시설 조성의 설계"
+    },
+    {
+      "stratum": "council_mention",
+      "signal_key": "6ce40f67e716044b54866054a115f45cb540d970a216633d5e08e7156e9129fe",
+      "signal_title": "자연재해 대비 비상근무자 대기실 조성",
+      "signal_date": "2025-12-09",
+      "budget_krw": null,
+      "notice": "R26BK01274653-000",
+      "notice_title": "도로관리사업소 비상근무자 대기실 증축공사 기본 및 실시설계용역",
+      "notice_date": "2026-01-16",
+      "institution": "충청북도 도로관리사업소",
+      "stage": "설계",
+      "recurring": false,
+      "lead_days": 38,
+      "reason": "같은 도로관리사업소 비상근무자 대기실 증축의 설계·공종별 공사"
+    },
+    {
+      "stratum": "council_mention",
+      "signal_key": "2965aeaf6e3d1082d901163246577c9e5e117a1d3bbb4de5a837c9c1b1b531eb",
+      "signal_title": "충청북도지사가 제출한 충청북도 문화예술복합시설 조성사업",
+      "signal_date": "2025-12-15",
+      "budget_krw": null,
+      "notice": "R26BK01397869-000",
+      "notice_title": "충청북도 문화예술복합시설 조성사업 설계용역",
+      "notice_date": "2026-03-16",
+      "institution": "충청북도",
+      "stage": "설계",
+      "recurring": false,
+      "lead_days": 91,
+      "reason": "같은 문화예술복합시설 조성의 설계"
+    }
+  ]
+}
