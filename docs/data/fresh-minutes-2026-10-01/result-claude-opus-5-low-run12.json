@@ -1,0 +1,992 @@
+{
+  "schema_version": "source-holdout-result-v1",
+  "evaluated_at": "2026-10-02T15:53:14.557179+00:00",
+  "code_revision": "30f5c996ec4416dd0a83c3f4c7a9dc501320c62c",
+  "extractor": "claude-opus-5 · low",
+  "api_cost_usd": 0.3201,
+  "max_usd": 1.0,
+  "skipped_cases": [],
+  "manifest_sha256": "f034c20b8b650e4f92be253a784c017530cde9132b2ca7bbb8ef5041f5ab4479",
+  "cases_sha256": "093a296e8e74edfca4aa4bddf68e3347c4d116d63a573c71133aa39c95b400e3",
+  "label_origin": "정답: 이 저장소 작업을 맡은 AI(Claude Code)가 2026-10-01 원문만 읽고 작성. 어떤 추출기 출력도 보기 전에 고정. 독립 전문가 정답 아님. 신호 정의는 제품 추출 기준(prompts.py SIGNALS)과 같고, 판단이 갈리는 사업은 ambiguous로 분리(채점에서 제외하고 따로 셈).",
+  "independent_human_gold": false,
+  "scope": "selected_parsed_excerpts_extraction_only_not_ocr_linking_or_forecasting",
+  "matching": "maximum_one_to_one_title_phrase_whitespace_insensitive_budget_2pct",
+  "context_policy": "speaker_labels_and_grounding_offsets_from_verified_full_source_not_gold",
+  "documents": 4,
+  "institutions": [
+    "서울특별시 서초구",
+    "전남광주통합특별시 곡성군",
+    "전남광주통합특별시 여수시",
+    "충청남도 홍성군"
+  ],
+  "raw": {
+    "cases": 24,
+    "expected": 8,
+    "predicted": 8,
+    "matched": 8,
+    "precision": 1.0,
+    "recall": 1.0,
+    "negative_cases": 19,
+    "negative_cases_with_predictions": 0,
+    "negative_case_false_positive_rate": 0.0,
+    "ambiguous_predictions_set_aside": 4,
+    "fields": {
+      "category": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 0,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": null
+      },
+      "commitment": {
+        "correct": 7,
+        "matched_eligible": 8,
+        "all_expected_eligible": 8,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": 0.875,
+        "end_to_end_recall": 0.875
+      },
+      "budget_krw": {
+        "correct": 7,
+        "matched_eligible": 7,
+        "all_expected_eligible": 7,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": 1.0,
+        "end_to_end_recall": 1.0
+      },
+      "expected_year": {
+        "correct": 7,
+        "matched_eligible": 7,
+        "all_expected_eligible": 7,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": 1.0,
+        "end_to_end_recall": 1.0
+      }
+    },
+    "failures": [
+      {
+        "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-3",
+        "title": "홍성 명동상가 공영주차장 조성",
+        "wrong": {
+          "commitment": {
+            "expected": "committed",
+            "got": "planned"
+          }
+        }
+      }
+    ]
+  },
+  "after_verifier": {
+    "cases": 24,
+    "expected": 8,
+    "predicted": 8,
+    "matched": 8,
+    "precision": 1.0,
+    "recall": 1.0,
+    "negative_cases": 19,
+    "negative_cases_with_predictions": 0,
+    "negative_case_false_positive_rate": 0.0,
+    "ambiguous_predictions_set_aside": 4,
+    "fields": {
+      "category": {
+        "correct": 0,
+        "matched_eligible": 0,
+        "all_expected_eligible": 0,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": null,
+        "end_to_end_recall": null
+      },
+      "commitment": {
+        "correct": 7,
+        "matched_eligible": 8,
+        "all_expected_eligible": 8,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": 0.875,
+        "end_to_end_recall": 0.875
+      },
+      "budget_krw": {
+        "correct": 7,
+        "matched_eligible": 7,
+        "all_expected_eligible": 7,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": 1.0,
+        "end_to_end_recall": 1.0
+      },
+      "expected_year": {
+        "correct": 7,
+        "matched_eligible": 7,
+        "all_expected_eligible": 7,
+        "ambiguous_identity_excluded": 0,
+        "accuracy_when_matched": 1.0,
+        "end_to_end_recall": 1.0
+      }
+    },
+    "failures": [
+      {
+        "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-3",
+        "title": "홍성 명동상가 공영주차장 조성",
+        "wrong": {
+          "commitment": {
+            "expected": "committed",
+            "got": "planned"
+          }
+        }
+      }
+    ]
+  },
+  "by_institution": {
+    "서울특별시 서초구": {
+      "cases": 6,
+      "expected": 1,
+      "predicted": 1,
+      "matched": 1,
+      "precision": 1.0,
+      "recall": 1.0,
+      "negative_cases": 5,
+      "negative_cases_with_predictions": 0,
+      "negative_case_false_positive_rate": 0.0,
+      "ambiguous_predictions_set_aside": 3,
+      "fields": {
+        "category": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        },
+        "commitment": {
+          "correct": 1,
+          "matched_eligible": 1,
+          "all_expected_eligible": 1,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": 1.0,
+          "end_to_end_recall": 1.0
+        },
+        "budget_krw": {
+          "correct": 1,
+          "matched_eligible": 1,
+          "all_expected_eligible": 1,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": 1.0,
+          "end_to_end_recall": 1.0
+        },
+        "expected_year": {
+          "correct": 1,
+          "matched_eligible": 1,
+          "all_expected_eligible": 1,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": 1.0,
+          "end_to_end_recall": 1.0
+        }
+      },
+      "failures": []
+    },
+    "전남광주통합특별시 곡성군": {
+      "cases": 6,
+      "expected": 0,
+      "predicted": 0,
+      "matched": 0,
+      "precision": null,
+      "recall": null,
+      "negative_cases": 6,
+      "negative_cases_with_predictions": 0,
+      "negative_case_false_positive_rate": 0.0,
+      "ambiguous_predictions_set_aside": 0,
+      "fields": {
+        "category": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        },
+        "commitment": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        },
+        "budget_krw": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        },
+        "expected_year": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        }
+      },
+      "failures": []
+    },
+    "전남광주통합특별시 여수시": {
+      "cases": 6,
+      "expected": 0,
+      "predicted": 0,
+      "matched": 0,
+      "precision": null,
+      "recall": null,
+      "negative_cases": 6,
+      "negative_cases_with_predictions": 0,
+      "negative_case_false_positive_rate": 0.0,
+      "ambiguous_predictions_set_aside": 0,
+      "fields": {
+        "category": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        },
+        "commitment": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        },
+        "budget_krw": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        },
+        "expected_year": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        }
+      },
+      "failures": []
+    },
+    "충청남도 홍성군": {
+      "cases": 6,
+      "expected": 7,
+      "predicted": 7,
+      "matched": 7,
+      "precision": 1.0,
+      "recall": 1.0,
+      "negative_cases": 2,
+      "negative_cases_with_predictions": 0,
+      "negative_case_false_positive_rate": 0.0,
+      "ambiguous_predictions_set_aside": 1,
+      "fields": {
+        "category": {
+          "correct": 0,
+          "matched_eligible": 0,
+          "all_expected_eligible": 0,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": null,
+          "end_to_end_recall": null
+        },
+        "commitment": {
+          "correct": 6,
+          "matched_eligible": 7,
+          "all_expected_eligible": 7,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": 0.8571,
+          "end_to_end_recall": 0.8571
+        },
+        "budget_krw": {
+          "correct": 6,
+          "matched_eligible": 6,
+          "all_expected_eligible": 6,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": 1.0,
+          "end_to_end_recall": 1.0
+        },
+        "expected_year": {
+          "correct": 6,
+          "matched_eligible": 6,
+          "all_expected_eligible": 6,
+          "ambiguous_identity_excluded": 0,
+          "accuracy_when_matched": 1.0,
+          "end_to_end_recall": 1.0
+        }
+      },
+      "failures": [
+        {
+          "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-3",
+          "title": "홍성 명동상가 공영주차장 조성",
+          "wrong": {
+            "commitment": {
+              "expected": "committed",
+              "got": "planned"
+            }
+          }
+        }
+      ]
+    }
+  },
+  "predictions": [
+    {
+      "case": "dev-전남광주통합특별시-여수시의회-기획행정위원회-2026-09-02-1",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-전남광주통합특별시-여수시의회-기획행정위원회-2026-09-02-2",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-전남광주통합특별시-여수시의회-기획행정위원회-2026-09-02-3",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-전남광주통합특별시-여수시의회-기획행정위원회-2026-09-02-4",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-전남광주통합특별시-여수시의회-기획행정위원회-2026-09-02-5",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-전남광주통합특별시-여수시의회-기획행정위원회-2026-09-02-6",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-서울특별시-서초구의회-임시-재정건설위원회-2026-09-14-1",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "도로 포트홀 정비",
+            "keywords": [
+              "포트홀",
+              "도로 정비",
+              "재포장",
+              "도로과"
+            ],
+            "category": "facility",
+            "commitment": "committed",
+            "budget_krw": null,
+            "expected_year": 2026
+          },
+          "verdict": "accepted",
+          "issues": []
+        },
+        {
+          "prediction": {
+            "title": "방배카페골목 도로경관 정비",
+            "keywords": [
+              "방배카페골목",
+              "도로경관 정비",
+              "보도 정비",
+              "활성화"
+            ],
+            "category": "facility",
+            "commitment": "planned",
+            "budget_krw": null,
+            "expected_year": 2026
+          },
+          "verdict": "needs_review",
+          "issues": [
+            "official_evidence_missing",
+            "year_unverified"
+          ]
+        }
+      ],
+      "raw_signals": [
+        {
+          "title": "도로 포트홀 정비",
+          "summary": "서초구 도로과가 추경에 포트홀 등 도로 정비 예산을 반영해 일정 구간 포장 정비를 추진한다.",
+          "category": "facility",
+          "institution_mention": "서초구",
+          "department": "도로과",
+          "budget_text": null,
+          "budget_krw": null,
+          "timing_text": "추경에",
+          "expected_year": 2026,
+          "expected_half": "H2",
+          "commitment": "committed",
+          "procurement_type": "construction",
+          "keywords": [
+            "포트홀",
+            "도로 정비",
+            "재포장",
+            "도로과"
+          ],
+          "evidence": [
+            "저희가 추경에 반영한 예산은 굴착 관련된 예산은 아니고 잦은 포트홀 이런 부분을 정비하는 예산이 되겠습니다."
+          ],
+          "confidence": 0.6
+        },
+        {
+          "title": "방배카페골목 도로경관 정비",
+          "summary": "서초구 도로과가 방배카페골목 활성화를 위한 보도 등 도로경관 정비 사업을 예산에 편성해 추진한다.",
+          "category": "facility",
+          "institution_mention": "서초구",
+          "department": "도로과",
+          "budget_text": null,
+          "budget_krw": null,
+          "timing_text": null,
+          "expected_year": 2026,
+          "expected_half": null,
+          "commitment": "planned",
+          "procurement_type": "construction",
+          "keywords": [
+            "방배카페골목",
+            "도로경관 정비",
+            "보도 정비",
+            "활성화"
+          ],
+          "evidence": [
+            "방배카페골목 관련해서 질의드릴 건데요. 예산서 249페이지 그리고 사업별 설명서 64페이지, 70페이지 부분인데"
+          ],
+          "confidence": 0.45
+        }
+      ]
+    },
+    {
+      "case": "dev-서울특별시-서초구의회-임시-재정건설위원회-2026-09-14-2",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "방배카페골목 보행환경 개선공사",
+            "keywords": [
+              "보행환경 개선",
+              "노후블록 정비",
+              "방배카페골목",
+              "도로 정비"
+            ],
+            "category": "facility",
+            "commitment": "committed",
+            "budget_krw": 420000000,
+            "expected_year": 2026
+          },
+          "verdict": "accepted",
+          "issues": []
+        }
+      ],
+      "raw_signals": [
+        {
+          "title": "방배카페골목 보행환경 개선공사",
+          "summary": "서초구 도로과가 방배카페골목 노후블록·경계선 정비 등 보행환경 개선을 위해 본예산 4억 2000만원과 추경 4억 2000만원으로 각 500m 구간 공사를 추진한다.",
+          "category": "facility",
+          "institution_mention": "서울특별시 서초구",
+          "department": "도로과",
+          "budget_text": "4억 2000만원",
+          "budget_krw": 420000000,
+          "timing_text": "11월까지",
+          "expected_year": 2026,
+          "expected_half": "H2",
+          "commitment": "committed",
+          "procurement_type": "construction",
+          "keywords": [
+            "보행환경 개선",
+            "노후블록 정비",
+            "방배카페골목",
+            "도로 정비"
+          ],
+          "evidence": [
+            "500m에 4억 2000만원의 예산이 편성되었고요. 추경에도 4억 2000만원이 500m 되어 있습니다.",
+            "지금 추경에 4억을 받는다고 해도 공사가 늦어도 11월까지는 충분히 다 완료할 수 있습니다."
+          ],
+          "confidence": 0.78
+        }
+      ]
+    },
+    {
+      "case": "dev-서울특별시-서초구의회-임시-재정건설위원회-2026-09-14-3",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-서울특별시-서초구의회-임시-재정건설위원회-2026-09-14-4",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "동광로 지중화사업",
+            "keywords": [
+              "지중화",
+              "동광로",
+              "전주 철거",
+              "도로확장"
+            ],
+            "category": "facility",
+            "commitment": "committed",
+            "budget_krw": 1140000000,
+            "expected_year": 2026
+          },
+          "verdict": "needs_review",
+          "issues": [
+            "year_unverified"
+          ]
+        }
+      ],
+      "raw_signals": [
+        {
+          "title": "동광로 지중화사업",
+          "summary": "서초구가 동광로 확장 사업과 연계해 340m 구간 전주 11본을 철거하는 지중화사업을 총사업비 11억 4000만원(구비 100%)으로 추진한다.",
+          "category": "facility",
+          "institution_mention": "서초구",
+          "department": "가로행정과",
+          "budget_text": "11억 4000만원",
+          "budget_krw": 1140000000,
+          "timing_text": null,
+          "expected_year": 2026,
+          "expected_half": null,
+          "commitment": "committed",
+          "procurement_type": "construction",
+          "keywords": [
+            "지중화",
+            "동광로",
+            "전주 철거",
+            "도로확장"
+          ],
+          "evidence": [
+            "이 본 사업은 총사업비 11억 4000만원 정도 구비 100%네요. 340m 구간이고 전주가 11본을 철거하는 지중화사업입니다.",
+            "현재 동광로 지중화사업은 저희 도로과에서 실시하고 있는 동광로 확장 사업과 연계되어서 실시하는 사업입니다."
+          ],
+          "confidence": 0.85
+        }
+      ]
+    },
+    {
+      "case": "dev-서울특별시-서초구의회-임시-재정건설위원회-2026-09-14-5",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-서울특별시-서초구의회-임시-재정건설위원회-2026-09-14-6",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-전남광주통합특별시-곡성군의회-예산결산특별위원회-2026-09-15-1",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-전남광주통합특별시-곡성군의회-예산결산특별위원회-2026-09-15-2",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-전남광주통합특별시-곡성군의회-예산결산특별위원회-2026-09-15-3",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-전남광주통합특별시-곡성군의회-예산결산특별위원회-2026-09-15-4",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-전남광주통합특별시-곡성군의회-예산결산특별위원회-2026-09-15-5",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-전남광주통합특별시-곡성군의회-예산결산특별위원회-2026-09-15-6",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-1",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "홍주성 활용 및 원도심 활성화 계획 연구용역",
+            "keywords": [
+              "원도심 활성화",
+              "홍주성",
+              "연구용역",
+              "문화거점공간"
+            ],
+            "category": "tourism_culture",
+            "commitment": "committed",
+            "budget_krw": 50000000,
+            "expected_year": 2026
+          },
+          "verdict": "accepted",
+          "issues": []
+        },
+        {
+          "prediction": {
+            "title": "홍주초등학교 문화거점공간 조성",
+            "keywords": [
+              "문화거점공간",
+              "문화도시사업",
+              "홍주초등학교",
+              "건축계획"
+            ],
+            "category": "tourism_culture",
+            "commitment": "planned",
+            "budget_krw": null,
+            "expected_year": null
+          },
+          "verdict": "accepted",
+          "issues": []
+        }
+      ],
+      "raw_signals": [
+        {
+          "title": "홍주성 활용 및 원도심 활성화 계획 연구용역",
+          "summary": "홍성군 문화유산과가 홍주성 및 명동상가·상설시장을 연계한 원도심 활성화 계획 수립을 위해 추경에 연구용역비 5,000만원을 계상했다.",
+          "category": "tourism_culture",
+          "institution_mention": "홍성군",
+          "department": "문화유산과",
+          "budget_text": "5,000만원",
+          "budget_krw": 50000000,
+          "timing_text": "이번 추경",
+          "expected_year": 2026,
+          "expected_half": "H2",
+          "commitment": "committed",
+          "procurement_type": "service",
+          "keywords": [
+            "원도심 활성화",
+            "홍주성",
+            "연구용역",
+            "문화거점공간"
+          ],
+          "evidence": [
+            "저희가이번추경을보시면홍주성활용및원도심활성화계획관련돼서연구용역비5,000만원이지금계상이됐습니다."
+          ],
+          "confidence": 0.85
+        },
+        {
+          "title": "홍주초등학교 문화거점공간 조성",
+          "summary": "홍성군 문화유산과가 문화도시사업으로 홍주초등학교에 문화거점공간을 조성할 계획이다.",
+          "category": "tourism_culture",
+          "institution_mention": "홍성군",
+          "department": "문화유산과",
+          "budget_text": null,
+          "budget_krw": null,
+          "timing_text": null,
+          "expected_year": null,
+          "expected_half": null,
+          "commitment": "planned",
+          "procurement_type": "construction",
+          "keywords": [
+            "문화거점공간",
+            "문화도시사업",
+            "홍주초등학교",
+            "건축계획"
+          ],
+          "evidence": [
+            "저희가지금홍주초등학교는문화도시사업으로서문화거점공간을조성하는거고"
+          ],
+          "confidence": 0.7
+        }
+      ]
+    },
+    {
+      "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-2",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "홍주성 활용방안 연구용역",
+            "keywords": [
+              "연구용역",
+              "홍주성",
+              "활용방안",
+              "활성화 방안"
+            ],
+            "category": "tourism_culture",
+            "commitment": "planned",
+            "budget_krw": null,
+            "expected_year": null
+          },
+          "verdict": "accepted",
+          "issues": []
+        },
+        {
+          "prediction": {
+            "title": "홍주초등학교 본관 리모델링 문화거점공간 조성",
+            "keywords": [
+              "리모델링",
+              "문화거점공간 조성",
+              "문화도시사업",
+              "홍주초등학교"
+            ],
+            "category": "facility",
+            "commitment": "committed",
+            "budget_krw": 5380000000,
+            "expected_year": null
+          },
+          "verdict": "accepted",
+          "issues": []
+        }
+      ],
+      "raw_signals": [
+        {
+          "title": "홍주성 활용방안 연구용역",
+          "summary": "홍성군 문화유산과가 홍주성 및 본청 활용·활성화 방안 수립을 위한 연구용역을 추진할 계획이다.",
+          "category": "tourism_culture",
+          "institution_mention": "홍성군",
+          "department": "문화유산과",
+          "budget_text": null,
+          "budget_krw": null,
+          "timing_text": null,
+          "expected_year": null,
+          "expected_half": null,
+          "commitment": "planned",
+          "procurement_type": "service",
+          "keywords": [
+            "연구용역",
+            "홍주성",
+            "활용방안",
+            "활성화 방안"
+          ],
+          "evidence": [
+            "이렇게연구용역으로담아서활성화방안연구수립을할계획입니다.",
+            "본청활용계획도연구용역에담을겁니다."
+          ],
+          "confidence": 0.8
+        },
+        {
+          "title": "홍주초등학교 본관 리모델링 문화거점공간 조성",
+          "summary": "홍성군 문화유산과가 문화도시사업으로 홍주초등학교 본관을 리모델링해 문화거점공간을 조성하며 53억8,000만원을 투입한다.",
+          "category": "facility",
+          "institution_mention": "홍성군",
+          "department": "문화유산과",
+          "budget_text": "53억8,000만원",
+          "budget_krw": 5380000000,
+          "timing_text": null,
+          "expected_year": null,
+          "expected_half": null,
+          "commitment": "committed",
+          "procurement_type": "construction",
+          "keywords": [
+            "리모델링",
+            "문화거점공간 조성",
+            "문화도시사업",
+            "홍주초등학교"
+          ],
+          "evidence": [
+            "지금현재홍주초등학교문화도시사업으로문화거점공간조성하는거본관입니다.",
+            "저희가53억8,000만원지금투입을하잖아요."
+          ],
+          "confidence": 0.82
+        }
+      ]
+    },
+    {
+      "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-3",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "홍성 명동상가 공영주차장 조성",
+            "keywords": [
+              "공영주차장",
+              "주차장 조성",
+              "철거공사",
+              "명동상가"
+            ],
+            "category": "mobility",
+            "commitment": "planned",
+            "budget_krw": 1200000000,
+            "expected_year": 2027
+          },
+          "verdict": "accepted",
+          "issues": []
+        }
+      ],
+      "raw_signals": [
+        {
+          "title": "홍성 명동상가 공영주차장 조성",
+          "summary": "홍성군 경제정책과가 명동상가 공영주차장 조성을 위해 건물 철거(약 7억원)와 조성공사(약 12억원)를 추진하며 내년도 본예산에 남은 사업비를 확보할 계획이다.",
+          "category": "mobility",
+          "institution_mention": "홍성군",
+          "department": "경제정책과",
+          "budget_text": "조성공사로12억정도",
+          "budget_krw": 1200000000,
+          "timing_text": "내년도본예산에",
+          "expected_year": 2027,
+          "expected_half": null,
+          "commitment": "planned",
+          "procurement_type": "construction",
+          "keywords": [
+            "공영주차장",
+            "주차장 조성",
+            "철거공사",
+            "명동상가"
+          ],
+          "evidence": [
+            "그리고철거비는7억정도예상이되고요.",
+            "그다음에조성공사로12억정도로계획을하고있습니다.",
+            "그래서내년도본예산에남은사업비를확보하면사업마무리는이상이없을것으로예상이됩니다."
+          ],
+          "confidence": 0.85
+        }
+      ]
+    },
+    {
+      "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-4",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "청년창업거리 상권 밸류업 환경개선 사업",
+            "keywords": [
+              "상권 밸류업",
+              "청년창업거리",
+              "간판 제작",
+              "환경개선",
+              "리노베이션"
+            ],
+            "category": "facility",
+            "commitment": "committed",
+            "budget_krw": 30000000,
+            "expected_year": 2026
+          },
+          "verdict": "needs_review",
+          "issues": [
+            "year_unverified"
+          ]
+        }
+      ],
+      "raw_signals": [
+        {
+          "title": "청년창업거리 상권 밸류업 환경개선 사업",
+          "summary": "홍성군이 청년창업거리 조성과 연계해 기존 점포 간판 제작·외벽 정리 등 환경개선과 DIY 리노베이션, 인·익스테리어 사업을 도비·군비 3,000만원 규모로 추진 중이다.",
+          "category": "facility",
+          "institution_mention": "홍성군",
+          "department": "지역경제팀",
+          "budget_text": "도비1,500,군비1,500",
+          "budget_krw": 30000000,
+          "timing_text": "26년4월부터8월까지",
+          "expected_year": 2026,
+          "expected_half": "H2",
+          "commitment": "committed",
+          "procurement_type": "service",
+          "keywords": [
+            "상권 밸류업",
+            "청년창업거리",
+            "간판 제작",
+            "환경개선",
+            "리노베이션"
+          ],
+          "evidence": [
+            "26페이지에사업비가도비1,500,군비1,500들어가있는걸로나와있는데요",
+            "이게3,000만원가지고25개소하려면나눠보면한120만원정도밖에안돼요.",
+            "예,그안에기존상권밸류업이라고해서인·익스테리어이런사업들은같이하고요."
+          ],
+          "confidence": 0.62
+        }
+      ]
+    },
+    {
+      "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-5",
+      "predictions": [],
+      "raw_signals": []
+    },
+    {
+      "case": "dev-충청남도-홍성군의회-홍성군청사이전대책특별위원회-2026-09-02-6",
+      "predictions": [
+        {
+          "prediction": {
+            "title": "홍주상권문화어울림센터 건립 용역",
+            "keywords": [
+              "홍주상권문화어울림센터",
+              "리모델링",
+              "신축",
+              "용역",
+              "안전성 경제성 분석"
+            ],
+            "category": "facility",
+            "commitment": "planned",
+            "budget_krw": null,
+            "expected_year": null
+          },
+          "verdict": "accepted",
+          "issues": []
+        },
+        {
+          "prediction": {
+            "title": "홍고통 창업특화가로 조성 및 신설도로 개설",
+            "keywords": [
+              "특화가로 조성",
+              "신설도로 개설",
+              "배수로 정비",
+              "경관개선",
+              "홍고통"
+            ],
+            "category": "facility",
+            "commitment": "planned",
+            "budget_krw": null,
+            "expected_year": null
+          },
+          "verdict": "accepted",
+          "issues": []
+        }
+      ],
+      "raw_signals": [
+        {
+          "title": "홍주상권문화어울림센터 건립 용역",
+          "summary": "홍성군 도시과가 홍주상권문화어울림센터 건립을 위해 리모델링·신축 여부를 결정하기 위한 안전성·경제성 분석 용역을 발주할 계획이다.",
+          "category": "facility",
+          "institution_mention": "홍성군",
+          "department": "도시과",
+          "budget_text": null,
+          "budget_krw": null,
+          "timing_text": null,
+          "expected_year": null,
+          "expected_half": null,
+          "commitment": "planned",
+          "procurement_type": "service",
+          "keywords": [
+            "홍주상권문화어울림센터",
+            "리모델링",
+            "신축",
+            "용역",
+            "안전성 경제성 분석"
+          ],
+          "evidence": [
+            "예,리모델링과신축을두고지금용역을발주해봐야되겠지만안전성하고경제성을분석한다음에결정하려고하고있습니다."
+          ],
+          "confidence": 0.75
+        },
+        {
+          "title": "홍고통 창업특화가로 조성 및 신설도로 개설",
+          "summary": "홍성군 도시과가 홍고통 일대에 특화거리 조성과 128미터 신설도로 개설, 배수로 정비 및 경관 개선을 추진할 계획이다.",
+          "category": "facility",
+          "institution_mention": "홍성군",
+          "department": "도시과",
+          "budget_text": null,
+          "budget_krw": null,
+          "timing_text": null,
+          "expected_year": null,
+          "expected_half": null,
+          "commitment": "planned",
+          "procurement_type": "construction",
+          "keywords": [
+            "특화가로 조성",
+            "신설도로 개설",
+            "배수로 정비",
+            "경관개선",
+            "홍고통"
+          ],
+          "evidence": [
+            "그거는기존도로에특화거리를조성하고일부128미터는신설도로개설이있습니다.",
+            "신설도로개설도있고요,기존도로에배수로정비라든지경관개선이라든지그런계획중에있습니다."
+          ],
+          "confidence": 0.75
+        }
+      ]
+    }
+  ]
+}
