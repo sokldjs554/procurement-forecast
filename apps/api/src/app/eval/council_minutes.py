@@ -2,7 +2,9 @@
 (``docs/retrospective-validation.md``) beyond 성남시.
 
 1. :func:`find_councils` — CLIK has no council directory, so the national list is read newest
-   first until each wanted name appears in a ``RASMBLY_NM``; its ``RASMBLY_ID`` is kept.
+   first until each wanted name appears in a ``RASMBLY_NM``; its ``RASMBLY_ID`` is kept. A council
+   that has posted nothing lately is not in those rows; :func:`identify` instead tries ids given
+   for it (one list call each) and keeps the first whose own rows carry the name.
 2. :func:`archive` — for each council, the meetings held in the window whose name matches the
    pattern are read once each (:meth:`ClikMinutesAdapter.read_meeting`, the live adapter's own
    call). The text goes to ``sources/<id>.txt`` and every other field of the record to
@@ -76,6 +78,23 @@ async def find_councils(
     return found
 
 
+async def identify(
+    adapter: ClikMinutesAdapter, name: str, candidates: list[str]
+) -> tuple[dict[str, str] | None, dict[str, str | None]]:
+    """The first of ``candidates`` whose newest row's ``RASMBLY_NM`` contains ``name``, and the
+    council each id tried turned out to be (``None``: no rows)."""
+    tried: dict[str, str | None] = {}
+    for council_id in candidates:
+        council = None
+        async for row in adapter._list(council_id, FetchWindow(date(2000, 1, 1), date(2100, 1, 1))):
+            council = str(row.get("RASMBLY_NM") or "")
+            break
+        tried[council_id] = council
+        if council and name in council:
+            return {"id": council_id, "council": council}, tried
+    return None, tried
+
+
 async def archive(
     adapter: ClikMinutesAdapter,
     out_dir: Path,
@@ -86,9 +105,12 @@ async def archive(
     meeting_pattern: str,
     max_details: int | None = None,
     find_rows: int = 10_000,
+    ids: dict[str, list[str]] | None = None,
 ) -> dict[str, Any]:
-    """Archive (or go on archiving) every matching meeting of ``names`` held in the window."""
+    """Archive (or go on archiving) every matching meeting of ``names`` held in the window.
+    ``ids`` gives CLIK ids to try for a name instead of looking it up in the national list."""
     manifest = _load(out_dir)
+    ids = ids or {}
     rule = {
         "since": since.isoformat(),
         "until": until.isoformat(),
@@ -104,10 +126,19 @@ async def archive(
     stopped: str | None = None
     try:
         missing = [n for n in names if n not in manifest["councils"]]
+        given = [n for n in missing if ids.get(n)]
+        for name in given:
+            council, tried = await identify(adapter, name, ids[name])
+            run.setdefault("tried_ids", {})[name] = tried
+            if council is not None:
+                manifest["councils"][name] = council
+        rest = [n for n in missing if n not in given]
+        if rest:
+            manifest["councils"].update(
+                await find_councils(adapter, rest, until=until, max_rows=find_rows)
+            )
         if missing:
-            found = await find_councils(adapter, missing, until=until, max_rows=find_rows)
-            manifest["councils"].update(found)
-            run["not_found"] = [n for n in missing if n not in found]
+            run["not_found"] = [n for n in missing if n not in manifest["councils"]]
         pattern = re.compile(meeting_pattern)
         window = FetchWindow(since, until)
         sources = out_dir / "sources"
