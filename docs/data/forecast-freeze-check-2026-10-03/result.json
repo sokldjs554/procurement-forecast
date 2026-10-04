@@ -1,0 +1,36 @@
+{
+  "schema": "forecast-freeze-check-v1",
+  "checked_on": "2026-10-04",
+  "freeze": {
+    "open_forecasts_sha256": "65b0c67d456889d8a13e3ac986674dfca4f4e1fa05dba5348288651cb9f5cb02",
+    "frozen_at": "2026-10-02T04:58:00+00:00",
+    "open_forecasts": 290,
+    "institutions": 185
+  },
+  "notices_read": {
+    "since": "2026-10-03",
+    "until": "2026-10-03",
+    "note": "Oct 2 is excluded (same-day order against the freeze is unproven with date-only publication); Oct 4 was not read because that day was not over when the census ran.",
+    "census_run": "https://github.com/sokldjs554/procurement-forecast/actions/runs/37186875983",
+    "census_data_commit": "294f7fa227d1e5426dc60f6dc2ac93f961d4c3f7 (data/tender-census)",
+    "slices_complete": "3/3 (rows read equal the provider's totalCount in each)",
+    "notices_nationwide": 17,
+    "notices_of_frozen_institutions": 5
+  },
+  "candidate_pairs": 1,
+  "observed_positives": [
+    {
+      "forecast": 92,
+      "institution": "한국생명공학연구원",
+      "title": "AI 연산용 GPU 가속기",
+      "stage": "prespec",
+      "forecast_first_seen": "2026-09-27",
+      "forecast_bid_window": ["2026-09-27", "2026-11-30"],
+      "notice": "R26BK01756046-000",
+      "notice_published": "2026-10-03",
+      "kind": "등록공고"
+    }
+  ],
+  "by_stage": {"order_plan": 0, "prespec": 1, "council_mention": 0},
+  "not_a_rate": "One day of notices (a Saturday and a public holiday), 289 of the 290 forecasts with nothing observed. Neither number says anything about accuracy."
+}
