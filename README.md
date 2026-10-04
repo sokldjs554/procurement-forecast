@@ -124,7 +124,7 @@
 | Docker 기반 개발 환경 구성 경험 | `docker compose up`으로 DB·Redis·메일·API·워커·웹 |
 | 로깅·에러 트래킹 기반 장애 대응 경험 | structlog JSON(요청·작업 ID), Sentry, 워커 헬스체크, 런북 |
 | Git 브랜치 전략과 코드 리뷰 기반 협업 경험 | 짧은 브랜치 + 트렁크, squash merge, Conventional Commits, PR 템플릿, CODEOWNERS. PR 예: [#6](https://github.com/sokldjs554/procurement-forecast/pull/6) 의존성 PR 검토(액션 10개 호환성 대조), [#7](https://github.com/sokldjs554/procurement-forecast/pull/7) 기능 PR(코드 리뷰 15건 중 13건 반영, 2건은 이유 답변). 초기 구축은 main 직접 커밋 ([CONTRIBUTING](CONTRIBUTING.md)) |
-| 테스트 작성 및 정적 타입 검사를 습관으로 갖춘 분 | pytest 926개(실제 PostgreSQL·Redis), vitest 웹 69개(BFF 프록시 헤더, 과금 요청의 재시도·멱등 키 포함)·작업 API 30개(실제 PostgreSQL에서 여러 워커가 동시에 가져가도 한 번만 처리, 끊긴 다운로드 이어받기 포함), Playwright E2E 3개(README 둘러보기를 실제 브라우저로), mypy strict, [main `48746be` CI 통과](https://github.com/sokldjs554/procurement-forecast/actions/runs/36703422314) |
+| 테스트 작성 및 정적 타입 검사를 습관으로 갖춘 분 | pytest 981개(실제 PostgreSQL·Redis), vitest 웹 70개(BFF 프록시 헤더, 과금 요청의 재시도·멱등 키 포함)·작업 API 30개(실제 PostgreSQL에서 여러 워커가 동시에 가져가도 한 번만 처리, 끊긴 다운로드 이어받기 포함), Playwright E2E 3개(README 둘러보기를 실제 브라우저로), mypy strict, [main `78321cd` CI 통과](https://github.com/sokldjs554/procurement-forecast/actions/runs/37187202634) |
 | 명세가 불완전한 상태에서 구조를 세우고 문서로 남길 수 있는 능력 | 주요업무 9번 |
 
 </details>
@@ -306,6 +306,12 @@ docs/                 조사, ADR, 아키텍처, 평가, 데이터 소스, 런�
 **2026-09-29 보완:** 의원 발언 근거만 있는 신호를 자동 승인하지 않도록 발언자를 검증하고, 모호한 연결은 독립 기회로 남기며, 백테스트의 미래 정보·관측기간·공개일 오류를 수정했습니다. 수정 범위, 검증 방법과 남은 과제는 [근거·연결·평가 보완](docs/evidence-integrity.md)에 정리했습니다. 아래 실문서 측정은 당시 코드의 기록이며 이번 변경 후 정확도를 뜻하지 않습니다.
 
 솔직하게 적습니다.
+
+**2026-10-04 기준, 지금 돌고 있는 것과 아닌 것.**
+
+- **돌고 있는 것**: 2026-10-01부터 GitHub Actions 예약 실행과 무료 호스팅 PostgreSQL에서 수집 → 처리 → 연결 → 추천을 돌립니다([무료 상시 운영](docs/free-operations.md)). 규칙 기반 추출기만 쓰고(유료 모델 호출 없음) API·웹 서버는 띄우지 않습니다. 매시 23분으로 설정했지만 GitHub가 실제로 깨운 것은 53.6시간 동안 12번(간격 중앙값 4.7시간, 최대 6.9시간)이었고, 12번 모두 성공했습니다. 밀린 정기 작업은 다음 실행이 한 번씩 따라잡도록 만들어서 빠지는 일은 없고 늦어질 뿐입니다.
+- **운영 중인 예측은 동결해 두었습니다**: 2026-10-02에 공고 전인 예측 290건을 해시와 함께 고정했고, 이후 올라오는 공고와 비교하기 시작했습니다([기록](docs/longitudinal-validation.md#first-real-freeze-2026-10-02)). 지금까지 관찰된 것은 사전규격 단계 예측 1건이 공고로 이어진 것뿐이며, 정확도나 선행 기간에 대해서는 아직 말할 수 없습니다.
+- **아닌 것**: 유료 고객과 실결제는 없습니다. 토스 결제와 이메일·Slack·카카오 알림톡 발송은 공급자 응답을 흉내 낸 테스트(이메일은 로컬 메일함 Mailpit)로만 확인했고, 실제 계정으로 결제하거나 발송해 본 적이 없습니다. GCP·AWS 같은 클라우드 컨테이너 서비스에 배포한 적도 없습니다(Terraform은 `validate`까지).
 
 **실데이터로 끝까지 돌려 본 건 조달청 API, 성남시 예산서 6권, 성남시의회 회의록 34건(누리집과 CLIK 양쪽), CLIK 전국 회의록 178건입니다.** 2026-09-26 ~ 29에 실제 키와 실제 누리집으로 돌렸습니다. 명세만 보고 쓴 코드는 붙이는 순간 가정이 깨졌고, 네 곳에서는 오류 없이 0건을 냈습니다. 원문 대조의 판정은 모두 제 판단입니다.
 
