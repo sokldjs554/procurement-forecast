@@ -287,10 +287,12 @@ apps/api/             FastAPI · arq 워커 · 파이프라인 (Python 3.11, uv)
     pipeline/         수집 → 처리 → 연결 → 추천 → 브리프, 백테스트
     billing/ notify/  토스 자동결제·크레딧 원장 / 이메일·Slack·알림톡
     api/ worker/      HTTP 라우터 / arq 작업·cron
+    media/            회의 영상 → 회의록 모양 전사 (ffmpeg, STT, 하단 자막 OCR로 발언자 판별)
     demo/ eval/       합성 세계·합성 누리집 / 평가 러너·수기 세트
     bench.py          대용량 쿼리 벤치 (manage bench)
   migrations/ tests/
 apps/web/             Next.js 16 고객 앱 + 운영 콘솔
+apps/orchestrator/    TypeScript(Hono) 작업 API·다운로드 워커. Postgres 작업 큐(`jobq_*`), RLS 테넌트 격리, API 키
 infra/terraform/      GCP 서울 리전 (Cloud Run, Cloud SQL, Memorystore, …)
 docs/                 조사, ADR, 아키텍처, 평가, 데이터 소스, 런북, 스크린샷
 ```
@@ -310,6 +312,7 @@ docs/                 조사, ADR, 아키텍처, 평가, 데이터 소스, 런�
 **2026-10-04 기준, 지금 돌고 있는 것과 아닌 것.**
 
 - **돌고 있는 것**: 2026-10-01부터 GitHub Actions 예약 실행과 무료 호스팅 PostgreSQL에서 수집 → 처리 → 연결 → 추천을 돌립니다([무료 상시 운영](docs/free-operations.md)). 규칙 기반 추출기만 쓰고(유료 모델 호출 없음) API·웹 서버는 띄우지 않습니다. 매시 23분으로 설정했지만 GitHub가 실제로 깨운 것은 53.6시간 동안 12번(간격 중앙값 4.7시간, 최대 6.9시간)이었고, 12번 모두 성공했습니다. 밀린 정기 작업은 다음 실행이 한 번씩 따라잡도록 만들어서 빠지는 일은 없고 늦어질 뿐입니다.
+- **회의 영상 처리는 상시 운영에 연결돼 있지 않습니다**: 영상을 회의록 모양의 글로 바꿔 같은 파이프라인에 넣는 단계([ADR-0012](docs/adr/0012-meeting-video-as-minutes.md))와, 긴 작업을 맡는 Postgres 큐·TypeScript 서버([ADR-0013](docs/adr/0013-postgres-job-queue.md))는 합성 영상과 실제 PostgreSQL 통합 테스트로만 확인했습니다. 실제 의회 영상에서 음성 인식의 글자 오류율과 자막 판독률, 발언자 오귀속률은 재지 않았습니다.
 - **운영 중인 예측은 동결해 두었습니다**: 2026-10-02에 공고 전인 예측 290건을 해시와 함께 고정했고, 이후 올라오는 공고와 비교하기 시작했습니다([기록](docs/longitudinal-validation.md#first-real-freeze-2026-10-02)). 지금까지 관찰된 것은 사전규격 단계 예측 1건이 공고로 이어진 것뿐이며, 정확도나 선행 기간에 대해서는 아직 말할 수 없습니다.
 - **아닌 것**: 유료 고객과 실결제는 없습니다. 토스 결제와 이메일·Slack·카카오 알림톡 발송은 공급자 응답을 흉내 낸 테스트(이메일은 로컬 메일함 Mailpit)로만 확인했고, 실제 계정으로 결제하거나 발송해 본 적이 없습니다. GCP·AWS 같은 클라우드 컨테이너 서비스에 배포한 적도 없습니다(Terraform은 `validate`까지). Sentry는 초기화 코드와 키 제거 처리만 테스트했고 실제 프로젝트(DSN)에 연결한 적은 없습니다.
 
