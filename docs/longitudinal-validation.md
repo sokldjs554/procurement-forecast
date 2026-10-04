@@ -70,6 +70,16 @@ timestamping authority (gap 2 below). The directory is refused if it already exi
 - The 24 council-mention forecasts come from the rule-based extractor and are mostly sentence fragments; they are frozen as they stood, not cleaned.
 - No outcome has been observed yet. A first look a week later can only list notices that followed; it is not a conversion rate (see the denominators below).
 
+### First look at later tenders, 2026-10-04
+
+Only a pipeline check: the 290 frozen forecasts against the tenders published on **2026-10-03**, the one full day after the freeze that was over when this ran (a Saturday and the 개천절 holiday).
+
+- Notices: [census run 37186875983](https://github.com/sokldjs554/procurement-forecast/actions/runs/37186875983), all 3 업무구분 slices complete (rows read equal the provider's `totalCount`). 17 notices were registered nationwide that day; 5 belonged to the 185 frozen institutions. Oct 2 stays excluded (same-day order against the freeze is unproven); Oct 4 was not read because that day was not over. The next look covers Oct 4–6.
+- Pairing: name overlap proposed 1 candidate pair, and the 5 notices were also read against every frozen forecast of their institution family by hand. Judged from the two names alone, by this repository's AI, not an independent reviewer. Files: `docs/data/forecast-freeze-check-2026-10-03/`.
+- **One observed positive:** forecast 92, 한국생명공학연구원 "AI 연산용 GPU 가속기" (stage 사전규격, first seen 2026-09-27, window 2026-09-27..2026-11-30), has an identical-title 등록공고 `R26BK01756046-000` registered 2026-10-03, inside its window. After the judgment, the notice's 배정예산 (472,000,000) was also found equal to the forecast's estimated budget; the judgment did not use it.
+- The other four notices are different projects (one is a cancellation notice). 289 of 290 forecasts: nothing observed.
+- This says almost nothing about accuracy or lead time. It is a prespec-stage forecast, so its lead is days by construction, not the 6-18 months at issue. It is one day of notices. It is no rate: the 540-day horizon has not elapsed, and the denominators above still apply.
+
 ## Observation file contract
 
 The following is a **synthetic schema example, not real observations**. Unit tests create their
