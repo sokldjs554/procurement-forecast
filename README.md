@@ -87,7 +87,7 @@
 |---|---|---|
 | FastAPI 기반 비동기 API 서버의 기능 개발과 운영 (데이터 수집·추출·추천·알림·결제 도메인 전반) | 앱 팩토리, async SQLAlchemy, 키셋 페이지네이션, 요청 ID·구조화 로그, 과금 API의 `Idempotency-Key`. 수집·추출·추천·알림·결제 라우터 전부 | [`api/`](apps/api/src/app/api) |
 | 작업 큐(Redis)와 cron 잡 위에서 도는 대용량 배치 파이프라인 설계·개선 | arq 워커 + KST cron(매시 조달, 매일 회의록, 매주 예산서 게시판 크롤링, 10분 스윕, 아침 요약), 모든 수집원이 cron에 걸려 있는지 테스트로 확인, 작업 ID 중복 제거, 한도 초과·서킷·일시 오류별 재시도, 종료 신호 시 재시도로 기록, 실행 이력 `job_runs` | [`worker/`](apps/api/src/app/worker), [ADR-0003](docs/adr/0003-arq-and-in-worker-cron.md) |
-| PostgreSQL 스키마 설계와 마이그레이션, 대용량 데이터 환경에서의 쿼리 최적화 | 33개 테이블, Alembic 비동기 마이그레이션. 공고 10만·신호 40만 건 벤치로 찾은 문제를 마이그레이션 0002로 해결: 벡터 후보 **13건·재현율 4% → 300건·100%**, 참조번호 조회 **99.5ms → 0.02ms**, 운영 집계 197 → 130ms. 인덱스는 `CONCURRENTLY` | [`migrations/`](apps/api/migrations), [performance.md](docs/performance.md), [ADR-0010](docs/adr/0010-measure-at-volume.md) |
+| PostgreSQL 스키마 설계와 마이그레이션, 대용량 데이터 환경에서의 쿼리 최적화 | 33개 테이블, Alembic 비동기 마이그레이션. 공고 10만·신호 40만 건 벤치로 찾은 문제를 마이그레이션 0002로 해결: 벡터 후보 **13건·재현율 4% → 300건·100%**, 참조번호 조회 **94.7ms → 0.02ms**, 운영 집계 199 → 138ms. 인덱스는 `CONCURRENTLY` | [`migrations/`](apps/api/migrations), [performance.md](docs/performance.md), [ADR-0010](docs/adr/0010-measure-at-volume.md) |
 | Next.js·TypeScript 기반 사용자 웹과 운영자 콘솔(admin) 화면 개발 | 고객 앱(피드·기회 상세·프로필·알림·요금) + 운영 콘솔(개요·수집원·작업 로그·검토 대기열·LLM 비용·평가) | [`apps/web`](apps/web) |
 | LLM 파이프라인 개선 (프롬프트 설계, 구조화 출력, 결과 검증, 품질 평가, 비용 최적화) | 구조화 출력(엄격 JSON 스키마), 프롬프트 캐싱, effort 조절, 원문 근거 검증기, 합성 정답·수기 세트(54건) 평가, 모델·effort별 정확도·비용·지연 실측(Opus 5 low: 재현율 46% → 100%, 청크당 $0.0107; 측정으로 금액 파서 버그 발견·수정), 트리아지(청크 59% LLM 생략)·해시 캐시·일일 예산 가드 | [`llm/`](apps/api/src/app/llm), [`grounding.py`](apps/api/src/app/domain/grounding.py), [`eval/`](apps/api/src/app/eval), [ADR-0002](docs/adr/0002-grounded-extraction.md), [ADR-0006](docs/adr/0006-one-model-low-effort.md) |
 | 비정형 문서 파싱과 OCR 파이프라인 정확도 개선 | PDF 페이지별 텍스트층 판정 → 부족한 페이지만 OCR(tesseract `kor+eng`) + 후보정(문자 오류율 1.13% → 0.99%, 금액 100%), HWP5 레코드 파서, HWPX | [`parsing/`](apps/api/src/app/parsing) |
@@ -199,14 +199,14 @@ flowchart LR
 
 ## 대용량 쿼리
 
-데모 데이터는 수백 행이라 모든 쿼리가 순차 스캔이고, 인덱스 설계의 문제가 보이지 않습니다. `make bench`가 공고 10만·신호 40만·청크 60만·추천 30만 건을 만들어 핫 쿼리를 최초 스키마와 현재 스키마에서 비교합니다.
+데모 데이터는 수백 행이라 모든 쿼리가 순차 스캔이고, 인덱스 설계의 문제가 보이지 않습니다. `make bench`가 공고 10만·신호 40만·청크 60만·추천 30만 건을 만들어 핫 쿼리를 최초 스키마와 현재 스키마에서 비교합니다. 아래 수치는 2026-09-30 재측정값입니다(전체 표: [docs/performance.md](docs/performance.md)).
 
 | 쿼리 | 전 | 후 |
 |---|---|---|
-| 추천 후보: 가까운 진행 중 공고 300건 (벡터) | **13건만 반환, 재현율 4%** | 300건, 재현율 100% (2.6ms) |
-| 기회 연결: 처음 보는 발주계획번호 조회 | 99.5ms (신호 전체 스캔) | 0.02ms (GIN) |
+| 추천 후보: 가까운 진행 중 공고 300건 (벡터) | **13건만 반환, 재현율 4%** (0.65ms) | 300건, 재현율 100% (57.7ms) |
+| 기회 연결: 처음 보는 발주계획번호 조회 | 94.7ms (신호 전체 스캔) | 0.02ms (GIN) |
 | 추천 후보: 키워드 | 인덱스 못 씀 (`= ANY`) | 트라이그램 + GIN BitmapOr |
-| 운영 개요 집계 | 197ms (청크 2회 스캔) | 130ms |
+| 운영 개요 집계 | 199ms (청크 2회 스캔) | 138ms |
 | 고객 피드: 정렬 3종(잘 맞는 순·입찰이 가까운 순·새 소식 순), 단계별 건수 | — | 각 0.5ms 이하 (회사당 추천 150건) |
 
 첫 줄은 속도가 아니라 **정확성** 문제입니다. 전체 테이블 HNSW 인덱스에 상태 조건을 붙이면 pgvector가 `ef_search`(40)건을 찾은 뒤 필터를 적용해 결과가 조용히 줄어듭니다. 부분 인덱스 + `ef_search` 조정으로 고쳤고, 이 경로를 강제한 회귀 테스트가 있습니다. 전체 결과와 실행 계획: [docs/performance.md](docs/performance.md), 결정: [ADR-0010](docs/adr/0010-measure-at-volume.md).
