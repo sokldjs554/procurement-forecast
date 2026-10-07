@@ -191,10 +191,10 @@
   "화성도시공사",
   "환경에너지솔루션 주식회사"
  ],
- "updated_at": "2026-10-07T00:32:39+00:00",
+ "updated_at": "2026-10-07T00:33:54+00:00",
  "stopped": null,
  "calls": 0,
- "seconds": 31.2,
+ "seconds": 60.0,
  "summary": {
   "slices_expected": 3,
   "slices_complete": 0,
