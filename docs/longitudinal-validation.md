@@ -80,6 +80,17 @@ Only a pipeline check: the 290 frozen forecasts against the tenders published on
 - The other four notices are different projects (one is a cancellation notice). 289 of 290 forecasts: nothing observed.
 - This says almost nothing about accuracy or lead time. It is a prespec-stage forecast, so its lead is days by construction, not the 6-18 months at issue. It is one day of notices. It is no rate: the 540-day horizon has not elapsed, and the denominators above still apply.
 
+### Second look at later tenders, 2026-10-07
+
+The same pipeline check over the tenders registered on **2026-10-04..2026-10-06** (a Sunday, the 개천절 substitute holiday and a Tuesday). Together with the first look this covers Oct 3-6; Oct 2 stays excluded.
+
+- Notices: [census run 37556777322](https://github.com/sokldjs554/procurement-forecast/actions/runs/37556777322), all 3 업무구분 slices complete (rows read equal the provider's `totalCount`: 759 + 642 + 650 = 2,051 notices nationwide). 950 rows (921 distinct notice numbers) belonged to the 185 frozen institutions; 927 of them were registered on the Tuesday. Two earlier attempts the same morning ([run 37552451212](https://github.com/sokldjs554/procurement-forecast/actions/runs/37552451212)) read nothing because the provider's gateway timed out on connect four times; the data branch keeps their empty manifests.
+- Pairing: name overlap proposed 39 candidate pairs. All 950 notices were also read against every frozen forecast of their institution family by hand, from titles only (dates were not shown); every same-project pair found was already among the 39, and 3 further related-but-different pairs are recorded. Judged from the two names alone, by this repository's AI, not an independent reviewer. Files: `docs/data/forecast-freeze-check-2026-10-06/`.
+- **19 observed positives** across 15 institutions: 11 forecasts from 발주계획 and 8 from 사전규격, none from council mentions. Each has a same-project first registration (등록공고, order 000) registered 2026-10-06, four days after the freeze and inside the forecast's bid window. With the Oct 3 positive that is 20 observed positives over the two looks.
+- Three more forecasts have a same-project notice that is not counted: a 재공고 (forecast 24, 기아타이거즈), a 변경공고 (1285, 한강유역환경청) and a 취소공고 (1151, 선박해양플랜트연구소). Their first registrations are not among the notices read, so they were registered before Oct 4 and may pre-date the freeze.
+- After the judgments, the forecast's estimated budget equals the notice's allotted budget (or its presumed price plus VAT) in 17 of the 19; it differs for forecasts 1256 and 1262. The judgments did not use it.
+- This says almost nothing about accuracy or lead time. All 19 are order-plan or pre-spec-stage forecasts first seen 0-7 days before the freeze, so their lead is days by construction, not the 6-18 months at issue. It is a count, not a rate: 271 of the 290 forecasts have no counted observation so far, which does not make them wrong, because the 540-day horizon has not elapsed and the denominators above still apply.
+
 ## Observation file contract
 
 The following is a **synthetic schema example, not real observations**. Unit tests create their

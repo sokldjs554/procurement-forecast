@@ -1,0 +1,469 @@
+{
+  "schema": "forecast-freeze-check-v1",
+  "checked_on": "2026-10-07",
+  "freeze": {
+    "open_forecasts_sha256": "65b0c67d456889d8a13e3ac986674dfca4f4e1fa05dba5348288651cb9f5cb02",
+    "frozen_at": "2026-10-02T04:58:00+00:00",
+    "open_forecasts": 290,
+    "institutions": 185
+  },
+  "notices_read": {
+    "since": "2026-10-04",
+    "until": "2026-10-06",
+    "note": "Oct 3 was read by the first look (forecast-freeze-check-2026-10-03); Oct 2 stays excluded (same-day order against the freeze is unproven with date-only publication). Oct 4 was a Sunday, Oct 5 the 개천절 substitute holiday, Oct 6 a Tuesday.",
+    "census_run": "https://github.com/sokldjs554/procurement-forecast/actions/runs/37556777322",
+    "earlier_attempts": "Two attempts of run 37552451212 the same morning (00:31 and 00:33 UTC) read 0 rows: g2b_bid ConnectTimeout after 4 attempts. The data-branch history keeps their empty manifests.",
+    "census_data_commit": "c7be7750137852dbb71c7cd1d64eebeff67a6e59 (data/tender-census)",
+    "slices_complete": "3/3 (rows read equal the provider's totalCount in each)",
+    "rows_read_nationwide": 2051,
+    "notices_of_frozen_institutions": 950,
+    "distinct_notice_numbers_of_frozen_institutions": 921,
+    "registered_on": {
+      "2026-10-04": 4,
+      "2026-10-05": 19,
+      "2026-10-06": 927
+    }
+  },
+  "candidate_pairs": 39,
+  "hand_read": "All 950 kept notices were read against every frozen forecast of their institution family (titles only; dates were not shown). Every same-project pair found was already among the 39 name-overlap candidates; 3 further related-but-different pairs are in judgments-by-name.jsonl (found_by: hand read).",
+  "counting_rule": "Observed positive = judged same_project from the two names alone, notice kind 등록공고 with order 000 (a first registration), registered after the freeze and inside the forecast's bid window. Amendments, re-notices and cancellations are listed separately because the notice they refer to may pre-date the freeze.",
+  "observed_positives": [
+    {
+      "forecast": 307,
+      "institution": "경기도 동두천시",
+      "title": "생연2동·중앙동 도시재생사업 종합성과평가 용역",
+      "stage": "order_plan",
+      "forecast_first_seen": "2026-10-01",
+      "forecast_bid_window": [
+        "2026-10-01",
+        "2026-12-31"
+      ],
+      "notice": "R26BK01755588-000",
+      "notice_published": "2026-10-06",
+      "kind": "등록공고",
+      "days_after_freeze_date": 4,
+      "budget_check_after_judgment": "equal",
+      "forecast_est_budget_krw": 50000000,
+      "notice_assigned_budget_krw": 50000000,
+      "notice_presumed_price_krw": 45454545
+    },
+    {
+      "forecast": 1237,
+      "institution": "경기도교육청 경기도고양교육지원청",
+      "title": "정발중 교사동(1~3층) 석면해체제거공사",
+      "stage": "order_plan",
+      "forecast_first_seen": "2026-10-02",
+      "forecast_bid_window": [
+        "2026-10-02",
+        "2026-12-31"
+      ],
+      "notice": "R26BK01754330-000",
+      "notice_published": "2026-10-06",
+      "kind": "등록공고",
+      "days_after_freeze_date": 4,
+      "budget_check_after_judgment": "equal",
+      "forecast_est_budget_krw": 298523000,
+      "notice_assigned_budget_krw": null,
+      "notice_presumed_price_krw": 271384546
+    },
+    {
+      "forecast": 1246,
+      "institution": "경기도교육청 경기도고양교육지원청",
+      "title": "정발중 교사동(1~3층) 천장텍스 설치공사",
+      "stage": "order_plan",
+      "forecast_first_seen": "2026-10-02",
+      "forecast_bid_window": [
+        "2026-10-02",
+        "2026-12-31"
+      ],
+      "notice": "R26BK01754388-000",
+      "notice_published": "2026-10-06",
+      "kind": "등록공고",
+      "days_after_freeze_date": 4,
+      "budget_check_after_judgment": "equal",
+      "forecast_est_budget_krw": 262232000,
+      "notice_assigned_budget_krw": null,
+      "notice_presumed_price_krw": 238392728
+    },
+    {
+      "forecast": 325,
+      "institution": "경기도교육청 경기도광명교육지원청",
+      "title": "창의경영고 냉난방개선 전기공사",
+      "stage": "order_plan",
+      "forecast_first_seen": "2026-10-01",
+      "forecast_bid_window": [
+        "2026-10-01",
+        "2026-12-31"
+      ],
+      "notice": "R26BK01754171-000",
+      "notice_published": "2026-10-06",
+      "kind": "등록공고",
+      "days_after_freeze_date": 4,
+      "budget_check_after_judgment": "equal",
+      "forecast_est_budget_krw": 396228000,
+      "notice_assigned_budget_krw": null,
+      "notice_presumed_price_krw": 360207273
+    },
+    {
+      "forecast": 1195,
+      "institution": "경남개발공사",
+      "title": "진해신항CC 캐디피복(동복) 제조 및 구매",
+      "stage": "order_plan",
+      "forecast_first_seen": "2026-10-02",
+      "forecast_bid_window": [
+        "2026-10-02",
+        "2026-12-31"
+      ],
+      "notice": "R26BK01754202-000",
+      "notice_published": "2026-10-06",
+      "kind": "등록공고",
+      "days_after_freeze_date": 4,
+      "budget_check_after_judgment": "equal",
+      "forecast_est_budget_krw": 97150000,
+      "notice_assigned_budget_krw": 97150000,
+      "notice_presumed_price_krw": 88318182
+    },
+    {
+      "forecast": 300,
+      "institution": "대전광역시",
+      "title": "신흥지하차도 등 5개소 정기안전점검용역",
+      "stage": "order_plan",
+      "forecast_first_seen": "2026-10-01",
+      "forecast_bid_window": [
+        "2026-10-01",
+        "2026-12-31"
+      ],
+      "notice": "R26BK01754097-000",
+      "notice_published": "2026-10-06",
+      "kind": "등록공고",
+      "days_after_freeze_date": 4,
+      "budget_check_after_judgment": "equal",
+      "forecast_est_budget_krw": 17061000,
+      "notice_assigned_budget_krw": 17061000,
+      "notice_presumed_price_krw": 15510000
+    },
+    {
+      "forecast": 1262,
+      "institution": "부산광역시 해운대구",
+      "title": "침수위험지역 일원 맨홀추락방지시설 설치공사(2차)",
+      "stage": "order_plan",
+      "forecast_first_seen": "2026-10-02",
+      "forecast_bid_window": [
+        "2026-10-02",
+        "2026-12-31"
+      ],
+      "notice": "R26BK01757592-000",
+      "notice_published": "2026-10-06",
+      "kind": "등록공고",
+      "days_after_freeze_date": 4,
+      "budget_check_after_judgment": "differs",
+      "forecast_est_budget_krw": 170878000,
+      "notice_assigned_budget_krw": null,
+      "notice_presumed_price_krw": 151275455
+    },
+    {
+      "forecast": 1134,
+      "institution": "서울특별시",
+      "title": "한국숲정원, 백범광장 옥외분전반 설치공사 실시설계용역",
+      "stage": "order_plan",
+      "forecast_first_seen": "2026-10-02",
+      "forecast_bid_window": [
+        "2026-10-02",
+        "2026-12-31"
+      ],
+      "notice": "R26BK01754323-000",
+      "notice_published": "2026-10-06",
+      "kind": "등록공고",
+      "days_after_freeze_date": 4,
+      "budget_check_after_judgment": "equal",
+      "forecast_est_budget_krw": 11044000,
+      "notice_assigned_budget_krw": 11044000,
+      "notice_presumed_price_krw": 10040000
+    },
+    {
+      "forecast": 3,
+      "institution": "세종특별자치시",
+      "title": "하반기 상수도 배수지 청소용역(2권역)",
+      "stage": "prespec",
+      "forecast_first_seen": "2026-09-25",
+      "forecast_bid_window": [
+        "2026-09-25",
+        "2026-11-30"
+      ],
+      "notice": "R26BK01756706-000",
+      "notice_published": "2026-10-06",
+      "kind": "등록공고",
+      "days_after_freeze_date": 4,
+      "budget_check_after_judgment": "equal",
+      "forecast_est_budget_krw": 58424000,
+      "notice_assigned_budget_krw": 58424000,
+      "notice_presumed_price_krw": 53112727
+    },
+    {
+      "forecast": 6,
+      "institution": "세종특별자치시",
+      "title": "하반기 상수도 배수지 청소용역(1권역)",
+      "stage": "prespec",
+      "forecast_first_seen": "2026-09-25",
+      "forecast_bid_window": [
+        "2026-09-25",
+        "2026-11-30"
+      ],
+      "notice": "R26BK01756461-000",
+      "notice_published": "2026-10-06",
+      "kind": "등록공고",
+      "days_after_freeze_date": 4,
+      "budget_check_after_judgment": "equal",
+      "forecast_est_budget_krw": 51365000,
+      "notice_assigned_budget_krw": 51365000,
+      "notice_presumed_price_krw": 46695455
+    },
+    {
+      "forecast": 58,
+      "institution": "울산과학대학",
+      "title": "동부캠퍼스 학생생활관 출입관리 시스템 재구축 번호키 구입 및 설치",
+      "stage": "prespec",
+      "forecast_first_seen": "2026-09-27",
+      "forecast_bid_window": [
+        "2026-09-27",
+        "2026-11-30"
+      ],
+      "notice": "R26BK01757320-000",
+      "notice_published": "2026-10-06",
+      "kind": "등록공고",
+      "days_after_freeze_date": 4,
+      "budget_check_after_judgment": "equal",
+      "forecast_est_budget_krw": 45760000,
+      "notice_assigned_budget_krw": 45760000,
+      "notice_presumed_price_krw": 41600000
+    },
+    {
+      "forecast": 59,
+      "institution": "울산과학대학",
+      "title": "동부캠퍼스 학생생활관 출입관리 시스템 재구축 IOT 난방 조절기 구입 및 설치",
+      "stage": "prespec",
+      "forecast_first_seen": "2026-09-27",
+      "forecast_bid_window": [
+        "2026-09-27",
+        "2026-11-30"
+      ],
+      "notice": "R26BK01757467-000",
+      "notice_published": "2026-10-06",
+      "kind": "등록공고",
+      "days_after_freeze_date": 4,
+      "budget_check_after_judgment": "equal",
+      "forecast_est_budget_krw": 30580000,
+      "notice_assigned_budget_krw": 30580000,
+      "notice_presumed_price_krw": 27800000
+    },
+    {
+      "forecast": 306,
+      "institution": "재단법인 한국-아랍 소사이어티",
+      "title": "제22차 한-중동 협력포럼 운영 용역",
+      "stage": "order_plan",
+      "forecast_first_seen": "2026-10-01",
+      "forecast_bid_window": [
+        "2026-10-01",
+        "2026-12-31"
+      ],
+      "notice": "R26BK01755936-000",
+      "notice_published": "2026-10-06",
+      "kind": "등록공고",
+      "days_after_freeze_date": 4,
+      "budget_check_after_judgment": "equal",
+      "forecast_est_budget_krw": 175000000,
+      "notice_assigned_budget_krw": 175000000,
+      "notice_presumed_price_krw": 159090909
+    },
+    {
+      "forecast": 518,
+      "institution": "재단법인 한국-아랍 소사이어티",
+      "title": "2026 한-아랍 스타트업 공모전 운영 용역",
+      "stage": "prespec",
+      "forecast_first_seen": "2026-10-01",
+      "forecast_bid_window": [
+        "2026-10-01",
+        "2026-11-30"
+      ],
+      "notice": "R26BK01754194-000",
+      "notice_published": "2026-10-06",
+      "kind": "등록공고",
+      "days_after_freeze_date": 4,
+      "budget_check_after_judgment": "equal",
+      "forecast_est_budget_krw": 100000000,
+      "notice_assigned_budget_krw": 100000000,
+      "notice_presumed_price_krw": 90909091
+    },
+    {
+      "forecast": 80,
+      "institution": "전북특별자치도 군산시",
+      "title": "경포천 하천기본계획 수립 전략환경영향평가용역",
+      "stage": "prespec",
+      "forecast_first_seen": "2026-09-27",
+      "forecast_bid_window": [
+        "2026-09-27",
+        "2026-11-30"
+      ],
+      "notice": "R26BK01758777-000",
+      "notice_published": "2026-10-06",
+      "kind": "등록공고",
+      "days_after_freeze_date": 4,
+      "budget_check_after_judgment": "equal",
+      "forecast_est_budget_krw": 185586000,
+      "notice_assigned_budget_krw": 185586000,
+      "notice_presumed_price_krw": 168714545
+    },
+    {
+      "forecast": 64,
+      "institution": "제주특별자치도",
+      "title": "저탄소 축산혁신지구 조성·운영계획 수립 연구용역",
+      "stage": "prespec",
+      "forecast_first_seen": "2026-09-27",
+      "forecast_bid_window": [
+        "2026-09-27",
+        "2026-11-30"
+      ],
+      "notice": "R26BK01758647-000",
+      "notice_published": "2026-10-06",
+      "kind": "등록공고",
+      "days_after_freeze_date": 4,
+      "budget_check_after_judgment": "equal",
+      "forecast_est_budget_krw": 90000000,
+      "notice_assigned_budget_krw": 90000000,
+      "notice_presumed_price_krw": 81818182
+    },
+    {
+      "forecast": 1256,
+      "institution": "제주특별자치도 서귀포시",
+      "title": "서홍공영노외3주차장 조성공사",
+      "stage": "order_plan",
+      "forecast_first_seen": "2026-10-02",
+      "forecast_bid_window": [
+        "2026-10-02",
+        "2026-12-31"
+      ],
+      "notice": "R26BK01754648-000",
+      "notice_published": "2026-10-06",
+      "kind": "등록공고",
+      "days_after_freeze_date": 4,
+      "budget_check_after_judgment": "differs",
+      "forecast_est_budget_krw": 275746000,
+      "notice_assigned_budget_krw": null,
+      "notice_presumed_price_krw": 133444545
+    },
+    {
+      "forecast": 1172,
+      "institution": "한국농어촌공사 경남지역본부 고성.통영.거제지사",
+      "title": "덕촌마을 취약지역생활여건개조사업 지역역량강화 용역",
+      "stage": "order_plan",
+      "forecast_first_seen": "2026-10-02",
+      "forecast_bid_window": [
+        "2026-10-02",
+        "2026-12-31"
+      ],
+      "notice": "R26BK01754393-000",
+      "notice_published": "2026-10-06",
+      "kind": "등록공고",
+      "days_after_freeze_date": 4,
+      "budget_check_after_judgment": "equal",
+      "forecast_est_budget_krw": 144834000,
+      "notice_assigned_budget_krw": 144834000,
+      "notice_presumed_price_krw": 131667273
+    },
+    {
+      "forecast": 316,
+      "institution": "한국농어촌공사 전남지역본부 목포.무안.신안지사",
+      "title": "영화지구 재해복구사업 지급자재 PHC파일 제조·구매",
+      "stage": "prespec",
+      "forecast_first_seen": "2026-10-01",
+      "forecast_bid_window": [
+        "2026-10-02",
+        "2026-11-30"
+      ],
+      "notice": "R26BK01756487-000",
+      "notice_published": "2026-10-06",
+      "kind": "등록공고",
+      "days_after_freeze_date": 4,
+      "budget_check_after_judgment": "equal",
+      "forecast_est_budget_krw": 103100800,
+      "notice_assigned_budget_krw": 103100800,
+      "notice_presumed_price_krw": 93728000
+    }
+  ],
+  "observed_positives_count": 19,
+  "distinct_institutions": 15,
+  "by_stage": {
+    "order_plan": 11,
+    "prespec": 8,
+    "council_mention": 0
+  },
+  "same_project_not_counted": [
+    {
+      "forecast": 24,
+      "institution": "기아타이거즈 주식회사",
+      "title": "기아타이거즈 홈 최종전 이벤트",
+      "stage": "prespec",
+      "forecast_first_seen": "2026-09-26",
+      "forecast_bid_window": [
+        "2026-09-26",
+        "2026-11-30"
+      ],
+      "notice": "R26BK01756147-000",
+      "notice_published": "2026-10-04",
+      "kind": "재공고",
+      "days_after_freeze_date": 2,
+      "budget_check_after_judgment": "differs",
+      "forecast_est_budget_krw": 7150000,
+      "notice_assigned_budget_krw": 71500000,
+      "notice_presumed_price_krw": 65000000,
+      "why_not_counted": "a re-notice; the earlier notice it replaces is outside the notices read"
+    },
+    {
+      "forecast": 1285,
+      "institution": "기후에너지환경부 한강유역환경청",
+      "title": "청미천·복하천 하천재해예방사업 설계의 경제성(VE) 검토용역",
+      "stage": "prespec",
+      "forecast_first_seen": "2026-10-02",
+      "forecast_bid_window": [
+        "2026-10-02",
+        "2026-11-30"
+      ],
+      "notice": "R26BK01754362-001",
+      "notice_published": "2026-10-06",
+      "kind": "변경공고",
+      "days_after_freeze_date": 4,
+      "budget_check_after_judgment": "equal",
+      "forecast_est_budget_krw": 88000000,
+      "notice_assigned_budget_krw": 88000000,
+      "notice_presumed_price_krw": 80000000,
+      "why_not_counted": "an amendment of a notice whose first registration is not among the notices read (so it was registered before Oct 4)"
+    },
+    {
+      "forecast": 1151,
+      "institution": "한국해양과학기술원 부설 선박해양플랜트연구소",
+      "title": "무인선 실해역 시험선박 대여 및 지원용역",
+      "stage": "order_plan",
+      "forecast_first_seen": "2026-10-02",
+      "forecast_bid_window": [
+        "2026-10-02",
+        "2026-12-31"
+      ],
+      "notice": "R26BK01755551-001",
+      "notice_published": "2026-10-06",
+      "kind": "취소공고",
+      "days_after_freeze_date": 4,
+      "budget_check_after_judgment": "differs",
+      "forecast_est_budget_krw": 63735000,
+      "notice_assigned_budget_krw": 70108500,
+      "notice_presumed_price_krw": 63735000,
+      "why_not_counted": "a cancellation of a notice whose first registration is not among the notices read (so it was registered before Oct 4)"
+    }
+  ],
+  "budget_check_after_judgment": {
+    "note": "Done after the judgments; the judgments did not use it. Equal means the forecast's estimated budget equals the notice's allotted budget or its presumed price plus 10% VAT.",
+    "equal": 17,
+    "differs": 2
+  },
+  "total_observed_positives_oct3_and_oct4_to_6": 20,
+  "not_a_rate": "Counts, not a rate. Every positive is an order-plan or pre-spec-stage forecast and every notice was registered four days after the freeze, so the lead is days by construction. 271 of the 290 forecasts have no counted observation so far (3 of them have a same-project notice that is a re-notice, amendment or cancellation); that does not make them wrong, because the 540-day horizon has not elapsed."
+}
