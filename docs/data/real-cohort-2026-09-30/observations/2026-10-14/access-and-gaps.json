@@ -1,0 +1,83 @@
+{
+  "attempts": [
+    {
+      "name": "seosan-robots",
+      "url": "https://www.seosan.go.kr/robots.txt",
+      "error": "HTTP Error 502: Bad Gateway",
+      "checked_at": "2026-10-13T23:18:26.134123+00:00",
+      "recorded_at": "2026-10-13T23:22:52.319293+00:00"
+    },
+    {
+      "name": "seosan-home",
+      "url": "https://www.seosan.go.kr/www/index.do",
+      "error": "HTTP Error 502: Bad Gateway",
+      "checked_at": "2026-10-13T23:18:26.134838+00:00",
+      "recorded_at": "2026-10-13T23:22:52.319293+00:00"
+    },
+    {
+      "name": "g2b-robots",
+      "url": "https://www.g2b.go.kr/robots.txt",
+      "error": "HTTP Error 502: Bad Gateway",
+      "checked_at": "2026-10-13T23:18:26.135708+00:00",
+      "recorded_at": "2026-10-13T23:22:52.319293+00:00"
+    },
+    {
+      "url": "https://www.seosan.go.kr/www/contents.do?key=1259",
+      "method": "web_open",
+      "result": "입찰공고 안내 껍데기만 열림; 입찰공고 영역 링크 클릭은 invalid arguments 오류. 목록 행·기간 전수조회 실패.",
+      "coverage_complete": false,
+      "recorded_at": "2026-10-13T23:22:52.319293+00:00"
+    },
+    {
+      "url": "https://gyeyak.seosan.go.kr/",
+      "method": "web_open",
+      "result": "400 Timeout fetching; 계약정보 목록 미확보",
+      "coverage_complete": false,
+      "recorded_at": "2026-10-13T23:22:52.319293+00:00"
+    },
+    {
+      "url": "https://www.g2b.go.kr/",
+      "method": "web_open",
+      "result": "Internal Error; 전체 공고 목록 미확보",
+      "coverage_complete": false,
+      "recorded_at": "2026-10-13T23:22:52.319293+00:00"
+    },
+    {
+      "url": "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01398519&bidPbancOrd=000&fileSeq=1&fileType=&prcmBsneSeCd=03",
+      "method": "curl_public_attachment",
+      "result": "HTTP 502; 150-byte error body is not original PDF and is not archived as source evidence",
+      "coverage_complete": false,
+      "recorded_at": "2026-10-13T23:22:52.319293+00:00"
+    },
+    {
+      "url": "https://www.seosan.go.kr/robots.txt",
+      "method": "web_open",
+      "result": "Not accessible via tool. No automated site crawl attempted.",
+      "recorded_at": "2026-10-13T23:22:52.319293+00:00"
+    },
+    {
+      "url": "https://www.g2b.go.kr/robots.txt",
+      "method": "web_open",
+      "result": "Not accessible via tool. No automated site crawl attempted.",
+      "recorded_at": "2026-10-13T23:22:52.319293+00:00"
+    }
+  ],
+  "all_opportunity_ids_with_incomplete_coverage": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "missing": [
+    "서산시 공식 입찰/계약 목록의 날짜별 전수 수집",
+    "나라장터 원 공고 등록 시각 및 변경/재공고 이력",
+    "AI 챗봇 후보의 공식 공고문과 과업 대응 검토",
+    "모호하거나 지원사업인 모델 출력의 독립적 사업 동일성 검토",
+    "2028-03-23까지 실제 후속 관측 및 프로젝트별 완전 커버리지 증거"
+  ]
+}

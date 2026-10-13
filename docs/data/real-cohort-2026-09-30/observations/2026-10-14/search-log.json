@@ -1,0 +1,174 @@
+{
+  "retrieval_interval_utc": {
+    "start": "2026-10-13T23:13:32Z",
+    "end": "2026-10-13T23:22:52.319293+00:00",
+    "basis": "실행 시작부터 검토 기록 확정까지의 범위; 개별 검색의 정확한 시작시각은 기록하지 않음"
+  },
+  "coverage_complete": false,
+  "batches": [
+    {
+      "id": "search0",
+      "engine": "system1",
+      "queries": [
+        "서산시 입찰공고 계약정보공개"
+      ],
+      "recency_days": 30,
+      "assessment": "Returned unrelated pages despite site filters; inadequate targeted recall.",
+      "returned_result_count": 12,
+      "retained_discovery_urls": [],
+      "omission_policy": "무관 결과·시민 광고·직원 연락처·개인정보를 재게시하지 않음. 전체 원문은 보존하지 않고 질의 및 관련 URL만 보존."
+    },
+    {
+      "id": "search1",
+      "engine": "system2",
+      "queries": [
+        "site:seosan.go.kr 입찰 계약정보",
+        "site:seosan.go.kr \"AI\" \"민원\" \"입찰\"",
+        "site:seosan.go.kr \"데이터 통합 플랫폼\""
+      ],
+      "recency_days": null,
+      "assessment": "Discovery only; results neither exhaustive nor proof of no procurement.",
+      "returned_result_count": 18,
+      "retained_discovery_urls": [
+        "https://www.seosan.go.kr/DATA/bbs/106/202512290910008444DL0LN.pdf"
+      ],
+      "omission_policy": "무관 결과·시민 광고·직원 연락처·개인정보를 재게시하지 않음. 전체 원문은 보존하지 않고 질의 및 관련 URL만 보존."
+    },
+    {
+      "id": "search2",
+      "engine": "system2",
+      "queries": [
+        "\"서산시\" \"입찰공고\" \"AI\"",
+        "\"서산시\" \"주차정보\" \"입찰\"",
+        "\"서산시\" \"민원\" \"만족도\" \"용역\"",
+        "\"서산시\" \"교육발전특구\" \"입찰\""
+      ],
+      "recency_days": null,
+      "assessment": "Discovery only; results neither exhaustive nor proof of no procurement.",
+      "returned_result_count": 27,
+      "retained_discovery_urls": [
+        "https://www.bidpro.co.kr/n0_ipchal/konggo/item/konggo_view.asp?num=5423944",
+        "https://www.g2b.go.kr/pn/pnp/pnpe/UntyAtchFile/downloadFile.do?bidPbancNo=R26BK01398519&bidPbancOrd=000&fileSeq=1&fileType=&prcmBsneSeCd=03",
+        "https://www.seosan.go.kr/DATA/bbs/106/202512290910008444DL0LN.pdf"
+      ],
+      "omission_policy": "무관 결과·시민 광고·직원 연락처·개인정보를 재게시하지 않음. 전체 원문은 보존하지 않고 질의 및 관련 URL만 보존."
+    },
+    {
+      "id": "search3",
+      "engine": "system2",
+      "queries": [
+        "site:seosan.go.kr \"입찰정보\"",
+        "site:g2b.go.kr \"서산시\" \"AI\" \"챗봇\"",
+        "site:seosan.go.kr \"2026\" \"신재생에너지\" \"공고\""
+      ],
+      "recency_days": null,
+      "assessment": "Discovery only; results neither exhaustive nor proof of no procurement.",
+      "returned_result_count": 10,
+      "retained_discovery_urls": [
+        "https://www.seosan.go.kr/DATA/bbs/106/202512290910008444DL0LN.pdf",
+        "https://www.seosan.go.kr/www/index.do"
+      ],
+      "omission_policy": "무관 결과·시민 광고·직원 연락처·개인정보를 재게시하지 않음. 전체 원문은 보존하지 않고 질의 및 관련 URL만 보존."
+    },
+    {
+      "id": "search4",
+      "engine": "system2",
+      "queries": [
+        "site:g2b.go.kr \"서산시\" \"2026\" \"민원\" \"만족도\"",
+        "site:seosan.go.kr \"교육발전특구\" \"2026\" \"공고\"",
+        "site:seosan.go.kr \"신재생에너지 주택\" \"2026\"",
+        "\"서산시\" \"AI 챗봇\" \"R26BK01535235\""
+      ],
+      "recency_days": null,
+      "assessment": "Discovery only; results neither exhaustive nor proof of no procurement.",
+      "returned_result_count": 14,
+      "retained_discovery_urls": [
+        "https://www.bidpro.co.kr/n0_ipchal/konggo/item/konggo_view.asp?num=5423944",
+        "https://www.seosan.go.kr/DATA/bbs/106/202512290910008444DL0LN.pdf"
+      ],
+      "omission_policy": "무관 결과·시민 광고·직원 연락처·개인정보를 재게시하지 않음. 전체 원문은 보존하지 않고 질의 및 관련 URL만 보존."
+    },
+    {
+      "id": "search5",
+      "engine": "system2",
+      "queries": [
+        "site:g2b.go.kr \"R26BK01535235\"",
+        "site:g2b.go.kr \"서산시\" \"성인\" \"문해\"",
+        "site:seosan.go.kr \"해봄센터\" \"2026\" \"공고\""
+      ],
+      "recency_days": null,
+      "assessment": "Discovery only; results neither exhaustive nor proof of no procurement.",
+      "returned_result_count": 1,
+      "retained_discovery_urls": [
+        "https://www.seosan.go.kr/www/contents.do?key=1259"
+      ],
+      "omission_policy": "무관 결과·시민 광고·직원 연락처·개인정보를 재게시하지 않음. 전체 원문은 보존하지 않고 질의 및 관련 URL만 보존."
+    },
+    {
+      "id": "search6",
+      "engine": "system2",
+      "queries": [
+        "site:g2b.go.kr \"서산시\" \"경로당\" \"태양광\"",
+        "site:seosan.go.kr \"성인 문해\" \"2026\"",
+        "site:seosan.go.kr \"민원 만족도\" \"2026\"",
+        "\"서산시\" (\"주차정보\" OR \"AI 민원\" OR \"교육발전특구\" OR \"신재생에너지\") after:2026-09-30 before:2026-10-15"
+      ],
+      "recency_days": null,
+      "assessment": "Discovery only; results neither exhaustive nor proof of no procurement.",
+      "returned_result_count": 8,
+      "retained_discovery_urls": [
+        "https://www.seosan.go.kr/DATA/bbs/106/202512290910008444DL0LN.pdf"
+      ],
+      "omission_policy": "무관 결과·시민 광고·직원 연락처·개인정보를 재게시하지 않음. 전체 원문은 보존하지 않고 질의 및 관련 URL만 보존."
+    },
+    {
+      "id": "search7",
+      "engine": "system1",
+      "queries": [
+        "site:seosan.go.kr \"주차정보\" \"공고\"",
+        "site:g2b.go.kr \"서산시\" \"태양광\"",
+        "site:seosan.go.kr \"민원\" \"챗봇\""
+      ],
+      "recency_days": 14,
+      "assessment": "Returned unrelated pages despite site filters; inadequate targeted recall.",
+      "returned_result_count": 13,
+      "retained_discovery_urls": [],
+      "omission_policy": "무관 결과·시민 광고·직원 연락처·개인정보를 재게시하지 않음. 전체 원문은 보존하지 않고 질의 및 관련 URL만 보존."
+    },
+    {
+      "id": "search8",
+      "engine": "system2",
+      "queries": [
+        "site:seosan.go.kr \"성인 문해\" \"공고\" -bbsNo=121 -bbsNo=122",
+        "site:seosan.go.kr \"해봄센터\" \"수탁\"",
+        "site:seosan.go.kr \"AI\" \"보이스봇\" \"공고\"",
+        "site:g2b.go.kr \"서산시\" \"데이터 통합\""
+      ],
+      "recency_days": null,
+      "assessment": "Discovery only; results neither exhaustive nor proof of no procurement.",
+      "returned_result_count": 1,
+      "retained_discovery_urls": [
+        "https://www.seosan.go.kr/www/selectBbsNttView.do?bbsNo=144&contentId=251729&contentIdx=337&integrDeptCode=&key=1241&nttNo=251729&pageIndex=1&searchCnd=all&searchCtgry=&searchKrwd="
+      ],
+      "omission_policy": "무관 결과·시민 광고·직원 연락처·개인정보를 재게시하지 않음. 전체 원문은 보존하지 않고 질의 및 관련 URL만 보존."
+    },
+    {
+      "id": "search9",
+      "engine": "system2",
+      "queries": [
+        "site:seosan.go.kr \"성인문해\" \"2026\"",
+        "site:seosan.go.kr \"교육발전특구\" \"입찰\" after:2026-09-30",
+        "site:g2b.go.kr \"서산시\" \"신재생에너지\" after:2026-09-30",
+        "site:seosan.go.kr \"민원 만족도\" after:2026-09-30"
+      ],
+      "recency_days": null,
+      "assessment": "Discovery only; results neither exhaustive nor proof of no procurement.",
+      "returned_result_count": 11,
+      "retained_discovery_urls": [
+        "https://www.seosan.go.kr/DATA/bbs/178/20251114114753468AkDllH.pdf",
+        "https://www.seosan.go.kr/DATA/bbs/106/202512290910008444DL0LN.pdf"
+      ],
+      "omission_policy": "무관 결과·시민 광고·직원 연락처·개인정보를 재게시하지 않음. 전체 원문은 보존하지 않고 질의 및 관련 URL만 보존."
+    }
+  ]
+}

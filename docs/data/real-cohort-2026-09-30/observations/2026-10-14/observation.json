@@ -1,0 +1,337 @@
+{
+  "version": "real-cohort-followup-audit-v1",
+  "observation_date_kst": "2026-10-14",
+  "recorded_at": "2026-10-13T23:22:52.319293+00:00",
+  "institution_code": "LG-44210",
+  "data_origin": "real",
+  "baseline_commit": "9eb74750e8d2c0eba007d6af6d75dde4c9c34a91",
+  "snapshot_url": "https://github.com/sokldjs554/procurement-forecast/blob/9eb74750e8d2c0eba007d6af6d75dde4c9c34a91/docs/data/real-cohort-2026-09-30/LG-44210.jsonl",
+  "snapshot_sha256": "9084cb38e4b5652e0bbf3e4aced44500067d0eba59d7c802efa882ce20bf511d",
+  "snapshot_sha256_verified": true,
+  "snapshot_bytes": 565618,
+  "frozen_at": "2026-09-30T14:15:51.046565Z",
+  "horizon_days": 540,
+  "horizon_end": "2028-03-23",
+  "cohort_size": 9,
+  "all_original_opportunities_retained": true,
+  "reference_file_verification": [
+    {
+      "path": "README.md",
+      "url": "https://github.com/sokldjs554/procurement-forecast/blob/9eb74750e8d2c0eba007d6af6d75dde4c9c34a91/docs/data/real-cohort-2026-09-30/README.md",
+      "sha256": "8e430fe0291194df7b105ffdc9c564bc97e0ab91ac4305ed772ab574b22f2b38",
+      "git_blob_sha1": "71993a670ef450f9ad62056138a8b50f98e6d80e"
+    },
+    {
+      "path": "receipt.json",
+      "url": "https://github.com/sokldjs554/procurement-forecast/blob/9eb74750e8d2c0eba007d6af6d75dde4c9c34a91/docs/data/real-cohort-2026-09-30/receipt.json",
+      "sha256": "2dc2dc94c25adf6dc7d6262c8487d54c90fb4e1d7f6226786ab27e8c54fb82f5",
+      "git_blob_sha1": "4ab2cb0aaf363a9a897b04b975b263da87befc2e"
+    },
+    {
+      "path": "LG-44210-observations-initial.json",
+      "url": "https://github.com/sokldjs554/procurement-forecast/blob/9eb74750e8d2c0eba007d6af6d75dde4c9c34a91/docs/data/real-cohort-2026-09-30/LG-44210-observations-initial.json",
+      "sha256": "b102c45364963b92f53fa80060e4d383ed076a692f6d8114ad4070191e182203",
+      "git_blob_sha1": "3297fb9418e2d9af1651d8cdcaa94f8cb7bd59e7"
+    },
+    {
+      "path": "screening-initial.json",
+      "url": "https://github.com/sokldjs554/procurement-forecast/blob/9eb74750e8d2c0eba007d6af6d75dde4c9c34a91/docs/data/real-cohort-2026-09-30/screening-initial.json",
+      "sha256": "5211d02bef006cc2631876e5650a7fa41955505f25f07d1814dc04b4ef580331",
+      "git_blob_sha1": "a25ef7df9ef4d4c7ac0504b9ea19343298fe4794"
+    }
+  ],
+  "prior_observation": {
+    "url": "https://github.com/sokldjs554/procurement-forecast/blob/9eb74750e8d2c0eba007d6af6d75dde4c9c34a91/docs/data/real-cohort-2026-09-30/LG-44210-observations-initial.json",
+    "observed_through": "2026-09-30",
+    "outcomes": [],
+    "coverage": [],
+    "branch_previously_existed": false,
+    "checked_main_commit": "687e5cfa69441f96dc3eed6e5e82708865d96714",
+    "note": "지정 관측 브랜치는 404 및 브랜치 목록 부재로 확인. main에 이 코호트/관측 경로가 없어 원본 커밋에서 초기 기록을 읽음. main의 별도 290건 코호트와 혼합하지 않음."
+  },
+  "observation_attempt_through_kst": "2026-10-14",
+  "coverage": [],
+  "outcomes": [],
+  "new_confirmed_post_freeze_matches": 0,
+  "opportunity_reviews": [
+    {
+      "opportunity_id": 1,
+      "frozen_fields": {
+        "id": 1,
+        "institution_code": "LG-44210",
+        "title": "학교는 현재 29개",
+        "est_budget_krw": null,
+        "best_commitment": "planned",
+        "conversion_prob": 0.42,
+        "bid_window_start": "2026-01-15",
+        "bid_window_end": "2026-11-30",
+        "first_seen_at": "2025-12-04",
+        "last_signal_at": "2025-12-04",
+        "created_at": "2026-09-30T14:15:50.908074+00:00",
+        "updated_at": "2026-09-30T14:15:50.908074+00:00",
+        "signal_count": 1
+      },
+      "search_interpretation_only": "성인 문해 마을학교 운영",
+      "status": "unresolved_no_confirmed_post_freeze_match",
+      "review_sources": [
+        "S6"
+      ],
+      "reason": "동결 제목은 학교 수를 사업명으로 추출함. 연결 청크 68은 강사수당·운영비이며 신규 조달 의도가 확정되지 않음. 모집 안내는 입찰 증거가 아님.",
+      "coverage_complete": false,
+      "issued": null,
+      "outcome": null,
+      "retained_in_original_cohort": true
+    },
+    {
+      "opportunity_id": 2,
+      "frozen_fields": {
+        "id": 2,
+        "institution_code": "LG-44210",
+        "title": "위원장님께서 말씀하신 교육 특구 사업",
+        "est_budget_krw": 6000000000,
+        "best_commitment": "planned",
+        "conversion_prob": 0.42,
+        "bid_window_start": "2026-01-15",
+        "bid_window_end": "2026-11-30",
+        "first_seen_at": "2025-12-04",
+        "last_signal_at": "2025-12-04",
+        "created_at": "2026-09-30T14:15:50.908074+00:00",
+        "updated_at": "2026-09-30T14:15:50.908074+00:00",
+        "signal_count": 1
+      },
+      "search_interpretation_only": "교육발전특구 포괄 사업",
+      "status": "unresolved_no_confirmed_post_freeze_match",
+      "review_sources": [
+        "S5"
+      ],
+      "reason": "여러 기관과 하위 사업이 섞인 포괄 예산 발언. 서산교육지원청 발주나 기존 센터 위탁을 서산시의 동일 조달로 간주하지 않음. 동결 60억원과 원문 차년도 45억원의 차이를 유지·기록.",
+      "coverage_complete": false,
+      "issued": null,
+      "outcome": null,
+      "retained_in_original_cohort": true
+    },
+    {
+      "opportunity_id": 3,
+      "frozen_fields": {
+        "id": 3,
+        "institution_code": "LG-44210",
+        "title": "교육 발전 특구 사업",
+        "est_budget_krw": null,
+        "best_commitment": "planned",
+        "conversion_prob": 0.42,
+        "bid_window_start": "2026-01-15",
+        "bid_window_end": "2026-11-30",
+        "first_seen_at": "2025-12-04",
+        "last_signal_at": "2025-12-04",
+        "created_at": "2026-09-30T14:15:50.908074+00:00",
+        "updated_at": "2026-09-30T14:15:50.908074+00:00",
+        "signal_count": 1
+      },
+      "search_interpretation_only": "해봄센터 운영 부서 이관",
+      "status": "unresolved_no_confirmed_post_freeze_match",
+      "review_sources": [
+        "S5"
+      ],
+      "reason": "연결 청크 149의 핵심은 2026년 가족지원과 이관. 새 입찰 의도를 확정할 수 없음. 과거 운영기관 선정 보도만 확인했으며 공고번호는 미확인.",
+      "coverage_complete": false,
+      "issued": null,
+      "outcome": null,
+      "retained_in_original_cohort": true
+    },
+    {
+      "opportunity_id": 4,
+      "frozen_fields": {
+        "id": 4,
+        "institution_code": "LG-44210",
+        "title": "저희가 올해 데이터 통합 플랫폼",
+        "est_budget_krw": null,
+        "best_commitment": "planned",
+        "conversion_prob": 0.42,
+        "bid_window_start": "2026-01-15",
+        "bid_window_end": "2026-11-30",
+        "first_seen_at": "2025-12-04",
+        "last_signal_at": "2025-12-04",
+        "created_at": "2026-09-30T14:15:50.908074+00:00",
+        "updated_at": "2026-09-30T14:15:50.908074+00:00",
+        "signal_count": 1
+      },
+      "search_interpretation_only": "데이터 플랫폼 유지보수 / 생성형 AI 도구 구입 혼합",
+      "status": "unresolved_no_confirmed_post_freeze_match",
+      "review_sources": [
+        "S3"
+      ],
+      "reason": "연결 청크 202는 구축 완료 플랫폼 유지보수와 별도 AI 도구 구입을 함께 설명함. 하나의 신규 구축 공고로 대응하지 않음. 공식 계획에서 기존 구축 완료를 보강했으나 계약 원문은 미확인.",
+      "coverage_complete": false,
+      "issued": null,
+      "outcome": null,
+      "retained_in_original_cohort": true
+    },
+    {
+      "opportunity_id": 5,
+      "frozen_fields": {
+        "id": 5,
+        "institution_code": "LG-44210",
+        "title": "그 밑에 AI 민원 플랫폼",
+        "est_budget_krw": 1000000000,
+        "best_commitment": "planned",
+        "conversion_prob": 0.42,
+        "bid_window_start": "2026-01-15",
+        "bid_window_end": "2026-11-30",
+        "first_seen_at": "2025-12-04",
+        "last_signal_at": "2025-12-04",
+        "created_at": "2026-09-30T14:15:50.908074+00:00",
+        "updated_at": "2026-09-30T14:15:50.908074+00:00",
+        "signal_count": 1
+      },
+      "search_interpretation_only": "AI 민원 챗봇·보이스봇 일부 구축",
+      "status": "unresolved_no_confirmed_post_freeze_match",
+      "review_sources": [
+        "S2",
+        "S4"
+      ],
+      "reason": "챗봇 GPU 구매 후보는 2차 출처이며 전체 민원 플랫폼과 과업 범위가 다를 수 있음. 공식 원문 확보 전 미확인 후보. 동결 10억원을 원문 시범예산 2.8억원으로 수정하지 않음.",
+      "coverage_complete": false,
+      "issued": null,
+      "outcome": null,
+      "retained_in_original_cohort": true
+    },
+    {
+      "opportunity_id": 6,
+      "frozen_fields": {
+        "id": 6,
+        "institution_code": "LG-44210",
+        "title": "같은 예산은 아마 주차장 조성",
+        "est_budget_krw": 600000000,
+        "best_commitment": "planned",
+        "conversion_prob": 0.42,
+        "bid_window_start": "2026-06-02",
+        "bid_window_end": "2027-05-28",
+        "first_seen_at": "2025-12-04",
+        "last_signal_at": "2025-12-04",
+        "created_at": "2026-09-30T14:15:50.908074+00:00",
+        "updated_at": "2026-09-30T14:15:50.908074+00:00",
+        "signal_count": 1
+      },
+      "search_interpretation_only": "주차정보 공유서비스",
+      "status": "unresolved_no_confirmed_post_freeze_match",
+      "review_sources": [
+        "S1"
+      ],
+      "reason": "기관과 연결 청크 248의 공영주차장 3개소 정보공유 및 원문 예산 692000000원이 공식 공고와 부합함. 그러나 동결 제목은 주차장 조성, 금액은 600000000원으로 오류가 있음. 원문 사업의 유력 대응 후보로 보존하고 동결 출력의 정확한 예측으로 확정하지 않음. 2026-03-16 공고는 동결 이전이므로 미래 적중 제외.",
+      "coverage_complete": false,
+      "issued": null,
+      "outcome": null,
+      "retained_in_original_cohort": true
+    },
+    {
+      "opportunity_id": 7,
+      "frozen_fields": {
+        "id": 7,
+        "institution_code": "LG-44210",
+        "title": "그거는 처음 도입하는 사업",
+        "est_budget_krw": null,
+        "best_commitment": "committed",
+        "conversion_prob": 0.56,
+        "bid_window_start": "2026-06-02",
+        "bid_window_end": "2027-05-28",
+        "first_seen_at": "2025-12-04",
+        "last_signal_at": "2025-12-04",
+        "created_at": "2026-09-30T14:15:50.908074+00:00",
+        "updated_at": "2026-09-30T14:15:50.908074+00:00",
+        "signal_count": 1
+      },
+      "search_interpretation_only": "방문 민원 만족도 조사 참여자 보상",
+      "status": "unresolved_no_confirmed_post_freeze_match",
+      "review_sources": [
+        "S3"
+      ],
+      "reason": "연결 청크 305는 설문 참여자 보상이며 소프트웨어 조달로 확정되지 않음. 공무원 친절도 평가 용역은 대상·범위가 달라 대응에서 제외. 원래 출력 유지.",
+      "coverage_complete": false,
+      "issued": null,
+      "outcome": null,
+      "retained_in_original_cohort": true
+    },
+    {
+      "opportunity_id": 8,
+      "frozen_fields": {
+        "id": 8,
+        "institution_code": "LG-44210",
+        "title": "신재생에너지 주택 지원 사업",
+        "est_budget_krw": 5431000,
+        "best_commitment": "planned",
+        "conversion_prob": 0.42,
+        "bid_window_start": "2026-01-15",
+        "bid_window_end": "2026-11-30",
+        "first_seen_at": "2025-12-04",
+        "last_signal_at": "2025-12-04",
+        "created_at": "2026-09-30T14:15:50.908074+00:00",
+        "updated_at": "2026-09-30T14:15:50.908074+00:00",
+        "signal_count": 2
+      },
+      "search_interpretation_only": "주택지원 및 융복합지원 혼합",
+      "status": "unresolved_no_confirmed_post_freeze_match",
+      "review_sources": [
+        "S3"
+      ],
+      "reason": "신호 8과 10이 한 기회로 연결됨. 원래 5431000원은 인접 경로당 설치비에서 섞였을 가능성이 원문에 드러남. 지원사업 계획을 조달 공고로 세지 않음. 두 지원사업을 임의 분리하여 분모를 바꾸지 않음.",
+      "coverage_complete": false,
+      "issued": null,
+      "outcome": null,
+      "retained_in_original_cohort": true
+    },
+    {
+      "opportunity_id": 9,
+      "frozen_fields": {
+        "id": 9,
+        "institution_code": "LG-44210",
+        "title": "그것은 나중에 개축된 다음에 설치",
+        "est_budget_krw": null,
+        "best_commitment": "declined",
+        "conversion_prob": 0.052,
+        "bid_window_start": "2026-06-02",
+        "bid_window_end": "2027-05-28",
+        "first_seen_at": "2025-12-04",
+        "last_signal_at": "2025-12-04",
+        "created_at": "2026-09-30T14:15:50.908074+00:00",
+        "updated_at": "2026-09-30T14:15:50.908074+00:00",
+        "signal_count": 1
+      },
+      "search_interpretation_only": "개축 후 경로당 태양광 설치 가능성",
+      "status": "unresolved_no_confirmed_post_freeze_match",
+      "review_sources": [
+        "S3"
+      ],
+      "reason": "연결 청크 322는 미신청 사유와 설치 곤란을 설명하며 장소·발주범위가 특정되지 않음. 지역 전체 태양광 공고를 이 항목에 자동 대응시키지 않음. declined 및 원래 확률 유지.",
+      "coverage_complete": false,
+      "issued": null,
+      "outcome": null,
+      "retained_in_original_cohort": true
+    }
+  ],
+  "review_candidate_ids": [
+    "S1",
+    "S2"
+  ],
+  "metrics": {
+    "future_hit_rate": null,
+    "precision": null,
+    "recall": null,
+    "lead_time_days": null,
+    "window_hit_rate": null,
+    "probability_calibration": null
+  },
+  "limitations": [
+    "540일 실제 경과 전이며 9건 모두 프로젝트별 완전 관측 증거가 없음.",
+    "9건 모두 창 시작일이 동결 이전이고 확률 목표도 동결되지 않아 창 적중률·확률 보정 성능 측정 불가.",
+    "제목·금액·의도 오류가 남은 실제 모델 출력이며 정확한 예측 9건을 전제하지 않음.",
+    "검색 미발견·게시판 접근 실패는 미발주/음성/완전 관측이 아님.",
+    "검색 날짜 필터가 적용되지 않은 오래된/무관 결과도 반환됨. 공고문 날짜와 실제 최초 등록 시각을 구별함.",
+    "동결 이전·당일 공고는 미래 적중 제외. 동결 원본·창·확률·시각과 기존 관측은 수정하지 않음.",
+    "기관·사업범위·공고번호 미확인 대응은 검토 항목만 기록. 공식 공고 존재와 모델 예측 정확성은 별개."
+  ],
+  "cost": {
+    "paid_api_used": false,
+    "paid_infrastructure_used": false,
+    "keepalive_calls_used": false
+  }
+}
